@@ -1,0 +1,27 @@
+.sidebar {
+  height: 100vh;
+  position: sticky;
+  left: 0; bottom: 0; top: 0;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000c40;
+  margin: 8px 0;
+  padding: 0 3px;
+  font-size: 1.5rem;
+  font-weight: 800;
+  border-right: 1px solid #f0f0f0;
+}
+
+.header {
+  padding-top: 12x;
+  background-color: #fff;
+}
+
+.content {
+  margin: 24px 16px;
+  padding: 20px;
+}

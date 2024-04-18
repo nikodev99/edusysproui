@@ -1,8 +1,9 @@
 import './App.scss'
-import {metadata} from "./utils/metadata.tsx";
-import {Layout} from "antd";
+import {metadata} from "./utils/metadata.ts";
+import {Button, Layout} from "antd";
 import {useState} from "react";
-import Sidebar from "./components/Sidebar.tsx";
+import Sidebar from "./components/sidebar/Sidebar.tsx";
+import {CircleChevronLeft, CircleChevronRight} from "lucide-react";
 
 metadata({
     title: "Dashboard",
@@ -20,8 +21,13 @@ const App = () => {
     
     return(
         <Layout className="App">
-            <Sider theme="light" trigger={null} collapsed={collapsed} collapsible className='sidebar'>
-                <Sidebar />
+            <Sider style={{width: '300px'}} theme="light" trigger={null} collapsed={collapsed} collapsible className='sidebar'>
+                <Sidebar showText={collapsed} />
+                <Button
+                    className='trigger-btn'
+                    type='text'
+                    icon={collapsed ? <CircleChevronRight /> : <CircleChevronLeft />}
+                    onClick={handleCollapse} />
             </Sider>
             <Layout>
                 <Header className='header'>Here is the header</Header>

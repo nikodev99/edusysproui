@@ -1,3 +1,5 @@
+@import "assets/style/variables";
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -7,4 +9,30 @@
 
 body {
   background-color: #f7f6ff;
+
+  .ant-btn:hover {
+    color: $primary_color!important;
+    border-color: $primary_color!important;
+  }
+
+  .ant-btn-primary {
+    background-color: $primary_color!important;
+  }
+
+  .ant-btn-primary:hover {
+    background-color: lighten($primary_color, 20%)!important;
+    color: $text_color_over_primary_color!important;
+  }
+
+  .primary--color {
+    color: $primary_color!important;
+  }
+
+  .primary--light--color {
+    color: $primary_color!important;
+  }
+
+  .gray--color {
+    color: $gray_color!important;
+  }
 }

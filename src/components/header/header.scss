@@ -1,0 +1,12 @@
+@import "../../assets/style/variables";
+
+.header-icon {
+  background: lighten($primary_color, 83%);
+  height: 30px;
+  width: 30px;
+  padding: 6px;
+  border-radius: 4px;
+  color: $primary_color;
+  cursor: pointer;
+}
+

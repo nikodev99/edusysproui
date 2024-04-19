@@ -3,6 +3,7 @@ import {metadata} from "./utils/metadata.ts";
 import {Button, Layout} from "antd";
 import {useState} from "react";
 import Sidebar from "./components/sidebar/Sidebar.tsx";
+import CustomHeader from "./components/header/Header.tsx";
 import {CircleChevronLeft, CircleChevronRight} from "lucide-react";
 
 metadata({
@@ -21,7 +22,7 @@ const App = () => {
     
     return(
         <Layout className="App">
-            <Sider style={{width: '300px'}} theme="light" trigger={null} collapsed={collapsed} collapsible className='sidebar'>
+            <Sider theme="light" trigger={null} collapsed={collapsed} collapsible className='sidebar'>
                 <Sidebar showText={collapsed} />
                 <Button
                     className='trigger-btn'
@@ -30,8 +31,12 @@ const App = () => {
                     onClick={handleCollapse} />
             </Sider>
             <Layout>
-                <Header className='header'>Here is the header</Header>
-                <Content className='content'>Here is the content</Content>
+                <Header className='header'>
+                    <CustomHeader />
+                </Header>
+                <Content className='content'>
+
+                </Content>
             </Layout>
         </Layout>
     )

@@ -1,13 +1,15 @@
+@import "../../assets/style/variables";
+
 .logo {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #000c40;
+  color: $primary_color;
   padding: 8px 3px;
   font-size: 1.5rem;
   font-weight: 800;
-  border-right: 1px solid #f0f0f0;
-  border-bottom: 1px solid #f0f0f0;
+  border-right: $light_bar;
+  border-bottom: $light_bar;
 }
 
 .menu {
@@ -28,7 +30,8 @@
   }
 
   .ant-menu-item-selected {
-    background-color: #000c40!important;
-    color: #fff;
+    background-color: $primary_color;
+    color: $text_color_over_primary_color;
   }
 }
+

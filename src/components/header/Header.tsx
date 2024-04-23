@@ -1,7 +1,9 @@
 import "./header.scss"
-import {Avatar, Flex, Typography} from "antd";
+import {Badge, Flex, Typography} from "antd";
 import Search from "antd/es/input/Search";
-import {Bell, MessageSquare, User} from "lucide-react";
+import {MessageSquare} from "lucide-react";
+import ProfileCard from "../cards/ProfileCard.tsx";
+import NotificationCard from "../cards/NotificationCard.tsx";
 
 
 const CustomHeader = () => {
@@ -13,9 +15,11 @@ const CustomHeader = () => {
             <Flex align='center' gap='3rem'>
                 <Search placeholder='Search...'  allowClear className='search-input' />
                 <Flex align='center' gap='10px'>
-                    <MessageSquare className='header-icon'/>
-                    <Bell className='header-icon'/>
-                    <Avatar shape={"square"} icon={<User />} />
+                    <Badge dot>
+                        <MessageSquare className='header-icon'/>
+                    </Badge>
+                    <NotificationCard />
+                    < ProfileCard />
                 </Flex>
             </Flex>
         </Flex>

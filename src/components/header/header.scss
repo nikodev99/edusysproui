@@ -1,4 +1,8 @@
-@import "../../assets/style/variables";
+@import "../../assets/style/main";
+
+.welcome-message {
+  font-family: Mulish, Kameron, Helvetica, sans-serif;
+}
 
 .header-icon {
   background: lighten($primary_color, 83%);
@@ -7,6 +11,10 @@
   padding: 6px;
   border-radius: 4px;
   color: $primary_color;
+  cursor: pointer;
+}
+
+.avatar {
   cursor: pointer;
 }
 

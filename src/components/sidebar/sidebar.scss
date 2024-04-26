@@ -1,33 +1,43 @@
 @import "../../assets/style/main";
 
-.logo {
-  @include flex-center;
-  color: $primary_color;
-  padding: 8px 3px;
-  font-size: 1.5rem;
-  font-weight: 800;
-  border-right: $light_bar;
-  border-bottom: $light_bar;
-}
-
-.menu {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  font-weight: 500;
-  .ant-menu-item {
-    @include display(flex, center, start);
+.sidebar {
+  height: 100vh;
+  position: sticky!important;
+  left: 0; bottom: 0; top: 0;
+  box-shadow: $box_shadow;
+  @media (max-width: 767px) {
+    display: none;
   }
 
-  &.show {
+  .logo {
+    @include flex-center;
+    color: $primary_color;
+    padding: 8px 3px;
+    font-size: 1.5rem;
+    font-weight: 800;
+    border-right: $light_bar;
+    border-bottom: $light_bar;
+  }
+
+  .menu {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-weight: 500;
     .ant-menu-item {
-
+      @include display(flex, center, start);
     }
-  }
 
-  .ant-menu-item-selected {
-    background-color: $primary_color;
-    color: $text_color_over_primary_color;
+    &.show {
+      .ant-menu-item {
+
+      }
+    }
+
+    .ant-menu-item-selected {
+      background-color: $primary_color;
+      color: $text_color_over_primary_color;
+    }
   }
 }
 

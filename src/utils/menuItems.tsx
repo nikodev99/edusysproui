@@ -4,7 +4,7 @@ export const menuItems = [
     {
         key: '1',
         icon: <LayoutDashboard />,
-        label: "Dashboard"
+        label: <a href='/dashboard'>Dashboard</a>
     },
     {
         key: '2',

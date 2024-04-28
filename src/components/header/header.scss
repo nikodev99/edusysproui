@@ -19,6 +19,15 @@
 
   .welcome-message {
     font-family: inherit;
+    @media (max-width: 767px) {
+      display: none;
+    }
+  }
+
+  .search-input {
+    @media (max-width: 767px) {
+      display: none;
+    }
   }
 
   .header-icon {

@@ -1,16 +1,6 @@
 @import "assets/style/main";
 
-.welcome-message {
-  @media (max-width: 767px) {
-    display: none;
-  }
-}
 
-.search-input {
-  @media (max-width: 767px) {
-    display: none;
-  }
-}
 
 .content {
   margin: 24px 16px;

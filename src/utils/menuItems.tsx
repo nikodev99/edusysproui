@@ -1,10 +1,11 @@
 import {CircleUserRound, Cog, LayoutDashboard, ListTodo, LogOut, ShoppingCart} from "lucide-react";
+import {MenuProps} from "antd";
 
-export const menuItems = [
+export const menuItems: Required<MenuProps>['items'][number][] = [
     {
         key: '1',
         icon: <LayoutDashboard />,
-        label: <a href='/dashboard'>Dashboard</a>
+        label: 'Dashboard'
     },
     {
         key: '2',
@@ -29,6 +30,7 @@ export const menuItems = [
     {
         key: '6',
         icon: <LogOut />,
-        label: "Logout"
+        label: "Logout",
+        danger: true
     }
 ]

@@ -3,7 +3,7 @@ import {metadata} from "./utils/metadata.ts";
 import {Layout} from "antd";
 import Sidebar from "./components/sidebar/Sidebar.tsx";
 import Header from "./components/header/Header.tsx";
-import {useState} from "react";
+import {useToggle} from "./hooks/useToggle.ts";
 
 metadata({
     title: "Dashboard",
@@ -12,10 +12,7 @@ metadata({
 
 const App = () => {
 
-    const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
-    const handleCollapse = () => {
-        setSidebarCollapsed(!sidebarCollapsed)
-    }
+    const [sidebarCollapsed, setSidebarCollapsed] = useToggle(false)
 
     console.log(sidebarCollapsed)
 
@@ -23,7 +20,7 @@ const App = () => {
         <Layout className="App">
             <Sidebar onCollapsed={sidebarCollapsed} />
             <Layout>
-                <Header onCollapsed={handleCollapse} />
+                <Header onCollapsed={setSidebarCollapsed} />
                 <Layout.Content className='content'>
 
                 </Layout.Content>

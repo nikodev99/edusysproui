@@ -2,14 +2,11 @@ import "./sidebar.scss"
 import {Flex, Menu, Image, Layout, Button} from "antd";
 import {menuItems} from "../../utils/menuItems.tsx";
 import {CircleChevronLeft, CircleChevronRight} from "lucide-react";
-import {useState} from "react";
+import {useToggle} from "../../hooks/useToggle.ts";
 
 const Sidebar = ({onCollapsed}: {onCollapsed?: boolean}) => {
 
-    const [collapsed, setCollapsed] = useState(false)
-    const handleCollapse = () => {
-        setCollapsed(!collapsed)
-    }
+    const [collapsed, setCollapsed] = useToggle(false)
 
     return(
         <Layout.Sider theme="light" trigger={null} collapsed={collapsed} collapsible className={`sidebar ${onCollapsed ? "show" : ""}`}>
@@ -28,7 +25,7 @@ const Sidebar = ({onCollapsed}: {onCollapsed?: boolean}) => {
                 className='trigger-btn'
                 type='text'
                 icon={collapsed ? <CircleChevronRight /> : <CircleChevronLeft />}
-                onClick={handleCollapse} />
+                onClick={setCollapsed} />
         </Layout.Sider>
     )
 }

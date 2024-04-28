@@ -7,10 +7,14 @@
   background-color: #fff;
   box-shadow: $box_shadow_colored;
   @media (max-width: 767px) {
-    display: flex;
-    align-items: end;
-    justify-items: center;
-    justify-content: flex-end;
+    padding: 0 10px
+  }
+
+  .hamburger {
+    display: none;
+    @media (max-width: 767px) {
+      display: inherit;
+    }
   }
 
   .welcome-message {
@@ -19,8 +23,6 @@
 
   .header-icon {
     background: lighten($primary_color, 83%);
-    height: 30px;
-    width: 30px;
     padding: 6px;
     border-radius: 4px;
     color: $primary_color;

@@ -4,7 +4,7 @@ import {menuItems} from "../../utils/menuItems.tsx";
 import {CircleChevronLeft, CircleChevronRight} from "lucide-react";
 import {useState} from "react";
 
-const Sidebar = () => {
+const Sidebar = ({onCollapsed}: {onCollapsed?: boolean}) => {
 
     const [collapsed, setCollapsed] = useState(false)
     const handleCollapse = () => {
@@ -12,7 +12,7 @@ const Sidebar = () => {
     }
 
     return(
-        <Layout.Sider theme="light" trigger={null} collapsed={collapsed} collapsible className='sidebar'>
+        <Layout.Sider theme="light" trigger={null} collapsed={collapsed} collapsible className={`sidebar ${onCollapsed ? "show" : ""}`}>
             <Flex align='center' justify='center'>
                 <div className="logo">
                     <Image src="/edusyspro.svg" alt="logo" preview={false} />

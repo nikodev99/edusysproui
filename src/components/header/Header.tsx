@@ -1,15 +1,18 @@
 import "./header.scss"
 import {Avatar, Badge, Dropdown, Flex, Layout, Typography} from "antd";
 import Search from "antd/es/input/Search";
-import {Bell, User} from "lucide-react";
+import {Bell, User, Menu} from "lucide-react";
 import AvatarDropdown from "./AvatarDropdown.tsx";
 import NotificationDropdown from "./NotificationDropdown.tsx";
 
 
-const Header = () => {
+const Header = ({onCollapsed}: {onCollapsed: () => void}) => {
     return(
         <Layout.Header className='header'>
             <Flex align='center' justify='space-between'>
+                <div className='hamburger'>
+                    <Menu  onClick={onCollapsed} />
+                </div>
                 <Typography.Title level={5} type='secondary' className='welcome-message'>
                     Welcome Back, Nikhe
                 </Typography.Title>
@@ -18,7 +21,7 @@ const Header = () => {
                     <Flex align='center' gap='10px'>
                         <Dropdown dropdownRender={() => (<NotificationDropdown />)}>
                             <Badge dot>
-                                <Bell className='header-icon'/>
+                                <Avatar shape='square' icon={<Bell />} className='header-icon' />
                             </Badge>
                         </Dropdown>
                         <Dropdown dropdownRender={() => (<AvatarDropdown />)} trigger={['click']} arrow={{pointAtCenter: true}}>

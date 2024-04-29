@@ -1,15 +1,14 @@
-import {useEffect, useRef} from "react";
+import {useEffect} from "react";
+import {Metadata} from "../utils/interfaces.ts";
+import {connectToElement} from "../utils/utils.ts";
 
-export const useDocumentTitle = (title: string) => {
-    const titleRef = useRef(document.title);
+export const useDocumentTitle = (metadata: Metadata) => {
+    const {title, description} = metadata;
 
-    useEffect(() => {
-        return () => {
-            document.title = titleRef.current;
-        }
-    }, []);
-
-    useEffect(() => {
-        document.title = title ? title : titleRef.current;
-    }, [title]);
+    useEffect( () => {
+        document.title = title
+        connectToElement("meta[name='description']", {
+            content: description
+        })
+    }, [title, description]);
 }

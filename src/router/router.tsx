@@ -15,7 +15,7 @@ export const router = createBrowserRouter([
                 element: <Dashboard />
             },
             {
-                path: 'setting',
+                path: 'settings',
                 element: <Setting />
             }
         ]

@@ -3,10 +3,15 @@ import {Flex, Menu, Image, Layout, Button} from "antd";
 import {menuItems} from "../../utils/menuItems.tsx";
 import {CircleChevronLeft, CircleChevronRight} from "lucide-react";
 import {useToggle} from "../../hooks/useToggle.ts";
+import {useNavigate} from "react-router-dom";
 
 const Sidebar = ({onCollapsed}: {onCollapsed?: boolean}) => {
 
     const [collapsed, setCollapsed] = useToggle(false)
+    const navigate = useNavigate();
+    const handleMenuItemClick = ({key}: {key: string|null}) => {
+        key ? navigate(key) : navigate('/')
+    }
 
     return(
         <Layout.Sider theme="light" trigger={null} collapsed={collapsed} collapsible className={`sidebar ${onCollapsed ? "show" : ""}`}>
@@ -17,8 +22,9 @@ const Sidebar = ({onCollapsed}: {onCollapsed?: boolean}) => {
                 </div>
             </Flex>
             <Menu
+                onClick={handleMenuItemClick}
                 mode="vertical"
-                defaultSelectedKeys={['1']}
+                defaultSelectedKeys={['/dashboard']}
                 className={`menu ${collapsed ? 'show' : ''}`}
                 items={menuItems} />
             <Button

@@ -1,36 +1,66 @@
-import {CircleUserRound, Cog, LayoutDashboard, ListTodo, LogOut, ShoppingCart} from "lucide-react";
+import {AtSign, BadgeCheck, BadgeDollarSign, BarChart3,ClipboardCheck, Cog, Contact, GraduationCap, LayoutDashboard, Library, Notebook, Users} from "lucide-react";
 import {MenuProps} from "antd";
 
 export const menuItems: Required<MenuProps>['items'][number][] = [
     {
-        key: '1',
+        key: '/dashboard',
         icon: <LayoutDashboard />,
-        label: 'Dashboard'
+        label: 'Tableau de bord',
     },
     {
-        key: '2',
-        icon: <ShoppingCart />,
-        label: "Orders"
+        key: '/students',
+        icon: <GraduationCap />,
+        label: "Élèves"
     },
     {
-        key: '3',
-        icon: <ListTodo />,
-        label: "Todo"
+        key: '/teachers',
+        icon: <Users />,
+        label: "Enseignants"
     },
     {
-        key: '4',
-        icon: <CircleUserRound />,
-        label: "Profile"
+        key: '/classes-and-subjects',
+        icon: <Notebook />,
+        label: "Classes et Matières"
     },
     {
-        key: '5',
+        key: '/examinations',
+        icon: <ClipboardCheck />,
+        label: "Examens"
+    },
+    {
+        key: '/attendance',
+        icon: <BadgeCheck />,
+        label: "Présence"
+    },
+    {
+        key: '/library',
+        icon: <Library />,
+        label: "Bibliothèque"
+    },
+    {
+        key: '/fee-and-finance',
+        icon: <BadgeDollarSign />,
+        label: "Frais et Finance"
+    },
+    {
+        key: '/communication',
+        icon: <AtSign />,
+        label: "Communication"
+    },
+    {
+        key: '/staff-management',
+        icon: <Contact />,
+        label: "Resource Humaine",
+        title: 'Gestion du personnel'
+    },
+    {
+        key: '/report-and-analytics',
+        icon: <BarChart3 />,
+        label: "Rapport/Analyses"
+    },
+    {
+        key: '/settings',
         icon: <Cog />,
-        label: "Setting"
+        label: "Paramètres"
     },
-    {
-        key: '6',
-        icon: <LogOut />,
-        label: "Logout",
-        danger: true
-    }
 ]

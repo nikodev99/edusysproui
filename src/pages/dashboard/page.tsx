@@ -1,4 +1,3 @@
-import {Layout} from "antd";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 
 const Dashboard = () => {
@@ -8,9 +7,7 @@ const Dashboard = () => {
     })
 
     return (
-        <Layout.Content>
-            <div>Dashboard</div>
-        </Layout.Content>
+        <main>Dashboard</main>
     )
 }
 

@@ -30,3 +30,5 @@ export const connectToElement = (connector: string, attributes?: {[key: string]:
         }
     }
 }
+
+export const fontFamily = 'Mulish, Kameron, Helvetica, sans-serif'

@@ -10,7 +10,17 @@ export const menuItems: Required<MenuProps>['items'][number][] = [
     {
         key: '/students',
         icon: <GraduationCap />,
-        label: "Élèves"
+        label: "Élèves",
+        children: [
+            {
+                key: '/students/new',
+                label: 'Inscription',
+            },
+            {
+                key: '/students/renew',
+                label: 'Re-Inscription'
+            }
+        ]
     },
     {
         key: '/teachers',

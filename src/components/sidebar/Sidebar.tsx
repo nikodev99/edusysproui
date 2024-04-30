@@ -9,21 +9,19 @@ const Sidebar = ({onCollapsed}: {onCollapsed?: boolean}) => {
 
     const [collapsed, setCollapsed] = useToggle(false)
     const navigate = useNavigate();
-    const handleMenuItemClick = ({key}: {key: string|null}) => {
-        key ? navigate(key) : navigate('/')
-    }
+    const handleMenuItemClick = ({key}: {key: string|null}) => {key ? navigate(key) : navigate('/')}
 
     return(
-        <Layout.Sider theme="light" trigger={null} collapsed={collapsed} collapsible className={`sidebar ${onCollapsed ? "show" : ""}`}>
-            <Flex align='center' justify='center'>
+        <Layout.Sider theme="light" trigger={null} collapsed={collapsed} collapsible className={`sidebar ${onCollapsed ? "show" : ""}`} width={250}>
+            <Flex align='center' justify='center' className='logo-wrapper'>
                 <div className="logo">
-                    <Image src="/edusyspro.svg" alt="logo" preview={false} />
+                    <Image src="/edusyspro.svg" alt="logo" preview={false} width={89} />
                     {collapsed ? '' : <p>EduSysPro</p>}
                 </div>
             </Flex>
             <Menu
                 onClick={handleMenuItemClick}
-                mode="vertical"
+                mode="inline"
                 defaultSelectedKeys={['/dashboard']}
                 className={`menu ${collapsed ? 'show' : ''}`}
                 items={menuItems} />

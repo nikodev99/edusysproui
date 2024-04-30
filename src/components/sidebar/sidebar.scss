@@ -6,6 +6,8 @@
   left: 0; bottom: 0; top: 0;
   box-shadow: $box_shadow;
   transition: display 1s ease-in-out .5s;
+  overflow-y: auto;
+  overflow-x: hidden;
   @media (max-width: 767px) {
     display: none;
   }
@@ -13,14 +15,18 @@
     display: inherit;
   }
 
-  .logo {
-    @include flex-center;
-    color: $primary_color;
-    padding: 8px 3px;
-    font-size: 1.5rem;
-    font-weight: 800;
+  .logo-wrapper {
     border-right: $light_bar;
     border-bottom: $light_bar;
+
+    .logo {
+      @include flex-center;
+      color: $primary_color;
+      padding: 8px 3px;
+      font-size: 1.5rem;
+      font-weight: 800;
+      height: 65px;
+    }
   }
 
   .menu {

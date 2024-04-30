@@ -1,3 +1,4 @@
+import "./page.scss"
 import Sidebar from "../components/sidebar/Sidebar.tsx";
 import {Layout} from "antd";
 import Header from "../components/header/Header.tsx";
@@ -13,7 +14,9 @@ const PageLayout = () => {
             <Sidebar onCollapsed={sidebarCollapsed} />
             <Layout>
                 <Header onCollapsed={setSidebarCollapsed} />
-                <Outlet />
+                <Layout.Content className="container">
+                    <Outlet />
+                </Layout.Content>
             </Layout>
         </Layout>
     )

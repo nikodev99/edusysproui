@@ -22,7 +22,6 @@ const Sidebar = ({onCollapsed}: {onCollapsed?: boolean}) => {
             <Menu
                 onClick={handleMenuItemClick}
                 mode="inline"
-                defaultSelectedKeys={['/dashboard']}
                 className={`menu ${collapsed ? 'show' : ''}`}
                 items={menuItems} />
             <Button

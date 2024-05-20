@@ -1,0 +1,17 @@
+@import "../../assets/style/main";
+
+.ant-breadcrumb {
+  ol {
+    li:first-child {
+      padding-top: 0px;
+      text-align: center;
+    }
+    li:nth-child(2) {
+      padding-top: 2.5px;
+    }
+  }
+}
+
+.breadcrumb-icon {
+  @include flex-center;
+}

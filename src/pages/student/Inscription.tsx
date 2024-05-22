@@ -62,16 +62,26 @@ const Inscription = () => {
     const [current, setCurrent] = useState(0)
 
     const next = async () => {
+        let validateFields;
         try {
-            if (current === 0) {
-                const validateFields = await trigger(['lastName', 'firstName'])
-                if (validateFields) {
-                    setValidationTriggered(true);
-                    setCurrent(() => current + 1)
-                }
+            switch (current) {
+                case 0:
+                    validateFields = await trigger(['lastName', 'firstName'])
+                    validate(validateFields)
+                    break
+                case 1:
+                    validateFields = await trigger()
+                    validate(validateFields)
             }
         }catch (err) {
             console.error('Validation failed:', err);
+        }
+    }
+
+    const validate = (validateFields: boolean) => {
+        if (validateFields) {
+            setValidationTriggered(true);
+            setCurrent(() => current + 1)
         }
     }
 

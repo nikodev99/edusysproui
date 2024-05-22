@@ -1,34 +1,35 @@
 import {
-    AtSign,
-    BadgeCheck,
-    BadgeDollarSign,
-    BarChart3,
-    ClipboardCheck,
-    Cog,
-    Contact,
-    LayoutDashboard,
-    Library,
-    Notebook, Users,
-    UserPlus2
-} from "lucide-react";
+    LuAtSign,
+    LuBadgeCheck,
+    LuBadgeDollarSign,
+    LuBarChart3,
+    LuClipboardCheck,
+    LuCog,
+    LuContact,
+    LuLayoutDashboard,
+    LuLibrary,
+    LuUsers,
+    LuUserPlus2
+} from "react-icons/lu";
 import {MenuProps} from "antd";
-import {FaUserGraduate, FaUserTie} from "react-icons/fa";
+import {PiNotebook, PiStudent} from "react-icons/pi";
+import {FaUserTie} from "react-icons/fa";
 
 export const menuItems: Required<MenuProps>['items'][number][] = [
     {
         key: '/dashboard',
-        icon: <LayoutDashboard />,
+        icon: <LuLayoutDashboard />,
         label: 'Tableau de bord',
     },
     {
         key: '/students',
-        icon: <FaUserGraduate size={24} />,
+        icon: <PiStudent />,
         label: "Élèves",
         children: [
             {
                 key: '/students/new',
                 label: 'Inscription',
-                icon: <UserPlus2 />
+                icon: <LuUserPlus2 />
             },
             {
                 key: '/students/renew',
@@ -38,58 +39,58 @@ export const menuItems: Required<MenuProps>['items'][number][] = [
     },
     {
         key: '/teachers',
-        icon: <Users />,
+        icon: <LuUsers />,
         label: "Enseignants"
     },
     {
         key: '/employees',
-        icon: <FaUserTie size={25} />,
+        icon: <FaUserTie />,
         label: "Employés"
     },
     {
         key: '/classes-and-subjects',
-        icon: <Notebook />,
+        icon: <PiNotebook />,
         label: "Classes et Matières"
     },
     {
         key: '/examinations',
-        icon: <ClipboardCheck />,
+        icon: <LuClipboardCheck />,
         label: "Examens"
     },
     {
         key: '/attendance',
-        icon: <BadgeCheck />,
+        icon: <LuBadgeCheck />,
         label: "Présence"
     },
     {
         key: '/library',
-        icon: <Library />,
+        icon: <LuLibrary />,
         label: "Bibliothèque"
     },
     {
         key: '/fee-and-finance',
-        icon: <BadgeDollarSign />,
+        icon: <LuBadgeDollarSign />,
         label: "Frais et Finance"
     },
     {
         key: '/communication',
-        icon: <AtSign />,
+        icon: <LuAtSign />,
         label: "Communication"
     },
     {
         key: '/staff-management',
-        icon: <Contact />,
+        icon: <LuContact />,
         label: "Resource Humaine",
         title: 'Gestion du personnel'
     },
     {
         key: '/report-and-analytics',
-        icon: <BarChart3 />,
+        icon: <LuBarChart3 />,
         label: "Rapport/Analyses"
     },
     {
         key: '/settings',
-        icon: <Cog />,
+        icon: <LuCog />,
         label: "Paramètres"
     },
 ]

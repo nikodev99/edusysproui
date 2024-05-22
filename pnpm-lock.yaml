@@ -20,9 +20,6 @@ importers:
       localforage:
         specifier: ^1.10.0
         version: 1.10.0
-      lucide-react:
-        specifier: ^0.371.0
-        version: 0.371.0(react@18.2.0)
       match-sorter:
         specifier: ^6.3.4
         version: 6.3.4
@@ -1058,11 +1055,6 @@ packages:
   lru-cache@6.0.0:
     resolution: {integrity: sha512-Jo6dJ04CmSjuznwJSS3pUeWmd/H0ffTlkXXgwZi+eq1UCmqQwCh+eLsYOYCwY991i2Fah4h1BEMCx4qThGbsiA==}
     engines: {node: '>=10'}
-
-  lucide-react@0.371.0:
-    resolution: {integrity: sha512-FpUup3kaya7JpGHaoNYn1o0Z8IFvR9w4LeXr2ad20DTr3RFLBXD69bVXagV/I8yWyCJu3it1d1B3bNSa5ui4AA==}
-    peerDependencies:
-      react: ^16.5.1 || ^17.0.0 || ^18.0.0
 
   match-sorter@6.3.4:
     resolution: {integrity: sha512-jfZW7cWS5y/1xswZo8VBOdudUiSd9nifYRWphc9M5D/ee4w4AoXLgBEdRbgVaxbMuagBPeUC5y2Hi8DO6o9aDg==}
@@ -2674,10 +2666,6 @@ snapshots:
   lru-cache@6.0.0:
     dependencies:
       yallist: 4.0.0
-
-  lucide-react@0.371.0(react@18.2.0):
-    dependencies:
-      react: 18.2.0
 
   match-sorter@6.3.4:
     dependencies:

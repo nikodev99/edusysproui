@@ -1,8 +1,11 @@
 import {School} from "./school.ts";
 import {Enrollment} from "./enrollment.ts";
-import {Address} from "./Address.ts";
+import {Address} from "./address.ts";
 import {Gender} from "./enums/gender.ts";
 import {Guardian} from "./guardian.ts";
+import {HealthCondition} from "./healthCondition.ts"
+import {Score} from "./Score.ts";
+import {Attendance} from "./attendance.ts";
 
 export interface Student {
     id?: string

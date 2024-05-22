@@ -1,6 +1,6 @@
 import {Status} from "./enums/status.ts";
 import {Gender} from "./enums/gender.ts";
-import {Address} from "./Address.ts";
+import {Address} from "./address.ts";
 import {Student} from "./student.ts";
 
 export interface Guardian {

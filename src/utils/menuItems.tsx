@@ -1,5 +1,18 @@
-import {AtSign, BadgeCheck, BadgeDollarSign, BarChart3,ClipboardCheck, Cog, Contact, GraduationCap, LayoutDashboard, Library, Notebook, Users} from "lucide-react";
+import {
+    AtSign,
+    BadgeCheck,
+    BadgeDollarSign,
+    BarChart3,
+    ClipboardCheck,
+    Cog,
+    Contact,
+    LayoutDashboard,
+    Library,
+    Notebook, Users,
+    UserPlus2
+} from "lucide-react";
 import {MenuProps} from "antd";
+import {FaUserGraduate, FaUserTie} from "react-icons/fa";
 
 export const menuItems: Required<MenuProps>['items'][number][] = [
     {
@@ -9,12 +22,13 @@ export const menuItems: Required<MenuProps>['items'][number][] = [
     },
     {
         key: '/students',
-        icon: <GraduationCap />,
+        icon: <FaUserGraduate size={24} />,
         label: "Élèves",
         children: [
             {
                 key: '/students/new',
                 label: 'Inscription',
+                icon: <UserPlus2 />
             },
             {
                 key: '/students/renew',
@@ -26,6 +40,11 @@ export const menuItems: Required<MenuProps>['items'][number][] = [
         key: '/teachers',
         icon: <Users />,
         label: "Enseignants"
+    },
+    {
+        key: '/employees',
+        icon: <FaUserTie size={25} />,
+        label: "Employés"
     },
     {
         key: '/classes-and-subjects',

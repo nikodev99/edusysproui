@@ -1,4 +1,4 @@
-import {Address} from "./Address.ts";
+import {Address} from "./address.ts";
 import {Grade} from "./grade.ts";
 
 export interface School {

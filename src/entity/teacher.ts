@@ -1,5 +1,5 @@
 import {Status} from "./enums/status.ts";
-import {Address} from "./Address.ts";
+import {Address} from "./address.ts";
 import {Classe} from "./classe.ts";
 import {School} from "./school.ts";
 import {Course} from "./course.ts";

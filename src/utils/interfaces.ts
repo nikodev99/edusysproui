@@ -12,3 +12,7 @@ export interface ZodProps {
     errors: FieldErrors<z.infer<typeof inscriptionSchema>>
     validationTriggered: boolean
 }
+
+export interface EnumType {
+    [key: string]: number | string
+}

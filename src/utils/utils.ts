@@ -1,3 +1,5 @@
+import {EnumType} from "./interfaces.ts";
+
 export const createElement = (htmlElement: string, parentNode: Element|null, attributes?: {[key: string]: string}, content?: string) => {
 
     const element = document.createElement(htmlElement);
@@ -29,6 +31,15 @@ export const connectToElement = (connector: string, attributes?: {[key: string]:
             })
         }
     }
+}
+
+export const enumToObjectArray = (enumObj: EnumType) => {
+    return Object.keys(enumObj)
+        .filter(key => isNaN(Number(key)))
+        .map(key => ({
+            value: enumObj[key as keyof EnumType],
+            label: key
+        }))
 }
 
 export const fontFamily = 'Mulish, Kameron, Helvetica, sans-serif'

@@ -1,9 +1,9 @@
 import "./sidebar.scss"
 import {Flex, Menu, Image, Layout, Button} from "antd";
 import {menuItems} from "../../utils/menuItems.tsx";
-import {CircleChevronLeft, CircleChevronRight} from "lucide-react";
 import {useToggle} from "../../hooks/useToggle.ts";
 import {useNavigate} from "react-router-dom";
+import {LuChevronLeft, LuChevronRight} from "react-icons/lu";
 
 const Sidebar = ({onCollapsed}: {onCollapsed?: boolean}) => {
 
@@ -27,7 +27,7 @@ const Sidebar = ({onCollapsed}: {onCollapsed?: boolean}) => {
             <Button
                 className='trigger-btn'
                 type='text'
-                icon={collapsed ? <CircleChevronRight /> : <CircleChevronLeft />}
+                icon={collapsed ? <LuChevronRight /> : <LuChevronLeft />}
                 onClick={setCollapsed} />
         </Layout.Sider>
     )

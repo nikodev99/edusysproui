@@ -3,7 +3,7 @@ import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {setBreadcrumb} from "../../utils/breadcrumb.tsx";
 import {Button, Flex, Form, Steps, Tag} from "antd";
 import {useForm} from "react-hook-form";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import IndividualForm from "../../components/inscription/IndividualForm.tsx";
 import AddressForm from "../../components/inscription/AddressForm.tsx";
 import GuardianForm from "../../components/inscription/GuardianForm.tsx";
@@ -12,6 +12,7 @@ import {inscriptionSchema} from "../../schema";
 import {zodResolver} from "@hookform/resolvers/zod";
 import HealthConditionForm from "../../components/inscription/HealthConditionForm.tsx";
 import AttachmentForm from "../../components/inscription/AttachmentForm.tsx";
+import AcademicForm from "../../components/inscription/AcademicForm.tsx";
 
 const Inscription = () => {
 
@@ -24,7 +25,7 @@ const Inscription = () => {
         title: 'Inscription'
     }])
 
-    const {handleSubmit, control, formState: {errors}, trigger} = useForm<z.infer<typeof inscriptionSchema>>({
+    const {handleSubmit, watch, control, formState: {errors}, trigger} = useForm<z.infer<typeof inscriptionSchema>>({
         resolver: zodResolver(inscriptionSchema),
     })
 
@@ -34,6 +35,36 @@ const Inscription = () => {
 
     const [validationTriggered, setValidationTriggered] = useState(false)
 
+    const [current, setCurrent] = useState(0)
+
+    const next = async () => {
+        setCurrent(() => current + 1)
+        /*let validateFields;
+        try {
+            switch (current) {
+                case 0:
+                    validateFields = await trigger([
+                        'lastName', 'firstName', 'gender', 'dadName', 'momName', 'birthCity', 'birthDate', 'nationality'
+                    ])
+                    validate(validateFields)
+                    break
+                case 1:
+                    validateFields = await trigger()
+                    validate(validateFields)
+            }
+        }catch (err) {
+            console.error('Validation failed:', err);
+        }*/
+    }
+
+    const validate = (validateFields: boolean) => {
+        if (validateFields) {
+            setValidationTriggered(true);
+            setCurrent(() => current + 1)
+        }
+    }
+
+    const prev = () => setCurrent(() => current - 1)
 
     const steps = [
         {
@@ -43,6 +74,10 @@ const Inscription = () => {
         {
             title: 'Adresse',
             content: <AddressForm />
+        },
+        {
+            title: 'Académique',
+            content: <AcademicForm />
         },
         {
             title: 'Tuteur',
@@ -58,38 +93,17 @@ const Inscription = () => {
         }
     ]
 
+    const formData = watch()
+
+    useEffect(() => {
+        console.log(formData)
+    }, [formData]);
+
     const stepItems = steps.map((item) => ({key: item.title, title: item.title}))
-    const [current, setCurrent] = useState(0)
-
-    const next = async () => {
-        let validateFields;
-        try {
-            switch (current) {
-                case 0:
-                    validateFields = await trigger(['lastName', 'firstName'])
-                    validate(validateFields)
-                    break
-                case 1:
-                    validateFields = await trigger()
-                    validate(validateFields)
-            }
-        }catch (err) {
-            console.error('Validation failed:', err);
-        }
-    }
-
-    const validate = (validateFields: boolean) => {
-        if (validateFields) {
-            setValidationTriggered(true);
-            setCurrent(() => current + 1)
-        }
-    }
-
-    const prev = () => setCurrent(() => current - 1)
 
     const requiredMark = (label: React.ReactNode, {required}: {required: boolean}) => (
         <>
-            {required ? <Tag color='error'>Requis</Tag> : <Tag color='warning'>optionnel</Tag>}
+            {required ? <Tag color='error'>requis</Tag> : <Tag color='warning'>optionnel</Tag>}
             {label}
         </>
     )

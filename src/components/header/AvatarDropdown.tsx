@@ -1,5 +1,5 @@
 import {Alert, Button, Divider, Dropdown, MenuProps} from "antd";
-import {Cog, LogOut, ShoppingCart, User} from "lucide-react";
+import {LuCog, LuLogOut, LuShoppingCart, LuUser} from "react-icons/lu";
 
 const AvatarDropdown = () => {
 
@@ -11,7 +11,7 @@ const AvatarDropdown = () => {
                     Profile
                 </a>
             ),
-            icon: <User />
+            icon: <LuUser />
         },
         {
             key: '2',
@@ -20,7 +20,7 @@ const AvatarDropdown = () => {
                     To be paid
                 </a>
             ),
-            icon: <ShoppingCart />
+            icon: <LuShoppingCart />
         },
         {
             key: '3',
@@ -29,7 +29,7 @@ const AvatarDropdown = () => {
                     Settings
                 </a>
             ),
-            icon: <Cog />
+            icon: <LuCog />
         },
         {
             key: '4',
@@ -38,7 +38,7 @@ const AvatarDropdown = () => {
                     Logout
                 </a>
             ),
-            icon: <LogOut />
+            icon: <LuLogOut />
         }
     ]
 
@@ -61,7 +61,7 @@ const AvatarDropdown = () => {
             </div>
             <Divider/>
             <div className='avatar-btn--logout'>
-                <Button icon={<LogOut  size={15}/>}>Logout</Button>
+                <Button icon={<LuLogOut  size={15}/>}>Logout</Button>
             </div>
         </div>
     )

@@ -5,7 +5,7 @@ import Dashboard from "../pages/dashboard/page.tsx";
 import Setting from "../pages/setting/page.tsx";
 import Inscription from "../pages/student/Inscription.tsx";
 
-export const router = createBrowserRouter([
+export const Router = createBrowserRouter([
     {
         path: '/',
         element: <PageLayout />,

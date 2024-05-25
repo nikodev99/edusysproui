@@ -1,4 +1,5 @@
-import {EnumType} from "./interfaces.ts";
+import {EnumType} from "./interfaces.ts"
+import countries from 'world-countries'
 
 export const createElement = (htmlElement: string, parentNode: Element|null, attributes?: {[key: string]: string}, content?: string) => {
 
@@ -40,6 +41,13 @@ export const enumToObjectArray = (enumObj: EnumType) => {
             value: enumObj[key as keyof EnumType],
             label: key
         }))
+}
+
+export const getCountyListInFrench = () => {
+    return countries.map(country => ({
+        value: country.cca3,
+        label: country.translations.fra.common
+    }))
 }
 
 export const fontFamily = 'Mulish, Kameron, Helvetica, sans-serif'

@@ -13,6 +13,9 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import HealthConditionForm from "../../components/inscription/HealthConditionForm.tsx";
 import AttachmentForm from "../../components/inscription/AttachmentForm.tsx";
 import AcademicForm from "../../components/inscription/AcademicForm.tsx";
+import {useLocation} from "react-router-dom";
+import queryString from 'query-string'
+import {useNavigation} from "../../hooks/useNavigation.ts";
 
 const Inscription = () => {
 
@@ -34,11 +37,14 @@ const Inscription = () => {
     }
 
     const [validationTriggered, setValidationTriggered] = useState(false)
-
-    const [current, setCurrent] = useState(0)
+    const location = useLocation()
+    const queryParam = queryString.parse(location.search)
+    const current = Number(queryParam.step) || 0
+    const nextStep = useNavigation(`/students/new?step=${current + 1}`)
+    const prevStep = useNavigation(`/students/new?step=${current - 1}`)
 
     const next = async () => {
-        setCurrent(() => current + 1)
+        nextStep()
         /*let validateFields;
         try {
             switch (current) {
@@ -60,11 +66,10 @@ const Inscription = () => {
     const validate = (validateFields: boolean) => {
         if (validateFields) {
             setValidationTriggered(true);
-            setCurrent(() => current + 1)
         }
     }
 
-    const prev = () => setCurrent(() => current - 1)
+    const prev = () => prevStep()
 
     const steps = [
         {

@@ -1,5 +1,16 @@
 import {z} from "zod";
 
+const addressSchema = z.object({
+    number: z.number(),
+    street: z.string().min(1, {message: "Rue est requis"}),
+    secondStreet: z.string().optional(),
+    neighborhood: z.string(),
+    borough: z.string().optional(),
+    city: z.string(),
+    zipCode: z.string().optional(),
+    country: z.string(),
+})
+
 export const inscriptionSchema = z.object({
     lastName: z.string().min(3, {message: "Nom de famille est requis"}),
     firstName: z.string().min(1, {message: "Prénom est requis"}),
@@ -19,4 +30,5 @@ export const inscriptionSchema = z.object({
     dadName: z.string().min(1, {message: "Nom et prénom du père est requis"}),
     momName: z.string().min(1, {message: "Nom et prénom de la mère est requis"}),
     telephone: z.string().optional(),
+    address: addressSchema
 })

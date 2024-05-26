@@ -73,7 +73,7 @@ const Inscription = () => {
         },
         {
             title: 'Adresse',
-            content: <AddressForm />
+            content: <AddressForm control={control} errors={errors} validationTriggered={validationTriggered} />
         },
         {
             title: 'Académique',
@@ -119,14 +119,14 @@ const Inscription = () => {
                     <Form layout="vertical" initialValues={{requiredMarkValue: 'customize'}} requiredMark={requiredMark} onFinish={handleSubmit(onSubmit)}>
                         {steps[current].content}
                         <Flex gap='small'>
+                            {current > 0 && (
+                                <Button onClick={prev}>précédent</Button>
+                            )}
                             {current < steps.length - 1 && (
                                 <Button type='primary' onClick={next}>Suivant</Button>
                             )}
                             {current === steps.length - 1 && (
                                 <Button type='primary' htmlType='submit'>Terminer</Button>
-                            )}
-                            {current > 0 && (
-                                <Button onClick={prev}>précédent</Button>
                             )}
                         </Flex>
                     </Form>

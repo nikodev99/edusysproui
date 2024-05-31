@@ -85,7 +85,7 @@ const Inscription = () => {
         },
         {
             title: 'Tuteur',
-            content: <GuardianForm />
+            content: <GuardianForm control={control} errors={errors} validationTriggered={validationTriggered} />
         },
         {
             title: 'Santé',

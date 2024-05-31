@@ -22,6 +22,9 @@ const AcademicForm = ({control, errors}: ZodProps) => {
             .finally(() => { return null})
     }, []);
 
+    console.log('Classes: ', classes)
+
+    //TODO ensure the client is connected
     const options = useMemo(() => classes.map(c => ({
         value: c.id,
         label: c.name,
@@ -32,10 +35,10 @@ const AcademicForm = ({control, errors}: ZodProps) => {
             <Grid xs={24} md={12} lg={12}>
                 <Form.Item
                     label='Année Scolaire/Academique' required tooltip='requis'
-                    validateStatus={errors.enrollment && errors.enrollment[0]?.academicYear ? 'error' : ''}
-                    help={errors.enrollment && errors.enrollment[0]?.academicYear ? errors.enrollment[0]?.academicYear.message : ''}
+                    validateStatus={errors.academicYear ? 'error' : ''}
+                    help={errors.academicYear ? errors.academicYear.message : ''}
                 >
-                    <Controller name={`enrollment.${0}.academicYear`} defaultValue={academicYear} control={control} render={({field}) => (
+                    <Controller name='academicYear' defaultValue={academicYear} control={control} render={({field}) => (
                         <Input {...field} />
                     )} />
                 </Form.Item>
@@ -43,10 +46,10 @@ const AcademicForm = ({control, errors}: ZodProps) => {
             <Grid xs={24} md={12} lg={12}>
                 <Form.Item
                     label='Classe' required tooltip='requis'
-                    validateStatus={errors.enrollment && errors.enrollment[0]?.classe?.id ? 'error' : ''}
-                    help={errors.enrollment && errors.enrollment[0]?.classe?.id ? errors.enrollment[0]?.classe?.id.message : ''}
+                    validateStatus={errors.classe?.id ? 'error' : ''}
+                    help={errors.classe?.id ? errors.classe?.id.message : ''}
                 >
-                    <Controller name={`enrollment.${0}.classe.id`} control={control} render={({field}) => (
+                    <Controller name='classe.id' control={control} render={({field}) => (
                         <Select placeholder='Selectionne une classe' options={options} {...field} />
                     )} />
                 </Form.Item>

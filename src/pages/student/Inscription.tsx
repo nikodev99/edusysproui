@@ -8,7 +8,7 @@ import IndividualForm from "../../components/inscription/IndividualForm.tsx";
 import AddressForm from "../../components/inscription/AddressForm.tsx";
 import GuardianForm from "../../components/inscription/GuardianForm.tsx";
 import {z} from "zod";
-import {studentSchema} from "../../schema";
+import {enrollmentSchema} from "../../schema";
 import {zodResolver} from "@hookform/resolvers/zod";
 import HealthConditionForm from "../../components/inscription/HealthConditionForm.tsx";
 import AttachmentForm from "../../components/inscription/AttachmentForm.tsx";
@@ -27,11 +27,11 @@ const Inscription = () => {
         title: 'Inscription'
     }])
 
-    const {handleSubmit, watch, control, formState: {errors}, trigger} = useForm<z.infer<typeof studentSchema>>({
-        resolver: zodResolver(studentSchema),
+    const {handleSubmit, watch, control, formState: {errors}, trigger} = useForm<z.infer<typeof enrollmentSchema>>({
+        resolver: zodResolver(enrollmentSchema),
     })
 
-    const onSubmit = (data: z.infer<typeof studentSchema>) => {
+    const onSubmit = (data: z.infer<typeof enrollmentSchema>) => {
         console.log(data)
     }
 
@@ -85,7 +85,7 @@ const Inscription = () => {
         },
         {
             title: 'Tuteur',
-            content: <GuardianForm />
+            content: <GuardianForm control={control} errors={errors} validationTriggered={validationTriggered} />
         },
         {
             title: 'Santé',

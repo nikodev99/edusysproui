@@ -1,6 +1,6 @@
 import {Control, FieldErrors} from "react-hook-form";
 import {z} from "zod";
-import {inscriptionSchema} from "../schema";
+import {studentSchema} from "../schema";
 import {ValidateStatus} from "antd/es/form/FormItem";
 import {ReactNode} from "react";
 
@@ -10,13 +10,13 @@ export interface Metadata {
 }
 
 export interface ZodProps {
-    control: Control<z.infer<typeof inscriptionSchema>>
-    errors: FieldErrors<z.infer<typeof inscriptionSchema>>
+    control: Control<z.infer<typeof studentSchema>>
+    errors: FieldErrors<z.infer<typeof studentSchema>>
     validationTriggered?: boolean
 }
 
 export interface ZodControl {
-    control: Control<z.infer<typeof inscriptionSchema>>
+    control: Control<z.infer<typeof studentSchema>>
     label: string
     name: 'nationality' | 'address.country'
     validateStatus: ValidateStatus
@@ -25,4 +25,11 @@ export interface ZodControl {
 
 export interface EnumType {
     [key: string]: number | string
+}
+
+export interface AxiosConfig {
+    method: string;
+    url: string;
+    data?: object,
+    headers?: Record<string, string>
 }

@@ -44,8 +44,8 @@ const IndividualForm = ({control, errors, validationTriggered}: ZodProps) => {
 
             <Grid xs={24} md={12} lg={8}>
                 <Form.Item label='Genre' required tooltip='requis' validateStatus={errors.gender ? 'error': ''} help={errors.gender ? errors.gender.message : ''}>
-                    <Controller name='gender' control={control} defaultValue='HOMME' render={({field}) => (
-                        <Select defaultValue={{value: 0, label: 'HOMME'}}  options={genderOptions} {...field} />
+                    <Controller name='gender' control={control} render={({field}) => (
+                        <Select placeholder='Selectionner le genre' options={genderOptions} {...field} />
                     )} />
                 </Form.Item>
             </Grid>

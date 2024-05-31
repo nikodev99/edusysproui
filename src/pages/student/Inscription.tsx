@@ -8,14 +8,13 @@ import IndividualForm from "../../components/inscription/IndividualForm.tsx";
 import AddressForm from "../../components/inscription/AddressForm.tsx";
 import GuardianForm from "../../components/inscription/GuardianForm.tsx";
 import {z} from "zod";
-import {inscriptionSchema} from "../../schema";
+import {studentSchema} from "../../schema";
 import {zodResolver} from "@hookform/resolvers/zod";
 import HealthConditionForm from "../../components/inscription/HealthConditionForm.tsx";
 import AttachmentForm from "../../components/inscription/AttachmentForm.tsx";
 import AcademicForm from "../../components/inscription/AcademicForm.tsx";
-import {useLocation} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import queryString from 'query-string'
-import {useNavigation} from "../../hooks/useNavigation.ts";
 
 const Inscription = () => {
 
@@ -28,11 +27,11 @@ const Inscription = () => {
         title: 'Inscription'
     }])
 
-    const {handleSubmit, watch, control, formState: {errors}, trigger} = useForm<z.infer<typeof inscriptionSchema>>({
-        resolver: zodResolver(inscriptionSchema),
+    const {handleSubmit, watch, control, formState: {errors}, trigger} = useForm<z.infer<typeof studentSchema>>({
+        resolver: zodResolver(studentSchema),
     })
 
-    const onSubmit = (data: z.infer<typeof inscriptionSchema>) => {
+    const onSubmit = (data: z.infer<typeof studentSchema>) => {
         console.log(data)
     }
 
@@ -40,11 +39,10 @@ const Inscription = () => {
     const location = useLocation()
     const queryParam = queryString.parse(location.search)
     const current = Number(queryParam.step) || 0
-    const nextStep = useNavigation(`/students/new?step=${current + 1}`)
-    const prevStep = useNavigation(`/students/new?step=${current - 1}`)
+    const navigate = useNavigate()
 
     const next = async () => {
-        nextStep()
+        navigate(`/students/new?step=${current + 1}`)
         /*let validateFields;
         try {
             switch (current) {
@@ -66,10 +64,11 @@ const Inscription = () => {
     const validate = (validateFields: boolean) => {
         if (validateFields) {
             setValidationTriggered(true);
+            navigate(`/students/new?step=${current + 1}`)
         }
     }
 
-    const prev = () => prevStep()
+    const prev = () => navigate(`/students/new?step=${current - 1}`)
 
     const steps = [
         {
@@ -81,8 +80,8 @@ const Inscription = () => {
             content: <AddressForm control={control} errors={errors} validationTriggered={validationTriggered} />
         },
         {
-            title: 'Académique',
-            content: <AcademicForm />
+            title: 'Scolarité',
+            content: <AcademicForm control={control} errors={errors} validationTriggered={validationTriggered} />
         },
         {
             title: 'Tuteur',

@@ -50,4 +50,15 @@ export const getCountyListInFrench = () => {
     }))
 }
 
+export const getAcademicYear = () => {
+    const curentDate = new Date()
+    const currentYear = curentDate.getFullYear()
+    const curentMonth = curentDate.getMonth()
+    console.log(curentMonth)
+    if (curentMonth > 7) {
+        return currentYear.toString() + ' - ' + (currentYear + 1).toString()
+    }
+    return (currentYear - 1).toString() + ' - ' + currentYear.toString()
+}
+
 export const fontFamily = 'Mulish, Kameron, Helvetica, sans-serif'

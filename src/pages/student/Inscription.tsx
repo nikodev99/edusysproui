@@ -15,6 +15,8 @@ import AttachmentForm from "../../components/inscription/AttachmentForm.tsx";
 import AcademicForm from "../../components/inscription/AcademicForm.tsx";
 import {useLocation, useNavigate} from "react-router-dom";
 import queryString from 'query-string'
+import {Gender} from "../../entity/enums/gender.ts";
+import {Status} from "../../entity/enums/status.ts";
 
 const Inscription = () => {
 
@@ -31,6 +33,8 @@ const Inscription = () => {
         resolver: zodResolver(enrollmentSchema),
     })
 
+    const formData = watch()
+
     const onSubmit = (data: z.infer<typeof enrollmentSchema>) => {
         console.log(data)
     }
@@ -40,6 +44,16 @@ const Inscription = () => {
     const queryParam = queryString.parse(location.search)
     const current = Number(queryParam.step) || 0
     const navigate = useNavigate()
+
+    const [showMaidenName, setShowMaidenName] = useState(false)
+    useEffect(() => {
+        console.log(formData)
+        if (formData?.student?.guardian?.gender === Gender.FEMME && formData?.student?.guardian?.status === Status.MARIE) {
+            setShowMaidenName(true)
+        }else {
+            setShowMaidenName(false)
+        }
+    }, [formData]);
 
     const next = async () => {
         navigate(`/students/new?step=${current + 1}`)
@@ -85,7 +99,7 @@ const Inscription = () => {
         },
         {
             title: 'Tuteur',
-            content: <GuardianForm control={control} errors={errors} validationTriggered={validationTriggered} />
+            content: <GuardianForm control={control} errors={errors} validationTriggered={validationTriggered} showField={showMaidenName} />
         },
         {
             title: 'Santé',
@@ -96,12 +110,6 @@ const Inscription = () => {
             content: <AttachmentForm />
         }
     ]
-
-    const formData = watch()
-
-    useEffect(() => {
-        console.log(formData)
-    }, [formData]);
 
     const stepItems = steps.map((item) => ({key: item.title, title: item.title}))
 

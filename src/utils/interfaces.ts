@@ -12,7 +12,8 @@ export interface Metadata {
 export interface ZodProps {
     control: Control<z.infer<typeof enrollmentSchema>>
     errors: FieldErrors<z.infer<typeof enrollmentSchema>>
-    validationTriggered?: boolean
+    validationTriggered?: boolean,
+    showField?: boolean
 }
 
 export interface ZodControl {

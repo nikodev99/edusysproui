@@ -1,6 +1,6 @@
 export enum Status {
-    MARRIED = 'MARRIED',
-    SINGLE = 'SINGLE',
-    WIDOW = 'WIDOW',
-    WIDOWER = 'WIDOWER'
+    MARIE = 'MARRIED',
+    CELIBATAIRE = 'SINGLE',
+    VEUVE = 'WIDOW',
+    VEUF = 'WIDOWER'
 }

@@ -5,7 +5,7 @@ import {Button, Flex, Form, Steps, Tag} from "antd";
 import {useForm} from "react-hook-form";
 import React, {useEffect, useState} from "react";
 import IndividualForm from "../../components/inscription/IndividualForm.tsx";
-import AddressForm from "../../components/inscription/AddressForm.tsx";
+import StudentAddressForm from "../../components/inscription/StudentAddressForm.tsx";
 import GuardianForm from "../../components/inscription/GuardianForm.tsx";
 import {z} from "zod";
 import {enrollmentSchema} from "../../schema";
@@ -17,6 +17,7 @@ import {useLocation, useNavigate} from "react-router-dom";
 import queryString from 'query-string'
 import {Gender} from "../../entity/enums/gender.ts";
 import {Status} from "../../entity/enums/status.ts";
+import {EnrollmentSchema} from "../../utils/interfaces.ts";
 
 const Inscription = () => {
 
@@ -29,10 +30,11 @@ const Inscription = () => {
         title: 'Inscription'
     }])
 
-    const {handleSubmit, watch, control, formState: {errors}, trigger} = useForm<z.infer<typeof enrollmentSchema>>({
+    const {handleSubmit, watch, control, formState: {errors}, trigger} = useForm<EnrollmentSchema>({
         resolver: zodResolver(enrollmentSchema),
     })
 
+    //TODO in production stop the watching
     const formData = watch()
 
     const onSubmit = (data: z.infer<typeof enrollmentSchema>) => {
@@ -91,7 +93,7 @@ const Inscription = () => {
         },
         {
             title: 'Adresse',
-            content: <AddressForm control={control} errors={errors} validationTriggered={validationTriggered} />
+            content: <StudentAddressForm control={control} errors={errors} validationTriggered={validationTriggered} />
         },
         {
             title: 'Scolarité',

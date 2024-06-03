@@ -1,6 +1,6 @@
 import {Control, FieldErrors} from "react-hook-form";
 import {z} from "zod";
-import {enrollmentSchema} from "../schema";
+import {classeSchema, enrollmentSchema, guardianSchema, studentSchema} from "../schema";
 import {ValidateStatus} from "antd/es/form/FormItem";
 import {ReactNode} from "react";
 
@@ -9,17 +9,30 @@ export interface Metadata {
     description: string;
 }
 
+export type ClasseSchema = z.infer<typeof classeSchema>;
+export type GuardianSchema = z.infer<typeof guardianSchema>;
+export type StudentSchema = z.infer<typeof studentSchema>;
+export type EnrollmentSchema = z.infer<typeof enrollmentSchema>;
+
+type NestedKeyOf<ObjectType extends object> = {
+    [Key in keyof ObjectType & (string | number)]: ObjectType[Key] extends object
+        ? `${Key}` | `${Key}.${NestedKeyOf<ObjectType[Key]>}`
+        : `${Key}`;
+}[keyof ObjectType & (string | number)];
+
 export interface ZodProps {
-    control: Control<z.infer<typeof enrollmentSchema>>
-    errors: FieldErrors<z.infer<typeof enrollmentSchema>>
+    control: Control<EnrollmentSchema>
+    errors: FieldErrors<EnrollmentSchema>
     validationTriggered?: boolean,
     showField?: boolean
 }
 
+export type TName = NestedKeyOf<EnrollmentSchema>;
+
 export interface ZodControl {
-    control: Control<z.infer<typeof enrollmentSchema>>
-    label: string
-    name: 'student.nationality' | 'student.address.country' | 'student.guardian.nationality' | 'student.guardian.country'
+    control: Control<EnrollmentSchema>
+    label?: string
+    name: TName
     validateStatus: ValidateStatus
     help: ReactNode
 }

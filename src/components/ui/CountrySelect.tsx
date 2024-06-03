@@ -11,8 +11,8 @@ const CountrySelect = ({control, label, validateStatus, help, name}: ZodControl)
 
     return(
         <Form.Item label={label} required tooltip='requis' validateStatus={validateStatus} help={help}>
-            <Controller name={name} control={control} defaultValue='Congo' render={({field}) => (
-                <Select showSearch options={countryOptions} filterOption={filterOption} {...field} />
+            <Controller name={name} control={control} render={({field}) => (
+                <Select showSearch options={countryOptions} filterOption={filterOption} placeholder='Selection votre pays' {...field} />
             )} />
         </Form.Item>
     )

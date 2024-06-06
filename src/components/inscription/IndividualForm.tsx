@@ -7,7 +7,7 @@ import {useEffect, useMemo} from "react";
 import {Gender} from "../../entity/enums/gender.ts";
 import {enumToObjectArray} from "../../utils/utils.ts";
 import dayjs from "dayjs";
-import CountrySelect from "../ui/CountrySelect.tsx";
+import CountrySelect from "../ui/form/CountrySelect.tsx";
 
 const IndividualForm = ({control, errors, validationTriggered}: ZodProps) => {
 

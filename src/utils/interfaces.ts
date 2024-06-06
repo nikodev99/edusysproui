@@ -20,6 +20,8 @@ type NestedKeyOf<ObjectType extends object> = {
         : `${Key}`;
 }[keyof ObjectType & (string | number)];
 
+export type TName = NestedKeyOf<EnrollmentSchema>;
+
 export interface ZodProps {
     control: Control<EnrollmentSchema>
     errors: FieldErrors<EnrollmentSchema>
@@ -27,14 +29,28 @@ export interface ZodProps {
     showField?: boolean
 }
 
-export type TName = NestedKeyOf<EnrollmentSchema>;
+export interface Health {
+    healthProps: [{
+        conditions: string[],
+        allergies: string[],
+        medications: string[]
+    }]
+}
+
+export type HealthProps = ZodProps & Health
 
 export interface ZodControl {
     control: Control<EnrollmentSchema>
     label?: string
     name: TName
-    validateStatus: ValidateStatus
-    help: ReactNode
+    validateStatus?: ValidateStatus
+    help?: ReactNode
+}
+
+export interface ZodListControl {
+    name: string,
+    label: string
+    zodProps: ZodControl
 }
 
 export interface EnumType {

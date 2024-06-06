@@ -11,6 +11,10 @@
   background: #fff;
   margin-top: 20px;
 
+  button {
+    @include flex-center
+  }
+
   .step-wrapper {
     margin-bottom: 20px;
   }
@@ -22,5 +26,19 @@
   .guardian__address__check {
     margin-bottom: 30px;
     text-align: center;
+  }
+
+  .dynamic_delete_button {
+    position: relative;
+    top: 4px;
+    margin: 0 8px;
+    color: #999;
+    font-size: 24px;
+    cursor: pointer;
+    transition: all .3s;
+
+    &:hover {
+      color: darken(#999, 70%);
+    }
   }
 }

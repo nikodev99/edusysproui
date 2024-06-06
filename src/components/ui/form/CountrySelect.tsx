@@ -1,7 +1,7 @@
 import {Controller} from "react-hook-form";
 import {Form, Select} from "antd";
-import {getCountyListInFrench} from "../../utils/utils.ts";
-import {ZodControl} from "../../utils/interfaces.ts";
+import {getCountyListInFrench} from "../../../utils/utils.ts";
+import {ZodControl} from "../../../utils/interfaces.ts";
 import {useMemo} from "react";
 
 const CountrySelect = ({control, label, validateStatus, help, name}: ZodControl) => {

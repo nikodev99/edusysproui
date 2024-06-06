@@ -1,5 +1,5 @@
 import {ZodControl, ZodProps} from "../../utils/interfaces.ts";
-import AddressForm from "../ui/AddressForm.tsx";
+import AddressForm from "../ui/form/AddressForm.tsx";
 
 const GuardianAddressForm = ({errors, control}: ZodProps) => {
 

@@ -105,7 +105,7 @@ const Inscription = () => {
         },
         {
             title: 'Santé',
-            content: <HealthConditionForm />
+            content: <HealthConditionForm control={control} errors={errors} />
         },
         {
             title: 'Attachements',

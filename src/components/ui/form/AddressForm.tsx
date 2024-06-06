@@ -1,9 +1,9 @@
-import Responsive from "./Responsive.tsx";
-import Grid from "./Grid.tsx";
+import Responsive from "../Responsive.tsx";
+import Grid from "../Grid.tsx";
 import {Form, Input} from "antd";
 import {Controller} from "react-hook-form";
 import CountrySelect from "./CountrySelect.tsx";
-import {ZodControl} from "../../utils/interfaces.ts";
+import {ZodControl} from "../../../utils/interfaces.ts";
 
 const AddressForm = ({addressProps}: {addressProps: ZodControl[]}) => {
     return (

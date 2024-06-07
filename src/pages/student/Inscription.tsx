@@ -109,7 +109,7 @@ const Inscription = () => {
         },
         {
             title: 'Attachements',
-            content: <AttachmentForm />
+            content: <AttachmentForm control={control} errors={errors} />
         }
     ]
 

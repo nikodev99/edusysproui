@@ -1,22 +1,15 @@
-import {ZodProps} from "../../utils/interfaces.ts";
+import {GuardianProps} from "../../utils/interfaces.ts";
 import Responsive from "../ui/Responsive.tsx";
 import Grid from "../ui/Grid.tsx";
 import {Checkbox, Collapse, Form, Input, Select} from "antd";
 import {Controller} from "react-hook-form";
-import {useMemo, useState} from "react";
+import {useMemo} from "react";
 import {enumToObjectArray} from "../../utils/utils.ts";
 import {Gender} from "../../entity/enums/gender.ts";
 import {Status} from "../../entity/enums/status.ts";
 import GuardianAddressForm from "./GuardianAddressForm.tsx";
 
-const GuardianForm = ({control, errors, showField}: ZodProps) => {
-
-    const [checked, setChecked] = useState(true)
-
-    const clickToUnchecked = () => {
-        console.log('clicked')
-        setChecked(!checked)
-    }
+const GuardianForm = ({control, errors, showField, checked, onChecked}: GuardianProps) => {
 
     const genderOptions = useMemo(() => enumToObjectArray(Gender), [])
     const statusOptions = useMemo(() => enumToObjectArray(Status), [])
@@ -107,7 +100,7 @@ const GuardianForm = ({control, errors, showField}: ZodProps) => {
                 <Collapse defaultActiveKey={['1']} items={[
                     {
                         key: 1,
-                        label: <Checkbox checked={checked} onClick={clickToUnchecked}>L'adresse du tuteur correspond à celui de l'élève/étudiant</Checkbox>,
+                        label: <Checkbox checked={checked} onClick={onChecked}>L'adresse du tuteur correspond à celui de l'élève/étudiant</Checkbox>,
                         children: <GuardianAddressForm control={control} errors={errors}/>,
                         showArrow: false,
                         collapsible: 'icon'

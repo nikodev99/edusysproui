@@ -40,21 +40,21 @@ const AttachmentForm = ({control, errors}: ZodProps) => {
                             <Upload listType='picture-card' className='image_uploader' beforeUpload={() => false}{...field}>
                                 <Button type='text' style={{ border: 0, background: 'none' }}>
                                     {loading ? <AiOutlineLoading /> : <AiOutlinePlus />}
-                                    <div>Upload</div>
+                                    <div>Charger</div>
                                 </Button>
                             </Upload>
                         </ImgCrop>
                     )} />
                 </Form.Item>
             </Grid>
-            <Grid xs={24} md={24} lg={24}>
+            {/*<Grid xs={24} md={24} lg={24}>
                 <Form.Item label='Attachements' validateStatus={errors.student?.image ? 'error' : ''} help={errors.student?.image ? errors.student?.image.message : ''}>
                         <Upload.Dragger {...props} disabled>
                             <p className="ant-upload-drag-icon"><AiOutlineInbox className='drag-n-drop-icon' /></p>
                             <p className="ant-upload-text">Click ou drag les fichiers à attacher</p>
                         </Upload.Dragger>
                 </Form.Item>
-            </Grid>
+            </Grid>*/}
         </Responsive>
     )
 }

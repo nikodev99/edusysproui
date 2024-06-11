@@ -1,7 +1,7 @@
 import {z} from "zod";
 
 const addressSchema = z.object({
-    number: z.number(),
+    number: z.string(),
     street: z.string().min(1, {message: "Rue est requis"}),
     secondStreet: z.string().optional(),
     neighborhood: z.string(),
@@ -66,7 +66,7 @@ export const studentSchema = z.object({
     address: addressSchema,
     guardian: guardianSchema,
     healthCondition: healthSchema,
-    image: z.string().optional()
+    image: z.instanceof(File).optional()
 })
 
 export const enrollmentSchema = z.object({

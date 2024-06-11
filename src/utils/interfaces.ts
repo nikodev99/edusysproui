@@ -29,7 +29,7 @@ export interface ZodProps {
     showField?: boolean
 }
 
-export interface Health {
+export interface HealthProps extends ZodProps{
     healthProps: [{
         conditions: string[],
         allergies: string[],
@@ -37,7 +37,10 @@ export interface Health {
     }]
 }
 
-export type HealthProps = ZodProps & Health
+export interface GuardianProps extends ZodProps {
+    checked: boolean
+    onChecked: () => void
+}
 
 export interface ZodControl {
     control: Control<EnrollmentSchema>
@@ -48,7 +51,7 @@ export interface ZodControl {
 }
 
 export interface ZodListControl {
-    name: string,
+    name: string
     label: string
     zodProps: ZodControl
 }

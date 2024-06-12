@@ -66,7 +66,7 @@ export const studentSchema = z.object({
     address: addressSchema,
     guardian: guardianSchema,
     healthCondition: healthSchema,
-    image: z.instanceof(File).optional()
+    image: z.object({foo: z.string()}).optional()
 })
 
 export const enrollmentSchema = z.object({

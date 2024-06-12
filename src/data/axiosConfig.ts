@@ -3,6 +3,8 @@ import {AxiosConfig} from "../utils/interfaces.ts";
 
 const baseURL = import.meta.env.VITE_API_URL;
 
+export const apiRequest = axios.create()
+
 export const apiClient = axios.create({
     baseURL: baseURL,
     // You can add other default configurations here

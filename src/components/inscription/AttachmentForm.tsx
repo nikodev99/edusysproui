@@ -1,21 +1,24 @@
-import {Button, Form, Upload} from 'antd'
-import ImgCrop from 'antd-img-crop';
+import {Form, Image} from 'antd'
 import Responsive from "../ui/Responsive.tsx";
 import Grid from "../ui/Grid.tsx";
-import {useState} from "react";
-import { FileUploaderRegular } from '@uploadcare/react-uploader';
+import {FileUploaderRegular} from '@uploadcare/react-uploader';
 import '@uploadcare/react-uploader/core.css';
+import {OutputFileEntry} from "@uploadcare/blocks";
 
-const AttachmentForm = () => {
-
-    const [loading, setLoading] = useState(false)
+const AttachmentForm = ({imageCdn, onChange}: {imageCdn?: string, onChange: (items?: {allEntries: OutputFileEntry[]}) => void}) => {
 
     return(
         <Responsive gutter={[16, 16]}>
 
-            <Grid xs={24} md={24} lg={24}>
-                <Form.Item label='Image'>
-                    <FileUploaderRegular pubkey={import.meta.env.VITE_UPLOADCARE_PUBLIC_KEY} />
+            <Grid xs={24} md={24} lg={24} xxl={24}>
+                <Form.Item label='Charger une image'>
+                    <FileUploaderRegular
+                        pubkey={import.meta.env.VITE_UPLOADCARE_PUBLIC_KEY}
+                        imgOnly
+                        cropPreset=''
+                        multiple={false}
+                        onChange={onChange}
+                    />
                     {/*<ImgCrop rotationSlider aspectSlider showReset>
                         <Upload listType='picture-card' className='image_uploader' beforeUpload={() => false}>
                             <Button type='text' style={{ border: 0, background: 'none' }}>
@@ -25,6 +28,12 @@ const AttachmentForm = () => {
                         </Upload>
                     </ImgCrop>*/}
                 </Form.Item>
+                {imageCdn && <Grid xs={24} md={4} lg={4} xxl={4} style={{marginBottom: '30px'}}>
+                    <Image
+                        width={200}
+                        src={imageCdn}
+                    />
+                </Grid>}
             </Grid>
             {/*<Grid xs={24} md={24} lg={24}>
                 <Form.Item label='Attachements' validateStatus={errors.student?.image ? 'error' : ''} help={errors.student?.image ? errors.student?.image.message : ''}>

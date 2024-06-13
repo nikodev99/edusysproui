@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.4.2",
+    "@uploadcare/blocks": "^0.42.1",
     "@uploadcare/react-uploader": "^0.5.4",
     "antd": "^5.16.2",
     "antd-img-crop": "^4.22.0",

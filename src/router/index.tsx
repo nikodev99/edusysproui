@@ -12,6 +12,10 @@ export const Router = createBrowserRouter([
         errorElement: <PageError />,
         children: [
             {
+                path: '/',
+                element: <Dashboard />
+            },
+            {
                 path: 'dashboard',
                 element: <Dashboard />
             },

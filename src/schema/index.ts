@@ -66,11 +66,13 @@ export const studentSchema = z.object({
     address: addressSchema,
     guardian: guardianSchema,
     healthCondition: healthSchema,
-    image: z.object({foo: z.string()}).optional()
+    image: z.string().optional(),
+    school: z.string().optional()
 })
 
 export const enrollmentSchema = z.object({
     academicYear: z.string().min(1, {message: "L'année scolaire est requise"}),
     student: studentSchema,
-    classe: classeSchema
+    classe: classeSchema,
+    school: z.string().optional()
 })

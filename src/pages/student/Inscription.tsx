@@ -20,6 +20,7 @@ import {EnrollmentSchema} from "../../utils/interfaces.ts";
 import {addStudent} from "../../data/action/enrollStudent.ts";
 import FormError from "../../components/ui/form/FormError.tsx";
 import FormSuccess from "../../components/ui/form/FormSuccess.tsx";
+import {OutputFileEntry} from "@uploadcare/blocks";
 
 const Inscription = () => {
 
@@ -34,6 +35,12 @@ const Inscription = () => {
 
     const {handleSubmit, watch, control, formState: {errors}, trigger} = useForm<EnrollmentSchema>({
         resolver: zodResolver(enrollmentSchema),
+        defaultValues: {
+            school: '19e8cf01-5098-453b-9d65-d57cd17fc548',
+            student: {
+                school: '19e8cf01-5098-453b-9d65-d57cd17fc548'
+            }
+        }
     })
 
     //TODO in production stop the watching
@@ -43,6 +50,7 @@ const Inscription = () => {
     const [checked, setChecked] = useState<boolean>(true)
     const [error, setError] = useState<string | undefined>("")
     const [success, setSuccess] = useState<string | undefined>("")
+    const [image, setImage] = useState<string | undefined>(undefined)
     const location = useLocation()
     const navigate = useNavigate()
     const [isPending, startTransition] = useTransition()
@@ -112,8 +120,12 @@ const Inscription = () => {
 
     const prev = () => navigate(`/students/new?step=${current - 1}`)
 
-    const uploadFiles = (data: EnrollmentSchema) => {
-        console.log('show me data: ', data)
+    const handleUploadChange = (items?: {allEntries: OutputFileEntry[]}) => {
+        console.log("called with this file: ", items)
+        const file = items?.allEntries[0]
+        if (file && file.status === 'success' && file.cdnUrl && file.name) {
+            setImage(`${file.cdnUrl}${file.name}`)
+        }
     }
 
     const onSubmit = (data: EnrollmentSchema) => {
@@ -122,6 +134,12 @@ const Inscription = () => {
         setSuccess("")
 
         startTransition(() => {
+
+            if (checked) data = {...data, student: {...data.student, guardian: {...data.student.guardian, address: data.student.address}}}
+            if (image) data = {...data, student: {...data.student, image: image} }
+
+            data = {...data, school: '19e8cf01-5098-453b-9d65-d57cd17fc548', student: {...data.student, school: '19e8cf01-5098-453b-9d65-d57cd17fc548'} }
+
             addStudent(data)
                 .then((res) => {
                     setError(res?.error)
@@ -131,7 +149,6 @@ const Inscription = () => {
     }
 
     const clickToUnchecked = () => {
-        console.log('clicked')
         setChecked(!checked)
     }
 
@@ -165,7 +182,7 @@ const Inscription = () => {
         },
         {
             title: 'Attachements',
-            content: <AttachmentForm />
+            content: <AttachmentForm imageCdn={image}  onChange={handleUploadChange}/>
         }
     ]
 

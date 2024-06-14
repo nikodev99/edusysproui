@@ -34,13 +34,7 @@ const Inscription = () => {
     }])
 
     const {handleSubmit, watch, control, formState: {errors}, trigger} = useForm<EnrollmentSchema>({
-        resolver: zodResolver(enrollmentSchema),
-        defaultValues: {
-            school: '19e8cf01-5098-453b-9d65-d57cd17fc548',
-            student: {
-                school: '19e8cf01-5098-453b-9d65-d57cd17fc548'
-            }
-        }
+        resolver: zodResolver(enrollmentSchema)
     })
 
     //TODO in production stop the watching
@@ -60,7 +54,7 @@ const Inscription = () => {
 
     const [showMaidenName, setShowMaidenName] = useState(false)
     useEffect(() => {
-        //console.log(formData)
+        console.log(formData)
         if (formData?.student?.guardian?.gender === Gender.FEMME && formData?.student?.guardian?.status === Status.MARIE) {
             setShowMaidenName(true)
         }else {
@@ -198,7 +192,7 @@ const Inscription = () => {
     return(
         <>
             <PageHierarchy items={items}/>
-            <Flex className='inscription-wrapper' vertical>
+            <Flex className='inscription-wrapper' vertical id='inscription_form'>
                 <div className="step-wrapper">
                     <Steps current={current} items={stepItems} />
                 </div>
@@ -215,7 +209,7 @@ const Inscription = () => {
                                 <Button type='primary' onClick={next}>Suivant</Button>
                             )}
                             {current === steps.length - 1 && (
-                                <Button disabled={isPending} type='primary' htmlType='submit'>Terminer</Button>
+                                <Button disabled={isPending} type='primary'>Terminer</Button>
                             )}
                         </Flex>
                     </Form>

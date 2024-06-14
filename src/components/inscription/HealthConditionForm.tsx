@@ -1,7 +1,7 @@
-import Responsive from "../ui/Responsive.tsx";
+import Responsive from "../ui/layout/Responsive.tsx";
 import {Card, Form, InputNumber, Select} from "antd";
 import {Controller} from "react-hook-form";
-import Grid from "../ui/Grid.tsx";
+import Grid from "../ui/layout/Grid.tsx";
 import {ZodProps} from "../../utils/interfaces.ts";
 import {BloodType} from "../../entity/enums/bloodType.ts";
 import ListInput from "../ui/form/ListInput.tsx";

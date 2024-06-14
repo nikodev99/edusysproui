@@ -66,6 +66,7 @@ export const studentSchema = z.object({
     address: addressSchema,
     guardian: guardianSchema,
     healthCondition: healthSchema,
+    reference: z.string().optional(),
     image: z.string().optional(),
     school: z.string().optional()
 })

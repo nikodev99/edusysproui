@@ -1,7 +1,7 @@
 import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {setBreadcrumb} from "../../utils/breadcrumb.tsx";
-import {Button, Flex, Form, Steps, Tag} from "antd";
+import {Button, Flex, Form, Modal, Steps, Tag} from "antd";
 import {useForm} from "react-hook-form";
 import React, {useEffect, useState, useTransition} from "react";
 import IndividualForm from "../../components/inscription/IndividualForm.tsx";
@@ -45,6 +45,7 @@ const Inscription = () => {
     const [error, setError] = useState<string | undefined>("")
     const [success, setSuccess] = useState<string | undefined>("")
     const [image, setImage] = useState<string | undefined>(undefined)
+    const [btnLoading, setBtnLoading] = useState<boolean[]>([])
     const location = useLocation()
     const navigate = useNavigate()
     const [isPending, startTransition] = useTransition()
@@ -115,11 +116,37 @@ const Inscription = () => {
     const prev = () => navigate(`/students/new?step=${current - 1}`)
 
     const handleUploadChange = (items?: {allEntries: OutputFileEntry[]}) => {
-        console.log("called with this file: ", items)
         const file = items?.allEntries[0]
         if (file && file.status === 'success' && file.cdnUrl && file.name) {
             setImage(`${file.cdnUrl}${file.name}`)
         }
+    }
+
+    const onConfirmModal = (index: number) => {
+        setBtnLoading((prevLoading) => {
+            const newLoading = [...prevLoading]
+            newLoading[index] = true
+            return newLoading
+        })
+        setTimeout(() => {
+            setBtnLoading((prevLoading) => {
+                const newLoading = [...prevLoading]
+                newLoading[index] = false
+                return newLoading
+            })
+            Modal.confirm({
+                title: 'Poursuivre ?',
+                content: 'Souhaitez vous vraiment poursuivre avec l\'inscription ?',
+                okText: 'Confirmer',
+                cancelText: 'Annuler',
+                footer: (_, {OkBtn, CancelBtn}) => (
+                    <>
+                        <CancelBtn />
+                        <OkBtn htmlType='submit' form='inscription_form' />
+                    </>
+                )
+            })
+        }, 2000)
     }
 
     const onSubmit = (data: EnrollmentSchema) => {
@@ -129,10 +156,38 @@ const Inscription = () => {
 
         startTransition(() => {
 
-            if (checked) data = {...data, student: {...data.student, guardian: {...data.student.guardian, address: data.student.address}}}
-            if (image) data = {...data, student: {...data.student, image: image} }
+            if (checked) {
+                data = {
+                    ...data,
+                    student: {
+                        ...data.student,
+                        guardian: {
+                            ...data.student.guardian,
+                            address: data.student.address
+                        }
+                    }
+                }
+            }
 
-            data = {...data, school: '19e8cf01-5098-453b-9d65-d57cd17fc548', student: {...data.student, school: '19e8cf01-5098-453b-9d65-d57cd17fc548'} }
+            if (image) {
+                data = {
+                    ...data,
+                    student: {
+                        ...data.student,
+                        image: image
+                    }
+                }
+            }
+
+            data = {
+                ...data,
+                school: '19e8cf01-5098-453b-9d65-d57cd17fc548',
+                student: {
+                    ...data.student,
+                    reference: 'AMB000001',
+                    school: '19e8cf01-5098-453b-9d65-d57cd17fc548'
+                }
+            }
 
             addStudent(data)
                 .then((res) => {
@@ -209,7 +264,7 @@ const Inscription = () => {
                                 <Button type='primary' onClick={next}>Suivant</Button>
                             )}
                             {current === steps.length - 1 && (
-                                <Button disabled={isPending} type='primary'>Terminer</Button>
+                                <Button disabled={isPending} type='primary' loading={btnLoading[0]} onClick={() => {onConfirmModal(0)}}>Terminer</Button>
                             )}
                         </Flex>
                     </Form>

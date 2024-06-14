@@ -1,6 +1,6 @@
 import {GuardianProps} from "../../utils/interfaces.ts";
-import Responsive from "../ui/Responsive.tsx";
-import Grid from "../ui/Grid.tsx";
+import Responsive from "../ui/layout/Responsive.tsx";
+import Grid from "../ui/layout/Grid.tsx";
 import {Checkbox, Collapse, Form, Input, Select} from "antd";
 import {Controller} from "react-hook-form";
 import {useMemo} from "react";

@@ -1,5 +1,5 @@
 import {Col, ColProps} from "antd";
-import {fontFamily} from "../../utils/utils.ts";
+import {fontFamily} from "../../../utils/utils.ts";
 
 const Grid = ({xs, sm, md, lg, xl, xxl, push, pull, flex, children, span, style, className}: ColProps) => {
 

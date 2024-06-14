@@ -1,6 +1,6 @@
 import {Form, Image} from 'antd'
-import Responsive from "../ui/Responsive.tsx";
-import Grid from "../ui/Grid.tsx";
+import Responsive from "../ui/layout/Responsive.tsx";
+import Grid from "../ui/layout/Grid.tsx";
 import {FileUploaderRegular} from '@uploadcare/react-uploader';
 import '@uploadcare/react-uploader/core.css';
 import {OutputFileEntry} from "@uploadcare/blocks";

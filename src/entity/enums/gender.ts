@@ -1,13 +1,13 @@
 export enum Gender {
-    HOMME,
-    FEMME,
-    GAY,
-    LESBIENNE,
-    NON_BINAIRE,
-    FLUIDE,
-    QUEER,
-    AGENDER,
-    BIGENRE,
-    PANGENRE,
-    TRAVESTI
+    HOMME = 'HOMME',
+    FEMME = 'FEMME',
+    GAY = 'GAY',
+    LESBIENNE = 'LESBIENNE',
+    NON_BINAIRE = 'NON_BINAIRE',
+    FLUIDE = 'FLUIDE',
+    QUEER = 'QUEER',
+    AGENDER = 'AGENDER',
+    BIGENRE = 'BIGENRE',
+    PANGENRE = 'PANGENRE',
+    TRAVESTI = 'TRAVESTI'
 }

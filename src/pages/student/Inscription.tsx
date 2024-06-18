@@ -21,6 +21,7 @@ import {addStudent} from "../../data/action/enrollStudent.ts";
 import FormError from "../../components/ui/form/FormError.tsx";
 import FormSuccess from "../../components/ui/form/FormSuccess.tsx";
 import {OutputFileEntry} from "@uploadcare/blocks";
+import FormInput from "../../components/ui/form/FormInput.tsx";
 
 const Inscription = () => {
 
@@ -139,12 +140,7 @@ const Inscription = () => {
                 content: 'Souhaitez vous vraiment poursuivre avec l\'inscription ?',
                 okText: 'Confirmer',
                 cancelText: 'Annuler',
-                footer: (_, {OkBtn, CancelBtn}) => (
-                    <>
-                        <CancelBtn />
-                        <OkBtn htmlType='submit' form='inscription_form' />
-                    </>
-                )
+                onOk: () => handleSubmit(onSubmit)()
             })
         }, 2000)
     }
@@ -181,11 +177,9 @@ const Inscription = () => {
 
             data = {
                 ...data,
-                school: '19e8cf01-5098-453b-9d65-d57cd17fc548',
                 student: {
                     ...data.student,
-                    reference: 'AMB000001',
-                    school: '19e8cf01-5098-453b-9d65-d57cd17fc548'
+                    reference: 'AMB000001'
                 }
             }
 
@@ -248,14 +242,16 @@ const Inscription = () => {
         <>
             <PageHierarchy items={items}/>
             <Flex className='inscription-wrapper' vertical id='inscription_form'>
-                <div className="step-wrapper">
-                    <Steps current={current} items={stepItems} />
-                </div>
                 <div className='form-wrapper'>
                     <Form layout="vertical" initialValues={{requiredMarkValue: 'customize'}} requiredMark={requiredMark} onFinish={handleSubmit(onSubmit)}>
+                        <div className="step-wrapper">
+                            <Steps current={current} items={stepItems}/>
+                        </div>
                         {steps[current].content}
-                        {error && (<FormError message={error} />)}
-                        {success && (<FormSuccess message={success} />)}
+                        <FormInput style={{display: 'none'}} control={control} name='student.school.id' defaultValue='19e8cf01-5098-453b-9d65-d57cd17fc548' />
+                        <FormInput control={control} name='school.id' style={{display: 'none'}} defaultValue='19e8cf01-5098-453b-9d65-d57cd17fc548' />
+                        {error && (<FormError message={error}/>)}
+                        {success && (<FormSuccess message={success}/>)}
                         <Flex gap='small'>
                             {current > 0 && (
                                 <Button onClick={prev}>précédent</Button>
@@ -264,7 +260,9 @@ const Inscription = () => {
                                 <Button type='primary' onClick={next}>Suivant</Button>
                             )}
                             {current === steps.length - 1 && (
-                                <Button disabled={isPending} type='primary' loading={btnLoading[0]} onClick={() => {onConfirmModal(0)}}>Terminer</Button>
+                                <Button disabled={isPending} type='primary' loading={btnLoading[0]} onClick={() => {
+                                    onConfirmModal(0)
+                                }}>Terminer</Button>
                             )}
                         </Flex>
                     </Form>

@@ -19,7 +19,7 @@ const FormError = ({message}: {message?: string}) => {
                     content: message,
                     duration: 2,
                 })
-            }, 1000)
+            }, 2000)
         }
     }, [message, messageApi]);
 

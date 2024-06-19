@@ -9,10 +9,10 @@ import {
     LuLayoutDashboard,
     LuLibrary,
     LuUsers,
-    LuUserPlus2
+    LuUserPlus2, LuUserCheck
 } from "react-icons/lu";
 import {MenuProps} from "antd";
-import {PiNotebook, PiStudent, PiUsersFour} from "react-icons/pi";
+import {PiNotebook, PiStudent, PiUserList} from "react-icons/pi";
 import {FaUserTie} from "react-icons/fa";
 
 export const menuItems: Required<MenuProps>['items'][number][] = [
@@ -29,7 +29,7 @@ export const menuItems: Required<MenuProps>['items'][number][] = [
             {
                 key: '/student/all',
                 label: 'Apprenants',
-                icon: <PiUsersFour />
+                icon: <PiUserList />
             },
             {
                 key: '/student/new',
@@ -38,7 +38,8 @@ export const menuItems: Required<MenuProps>['items'][number][] = [
             },
             {
                 key: '/student/renew',
-                label: 'Re-Inscription'
+                label: 'Re-Inscription',
+                icon: <LuUserCheck />
             }
         ]
     },

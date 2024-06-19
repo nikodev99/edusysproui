@@ -67,7 +67,7 @@ const Inscription = () => {
     const validate = (validateFields: boolean) => {
         if (validateFields) {
             setValidationTriggered(true);
-            navigate(`/students/new?step=${current + 1}`)
+            navigate(`/student/new?step=${current + 1}`)
         }
     }
 
@@ -114,7 +114,7 @@ const Inscription = () => {
         }
     }
 
-    const prev = () => navigate(`/students/new?step=${current - 1}`)
+    const prev = () => navigate(`/student/new?step=${current - 1}`)
 
     const handleUploadChange = (items?: {allEntries: OutputFileEntry[]}) => {
         const file = items?.allEntries[0]

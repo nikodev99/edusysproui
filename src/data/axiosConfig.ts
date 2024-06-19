@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, {AxiosError} from "axios";
 import {AxiosConfig} from "../utils/interfaces.ts";
 
 const baseURL = import.meta.env.VITE_API_URL;
@@ -19,4 +19,8 @@ export const request = ({method, url, data, headers}: AxiosConfig) => {
         data: data,
         headers: headers
     })
+}
+
+export const isAxiosError = (err: unknown): err is AxiosError => {
+    return axios.isAxiosError(err)
 }

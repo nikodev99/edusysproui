@@ -17,7 +17,7 @@ import queryString from 'query-string'
 import {Gender} from "../../entity/enums/gender.ts";
 import {Status} from "../../entity/enums/status.ts";
 import {EnrollmentSchema} from "../../utils/interfaces.ts";
-import {addStudent} from "../../data/action/enrollStudent.ts";
+import {addStudent} from "../../data";
 import FormError from "../../components/ui/form/FormError.tsx";
 import FormSuccess from "../../components/ui/form/FormSuccess.tsx";
 import {OutputFileEntry} from "@uploadcare/blocks";

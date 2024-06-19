@@ -5,8 +5,8 @@ import {Form, Input, Select} from "antd";
 import {Controller} from "react-hook-form";
 import {getAcademicYear} from "../../utils/utils.ts";
 import {useEffect, useMemo, useState} from "react";
-import {getClassesBasicValues} from "../../data/request";
 import {Classe} from "../../entity";
+import {findClassesBasicValue} from "../../data";
 
 const AcademicForm = ({control, errors}: ZodProps) => {
 
@@ -14,12 +14,12 @@ const AcademicForm = ({control, errors}: ZodProps) => {
     const [classes, setClasses] = useState<Classe[]>([])
 
     useEffect(() => {
-        getClassesBasicValues()
-            .then((classe) => {
-                setClasses(classe.data);
+        findClassesBasicValue()
+            .then((resp) => {
+                if (resp && resp.isSuccess) {
+                    setClasses(resp.data as Classe[])
+                }
             })
-            .catch((error) => console.error(error))
-            .finally(() => { return null})
     }, []);
 
     console.log('Classes: ', classes)

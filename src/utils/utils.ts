@@ -56,9 +56,9 @@ export const getAcademicYear = () => {
     const curentMonth = curentDate.getMonth()
     console.log(curentMonth)
     if (curentMonth > 7) {
-        return currentYear.toString() + ' - ' + (currentYear + 1).toString()
+        return currentYear.toString() + '-' + (currentYear + 1).toString()
     }
-    return (currentYear - 1).toString() + ' - ' + currentYear.toString()
+    return (currentYear - 1).toString() + '-' + currentYear.toString()
 }
 
 export const fontFamily = 'Mulish, Kameron, Helvetica, sans-serif'

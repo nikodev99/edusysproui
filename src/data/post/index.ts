@@ -1,6 +1,6 @@
 import {request} from "../axiosConfig.ts";
 import {EnrollmentSchema} from "../../utils/interfaces.ts";
-import {Enrollment} from "../../entity/domain/enrollment.ts";
+import {Enrollment} from "../../entity";
 import {AxiosResponse} from "axios";
 
 

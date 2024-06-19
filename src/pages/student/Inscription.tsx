@@ -1,6 +1,6 @@
 import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
-import {setBreadcrumb} from "../../utils/breadcrumb.tsx";
+import {setBreadcrumb} from "../../core/breadcrumb.tsx";
 import {Button, Flex, Form, Modal, Steps, Tag} from "antd";
 import {useForm} from "react-hook-form";
 import React, {useEffect, useState, useTransition} from "react";
@@ -34,7 +34,7 @@ const Inscription = () => {
         title: 'Inscription'
     }])
 
-    const {handleSubmit, watch, control, formState: {errors}, trigger} = useForm<EnrollmentSchema>({
+    const {handleSubmit, watch, control, formState: {errors}, trigger, reset} = useForm<EnrollmentSchema>({
         resolver: zodResolver(enrollmentSchema)
     })
 
@@ -186,7 +186,10 @@ const Inscription = () => {
             addStudent(data)
                 .then((res) => {
                     setError(res?.error)
-                    setSuccess(res?.success)
+                    if (res.isSuccess) {
+                        setSuccess(res?.success)
+                        reset()
+                    }
                 })
         })
     }

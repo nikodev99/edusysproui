@@ -1,6 +1,6 @@
 import "./sidebar.scss"
 import {Flex, Menu, Image, Layout, Button} from "antd";
-import {menuItems} from "../../utils/menuItems.tsx";
+import {menuItems} from "../../core/menuItems.tsx";
 import {useToggle} from "../../hooks/useToggle.ts";
 import {useNavigate} from "react-router-dom";
 import {LuChevronLeft, LuChevronRight} from "react-icons/lu";

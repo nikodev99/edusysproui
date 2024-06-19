@@ -1,5 +1,5 @@
-import {Status} from "./enums/status.ts";
-import {Gender} from "./enums/gender.ts";
+import {Status} from "../enums/status.ts";
+import {Gender} from "../enums/gender.ts";
 import {Address} from "./address.ts";
 import {Student} from "./student.ts";
 

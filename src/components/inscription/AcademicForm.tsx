@@ -6,7 +6,7 @@ import {Controller} from "react-hook-form";
 import {getAcademicYear} from "../../utils/utils.ts";
 import {useEffect, useMemo, useState} from "react";
 import {getClassesBasicValues} from "../../data/request";
-import {Classe} from "../../entity/classe.ts";
+import {Classe} from "../../entity";
 
 const AcademicForm = ({control, errors}: ZodProps) => {
 

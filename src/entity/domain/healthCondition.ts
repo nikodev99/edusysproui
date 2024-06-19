@@ -1,4 +1,4 @@
-import {BloodType} from "./enums/bloodType.ts";
+import {BloodType} from "../enums/bloodType.ts";
 
 export interface HealthCondition {
     id?: bigint

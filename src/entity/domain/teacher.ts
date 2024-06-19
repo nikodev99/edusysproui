@@ -1,9 +1,9 @@
-import {Status} from "./enums/status.ts";
+import {Status} from "../enums/status.ts";
 import {Address} from "./address.ts";
 import {Classe} from "./classe.ts";
 import {School} from "./school.ts";
 import {Course} from "./course.ts";
-import {Gender} from "./enums/gender.ts";
+import {Gender} from "../enums/gender.ts";
 
 export interface Teacher {
     id?: string

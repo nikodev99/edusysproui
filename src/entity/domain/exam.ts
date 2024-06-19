@@ -1,5 +1,5 @@
 import {Classe} from "./classe.ts";
-import {Score} from "./Score.ts";
+import {Score} from "./score.ts";
 import {School} from "./school.ts";
 
 export interface Exam {

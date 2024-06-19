@@ -12,7 +12,7 @@ import {
     LuUserPlus2
 } from "react-icons/lu";
 import {MenuProps} from "antd";
-import {PiNotebook, PiStudent} from "react-icons/pi";
+import {PiNotebook, PiStudent, PiUsersFour} from "react-icons/pi";
 import {FaUserTie} from "react-icons/fa";
 
 export const menuItems: Required<MenuProps>['items'][number][] = [
@@ -22,17 +22,22 @@ export const menuItems: Required<MenuProps>['items'][number][] = [
         label: 'Tableau de bord',
     },
     {
-        key: '/students',
+        key: '/student',
         icon: <PiStudent />,
         label: "Élèves",
         children: [
             {
-                key: '/students/new',
+                key: '/student/all',
+                label: 'Apprenants',
+                icon: <PiUsersFour />
+            },
+            {
+                key: '/student/new',
                 label: 'Inscription',
                 icon: <LuUserPlus2 />
             },
             {
-                key: '/students/renew',
+                key: '/student/renew',
                 label: 'Re-Inscription'
             }
         ]

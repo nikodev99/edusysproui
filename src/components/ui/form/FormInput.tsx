@@ -6,18 +6,32 @@ import {CSSProperties} from "react";
 interface InputProps extends ZodControl {
     defaultValue?: string,
     style?: CSSProperties
+    required?: boolean,
+    placeholder?: string
 }
 
-const FormInput = ({control,defaultValue, name, label, validateStatus, help, style}:InputProps) => {
+const FormInput = (inputProps :InputProps) => {
+    const {
+        control,
+        defaultValue,
+        name,
+        label,
+        validateStatus,
+        help,
+        style,
+        required,
+        placeholder
+    } = inputProps
+
     return(
         <Form.Item
             style={style}
-            label={label} required tooltip='requis'
+            label={label} required={required} tooltip={required ? 'requis' : undefined}
             validateStatus={validateStatus}
             help={help}
         >
             <Controller name={name} defaultValue={defaultValue} control={control} render={({field}) => (
-                <Input {...field} />
+                <Input placeholder={placeholder} {...field} />
             )} />
         </Form.Item>
     )

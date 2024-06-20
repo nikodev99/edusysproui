@@ -1,2 +1,3 @@
-export {addStudent} from './action/enroll_student.ts'
-export {findClassesBasicValue} from './action/find_classe.ts'
+export {addStudent} from './action/enroll_student'
+export {findClassesBasicValue} from './action/fetch_classe'
+export {fetchEnrolledStudentsGuardians} from './action/fetch_guardian'

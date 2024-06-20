@@ -39,7 +39,9 @@ export interface HealthProps extends ZodProps{
 
 export interface GuardianProps extends ZodProps {
     checked: boolean
+    exists: boolean
     onChecked: () => void
+    onExists: () => void
 }
 
 export interface ZodControl {

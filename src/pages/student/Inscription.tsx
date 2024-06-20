@@ -47,6 +47,7 @@ const Inscription = () => {
     const [success, setSuccess] = useState<string | undefined>("")
     const [image, setImage] = useState<string | undefined>(undefined)
     const [btnLoading, setBtnLoading] = useState<boolean[]>([])
+    const [isExists, setIsExists] = useState<boolean>(false)
     const location = useLocation()
     const navigate = useNavigate()
     const [isPending, startTransition] = useTransition()
@@ -198,6 +199,10 @@ const Inscription = () => {
         setChecked(!checked)
     }
 
+    const clickToOpenModal = () => {
+        setIsExists(!isExists)
+    }
+
     const steps = [
         {
             title: 'Individuelle',
@@ -220,6 +225,8 @@ const Inscription = () => {
                 showField={showMaidenName}
                 checked={checked}
                 onChecked={clickToUnchecked}
+                exists={isExists}
+                onExists={clickToOpenModal}
             />
         },
         {

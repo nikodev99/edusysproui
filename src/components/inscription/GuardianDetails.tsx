@@ -1,72 +1,38 @@
-import {Form, Select, SelectProps} from "antd";
-import {useState} from "react";
+import {Form, Select, SelectProps, Spin} from "antd";
+import {useMemo} from "react";
 
-let timeout: ReturnType<typeof setTimeout> | null;
-let currentValue: string;
+interface GuardianDetailsProps {
+    data: SelectProps['options'],
+    value?: string,
+    fetching?: boolean,
+    onSearch?: (value: string) => void,
+    onChange?: (value: string) => void,
+}
 
-const fetch = (value: string, callback: Function) => {
-    if (timeout) {
-        clearTimeout(timeout);
-        timeout = null;
-    }
-    currentValue = value;
+const GuardianDetails = ({data, value, fetching, onSearch, onChange}: GuardianDetailsProps) => {
 
-    const fake = () => {
-        const str = qs.stringify({
-            code: 'utf-8',
-            q: value,
-        });
-        jsonp(`https://suggest.taobao.com/sug?${str}`)
-            .then((response: any) => response.json())
-            .then((d: any) => {
-                if (currentValue === value) {
-                    const { result } = d;
-                    const data = result.map((item: any) => ({
-                        value: item[0],
-                        text: item[0],
-                    }));
-                    callback(data);
-                }
-            });
-    };
-    if (value) {
-        timeout = setTimeout(fake, 300);
-    } else {
-        callback([]);
-    }
-};
+    const filterOption = (input: string, option?: { label: string; value: string }) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
 
-const GuardianDetails = () => {
-
-    const [data, setData] = useState<SelectProps['options']>([]);
-    const [value, setValue] = useState<string>();
-
-    const handleSearch = (newValue: string) => {
-        fetch(newValue, setData);
-    };
-
-    const handleChange = (newValue: string) => {
-        setValue(newValue);
-    };
+    const options = useMemo(() => data?.map(d => ({
+        value: d.value as string,
+        label: d.text,
+    })), [data])
 
     return(
         <>
             <Form>
-                <Form.Item label='Rechercher le tuteur'>
+                <Form.Item>
                     <Select
                         showSearch
                         value={value}
-                        placeholder='Rechercher le tuteur'
+                        placeholder='Entrer les noms, prenoms ou numéro de téléphone du tuteur pour rechercher'
                         defaultActiveFirstOption={false}
                         suffixIcon={null}
-                        filterOption={false}
-                        onSearch={handleSearch}
-                        onChange={handleChange}
-                        notFoundContent={null}
-                        options={(data || []).map((d) => ({
-                            value: d.value,
-                            label: d.text,
-                        }))}
+                        filterOption={filterOption}
+                        onSearch={onSearch}
+                        onChange={onChange}
+                        notFoundContent={fetching ? <Spin size='small' /> : null}
+                        options={options}
                     />
                 </Form.Item>
             </Form>

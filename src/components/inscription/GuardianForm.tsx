@@ -13,7 +13,7 @@ import GuardianDetails from "./GuardianDetails.tsx";
 import {fetchEnrolledStudentsGuardians} from "../../data";
 import {Guardian} from "../../entity";
 
-const GuardianForm = ({control, errors, showField, checked, onChecked, exists, onExists}: GuardianProps) => {
+const GuardianForm = ({control, errors, showField, checked, onChecked, value, setValue}: GuardianProps) => {
 
     const genderOptions = useMemo(() => enumToObjectArray(Gender), [])
     const statusOptions = useMemo(() => enumToObjectArray(Status), [])
@@ -21,7 +21,6 @@ const GuardianForm = ({control, errors, showField, checked, onChecked, exists, o
     const [open, setOPen] = useState<boolean>(false)
 
     const [data, setData] = useState<SelectProps['options']>([]);
-    const [value, setValue] = useState<string>();
     const timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
     const currentValue = useRef<string>('');
     const [fetching, setFetching] = useState(false);
@@ -76,7 +75,6 @@ const GuardianForm = ({control, errors, showField, checked, onChecked, exists, o
     return(
         <Responsive gutter={[16, 16]}>
             <Grid xs={24} md={24} lg={24}>
-                <Divider />
                 <div className='linked_button'>
                     <Button type='link' onClick={onModalOpen}>Rechercher un tuteur existant</Button>
                 </div>

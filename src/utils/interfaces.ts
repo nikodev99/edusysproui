@@ -1,6 +1,6 @@
 import {Control, FieldErrors} from "react-hook-form";
 import {z} from "zod";
-import {classeSchema, enrollmentSchema, guardianSchema, studentSchema} from "../schema";
+import {enrollmentSchema, guardianSchema} from "../schema";
 import {ValidateStatus} from "antd/es/form/FormItem";
 import {ReactNode} from "react";
 
@@ -9,9 +9,7 @@ export interface Metadata {
     description: string;
 }
 
-export type ClasseSchema = z.infer<typeof classeSchema>;
 export type GuardianSchema = z.infer<typeof guardianSchema>;
-export type StudentSchema = z.infer<typeof studentSchema>;
 export type EnrollmentSchema = z.infer<typeof enrollmentSchema>;
 
 type NestedKeyOf<ObjectType extends object> = {
@@ -39,9 +37,11 @@ export interface HealthProps extends ZodProps{
 
 export interface GuardianProps extends ZodProps {
     checked: boolean
-    exists: boolean
+    value?: string
     onChecked: () => void
-    onExists: () => void
+    setValue: (newValue: string) => void
+    isExists: boolean
+    setIsExists: () => void
 }
 
 export interface ZodControl {

@@ -2,6 +2,7 @@ import {z} from "zod";
 import {addressSchema} from "./addressSchema.ts";
 
 export const guardianSchema = z.object({
+    id: z.string().optional(),
     lastName: z.string().min(1, {message: 'Nom de famille est requis'}),
     firstName: z.string().min(1, {message: 'Prénom est requis'}),
     gender: z.union([z.string(), z.number()]),

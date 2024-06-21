@@ -34,7 +34,7 @@ const Inscription = () => {
         title: 'Inscription'
     }])
 
-    const {handleSubmit, watch, control, formState: {errors}, trigger, reset} = useForm<EnrollmentSchema>({
+    const {handleSubmit, watch, control, clearErrors, formState: {errors}, trigger, reset} = useForm<EnrollmentSchema>({
         resolver: zodResolver(enrollmentSchema)
     })
 
@@ -47,6 +47,7 @@ const Inscription = () => {
     const [success, setSuccess] = useState<string | undefined>("")
     const [image, setImage] = useState<string | undefined>(undefined)
     const [btnLoading, setBtnLoading] = useState<boolean[]>([])
+    const [guardianId, setGuardianId] = useState<string | undefined>(undefined)
     const [isExists, setIsExists] = useState<boolean>(false)
     const location = useLocation()
     const navigate = useNavigate()
@@ -57,12 +58,13 @@ const Inscription = () => {
 
     const [showMaidenName, setShowMaidenName] = useState(false)
     useEffect(() => {
-        console.log(formData)
-        if (formData?.student?.guardian?.gender === Gender.FEMME && formData?.student?.guardian?.status === Status.MARIE) {
+        const guardian = formData?.student?.guardian
+        if (guardian && 'gender' in guardian && 'status' in guardian && guardian?.gender === Gender.FEMME && guardian?.status === Status.MARIE) {
             setShowMaidenName(true)
         }else {
             setShowMaidenName(false)
         }
+        console.log(formData)
     }, [formData]);
 
     const validate = (validateFields: boolean) => {
@@ -97,11 +99,16 @@ const Inscription = () => {
                     validate(validateFields)
                     break
                 case 3:
-                    validateFields = await trigger([
-                        "student.guardian.firstName", 'student.guardian.lastName', 'student.guardian.gender', 'student.guardian.status',
-                        'student.guardian.telephone'
-                    ])
-                    validate(validateFields)
+                    console.log('id exists: ', !guardianId)
+                    if (!guardianId) {
+                        validateFields = await trigger([
+                            "student.guardian.firstName", 'student.guardian.lastName', 'student.guardian.gender', 'student.guardian.status',
+                            'student.guardian.telephone'
+                        ])
+                        validate(validateFields)
+                    }else {
+                        validate(true)
+                    }
                     break
                 case 4:
                     validateFields = await trigger([
@@ -141,7 +148,7 @@ const Inscription = () => {
                 content: 'Souhaitez vous vraiment poursuivre avec l\'inscription ?',
                 okText: 'Confirmer',
                 cancelText: 'Annuler',
-                onOk: () => handleSubmit(onSubmit)()
+                onOk: () => handleSubmit(() => onSubmit)()
             })
         }, 2000)
     }
@@ -152,8 +159,22 @@ const Inscription = () => {
         setSuccess("")
 
         startTransition(() => {
+            if (guardianId) {
+                clearErrors(["student.guardian.firstName", 'student.guardian.lastName', 'student.guardian.gender', 'student.guardian.status',
+                    'student.guardian.telephone'])
+                data = {
+                    ...data,
+                    student: {
+                        ...data.student,
+                        guardian: {
+                            id: guardianId,
+                            ...data.student.guardian
+                        }
+                    }
+                }
+            }
 
-            if (checked) {
+            if (checked && !guardianId) {
                 data = {
                     ...data,
                     student: {
@@ -166,21 +187,19 @@ const Inscription = () => {
                 }
             }
 
-            if (image) {
-                data = {
-                    ...data,
-                    student: {
-                        ...data.student,
-                        image: image
-                    }
-                }
-            }
+            if (image) data = {...data, student: {...data.student, image: image}}
 
             data = {
                 ...data,
+                school: {
+                    id: '19e8cf01-5098-453b-9d65-d57cd17fc548'
+                },
                 student: {
                     ...data.student,
-                    reference: 'AMB000001'
+                    reference: 'AMB000002',
+                    school: {
+                        id: '19e8cf01-5098-453b-9d65-d57cd17fc548'
+                    }
                 }
             }
 
@@ -202,6 +221,8 @@ const Inscription = () => {
     const clickToOpenModal = () => {
         setIsExists(!isExists)
     }
+
+    console.log('Guardian ID: ', guardianId)
 
     const steps = [
         {
@@ -225,8 +246,10 @@ const Inscription = () => {
                 showField={showMaidenName}
                 checked={checked}
                 onChecked={clickToUnchecked}
-                exists={isExists}
-                onExists={clickToOpenModal}
+                value={guardianId}
+                setValue={setGuardianId}
+                isExists={isExists}
+                setIsExists={clickToOpenModal}
             />
         },
         {
@@ -258,8 +281,9 @@ const Inscription = () => {
                             <Steps current={current} items={stepItems}/>
                         </div>
                         {steps[current].content}
-                        <FormInput style={{display: 'none'}} control={control} name='student.school.id' defaultValue='19e8cf01-5098-453b-9d65-d57cd17fc548' />
-                        <FormInput control={control} name='school.id' style={{display: 'none'}} defaultValue='19e8cf01-5098-453b-9d65-d57cd17fc548' />
+                        {/*<FormInput style={{display: 'none'}} control={control} name='student.school.id' defaultValue='19e8cf01-5098-453b-9d65-d57cd17fc548' />
+                        <FormInput control={control} name='school.id' style={{display: 'none'}} defaultValue='' />
+                        {guardianId && <FormInput control={control} name='student.guardian.id' defaultValue={guardianId} style={{display: 'none'}} />}*/}
                         {error && (<FormError message={error}/>)}
                         {success && (<FormSuccess message={success}/>)}
                         <Flex gap='small'>

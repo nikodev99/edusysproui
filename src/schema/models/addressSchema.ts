@@ -5,9 +5,9 @@ export const addressSchema = z.object({
     number: z.number(),
     street: z.string().min(1, {message: "Rue est requis"}),
     secondStreet: z.string().optional(),
-    neighborhood: z.string(),
+    neighborhood: z.string().min(1, {message: "Quartier est requis"}),
     borough: z.string().optional(),
-    city: z.string(),
+    city: z.string().min(1, {message: "Ville est requise"}),
     zipCode: z.string().optional(),
-    country: z.string(),
+    country: z.string().min(1, {message: "Pays est requise"}),
 })

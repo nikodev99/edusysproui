@@ -21,9 +21,7 @@ import {addStudent} from "../../data";
 import FormError from "../../components/ui/form/FormError.tsx";
 import FormSuccess from "../../components/ui/form/FormSuccess.tsx";
 import {OutputFileEntry} from "@uploadcare/blocks";
-import FormInput from "../../components/ui/form/FormInput.tsx";
 import {Guardian} from "../../entity";
-import guardianDetails from "../../components/inscription/GuardianDetails.tsx";
 
 const Inscription = () => {
 
@@ -43,31 +41,33 @@ const Inscription = () => {
     //TODO in production stop the watching
     const formData = watch()
     const setGuardianValues = (guardian: Guardian) => {
-            const newGuardian: GuardianSchema = {
-                id: guardian.id,
-                lastName: guardian.lastName,
-                firstName: guardian.lastName,
-                gender: guardian.gender,
-                status: guardian.status,
-                maidenName: guardian.maidenName,
-                emailId: guardian.emailId,
-                company: guardian.company,
-                jobTitle: guardian.jobTitle,
-                telephone: guardian.telephone,
-                mobile: guardian.mobile,
-                address: {
-                    id: guardian.address?.id,
-                    number: guardian.address?.number as number,
-                    street: guardian.address?.street as string,
-                    secondStreet: guardian.address?.secondStreet,
-                    neighborhood: guardian.address?.neighborhood as string,
-                    borough: guardian.address?.borough,
-                    city: guardian.address?.city as string,
-                    zipCode: guardian.address?.zipCode,
-                    country: guardian.address?.country as string,
-                }
+        const newGuardian: GuardianSchema = {
+            id: guardian.id,
+            lastName: guardian.lastName,
+            firstName: guardian.firstName,
+            gender: guardian.gender,
+            status: guardian.status,
+            maidenName: guardian.maidenName,
+            emailId: guardian.emailId,
+            company: guardian.company,
+            jobTitle: guardian.jobTitle,
+            telephone: guardian.telephone,
+            mobile: guardian.mobile,
+            address: {
+                id: guardian.address?.id,
+                number: guardian.address?.number as number,
+                street: guardian.address?.street as string,
+                secondStreet: guardian.address?.secondStreet,
+                neighborhood: guardian.address?.neighborhood as string,
+                borough: guardian.address?.borough,
+                city: guardian.address?.city as string,
+                zipCode: guardian.address?.zipCode,
+                country: guardian.address?.country as string,
             }
-            setValue('student.guardian', newGuardian)
+        }
+        setValue('student.guardian', newGuardian, {
+            shouldValidate: true
+        })
     }
 
     const [validationTriggered, setValidationTriggered] = useState(false)
@@ -94,7 +94,6 @@ const Inscription = () => {
         }else {
             setShowMaidenName(false)
         }
-        console.log(formData)
     }, [formData]);
 
     const validate = (validateFields: boolean) => {
@@ -129,7 +128,6 @@ const Inscription = () => {
                     validate(validateFields)
                     break
                 case 3:
-                    console.log('id exists: ', guardianId)
                     if (guardianId && isExists) {
                         setGuardianValues(guardian as Guardian)
                         validate(true)
@@ -185,62 +183,55 @@ const Inscription = () => {
     }
 
     const onSubmit = (data: EnrollmentSchema) => {
-        try {
-            console.log('clicked')
-            setError("")
-            setSuccess("")
+        console.log('clicked')
+        setError("")
+        setSuccess("")
 
-            startTransition(() => {
+        startTransition(() => {
 
-            if (checked && !guardianId && !isExists) {
-                data = {
-                    ...data,
-                    student: {
-                        ...data.student,
-                        guardian: {
-                            ...data.student.guardian,
-                            address: data.student.address
-                        }
-                    }
-                }
-            }
-
-            if (image) data = {...data, student: {...data.student, image: image}}
-
+        if (checked && !guardianId && !isExists) {
             data = {
                 ...data,
-                school: {
-                    id: '19e8cf01-5098-453b-9d65-d57cd17fc548'
-                },
                 student: {
                     ...data.student,
-                    reference: 'AMB000005',
-                    school: {
-                        id: '19e8cf01-5098-453b-9d65-d57cd17fc548'
+                    guardian: {
+                        ...data.student.guardian,
+                        address: data.student.address
                     }
                 }
             }
-
-            addStudent(data)
-                .then((res) => {
-                    setError(res?.error)
-                    if (res.isSuccess) {
-                        setSuccess(res?.success)
-                        reset()
-                    }
-                })
-            })
-        }catch (e) {
-            console.error(e)
         }
+
+        if (image) data = {...data, student: {...data.student, image: image}}
+
+        data = {
+            ...data,
+            school: {
+                id: '19e8cf01-5098-453b-9d65-d57cd17fc548'
+            },
+            student: {
+                ...data.student,
+                reference: 'AMB000005',
+                school: {
+                    id: '19e8cf01-5098-453b-9d65-d57cd17fc548'
+                }
+            }
+        }
+
+        addStudent(data)
+            .then((res) => {
+                setError(res?.error)
+                if (res.isSuccess) {
+                    setSuccess(res?.success)
+                    reset()
+                }
+            })
+        })
     }
 
     const clickToUnchecked = () => {
         setChecked(!checked)
     }
-
-    console.log('Guardian ID: ', guardianId)
-    console.log('Guardian: ', guardian)
 
     const steps = [
         {
@@ -301,9 +292,6 @@ const Inscription = () => {
                             <Steps current={current} items={stepItems}/>
                         </div>
                         {steps[current].content}
-                        {/*<FormInput style={{display: 'none'}} control={control} name='student.school.id' defaultValue='19e8cf01-5098-453b-9d65-d57cd17fc548' />
-                        <FormInput control={control} name='school.id' style={{display: 'none'}} defaultValue='' />
-                        {guardianId && <FormInput control={control} name='student.guardian.id' defaultValue={guardianId} style={{display: 'none'}} />}*/}
                         {error && (<FormError message={error}/>)}
                         {success && (<FormSuccess message={success}/>)}
                         <Flex gap='small'>

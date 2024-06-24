@@ -7,7 +7,7 @@ export const guardianSchema = z.object({
     firstName: z.string().min(1, {message: 'Prénom est requis'}),
     gender: z.union([z.string(), z.number()]),
     status: z.union([z.string(), z.number()]),
-    maidenName: z.string().optional(),
+    maidenName: z.string().nullable().optional(),
     emailId: z.union([
         z.string().length(0),
         z.string().email({

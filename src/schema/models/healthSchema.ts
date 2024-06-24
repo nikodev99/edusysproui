@@ -5,8 +5,8 @@ export const healthSchema = z.object({
         z.number(),
         z.string().min(1, {message: "Ajouter le groupe sanguin de l'étudiant est requis"})
     ]),
-    weight: z.number(),
-    height: z.number(),
+    weight: z.number().min(5, {message: 'Le poids est requise'}),
+    height: z.number().min(10, {message: 'La taille est requise'}),
     handicap: z.string().optional(),
     medicalConditions: z.array(z.string()).optional(),
     allergies: z.array(z.string()).optional(),

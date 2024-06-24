@@ -19,10 +19,11 @@ const FormSuccess = ({message}: {message?: string}) => {
                 type: 'success',
                 content: message,
                 duration: 2,
+            }).then(() => {
+                navigate()
             })
-            navigate()
-        }, 4000)
-    }, [message, messageApi])
+        }, 1000)
+    }, [message, messageApi, navigate])
 
     return(
         <>

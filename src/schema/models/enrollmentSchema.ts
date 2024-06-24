@@ -7,5 +7,5 @@ export const enrollmentSchema = z.object({
     academicYear: z.string().min(1, {message: "L'année scolaire est requise"}),
     student: studentSchema,
     classe: classeSchema,
-    school: schoolSchema
+    school: schoolSchema.optional()
 })

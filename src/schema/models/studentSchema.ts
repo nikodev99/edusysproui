@@ -28,5 +28,5 @@ export const studentSchema = z.object({
     healthCondition: healthSchema,
     reference: z.string().optional(),
     image: z.string().optional(),
-    school: schoolSchema
+    school: schoolSchema.optional()
 })

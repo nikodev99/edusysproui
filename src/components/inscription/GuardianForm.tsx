@@ -1,7 +1,7 @@
 import {GuardianProps} from "../../utils/interfaces.ts";
 import Responsive from "../ui/layout/Responsive.tsx";
 import Grid from "../ui/layout/Grid.tsx";
-import {Button, Checkbox, Collapse, Divider, Form, Modal, Select, SelectProps} from "antd";
+import {Alert, Button, Checkbox, Collapse, Divider, Form, Modal, Select, SelectProps} from "antd";
 import {Controller} from "react-hook-form";
 import {useMemo, useRef, useState} from "react";
 import {enumToObjectArray} from "../../utils/utils.ts";
@@ -10,10 +10,10 @@ import {Status} from "../../entity/enums/status.ts";
 import GuardianAddressForm from "./GuardianAddressForm.tsx";
 import FormInput from "../ui/form/FormInput.tsx";
 import GuardianDetails from "./GuardianDetails.tsx";
-import {fetchEnrolledStudentsGuardians} from "../../data";
+import {fetchEnrolledStudentsGuardians, fetchGuardian} from "../../data";
 import {Guardian} from "../../entity";
 
-const GuardianForm = ({control, errors, showField, checked, onChecked, value, setValue}: GuardianProps) => {
+const GuardianForm = ({control, errors, showField, checked, onChecked, value, setValue, isExists, setIsExists, guardian, setGuardian}: GuardianProps) => {
 
     const genderOptions = useMemo(() => enumToObjectArray(Gender), [])
     const statusOptions = useMemo(() => enumToObjectArray(Status), [])
@@ -69,7 +69,17 @@ const GuardianForm = ({control, errors, showField, checked, onChecked, value, se
     }
 
     const onConfirm = () => {
-
+        console.log(value)
+        if (value) {
+            fetchGuardian(value)
+                .then(response => {
+                    if (response && response.isSuccess) {
+                        setGuardian(response.data as Guardian)
+                    }
+                })
+        }
+        setIsExists(true)
+        setOPen(false)
     }
 
     return(
@@ -87,6 +97,11 @@ const GuardianForm = ({control, errors, showField, checked, onChecked, value, se
                 >
                     <GuardianDetails data={data} value={value} fetching={fetching} onSearch={handleSearch} onChange={handleChange}/>
                 </Modal>
+                {isExists && <>
+                        <Alert type='success' message={`${guardian.lastName} ${guardian.firstName}`} showIcon />
+                        <Divider />
+                    </>
+                }
             </Grid>
             <Grid xs={24} md={12} lg={8}>
                 <FormInput

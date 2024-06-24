@@ -3,6 +3,7 @@ import {z} from "zod";
 import {enrollmentSchema, guardianSchema} from "../schema";
 import {ValidateStatus} from "antd/es/form/FormItem";
 import {ReactNode} from "react";
+import {Guardian} from "../entity";
 
 export interface Metadata {
     title: string;
@@ -41,7 +42,9 @@ export interface GuardianProps extends ZodProps {
     onChecked: () => void
     setValue: (newValue: string) => void
     isExists: boolean
-    setIsExists: () => void
+    setIsExists: (exists: boolean) => void
+    guardian: Guardian
+    setGuardian: (guardian: Guardian) => void
 }
 
 export interface ZodControl {

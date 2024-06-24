@@ -16,12 +16,14 @@ import {useLocation, useNavigate} from "react-router-dom";
 import queryString from 'query-string'
 import {Gender} from "../../entity/enums/gender.ts";
 import {Status} from "../../entity/enums/status.ts";
-import {EnrollmentSchema} from "../../utils/interfaces.ts";
+import {EnrollmentSchema, GuardianSchema} from "../../utils/interfaces.ts";
 import {addStudent} from "../../data";
 import FormError from "../../components/ui/form/FormError.tsx";
 import FormSuccess from "../../components/ui/form/FormSuccess.tsx";
 import {OutputFileEntry} from "@uploadcare/blocks";
 import FormInput from "../../components/ui/form/FormInput.tsx";
+import {Guardian} from "../../entity";
+import guardianDetails from "../../components/inscription/GuardianDetails.tsx";
 
 const Inscription = () => {
 
@@ -34,12 +36,39 @@ const Inscription = () => {
         title: 'Inscription'
     }])
 
-    const {handleSubmit, watch, control, clearErrors, formState: {errors}, trigger, reset} = useForm<EnrollmentSchema>({
+    const {handleSubmit, watch, control, formState: {errors}, setValue, trigger, reset} = useForm<EnrollmentSchema>({
         resolver: zodResolver(enrollmentSchema)
     })
 
     //TODO in production stop the watching
     const formData = watch()
+    const setGuardianValues = (guardian: Guardian) => {
+            const newGuardian: GuardianSchema = {
+                id: guardian.id,
+                lastName: guardian.lastName,
+                firstName: guardian.lastName,
+                gender: guardian.gender,
+                status: guardian.status,
+                maidenName: guardian.maidenName,
+                emailId: guardian.emailId,
+                company: guardian.company,
+                jobTitle: guardian.jobTitle,
+                telephone: guardian.telephone,
+                mobile: guardian.mobile,
+                address: {
+                    id: guardian.address?.id,
+                    number: guardian.address?.number as number,
+                    street: guardian.address?.street as string,
+                    secondStreet: guardian.address?.secondStreet,
+                    neighborhood: guardian.address?.neighborhood as string,
+                    borough: guardian.address?.borough,
+                    city: guardian.address?.city as string,
+                    zipCode: guardian.address?.zipCode,
+                    country: guardian.address?.country as string,
+                }
+            }
+            setValue('student.guardian', newGuardian)
+    }
 
     const [validationTriggered, setValidationTriggered] = useState(false)
     const [checked, setChecked] = useState<boolean>(true)
@@ -48,6 +77,7 @@ const Inscription = () => {
     const [image, setImage] = useState<string | undefined>(undefined)
     const [btnLoading, setBtnLoading] = useState<boolean[]>([])
     const [guardianId, setGuardianId] = useState<string | undefined>(undefined)
+    const [guardian, setGuardian] = useState<Guardian | object>({})
     const [isExists, setIsExists] = useState<boolean>(false)
     const location = useLocation()
     const navigate = useNavigate()
@@ -99,15 +129,16 @@ const Inscription = () => {
                     validate(validateFields)
                     break
                 case 3:
-                    console.log('id exists: ', !guardianId)
-                    if (!guardianId) {
+                    console.log('id exists: ', guardianId)
+                    if (guardianId && isExists) {
+                        setGuardianValues(guardian as Guardian)
+                        validate(true)
+                    }else {
                         validateFields = await trigger([
                             "student.guardian.firstName", 'student.guardian.lastName', 'student.guardian.gender', 'student.guardian.status',
                             'student.guardian.telephone'
                         ])
                         validate(validateFields)
-                    }else {
-                        validate(true)
                     }
                     break
                 case 4:
@@ -148,33 +179,20 @@ const Inscription = () => {
                 content: 'Souhaitez vous vraiment poursuivre avec l\'inscription ?',
                 okText: 'Confirmer',
                 cancelText: 'Annuler',
-                onOk: () => handleSubmit(() => onSubmit)()
+                onOk: () => handleSubmit(onSubmit)()
             })
         }, 2000)
     }
 
     const onSubmit = (data: EnrollmentSchema) => {
-        console.log('clicked')
-        setError("")
-        setSuccess("")
+        try {
+            console.log('clicked')
+            setError("")
+            setSuccess("")
 
-        startTransition(() => {
-            if (guardianId) {
-                clearErrors(["student.guardian.firstName", 'student.guardian.lastName', 'student.guardian.gender', 'student.guardian.status',
-                    'student.guardian.telephone'])
-                data = {
-                    ...data,
-                    student: {
-                        ...data.student,
-                        guardian: {
-                            id: guardianId,
-                            ...data.student.guardian
-                        }
-                    }
-                }
-            }
+            startTransition(() => {
 
-            if (checked && !guardianId) {
+            if (checked && !guardianId && !isExists) {
                 data = {
                     ...data,
                     student: {
@@ -196,7 +214,7 @@ const Inscription = () => {
                 },
                 student: {
                     ...data.student,
-                    reference: 'AMB000002',
+                    reference: 'AMB000005',
                     school: {
                         id: '19e8cf01-5098-453b-9d65-d57cd17fc548'
                     }
@@ -211,18 +229,18 @@ const Inscription = () => {
                         reset()
                     }
                 })
-        })
+            })
+        }catch (e) {
+            console.error(e)
+        }
     }
 
     const clickToUnchecked = () => {
         setChecked(!checked)
     }
 
-    const clickToOpenModal = () => {
-        setIsExists(!isExists)
-    }
-
     console.log('Guardian ID: ', guardianId)
+    console.log('Guardian: ', guardian)
 
     const steps = [
         {
@@ -249,7 +267,9 @@ const Inscription = () => {
                 value={guardianId}
                 setValue={setGuardianId}
                 isExists={isExists}
-                setIsExists={clickToOpenModal}
+                setIsExists={setIsExists}
+                guardian={guardian as Guardian}
+                setGuardian={setGuardian}
             />
         },
         {

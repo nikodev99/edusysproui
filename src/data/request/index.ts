@@ -9,3 +9,7 @@ export const getClassesBasicValues = (): Promise<AxiosResponse<Classe[]>> => {
 export const getEnrolledStudentsGuardians = (): Promise<AxiosResponse<Guardian[]>> => {
     return apiClient.get<Guardian[]>("/enroll/guardians")
 }
+
+export const getGuardianById = (guardianId: string): Promise<AxiosResponse<Guardian>> => {
+    return apiClient.get<Guardian>(`/guardian/${guardianId}`)
+}

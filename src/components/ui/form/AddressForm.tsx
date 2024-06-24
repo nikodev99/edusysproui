@@ -1,6 +1,6 @@
 import Responsive from "../layout/Responsive.tsx";
 import Grid from "../layout/Grid.tsx";
-import {Form, Input} from "antd";
+import {Form, Input, InputNumber} from "antd";
 import {Controller} from "react-hook-form";
 import CountrySelect from "./CountrySelect.tsx";
 import {ZodControl} from "../../../utils/interfaces.ts";
@@ -13,7 +13,7 @@ const AddressForm = ({addressProps}: {addressProps: ZodControl[]}) => {
                     <Grid xs={24} md={12} lg={8}>
                         <Form.Item label='N°' required tooltip='requis' validateStatus={addressProps[0].validateStatus} help={addressProps[0].help}>
                             <Controller name={addressProps[0].name} control={addressProps[0].control} render={({field}) => (
-                                <Input placeholder='17' {...field} />
+                                <InputNumber placeholder='17' {...field} />
                             )} />
                         </Form.Item>
                     </Grid>

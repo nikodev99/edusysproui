@@ -21,6 +21,11 @@ type NestedKeyOf<ObjectType extends object> = {
 
 export type TName = NestedKeyOf<EnrollmentSchema>;
 
+export interface BreadcrumbItems {
+    title: string | ReactNode,
+    path?: string
+}
+
 export interface ZodProps {
     control: Control<EnrollmentSchema>
     errors: FieldErrors<EnrollmentSchema>

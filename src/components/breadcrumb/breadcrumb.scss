@@ -1,17 +1,20 @@
 @import "../../assets/style/main";
 
 .ant-breadcrumb {
-  ol {
-    li:first-child {
-      padding-top: 0px;
-      text-align: center;
-    }
-    li:nth-child(2) {
-      padding-top: 2.5px;
-    }
+  .ant-breadcrumb-separator {
+    text-align: center;
+    margin-top: 3px;
   }
 }
 
 .breadcrumb-icon {
   @include flex-center;
+}
+
+.breadcrumb-nav {
+  cursor: pointer;
+  transition: .3s;
+  &:hover {
+    color: #000C40;
+  }
 }

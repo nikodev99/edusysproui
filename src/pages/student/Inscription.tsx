@@ -3,7 +3,7 @@ import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {setBreadcrumb} from "../../core/breadcrumb.tsx";
 import {Button, Flex, Form, Modal, Steps, Tag} from "antd";
 import {useForm} from "react-hook-form";
-import React, {useEffect, useState, useTransition} from "react";
+import React, {ReactNode, useEffect, useState, useTransition} from "react";
 import IndividualForm from "../../components/inscription/IndividualForm.tsx";
 import StudentAddressForm from "../../components/inscription/StudentAddressForm.tsx";
 import GuardianForm from "../../components/inscription/GuardianForm.tsx";
@@ -30,9 +30,15 @@ const Inscription = () => {
         description: "Inscription description",
     })
 
-    const items = setBreadcrumb([{
-        title: 'Inscription'
-    }])
+    const items = setBreadcrumb([
+        {
+            title: 'Apprenants',
+            path: '/student/all'
+        },
+        {
+            title: 'Inscription'
+        }
+    ]);
 
     const {handleSubmit, watch, control, formState: {errors}, setValue, trigger, reset} = useForm<EnrollmentSchema>({
         resolver: zodResolver(enrollmentSchema)
@@ -284,8 +290,8 @@ const Inscription = () => {
 
     return(
         <>
-            <PageHierarchy items={items}/>
-            <Flex className='inscription-wrapper' vertical id='inscription_form'>
+            <PageHierarchy items={items as [{title: string|ReactNode, path?: string}]}/>
+            <Flex className='page-wrapper inscription-wrapper' vertical>
                 <div className='form-wrapper'>
                     <Form layout="vertical" initialValues={{requiredMarkValue: 'customize'}} requiredMark={requiredMark} onFinish={handleSubmit(onSubmit)}>
                         <div className="step-wrapper">

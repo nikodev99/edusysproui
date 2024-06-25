@@ -4,9 +4,7 @@
   padding: 20px;
 }
 
-//Inscription page
-
-.inscription-wrapper{
+.page-wrapper {
   padding: 30px;
   background: #fff;
   margin-top: 20px;
@@ -15,6 +13,10 @@
     @include flex-center
   }
 
+}
+
+//Inscription page
+.inscription-wrapper {
   .step-wrapper {
     margin-bottom: 20px;
   }

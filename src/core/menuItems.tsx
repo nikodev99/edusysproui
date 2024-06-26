@@ -8,40 +8,23 @@ import {
     LuContact,
     LuLayoutDashboard,
     LuLibrary,
-    LuUsers,
-    LuUserPlus2, LuUserCheck
+    LuUsers
 } from "react-icons/lu";
 import {MenuProps} from "antd";
-import {PiNotebook, PiStudent, PiUserList} from "react-icons/pi";
+import {PiNotebook, PiStudent} from "react-icons/pi";
 import {FaUserTie} from "react-icons/fa";
+import {text} from "../utils/text_display.ts";
 
 export const menuItems: Required<MenuProps>['items'][number][] = [
     {
-        key: '/dashboard',
+        key: text.home.href,
         icon: <LuLayoutDashboard />,
-        label: 'Tableau de bord',
+        label: text.home.label,
     },
     {
-        key: '/student',
+        key: text.student.href,
         icon: <PiStudent />,
-        label: "Élèves",
-        children: [
-            {
-                key: '/student/all',
-                label: 'Apprenants',
-                icon: <PiUserList />
-            },
-            {
-                key: '/student/new',
-                label: 'Inscription',
-                icon: <LuUserPlus2 />
-            },
-            {
-                key: '/student/renew',
-                label: 'Re-Inscription',
-                icon: <LuUserCheck />
-            }
-        ]
+        label: text.student.label,
     },
     {
         key: '/teachers',

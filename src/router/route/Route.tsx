@@ -21,10 +21,10 @@ export const Route = createBrowserRouter([
                 element: <Dashboard />
             },
             {
-                path: 'student',
+                path: 'students',
                 children: [
                     {
-                        path: 'all',
+                        path: '',
                         element: <StudentList />
                     },
                     {

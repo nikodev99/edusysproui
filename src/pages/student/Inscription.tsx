@@ -22,6 +22,7 @@ import FormError from "../../components/ui/form/FormError.tsx";
 import FormSuccess from "../../components/ui/form/FormSuccess.tsx";
 import {OutputFileEntry} from "@uploadcare/blocks";
 import {Guardian} from "../../entity";
+import {text} from "../../utils/text_display.ts";
 
 const Inscription = () => {
 
@@ -32,11 +33,11 @@ const Inscription = () => {
 
     const items = setBreadcrumb([
         {
-            title: 'Apprenants',
-            path: '/student/all'
+            title: text.student.label,
+            path: text.student.href
         },
         {
-            title: 'Inscription'
+            title: text.student.group.enroll.label
         }
     ]);
 
@@ -105,7 +106,7 @@ const Inscription = () => {
     const validate = (validateFields: boolean) => {
         if (validateFields) {
             setValidationTriggered(true);
-            navigate(`/student/new?step=${current + 1}`)
+            navigate(`${text.student.group.enroll.href}?step=${current + 1}`)
         }
     }
 
@@ -157,7 +158,7 @@ const Inscription = () => {
         }
     }
 
-    const prev = () => navigate(`/student/new?step=${current - 1}`)
+    const prev = () => navigate(`${text.student.group.enroll.href}?step=${current - 1}`)
 
     const handleUploadChange = (items?: {allEntries: OutputFileEntry[]}) => {
         const file = items?.allEntries[0]
@@ -189,7 +190,6 @@ const Inscription = () => {
     }
 
     const onSubmit = (data: EnrollmentSchema) => {
-        console.log('clicked')
         setError("")
         setSuccess("")
 

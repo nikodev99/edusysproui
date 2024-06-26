@@ -22,3 +22,10 @@
   right: $right;
   bottom: $bottom;
 }
+
+@mixin text-size($color, $fontSize, $letterSpacing, $lineHeight) {
+  color: $color;
+  font-size: $fontSize;
+  letter-spacing: $letterSpacing;
+  line-height: $lineHeight;
+}

@@ -15,6 +15,44 @@
 
 }
 
+.add__btn {
+  @include flex-center;
+}
+
+//Page Description
+.page__header {
+  margin: 30px 0;
+
+  .page__title {
+    h1 {
+      @include text-size(#333, 26px, 0, 33px);
+      font-weight: 500;
+
+      .count__title {
+        padding-left: 5px;
+        @include text-size(#333, 14px, 0, 33px);
+      }
+    }
+  }
+
+  .page__description {
+    @include text-size(#666, 14px, 0, 20px)
+  }
+}
+
+//Student List
+.header__area {
+  @include display(flex, center, space-between);
+
+  .flex__end {
+    @include display(flex, center, flex-end);
+  }
+
+  .flex__end > *:not(:last-child) {
+    margin-right: 30px;
+  }
+}
+
 //Inscription page
 .inscription-wrapper {
   .step-wrapper {

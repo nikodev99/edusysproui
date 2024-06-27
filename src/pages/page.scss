@@ -9,6 +9,10 @@
   background: #fff;
   margin-top: 20px;
 
+  &.student__list__datatable {
+    padding: 0;
+  }
+
   button {
     @include flex-center
   }
@@ -50,6 +54,14 @@
 
   .flex__end > *:not(:last-child) {
     margin-right: 30px;
+  }
+
+  .list__icon {
+    color: lighten(#000, 50%);
+    &.active {
+      color: #000;
+      border-bottom: 2px solid #6db5f3;
+    }
   }
 }
 

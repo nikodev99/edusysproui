@@ -1,7 +1,19 @@
 import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
 import {setBreadcrumb} from "../../core/breadcrumb.tsx";
 import {ReactNode, useRef, useState} from "react";
-import {Button, Flex, Input, InputRef, Space, Table, TableColumnsType, TableColumnType} from "antd";
+import {
+    Avatar,
+    Button,
+    Card,
+    Flex,
+    Input,
+    InputRef,
+    Skeleton,
+    Space,
+    Table,
+    TableColumnsType,
+    TableColumnType
+} from "antd";
 import PageDescription from "../PageDescription.tsx";
 import {LuUserPlus2} from "react-icons/lu";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
@@ -9,8 +21,12 @@ import {text} from "../../utils/text_display.ts";
 import {useNavigation} from "../../hooks/useNavigation.ts";
 import {TfiLayoutGrid2Alt, TfiViewList} from "react-icons/tfi";
 import {FilterDropdownProps} from "antd/es/table/interface";
-import {AiOutlineSearch} from "react-icons/ai";
+import {AiOutlineEllipsis, AiOutlineSearch} from "react-icons/ai";
 import Highlighter from 'react-highlight-words';
+import LocalStorageManager from "../../core/LocalStorageManager.ts";
+import Meta from "antd/es/card/Meta";
+import Responsive from "../../components/ui/layout/Responsive.tsx";
+import Grid from "../../components/ui/layout/Grid.tsx";
 
 interface DataType {
     key: string;
@@ -46,6 +62,12 @@ const data: DataType[] = [
         age: 32,
         address: 'London No. 2 Lake Park',
     },
+    {
+        key: '5',
+        name: 'Jim Red',
+        age: 32,
+        address: 'London No. 2 Lake Park',
+    }
 ];
 
 const StudentList = () => {
@@ -61,14 +83,22 @@ const StudentList = () => {
         }
     ])
 
+    const iconActive = LocalStorageManager.get<number>('activeIcon') ?? 1;
+
     const [studentCount, setStudentCount] = useState<number>(0)
-    const [searchText, setSearchText] = useState('');
+    const [activeIcon, setActiveIcon] = useState<number>(iconActive)
+    const [searchText, setSearchText] = useState<string>('');
     const [searchedColumn, setSearchedColumn] = useState('');
     const searchInput = useRef<InputRef>(null);
     const navigate = useNavigation(text.student.group.enroll.href)
 
     const throughEnroll = () => {
         navigate()
+    }
+
+    const selectedIcon = (index: number) => {
+        setActiveIcon(index)
+        LocalStorageManager.update<number>('activeIcon', () => index)
     }
 
     const handleSearch = (
@@ -188,9 +218,20 @@ const StudentList = () => {
         },
     ];
 
+    const selectableIcons = [
+        {
+            key: 1,
+            element: <TfiViewList size={25} />
+        },
+        {
+            key: 2,
+            element: <TfiLayoutGrid2Alt size={25} />
+        }
+    ]
+
     return(
         <>
-            <Flex align={"center"} justify='space-between'>
+            <Flex align="center" justify='space-between'>
                 <PageHierarchy items={pageHierarchy as [{title: string | ReactNode, path?: string}]} />
                 <div className='add__btn__wrapper'>
                     <Button onClick={throughEnroll} type='primary' icon={<LuUserPlus2 size={20} />} className='add__btn'>Ajouter Étudiant</Button>
@@ -200,13 +241,37 @@ const StudentList = () => {
                 <PageDescription count={studentCount} title={`Étudiant${studentCount > 1 ? 's' : ''}`} isCount={true}/>
                 <div className='flex__end'>
                     <Input />
-                    <TfiViewList size={30} />
-                    <TfiLayoutGrid2Alt size={30} />
+                    {selectableIcons.map(icon => (
+                        <span key={icon.key} className={`list__icon ${activeIcon === icon.key ? 'active' : ''}`} onClick={() => selectedIcon(icon.key)}>
+                            {icon.element}
+                        </span>
+                    ))}
                 </div>
             </div>
-            <Flex className='page-wrapper' vertical>
-                <Table style={{width: '100%'}} columns={columns} dataSource={data} />
-            </Flex>
+            <Responsive gutter={[16, 16]} className={`${activeIcon !== 2 ? 'student__list__datatable' : ''}`}>
+                {
+                    activeIcon === 2
+                    ? data.map(d => (
+                        <Grid key={d.key} xs={24} md={12} lg={8} xl={6}>
+                            <Card actions={[
+                                <AiOutlineEllipsis key="ellipsis" />,
+                            ]}>
+                                <Skeleton loading={false} avatar active>
+                                    <Meta
+                                        avatar={<Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=1" />}
+                                        title={d.name}
+                                        description={<div>
+                                            <p>{d.age}</p>
+                                            <p>{d.address}</p>
+                                        </div>}
+                                    />
+                                </Skeleton>
+                            </Card>
+                        </Grid>
+                    ))
+                    : <Table style={{width: '100%'}} columns={columns} dataSource={data} />
+                }
+            </Responsive>
         </>
     )
 }

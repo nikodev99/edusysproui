@@ -12,10 +12,11 @@ export const apiClient = axios.create({
     // timeout: 10000,
 })
 
-export const request = ({method, url, data, headers}: AxiosConfig) => {
+export const request = ({method, url, data, headers, params}: AxiosConfig) => {
     return axios({
         method: method,
         url: `${baseURL}${url}`,
+        params: params,
         data: data,
         headers: headers
     })

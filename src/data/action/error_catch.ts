@@ -1,7 +1,6 @@
 import {isAxiosError} from "../axiosConfig.ts";
-import {Response} from "./response.ts";
 
-export const ErrorCatch = (err: unknown): Response => {
+export const ErrorCatch = (err: unknown) => {
     if (isAxiosError(err)) {
         if (err.response) {
             return {

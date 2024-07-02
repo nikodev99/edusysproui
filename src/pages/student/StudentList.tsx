@@ -1,13 +1,13 @@
 import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
 import {setBreadcrumb} from "../../core/breadcrumb.tsx";
-import {ReactNode, useRef, useState} from "react";
+import {ReactNode, useEffect, useRef, useState} from "react";
 import {
     Avatar,
     Button,
-    Card,
+    Card, Dropdown,
     Flex,
     Input,
-    InputRef,
+    InputRef, MenuProps, Pagination,
     Skeleton,
     Space,
     Table,
@@ -15,60 +15,23 @@ import {
     TableColumnType
 } from "antd";
 import PageDescription from "../PageDescription.tsx";
-import {LuUserPlus2} from "react-icons/lu";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {text} from "../../utils/text_display.ts";
 import {useNavigation} from "../../hooks/useNavigation.ts";
 import {TfiLayoutGrid2Alt, TfiViewList} from "react-icons/tfi";
 import {FilterDropdownProps} from "antd/es/table/interface";
-import {AiOutlineEllipsis, AiOutlineSearch} from "react-icons/ai";
+import {AiOutlineEllipsis, AiOutlineMore, AiOutlineSearch, AiOutlineUserAdd} from "react-icons/ai";
 import Highlighter from 'react-highlight-words';
 import LocalStorageManager from "../../core/LocalStorageManager.ts";
 import Meta from "antd/es/card/Meta";
 import Responsive from "../../components/ui/layout/Responsive.tsx";
 import Grid from "../../components/ui/layout/Grid.tsx";
-
-interface DataType {
-    key: string;
-    name: string;
-    age: number;
-    address: string;
-}
+import {StudentList as DataType} from "../../utils/interfaces.ts";
+import {useNavigate} from "react-router-dom";
+import {useQuery} from "@tanstack/react-query";
+import {fetchEnrolledStudent} from "../../data";
 
 type DataIndex = keyof DataType;
-
-const data: DataType[] = [
-    {
-        key: '1',
-        name: 'John Brown',
-        age: 32,
-        address: 'New York No. 1 Lake Park',
-    },
-    {
-        key: '2',
-        name: 'Joe Black',
-        age: 42,
-        address: 'London No. 1 Lake Park',
-    },
-    {
-        key: '3',
-        name: 'Jim Green',
-        age: 32,
-        address: 'Sydney No. 1 Lake Park',
-    },
-    {
-        key: '4',
-        name: 'Jim Red',
-        age: 32,
-        address: 'London No. 2 Lake Park',
-    },
-    {
-        key: '5',
-        name: 'Jim Red',
-        age: 32,
-        address: 'London No. 2 Lake Park',
-    }
-];
 
 const StudentList = () => {
 
@@ -85,27 +48,37 @@ const StudentList = () => {
 
     const iconActive = LocalStorageManager.get<number>('activeIcon') ?? 1;
 
+    const [content, setContent] = useState<DataType[]>()
     const [studentCount, setStudentCount] = useState<number>(0)
     const [activeIcon, setActiveIcon] = useState<number>(iconActive)
     const [searchText, setSearchText] = useState<string>('');
     const [searchedColumn, setSearchedColumn] = useState('');
     const searchInput = useRef<InputRef>(null);
     const navigate = useNavigation(text.student.group.enroll.href)
+    const nav = useNavigate();
 
     const throughEnroll = () => {
         navigate()
     }
+
+    const { data, error, isLoading } = useQuery({
+        queryKey: ['students'],
+        queryFn: async () => await fetchEnrolledStudent(0, 50).then(res => res.data)
+    })
+
+    useEffect(() => {
+        if (!isLoading && data) {
+            setContent(data.content)
+            setStudentCount(data.totalElements)
+        }
+    }, [data, isLoading]);
 
     const selectedIcon = (index: number) => {
         setActiveIcon(index)
         LocalStorageManager.update<number>('activeIcon', () => index)
     }
 
-    const handleSearch = (
-        selectedKeys: string[],
-        confirm: FilterDropdownProps['confirm'],
-        dataIndex: DataIndex,
-    ) => {
+    const handleSearch = (selectedKeys: string[], confirm: FilterDropdownProps['confirm'], dataIndex: DataIndex,) => {
         confirm();
         setSearchText(selectedKeys[0]);
         setSearchedColumn(dataIndex);
@@ -121,7 +94,7 @@ const StudentList = () => {
             <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
                 <Input
                     ref={searchInput}
-                    placeholder={`Search ${dataIndex}`}
+                    placeholder={`Recherche ${dataIndex}`}
                     value={selectedKeys[0]}
                     onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
                     onPressEnter={() => handleSearch(selectedKeys as string[], confirm, dataIndex)}
@@ -135,14 +108,14 @@ const StudentList = () => {
                         size="small"
                         style={{ width: 90 }}
                     >
-                        Search
+                        Recherche
                     </Button>
                     <Button
                         onClick={() => clearFilters && handleReset(clearFilters)}
                         size="small"
                         style={{ width: 90 }}
                     >
-                        Reset
+                        Réinitialiser
                     </Button>
                     <Button
                         type="link"
@@ -153,7 +126,7 @@ const StudentList = () => {
                             setSearchedColumn(dataIndex);
                         }}
                     >
-                        Filter
+                        Filtrer
                     </Button>
                     <Button
                         type="link"
@@ -162,7 +135,7 @@ const StudentList = () => {
                             close();
                         }}
                     >
-                        close
+                        Fermer
                     </Button>
                 </Space>
             </div>
@@ -195,27 +168,59 @@ const StudentList = () => {
 
     const columns: TableColumnsType<DataType> = [
         {
-            title: 'Name',
-            dataIndex: 'name',
-            key: 'name',
-            width: '30%',
-            ...getColumnSearchProps('name'),
-        },
-        {
-            title: 'Age',
-            dataIndex: 'age',
-            key: 'age',
+            title: 'Nom(s)',
+            dataIndex: 'firstName',
+            key: 'firstName',
             width: '20%',
-            ...getColumnSearchProps('age'),
+            ...getColumnSearchProps('firstName'),
         },
         {
-            title: 'Address',
-            dataIndex: 'address',
-            key: 'address',
-            ...getColumnSearchProps('address'),
-            sorter: (a, b) => a.address.length - b.address.length,
-            sortDirections: ['descend', 'ascend'],
+            title: 'Prénom(s)',
+            dataIndex: 'firstName',
+            key: 'firstName',
+            width: '20%',
+            ...getColumnSearchProps('firstName'),
         },
+        {
+            title: 'Genre',
+            dataIndex: 'gender',
+            key: 'gender',
+            ...getColumnSearchProps('gender')
+        },
+        {
+            title: "Date d'Inscription",
+            dataIndex: 'lastEnrolledDate',
+            key: 'lastEnrolledDate',
+            ...getColumnSearchProps('lastEnrolledDate')
+        },
+        {
+            title: "Classe",
+            dataIndex: 'classe',
+            key: 'classe',
+            ...getColumnSearchProps('classe')
+        },
+        {
+            title: "Section",
+            dataIndex: 'grade',
+            key: 'grade',
+            ...getColumnSearchProps('grade')
+        },
+        {
+            title: "Action",
+            key: 'action',
+            render: () => (
+                <Dropdown trigger={['click']} menu={{items}}>
+                    <div style={{cursor: 'pointer'}}>
+                        <AiOutlineEllipsis />
+                    </div>
+                </Dropdown>
+            )
+        }
+    ];
+
+    const items: MenuProps['items'] = [
+        { key: '1', label: 'Action 1', onClick: () => nav('/') },
+        { key: '2', label: 'Action 2' },
     ];
 
     const selectableIcons = [
@@ -229,12 +234,14 @@ const StudentList = () => {
         }
     ]
 
+    console.log('CONTENT: ', content)
+
     return(
         <>
             <Flex align="center" justify='space-between'>
                 <PageHierarchy items={pageHierarchy as [{title: string | ReactNode, path?: string}]} />
                 <div className='add__btn__wrapper'>
-                    <Button onClick={throughEnroll} type='primary' icon={<LuUserPlus2 size={20} />} className='add__btn'>Ajouter Étudiant</Button>
+                    <Button onClick={throughEnroll} type='primary' icon={<AiOutlineUserAdd size={20} />} className='add__btn'>Ajouter Étudiant</Button>
                 </div>
             </Flex>
             <div className='header__area'>
@@ -251,27 +258,30 @@ const StudentList = () => {
             <Responsive gutter={[16, 16]} className={`${activeIcon !== 2 ? 'student__list__datatable' : ''}`}>
                 {
                     activeIcon === 2
-                    ? data.map(d => (
-                        <Grid key={d.key} xs={24} md={12} lg={8} xl={6}>
+                    ? content?.map(d => (
+                        <Grid key={d.id} xs={24} md={12} lg={8} xl={6}>
                             <Card actions={[
                                 <AiOutlineEllipsis key="ellipsis" />,
                             ]}>
-                                <Skeleton loading={false} avatar active>
+                                <Skeleton loading={isLoading} avatar active>
                                     <Meta
-                                        avatar={<Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=1" />}
-                                        title={d.name}
+                                        avatar={<Avatar src={`${d.image ? d.image : "https://api.dicebear.com/7.x/miniavs/svg?seed=1"}`} />}
+                                        title={`${d.lastName} ${d.firstName}`}
                                         description={<div>
-                                            <p>{d.age}</p>
-                                            <p>{d.address}</p>
+                                            <p>{d.gender.toString()}</p>
+                                            <p>{d.lastEnrolledDate}</p>
                                         </div>}
                                     />
                                 </Skeleton>
                             </Card>
                         </Grid>
                     ))
-                    : <Table style={{width: '100%'}} columns={columns} dataSource={data} />
+                    : <Table style={{width: '100%'}} columns={columns} dataSource={content} loading={isLoading} />
                 }
             </Responsive>
+            {activeIcon === 2 && (<div style={{textAlign: 'right', marginTop: '30px'}}>
+                <Pagination defaultCurrent={1} total={studentCount} pageSize={content?.length} />
+            </div>)}
         </>
     )
 }

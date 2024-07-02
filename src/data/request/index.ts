@@ -1,4 +1,4 @@
-import {apiClient} from "../axiosConfig.ts";
+import {apiClient, request} from "../axiosConfig.ts";
 import {Classe, Guardian} from "../../entity";
 import {AxiosResponse} from "axios";
 
@@ -12,4 +12,15 @@ export const getEnrolledStudentsGuardians = (): Promise<AxiosResponse<Guardian[]
 
 export const getGuardianById = (guardianId: string): Promise<AxiosResponse<Guardian>> => {
     return apiClient.get<Guardian>(`/guardian/${guardianId}`)
+}
+
+export const getEnrolledStudents = (page: number, size: number) => {
+    return request({
+        method: 'GET',
+        url: '/enroll',
+        params: {
+            page: page,
+            size: size
+        }
+    })
 }

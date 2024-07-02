@@ -4,6 +4,8 @@ import {enrollmentSchema, guardianSchema} from "../schema";
 import {ValidateStatus} from "antd/es/form/FormItem";
 import {ReactNode} from "react";
 import {Guardian} from "../entity";
+import {SectionType} from "../entity/enums/section.ts";
+import {Gender} from "../entity/enums/gender.ts";
 
 export interface Metadata {
     title: string;
@@ -73,6 +75,21 @@ export interface EnumType {
 export interface AxiosConfig {
     method: string;
     url: string;
+    params?: object
     data?: object,
     headers?: Record<string, string>
 }
+
+export interface StudentList {
+    id: string
+    reference: string;
+    firstName: string;
+    lastName: number;
+    gender: Gender;
+    lastEnrolledDate: Date
+    classe: string
+    grade: SectionType | string
+    image: string
+}
+
+export type StudentListIndex = keyof StudentList;

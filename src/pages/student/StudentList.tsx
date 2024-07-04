@@ -7,7 +7,7 @@ import {
     Card, Dropdown,
     Flex,
     Input,
-    InputRef, MenuProps, Pagination,
+    InputRef, Pagination,
     Skeleton,
     Space,
     Table,
@@ -20,7 +20,7 @@ import {text} from "../../utils/text_display.ts";
 import {useNavigation} from "../../hooks/useNavigation.ts";
 import {TfiLayoutGrid2Alt, TfiViewList} from "react-icons/tfi";
 import {FilterDropdownProps} from "antd/es/table/interface";
-import {AiOutlineEllipsis, AiOutlineMore, AiOutlineSearch, AiOutlineUserAdd} from "react-icons/ai";
+import {AiOutlineEllipsis, AiOutlineSearch, AiOutlineUserAdd} from "react-icons/ai";
 import Highlighter from 'react-highlight-words';
 import LocalStorageManager from "../../core/LocalStorageManager.ts";
 import Meta from "antd/es/card/Meta";
@@ -30,6 +30,8 @@ import {StudentList as DataType} from "../../utils/interfaces.ts";
 import {useNavigate} from "react-router-dom";
 import {useQuery} from "@tanstack/react-query";
 import {fetchEnrolledStudent} from "../../data";
+import {Gender} from "../../entity/enums/gender.ts";
+import {chooseColor, enumToObjectArrayForFiltering, fDatetime, setFirstName} from "../../utils/utils.ts";
 
 type DataIndex = keyof DataType;
 
@@ -107,9 +109,7 @@ const StudentList = () => {
                         icon={<AiOutlineSearch />}
                         size="small"
                         style={{ width: 90 }}
-                    >
-                        Recherche
-                    </Button>
+                    />
                     <Button
                         onClick={() => clearFilters && handleReset(clearFilters)}
                         size="small"
@@ -168,30 +168,37 @@ const StudentList = () => {
 
     const columns: TableColumnsType<DataType> = [
         {
-            title: 'Nom(s)',
-            dataIndex: 'firstName',
-            key: 'firstName',
-            width: '20%',
-            ...getColumnSearchProps('firstName'),
-        },
-        {
-            title: 'Prénom(s)',
-            dataIndex: 'firstName',
-            key: 'firstName',
-            width: '20%',
-            ...getColumnSearchProps('firstName'),
+            title: 'Nom(s) et Prénons',
+            dataIndex: 'lastName',
+            key: 'lastName',
+            width: '30%',
+            sorter: (a, b) => a.lastName.localeCompare(b.lastName),
+            align: "center",
+            ...getColumnSearchProps('lastName'),
+            render: (text, record) => (
+                <div className='col__name'>
+                    {
+                        record.image ? <Avatar src={record.image} />
+                        : <Avatar style={{background: chooseColor(text) as string}}>
+                            {`${text.charAt(0)}${record.firstName.charAt(0)}`}
+                        </Avatar>
+                    }
+                    <span>{`${text.toUpperCase()}, ${setFirstName(record.firstName)}`}</span>
+                </div>
+            )
         },
         {
             title: 'Genre',
             dataIndex: 'gender',
             key: 'gender',
-            ...getColumnSearchProps('gender')
+            filters: enumToObjectArrayForFiltering(Gender),
+            onFilter: (value, record) => record.gender.indexOf(value as string) === 0,
         },
         {
             title: "Date d'Inscription",
             dataIndex: 'lastEnrolledDate',
             key: 'lastEnrolledDate',
-            ...getColumnSearchProps('lastEnrolledDate')
+            render: (text) => (<span>{fDatetime(text)}</span>)
         },
         {
             title: "Classe",
@@ -207,20 +214,21 @@ const StudentList = () => {
         },
         {
             title: "Action",
+            dataIndex: 'id',
             key: 'action',
-            render: () => (
-                <Dropdown trigger={['click']} menu={{items}}>
+            render: (text) => (
+                <Dropdown trigger={['click']} menu={{
+                    items: [
+                        {key: `details-${text}`, label: 'Details', onClick: () => nav(`students/${text}`)},
+                        {key: `delete-${text}`, label: 'Delete', danger: true, onClick: () => nav(`students/${text}`)}
+                    ]
+                }}>
                     <div style={{cursor: 'pointer'}}>
-                        <AiOutlineEllipsis />
+                        <AiOutlineEllipsis style={{fontWeight: 'bolder'}} size={30} />
                     </div>
                 </Dropdown>
             )
         }
-    ];
-
-    const items: MenuProps['items'] = [
-        { key: '1', label: 'Action 1', onClick: () => nav('/') },
-        { key: '2', label: 'Action 2' },
     ];
 
     const selectableIcons = [
@@ -257,31 +265,44 @@ const StudentList = () => {
             </div>
             <Responsive gutter={[16, 16]} className={`${activeIcon !== 2 ? 'student__list__datatable' : ''}`}>
                 {
-                    activeIcon === 2
-                    ? content?.map(d => (
-                        <Grid key={d.id} xs={24} md={12} lg={8} xl={6}>
-                            <Card actions={[
-                                <AiOutlineEllipsis key="ellipsis" />,
-                            ]}>
-                                <Skeleton loading={isLoading} avatar active>
-                                    <Meta
-                                        avatar={<Avatar src={`${d.image ? d.image : "https://api.dicebear.com/7.x/miniavs/svg?seed=1"}`} />}
-                                        title={`${d.lastName} ${d.firstName}`}
-                                        description={<div>
-                                            <p>{d.gender.toString()}</p>
-                                            <p>{d.lastEnrolledDate}</p>
-                                        </div>}
-                                    />
-                                </Skeleton>
-                            </Card>
-                        </Grid>
-                    ))
-                    : <Table style={{width: '100%'}} columns={columns} dataSource={content} loading={isLoading} />
+                    activeIcon === 2 ? (<Skeleton loading={isLoading} active={isLoading} avatar>
+                            { content?.map(d => (
+                                <Grid key={d.id} xs={24} md={12} lg={8} xl={6}>
+                                    <Card actions={[
+                                        <AiOutlineEllipsis key="ellipsis" />,
+                                    ]}>
+                                        <Skeleton loading={isLoading} avatar active={isLoading}>
+                                            <Meta
+                                                avatar={<Avatar src={`${d.image ? d.image : "https://api.dicebear.com/7.x/miniavs/svg?seed=1"}`} />}
+                                                title={`${d.lastName} ${d.firstName}`}
+                                                description={<div>
+                                                    <p>{d.gender.toString()}</p>
+                                                    <p>{fDatetime(d.lastEnrolledDate)}</p>
+                                                </div>}
+                                            />
+                                        </Skeleton>
+                                    </Card>
+                                </Grid>
+                                ))
+                            }
+                    </Skeleton>)
+                    : <Table
+                        style={{width: '100%'}}
+                        rowKey="id"
+                        onRow={({id}) => ({
+                            onClick: () => nav(`/students/${id}`)
+                        })}
+                        rowClassName='table__row'
+                        columns={columns}
+                        dataSource={content}
+                        loading={isLoading}
+                        pagination={false}
+                    />
                 }
             </Responsive>
-            {activeIcon === 2 && (<div style={{textAlign: 'right', marginTop: '30px'}}>
+            <div style={{textAlign: 'right', marginTop: '30px'}}>
                 <Pagination defaultCurrent={1} total={studentCount} pageSize={content?.length} />
-            </div>)}
+            </div>
         </>
     )
 }

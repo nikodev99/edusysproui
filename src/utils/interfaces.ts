@@ -82,11 +82,11 @@ export interface AxiosConfig {
 
 export interface StudentList {
     id: string
-    reference: string;
-    firstName: string;
-    lastName: number;
-    gender: Gender;
-    lastEnrolledDate: Date
+    reference: string
+    firstName: string
+    lastName: string
+    gender: Gender
+    lastEnrolledDate: Date | number
     classe: string
     grade: SectionType | string
     image: string

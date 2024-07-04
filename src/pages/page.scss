@@ -65,6 +65,19 @@
   }
 }
 
+.col__name {
+  @include display(flex, center, flex-start);
+  gap: 10px;
+}
+
+.table__row {
+  cursor: pointer;
+}
+
+.ant-table-column-sorters .ant-tooltip-open {
+  display: none !important;
+}
+
 //Inscription page
 .inscription-wrapper {
   .step-wrapper {

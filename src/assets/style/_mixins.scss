@@ -29,3 +29,19 @@
   letter-spacing: $letterSpacing;
   line-height: $lineHeight;
 }
+
+@mixin avatar {
+  background-color: #000C40;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  @include flex-center;
+}
+
+@mixin custom-avatar($width, $height) {
+  background-color: #000C40;
+  width: $width;
+  height: $height;
+  border-radius: 50%;
+  @include flex-center;
+}

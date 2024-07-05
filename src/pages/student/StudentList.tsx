@@ -1,6 +1,6 @@
 import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
 import {setBreadcrumb} from "../../core/breadcrumb.tsx";
-import {ReactNode, useEffect, useRef, useState} from "react";
+import {ReactNode, useEffect, useMemo, useRef, useState} from "react";
 import {
     Avatar,
     Button,
@@ -29,7 +29,7 @@ import Grid from "../../components/ui/layout/Grid.tsx";
 import {StudentList as DataType} from "../../utils/interfaces.ts";
 import {useNavigate} from "react-router-dom";
 import {useQuery} from "@tanstack/react-query";
-import {fetchEnrolledStudent} from "../../data";
+import {fetchEnrolledStudent, findClassesBasicValue} from "../../data";
 import {Gender} from "../../entity/enums/gender.ts";
 import {chooseColor, enumToObjectArrayForFiltering, fDatetime, setFirstName} from "../../utils/utils.ts";
 
@@ -61,6 +61,10 @@ const StudentList = () => {
 
     const throughEnroll = () => {
         navigate()
+    }
+
+    const throughDetails = (link: string) => {
+        nav(`${text.student.group.view.href}${link}`)
     }
 
     const { data, error, isLoading } = useQuery({
@@ -173,17 +177,25 @@ const StudentList = () => {
             key: 'lastName',
             width: '30%',
             sorter: (a, b) => a.lastName.localeCompare(b.lastName),
+            showSorterTooltip: false,
             align: "center",
+            className: 'col__name',
+            onCell: ({id}) => ({
+                onClick: () => throughDetails(id)
+            }),
             ...getColumnSearchProps('lastName'),
-            render: (text, record) => (
-                <div className='col__name'>
+            render: (text, {firstName, image, reference}) => (
+                <div className='render__name'>
                     {
-                        record.image ? <Avatar src={record.image} />
+                        image ? <Avatar src={image} />
                         : <Avatar style={{background: chooseColor(text) as string}}>
-                            {`${text.charAt(0)}${record.firstName.charAt(0)}`}
+                            {`${text.charAt(0)}${firstName.charAt(0)}`}
                         </Avatar>
                     }
-                    <span>{`${text.toUpperCase()}, ${setFirstName(record.firstName)}`}</span>
+                    <div>
+                        <p>{`${text.toUpperCase()}, ${setFirstName(firstName)}`}</p>
+                        <p className='st__ref'>{reference}</p>
+                    </div>
                 </div>
             )
         },
@@ -198,7 +210,8 @@ const StudentList = () => {
             title: "Date d'Inscription",
             dataIndex: 'lastEnrolledDate',
             key: 'lastEnrolledDate',
-            render: (text) => (<span>{fDatetime(text)}</span>)
+            render: (text) => (<span>{fDatetime(text)}</span>),
+            responsive: ['md'],
         },
         {
             title: "Classe",
@@ -219,8 +232,8 @@ const StudentList = () => {
             render: (text) => (
                 <Dropdown trigger={['click']} menu={{
                     items: [
-                        {key: `details-${text}`, label: 'Details', onClick: () => nav(`students/${text}`)},
-                        {key: `delete-${text}`, label: 'Delete', danger: true, onClick: () => nav(`students/${text}`)}
+                        {key: `details-${text}`, label: 'Details', onClick: () => throughDetails(text)},
+                        {key: `delete-${text}`, label: 'Delete', danger: true}
                     ]
                 }}>
                     <div style={{cursor: 'pointer'}}>
@@ -289,10 +302,6 @@ const StudentList = () => {
                     : <Table
                         style={{width: '100%'}}
                         rowKey="id"
-                        onRow={({id}) => ({
-                            onClick: () => nav(`/students/${id}`)
-                        })}
-                        rowClassName='table__row'
                         columns={columns}
                         dataSource={content}
                         loading={isLoading}

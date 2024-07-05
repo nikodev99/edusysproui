@@ -66,16 +66,24 @@
 }
 
 .col__name {
-  @include display(flex, center, flex-start);
-  gap: 10px;
-}
-
-.table__row {
   cursor: pointer;
-}
+  transition: 1s;
 
-.ant-table-column-sorters .ant-tooltip-open {
-  display: none !important;
+  &:hover p:first-child {
+    font-weight: bold;
+    color: $primary_color;
+  }
+
+  .render__name {
+    @include display(flex, center, flex-start);
+    gap: 10px;
+  }
+
+  .st__ref {
+    font-size: 11px;
+    text-align: left;
+    color: #A9A9A9FF;
+  }
 }
 
 //Inscription page

@@ -10,6 +10,10 @@ export const text = {
             enroll: {
                 label: 'Inscription',
                 href: '/students/new'
+            },
+            view: {
+                label: 'Details',
+                href: '/students/'
             }
         }
     }

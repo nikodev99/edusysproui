@@ -119,4 +119,15 @@ export const setFirstName = (firstName: string) => {
     return ''
 }
 
+export const getShortSortOrder = (order: string | undefined): 'asc' | 'desc' | undefined => {
+    switch (order) {
+        case 'ascend':
+            return 'asc';
+        case 'descend':
+            return 'desc';
+        default:
+            return undefined;
+    }
+};
+
 export const fontFamily = 'Mulish, Kameron, Helvetica, sans-serif'

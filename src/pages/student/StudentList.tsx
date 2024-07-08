@@ -1,6 +1,6 @@
 import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
 import {setBreadcrumb} from "../../core/breadcrumb.tsx";
-import {ReactNode, useEffect, useMemo, useRef, useState} from "react";
+import {ReactNode, useEffect, useRef, useState} from "react";
 import {
     Avatar,
     Button,
@@ -29,7 +29,7 @@ import Grid from "../../components/ui/layout/Grid.tsx";
 import {StudentList as DataType} from "../../utils/interfaces.ts";
 import {useNavigate} from "react-router-dom";
 import {useQuery} from "@tanstack/react-query";
-import {fetchEnrolledStudent, findClassesBasicValue} from "../../data";
+import {fetchEnrolledStudent} from "../../data";
 import {Gender} from "../../entity/enums/gender.ts";
 import {chooseColor, enumToObjectArrayForFiltering, fDatetime, setFirstName} from "../../utils/utils.ts";
 
@@ -55,6 +55,8 @@ const StudentList = () => {
     const [activeIcon, setActiveIcon] = useState<number>(iconActive)
     const [searchText, setSearchText] = useState<string>('');
     const [searchedColumn, setSearchedColumn] = useState('');
+    const [sortOrder, setSortOrder] = useState<string>('')
+    const [sortField, setSortField] = useState<string>('')
     const searchInput = useRef<InputRef>(null);
     const navigate = useNavigation(text.student.group.enroll.href)
     const nav = useNavigate();
@@ -67,17 +69,22 @@ const StudentList = () => {
         nav(`${text.student.group.view.href}${link}`)
     }
 
-    const { data, error, isLoading } = useQuery({
+    const { data, error, isLoading, refetch } = useQuery({
         queryKey: ['students'],
-        queryFn: async () => await fetchEnrolledStudent(0, 50).then(res => res.data)
+        queryFn: async () => await fetchEnrolledStudent(0, 50, sortField, sortOrder).then(res => res.data)
     })
 
-    useEffect(() => {
+    useEffect( () => {
+        refetch().then(r => r.data)
+        if (sortField && sortOrder) {
+            refetch().then(r => r.data)
+        }
+        
         if (!isLoading && data) {
             setContent(data.content)
             setStudentCount(data.totalElements)
         }
-    }, [data, isLoading]);
+    }, [data, isLoading, refetch, sortField, sortOrder]);
 
     const selectedIcon = (index: number) => {
         setActiveIcon(index)
@@ -170,15 +177,18 @@ const StudentList = () => {
             ),
     });
 
+    function handleSorterChange(pagination: never, filters: never, sorter) {
+        console.log(pagination, filters, sorter)
+    }
+
     const columns: TableColumnsType<DataType> = [
         {
             title: 'Nom(s) et Prénons',
             dataIndex: 'lastName',
             key: 'lastName',
             width: '30%',
-            sorter: (a, b) => a.lastName.localeCompare(b.lastName),
+            sorter: true,
             showSorterTooltip: false,
-            align: "center",
             className: 'col__name',
             onCell: ({id}) => ({
                 onClick: () => throughDetails(id)
@@ -203,6 +213,7 @@ const StudentList = () => {
             title: 'Genre',
             dataIndex: 'gender',
             key: 'gender',
+            align: 'center',
             filters: enumToObjectArrayForFiltering(Gender),
             onFilter: (value, record) => record.gender.indexOf(value as string) === 0,
         },
@@ -210,6 +221,7 @@ const StudentList = () => {
             title: "Date d'Inscription",
             dataIndex: 'lastEnrolledDate',
             key: 'lastEnrolledDate',
+            align: 'center',
             render: (text) => (<span>{fDatetime(text)}</span>),
             responsive: ['md'],
         },
@@ -217,18 +229,19 @@ const StudentList = () => {
             title: "Classe",
             dataIndex: 'classe',
             key: 'classe',
-            ...getColumnSearchProps('classe')
+            align: 'center'
         },
         {
             title: "Section",
             dataIndex: 'grade',
             key: 'grade',
-            ...getColumnSearchProps('grade')
+            align: 'center'
         },
         {
             title: "Action",
             dataIndex: 'id',
             key: 'action',
+            align: 'right',
             render: (text) => (
                 <Dropdown trigger={['click']} menu={{
                     items: [
@@ -305,6 +318,12 @@ const StudentList = () => {
                         columns={columns}
                         dataSource={content}
                         loading={isLoading}
+                        onChange={(pagination, filters, sorter) => {
+                            pagination.size
+                            filters.toString()
+                            setSortField(sorter && 'field' in sorter ? sorter.field : '')
+                            setSortOrder(sorter && 'order' in sorter ? sorter.order : '')
+                        }}
                         pagination={false}
                     />
                 }

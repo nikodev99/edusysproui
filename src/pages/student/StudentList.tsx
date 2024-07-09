@@ -1,7 +1,7 @@
 import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
 import {setBreadcrumb} from "../../core/breadcrumb.tsx";
 import {ChangeEvent, ReactNode, useEffect, useRef, useState} from "react";
-import {Avatar, Button, Card, Flex, Input, InputRef, Pagination, Skeleton, Space, Table, TableColumnsType, TableColumnType, TablePaginationConfig} from "antd";
+import {Avatar, Button, Flex, Input, InputRef, Pagination, Space, Table, TableColumnsType, TableColumnType, TablePaginationConfig} from "antd";
 import PageDescription from "../PageDescription.tsx";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {text} from "../../utils/text_display.ts";
@@ -10,9 +10,7 @@ import {TfiLayoutGrid2Alt, TfiViewList} from "react-icons/tfi";
 import {FilterDropdownProps, FilterValue, SorterResult} from "antd/es/table/interface";
 import {AiOutlineSearch, AiOutlineUserAdd} from "react-icons/ai";
 import LocalStorageManager from "../../core/LocalStorageManager.ts";
-import Meta from "antd/es/card/Meta";
 import Responsive from "../../components/ui/layout/Responsive.tsx";
-import Grid from "../../components/ui/layout/Grid.tsx";
 import {StudentList as DataType} from "../../utils/interfaces.ts";
 import {useNavigate} from "react-router-dom";
 import {useQuery} from "@tanstack/react-query";
@@ -22,6 +20,9 @@ import {chooseColor, enumToObjectArrayForFiltering, fDatetime, setFirstName} fro
 import PageError from "../PageError.tsx";
 import Highlighter from "react-highlight-words";
 import ActionButton from "../../components/list/ActionButton.tsx";
+import EmptyPage from "../EmptyPage.tsx";
+import CardList from "../../components/list/CardList.tsx";
+import {LuEye} from "react-icons/lu";
 
 type DataIndex = keyof DataType;
 
@@ -53,7 +54,8 @@ const StudentList = () => {
     const [size, setSize] = useState<number>(pageSizeCount)
     const [searchQuery, setSearchQuery] = useState<string>('')
     const searchInput = useRef<InputRef>(null);
-    const navigate = useNavigation(text.student.group.enroll.href)
+    const enrollUrl = useRef<string>(text.student.group.enroll.href);
+    const navigate = useNavigation(enrollUrl.current)
     const nav = useNavigate();
 
     const throughEnroll = () => {
@@ -150,15 +152,7 @@ const StudentList = () => {
                     >
                         Filtrer
                     </Button>
-                    <Button
-                        type="link"
-                        size="small"
-                        onClick={() => {
-                            close();
-                        }}
-                    >
-                        Fermer
-                    </Button>
+                    <Button type="link" size="small" onClick={() => { close() }}>Fermer</Button>
                 </Space>
             </div>
         ),
@@ -281,7 +275,7 @@ const StudentList = () => {
 
     const getItems = (url: string) => {
         return [
-            {key: `details-${url}`, label: 'Details', onClick: () => throughDetails(url)},
+            {key: `details-${url}`, icon: <LuEye size={20} />, label: 'Voir l\'étudiant', onClick: () => throughDetails(url)},
             {key: `delete-${url}`, label: 'Delete', danger: true}
         ]
     }
@@ -305,75 +299,51 @@ const StudentList = () => {
                     <Button onClick={throughEnroll} type='primary' icon={<AiOutlineUserAdd size={20} />} className='add__btn'>Ajouter Étudiant</Button>
                 </div>
             </Flex>
-            <div className='header__area'>
-                <PageDescription count={studentCount} title={`Étudiant${studentCount > 1 ? 's' : ''}`} isCount={true}/>
-                <div className='flex__end'>
-                    <Input size='middle' placeholder='Recherche...' style={{width: '300px'}} className='search__input' onChange={handleSearchInput} />
-                    {selectableIcons.map(icon => (
-                        <span key={icon.key} className={`list__icon ${activeIcon === icon.key ? 'active' : ''}`} onClick={() => selectedIcon(icon.key)}>
-                            {icon.element}
-                        </span>
-                    ))}
-                </div>
-            </div>
-            <Responsive gutter={[16, 16]} className={`${activeIcon !== 2 ? 'student__list__datatable' : ''}`}>
-                {
-                    activeIcon === 2 ? (<Skeleton loading={isLoading} active={isLoading} avatar>
-                            { content?.map(d => (
-                                <Grid key={d.id} xs={24} md={12} lg={8} xl={6}>
-                                    <Card actions={[
-                                        <ActionButton items={getItems(d.id)} placement='topRight' />
-                                    ]}>
-                                        <Skeleton loading={isLoading} avatar active={isLoading}>
-                                            <Meta
-                                                avatar={
-                                                    d.image ? <Avatar src={d.image} />
-                                                        : <Avatar style={{background: chooseColor(d.lastName) as string}}>
-                                                            {`${d.lastName.charAt(0)}${d.firstName.charAt(0)}`}
-                                                        </Avatar>
-                                                }
-                                                title={<div className='col__name'>
-                                                    <p>{`${d.lastName.toUpperCase()}, ${setFirstName(d.firstName)}`}</p>
-                                                    <p className='st__ref'>{d.reference}</p>
-                                                    <p className='st__ref'>{d.gender.toString()}</p>
-                                                </div>
-                                                }
-                                                description={
-                                                    <div className='card__desc'>
-                                                        <p className='desc'>{`${d.grade.toString()} - ${d.classe}`}</p>
-                                                        <p className='desc'>Inscrit le {fDatetime(d.lastEnrolledDate, true)}</p>
-                                                    </div>
-                                                }
-                                            />
-                                        </Skeleton>
-                                    </Card>
-                                </Grid>
-                                ))
-                            }
-                    </Skeleton>)
-                    : <Table
-                        style={{width: '100%'}}
-                        rowKey="id"
-                        columns={columns}
-                        dataSource={content}
-                        loading={isLoading}
-                        onChange={handleSorterChange}
-                        pagination={false}
-                    />
-                }
-            </Responsive>
-            <div style={{textAlign: 'right', marginTop: '30px'}}>
-                <Pagination
-                    current={currentPage}
-                    defaultCurrent={1}
-                    total={studentCount}
-                    pageSize={size}
-                    responsive={true}
-                    onShowSizeChange={handleSizeChange}
-                    onChange={handleNavChange}
-                    disabled={!!(isLoading || searchQuery)}
-                />
-            </div>
+            {content && content.length !== 0 ? (
+                <>
+                    <div className='header__area'>
+                        <PageDescription count={studentCount} title={`Étudiant${studentCount > 1 ? 's' : ''}`} isCount={true}/>
+                        <div className='flex__end'>
+                            <Input size='middle' placeholder='Recherche...' style={{width: '300px'}} className='search__input' onChange={handleSearchInput} />
+                            {selectableIcons.map(icon => (
+                                <span key={icon.key} className={`list__icon ${activeIcon === icon.key ? 'active' : ''}`} onClick={() => selectedIcon(icon.key)}>
+                                    {icon.element}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+                    <Responsive gutter={[16, 16]} className={`${activeIcon !== 2 ? 'student__list__datatable' : ''}`}>
+                        {
+                            activeIcon === 2 ? <CardList content={content} isActive={activeIcon === 2 } isLoading={isLoading} dropdownItems={getItems} />
+                            : <Table
+                                style={{width: '100%'}}
+                                rowKey="id"
+                                columns={columns}
+                                dataSource={content}
+                                loading={isLoading}
+                                onChange={handleSorterChange}
+                                pagination={false}
+                            />
+                        }
+                    </Responsive>
+                    <div style={{textAlign: 'right', marginTop: '30px'}}>
+                        <Pagination
+                            current={currentPage}
+                            defaultCurrent={1}
+                            total={studentCount}
+                            pageSize={size}
+                            responsive={true}
+                            onShowSizeChange={handleSizeChange}
+                            onChange={handleNavChange}
+                            disabled={!!(isLoading || searchQuery)}
+                        />
+                    </div>
+                </>): <EmptyPage
+                        title="Organiser les étudiant de l'école x dans le tableau"
+                        subTitle='Work teams enable simpler and faster management of your users’ access rights. Simply add users to a team and they will inherit the access rights of that work team.'
+                        btnLabel='Créer un nouveau étudiant'
+                        btnUrl={enrollUrl.current}
+                />}
         </>
     )
 }

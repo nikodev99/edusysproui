@@ -98,6 +98,19 @@
   }
 }
 
+.empty__page__wrapper {
+  .empty__page__box{
+    background: #fff;
+    border-radius: 10px;
+    padding: 50px;
+    margin-top: 80px;
+  }
+
+  button {
+    @include flex-center
+  }
+}
+
 //Inscription page
 .inscription-wrapper {
   .step-wrapper {

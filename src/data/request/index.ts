@@ -15,24 +15,23 @@ export const getGuardianById = (guardianId: string): Promise<AxiosResponse<Guard
 }
 
 export const getEnrolledStudents = (page: number, size: number, sortCriteria?: string) => {
-    if (sortCriteria) {
-        return request({
-            method: 'GET',
-            url: '/enroll',
-            params: {
-                page: page,
-                size: size,
-                sortCriteria: `${sortCriteria},e.enrollmentDate:desc`
-            }
-        })
-    }
     return request({
         method: 'GET',
         url: '/enroll',
         params: {
             page: page,
             size: size,
-            sortCriteria: 'e.enrollmentDate:desc'
+            sortCriteria: `${sortCriteria ? `${sortCriteria},e.enrollmentDate:desc` : 'e.enrollmentDate:desc'}`
+        }
+    })
+}
+
+export const searchEnrolledStudents = (searchInput: string) => {
+    return request({
+        method: 'GET',
+        url: '/enroll/search/',
+        params: {
+            q: searchInput
         }
     })
 }

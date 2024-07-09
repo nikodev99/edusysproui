@@ -71,9 +71,10 @@ export const getAcademicYear = () => {
     return (currentYear - 1).toString() + '-' + currentYear.toString()
 }
 
-export const fDatetime = (timestamp: Date | number | string) => {
+export const fDatetime = (timestamp: Date | number | string, to?: boolean) => {
+    const format: string = to ? 'DD/MM/YYYY à HH:mm' : 'DD/MM/YYYY HH:mm'
     if (timestamp) {
-        return dayjs.unix(timestamp as number).format('DD/MM/YYYY HH:mm')
+        return dayjs.unix(timestamp as number).format(format)
     }
     return undefined
 }

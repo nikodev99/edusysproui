@@ -45,3 +45,9 @@
   border-radius: 50%;
   @include flex-center;
 }
+
+@mixin md_screen {
+  @media (max-width: 767px) {
+    display: none;
+  }
+}

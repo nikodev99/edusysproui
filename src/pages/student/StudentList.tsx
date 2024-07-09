@@ -1,27 +1,14 @@
 import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
 import {setBreadcrumb} from "../../core/breadcrumb.tsx";
-import {ReactNode, useEffect, useRef, useState} from "react";
-import {
-    Avatar,
-    Button,
-    Card, Dropdown,
-    Flex,
-    Input,
-    InputRef, Pagination,
-    Skeleton,
-    Space,
-    Table,
-    TableColumnsType,
-    TableColumnType
-} from "antd";
+import {ChangeEvent, ReactNode, useEffect, useRef, useState} from "react";
+import {Avatar, Button, Card, Flex, Input, InputRef, Pagination, Skeleton, Space, Table, TableColumnsType, TableColumnType, TablePaginationConfig} from "antd";
 import PageDescription from "../PageDescription.tsx";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {text} from "../../utils/text_display.ts";
 import {useNavigation} from "../../hooks/useNavigation.ts";
 import {TfiLayoutGrid2Alt, TfiViewList} from "react-icons/tfi";
-import {FilterDropdownProps} from "antd/es/table/interface";
-import {AiOutlineEllipsis, AiOutlineSearch, AiOutlineUserAdd} from "react-icons/ai";
-import Highlighter from 'react-highlight-words';
+import {FilterDropdownProps, FilterValue, SorterResult} from "antd/es/table/interface";
+import {AiOutlineSearch, AiOutlineUserAdd} from "react-icons/ai";
 import LocalStorageManager from "../../core/LocalStorageManager.ts";
 import Meta from "antd/es/card/Meta";
 import Responsive from "../../components/ui/layout/Responsive.tsx";
@@ -29,9 +16,12 @@ import Grid from "../../components/ui/layout/Grid.tsx";
 import {StudentList as DataType} from "../../utils/interfaces.ts";
 import {useNavigate} from "react-router-dom";
 import {useQuery} from "@tanstack/react-query";
-import {fetchEnrolledStudent} from "../../data";
+import {fetchEnrolledStudents, fetchSearchedEnrolledStudents} from "../../data";
 import {Gender} from "../../entity/enums/gender.ts";
 import {chooseColor, enumToObjectArrayForFiltering, fDatetime, setFirstName} from "../../utils/utils.ts";
+import PageError from "../PageError.tsx";
+import Highlighter from "react-highlight-words";
+import ActionButton from "../../components/list/ActionButton.tsx";
 
 type DataIndex = keyof DataType;
 
@@ -49,14 +39,19 @@ const StudentList = () => {
     ])
 
     const iconActive = LocalStorageManager.get<number>('activeIcon') ?? 1;
+    const pageSizeCount = LocalStorageManager.get<number>('pageSize') ?? 10;
 
     const [content, setContent] = useState<DataType[]>()
     const [studentCount, setStudentCount] = useState<number>(0)
     const [activeIcon, setActiveIcon] = useState<number>(iconActive)
     const [searchText, setSearchText] = useState<string>('');
     const [searchedColumn, setSearchedColumn] = useState('');
-    const [sortOrder, setSortOrder] = useState<string>('')
-    const [sortField, setSortField] = useState<string>('')
+    const [sortOrder, setSortOrder] = useState<string | undefined>(undefined)
+    const [sortField, setSortField] = useState<string | undefined>(undefined)
+    const [pageCount, setPageCount] = useState<number>(0)
+    const [currentPage, setCurrentPage] = useState<number>(1)
+    const [size, setSize] = useState<number>(pageSizeCount)
+    const [searchQuery, setSearchQuery] = useState<string>('')
     const searchInput = useRef<InputRef>(null);
     const navigate = useNavigation(text.student.group.enroll.href)
     const nav = useNavigate();
@@ -71,20 +66,36 @@ const StudentList = () => {
 
     const { data, error, isLoading, refetch } = useQuery({
         queryKey: ['students'],
-        queryFn: async () => await fetchEnrolledStudent(0, 50, sortField, sortOrder).then(res => res.data)
+        queryFn: async () => await fetchEnrolledStudents(pageCount, size, sortField, sortOrder).then(res => res.data)
     })
 
     useEffect( () => {
-        refetch().then(r => r.data)
-        if (sortField && sortOrder) {
+        console.log('field: ', sortField, 'Order: ', sortOrder)
+        if (searchQuery) {
+            fetchSearchedEnrolledStudents(searchQuery)
+                .then((resp) => {
+                    if (resp && resp.isSuccess) {
+                        setContent(resp.data as DataType[])
+                    }
+                })
+
+        }else {
             refetch().then(r => r.data)
+            if (sortField && sortOrder || size || pageCount) {
+                refetch().then(r => r.data)
+            }
+
+            if (!isLoading && data) {
+                setContent(data.content)
+                setStudentCount(data.totalElements)
+            }
         }
         
-        if (!isLoading && data) {
-            setContent(data.content)
-            setStudentCount(data.totalElements)
-        }
-    }, [data, isLoading, refetch, sortField, sortOrder]);
+    }, [data, isLoading, pageCount, refetch, searchQuery, size, sortField, sortOrder]);
+
+    if (error) {
+        return <PageError />
+    }
 
     const selectedIcon = (index: number) => {
         setActiveIcon(index)
@@ -177,8 +188,30 @@ const StudentList = () => {
             ),
     });
 
-    function handleSorterChange(pagination: never, filters: never, sorter) {
-        console.log(pagination, filters, sorter)
+    const handleSorterChange = (pagination: TablePaginationConfig, filters: Record<string, FilterValue | null>, sorter:  SorterResult<DataType> | SorterResult<DataType>[]) => {
+        pagination.disabled
+        if (!Array.isArray(filters))
+            if (!Array.isArray(sorter)) {
+                setSortField(sorter.field as string)
+                setSortOrder(sorter.order as string)
+            }
+    }
+
+    const handleSizeChange = (current: number, pageSize: number) => {
+        setCurrentPage(current)
+        setSize(pageSize)
+        LocalStorageManager.update('pageSize', () => pageSize)
+    }
+
+    const handleNavChange = (page: number, pageSize: number) => {
+        setPageCount(page - 1)
+        setCurrentPage(page)
+        setSize(pageSize)
+        LocalStorageManager.update('pageSize', () => pageSize)
+    }
+
+    const handleSearchInput = (e: ChangeEvent<HTMLInputElement>) => {
+        setSearchQuery(e.target.value)
     }
 
     const columns: TableColumnsType<DataType> = [
@@ -242,33 +275,27 @@ const StudentList = () => {
             dataIndex: 'id',
             key: 'action',
             align: 'right',
-            render: (text) => (
-                <Dropdown trigger={['click']} menu={{
-                    items: [
-                        {key: `details-${text}`, label: 'Details', onClick: () => throughDetails(text)},
-                        {key: `delete-${text}`, label: 'Delete', danger: true}
-                    ]
-                }}>
-                    <div style={{cursor: 'pointer'}}>
-                        <AiOutlineEllipsis style={{fontWeight: 'bolder'}} size={30} />
-                    </div>
-                </Dropdown>
-            )
+            render: (text) => (<ActionButton items={getItems(text)} />)
         }
     ];
+
+    const getItems = (url: string) => {
+        return [
+            {key: `details-${url}`, label: 'Details', onClick: () => throughDetails(url)},
+            {key: `delete-${url}`, label: 'Delete', danger: true}
+        ]
+    }
 
     const selectableIcons = [
         {
             key: 1,
-            element: <TfiViewList size={25} />
+            element: <TfiViewList size={19} />
         },
         {
             key: 2,
-            element: <TfiLayoutGrid2Alt size={25} />
+            element: <TfiLayoutGrid2Alt size={19} />
         }
     ]
-
-    console.log('CONTENT: ', content)
 
     return(
         <>
@@ -281,7 +308,7 @@ const StudentList = () => {
             <div className='header__area'>
                 <PageDescription count={studentCount} title={`Étudiant${studentCount > 1 ? 's' : ''}`} isCount={true}/>
                 <div className='flex__end'>
-                    <Input />
+                    <Input size='middle' placeholder='Recherche...' style={{width: '300px'}} className='search__input' onChange={handleSearchInput} />
                     {selectableIcons.map(icon => (
                         <span key={icon.key} className={`list__icon ${activeIcon === icon.key ? 'active' : ''}`} onClick={() => selectedIcon(icon.key)}>
                             {icon.element}
@@ -295,16 +322,28 @@ const StudentList = () => {
                             { content?.map(d => (
                                 <Grid key={d.id} xs={24} md={12} lg={8} xl={6}>
                                     <Card actions={[
-                                        <AiOutlineEllipsis key="ellipsis" />,
+                                        <ActionButton items={getItems(d.id)} placement='topRight' />
                                     ]}>
                                         <Skeleton loading={isLoading} avatar active={isLoading}>
                                             <Meta
-                                                avatar={<Avatar src={`${d.image ? d.image : "https://api.dicebear.com/7.x/miniavs/svg?seed=1"}`} />}
-                                                title={`${d.lastName} ${d.firstName}`}
-                                                description={<div>
-                                                    <p>{d.gender.toString()}</p>
-                                                    <p>{fDatetime(d.lastEnrolledDate)}</p>
-                                                </div>}
+                                                avatar={
+                                                    d.image ? <Avatar src={d.image} />
+                                                        : <Avatar style={{background: chooseColor(d.lastName) as string}}>
+                                                            {`${d.lastName.charAt(0)}${d.firstName.charAt(0)}`}
+                                                        </Avatar>
+                                                }
+                                                title={<div className='col__name'>
+                                                    <p>{`${d.lastName.toUpperCase()}, ${setFirstName(d.firstName)}`}</p>
+                                                    <p className='st__ref'>{d.reference}</p>
+                                                    <p className='st__ref'>{d.gender.toString()}</p>
+                                                </div>
+                                                }
+                                                description={
+                                                    <div className='card__desc'>
+                                                        <p className='desc'>{`${d.grade.toString()} - ${d.classe}`}</p>
+                                                        <p className='desc'>Inscrit le {fDatetime(d.lastEnrolledDate, true)}</p>
+                                                    </div>
+                                                }
                                             />
                                         </Skeleton>
                                     </Card>
@@ -318,18 +357,22 @@ const StudentList = () => {
                         columns={columns}
                         dataSource={content}
                         loading={isLoading}
-                        onChange={(pagination, filters, sorter) => {
-                            pagination.size
-                            filters.toString()
-                            setSortField(sorter && 'field' in sorter ? sorter.field : '')
-                            setSortOrder(sorter && 'order' in sorter ? sorter.order : '')
-                        }}
+                        onChange={handleSorterChange}
                         pagination={false}
                     />
                 }
             </Responsive>
             <div style={{textAlign: 'right', marginTop: '30px'}}>
-                <Pagination defaultCurrent={1} total={studentCount} pageSize={content?.length} />
+                <Pagination
+                    current={currentPage}
+                    defaultCurrent={1}
+                    total={studentCount}
+                    pageSize={size}
+                    responsive={true}
+                    onShowSizeChange={handleSizeChange}
+                    onChange={handleNavChange}
+                    disabled={!!(isLoading || searchQuery)}
+                />
             </div>
         </>
     )

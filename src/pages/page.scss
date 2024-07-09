@@ -63,6 +63,11 @@
       border-bottom: 2px solid #6db5f3;
     }
   }
+
+  .search__input {
+    transition: .3s;
+    @include md_screen
+  }
 }
 
 .col__name {
@@ -83,6 +88,13 @@
     font-size: 11px;
     text-align: left;
     color: #A9A9A9FF;
+  }
+}
+
+.card__desc {
+  .desc {
+    font-size: 14px;
+    color: $text_color;
   }
 }
 

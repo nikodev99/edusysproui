@@ -5,6 +5,7 @@ import Dashboard from "../../pages/dashboard/page.tsx";
 import StudentList from "../../pages/student/StudentList.tsx";
 import Inscription from "../../pages/student/Inscription.tsx";
 import Setting from "../../pages/setting/page.tsx";
+import StudentView from "../../pages/student/StudentView.tsx";
 
 export const Route = createBrowserRouter([
     {
@@ -30,6 +31,10 @@ export const Route = createBrowserRouter([
                     {
                         path: "new",
                         element: <Inscription />
+                    },
+                    {
+                        path: ':id',
+                        element: <StudentView />
                     }
                 ]
             },

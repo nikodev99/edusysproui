@@ -1,4 +1,4 @@
-import {getEnrolledStudents, searchEnrolledStudents} from "../request";
+import {getEnrolledStudents, getStudentById, searchEnrolledStudents} from "../request";
 import {getShortSortOrder} from "../../utils/utils.ts";
 import {ErrorCatch} from "./error_catch.ts";
 
@@ -9,6 +9,10 @@ export const fetchEnrolledStudents = (page: number, size: number, sortField?: st
         return getEnrolledStudents(page, size, `${sortField}:${sortOrder}`)
     }
     return getEnrolledStudents(page, size)
+}
+
+export const fetchStudentById = (id: string) => {
+    return getStudentById(id)
 }
 
 export const fetchSearchedEnrolledStudents = async (searchInput: string) => {

@@ -1,11 +1,11 @@
-import {Teacher} from "./teacher.ts";
 import {School} from "./school.ts";
+import {ClasseTeacherBoss} from "./ClasseTeacherBoss.ts";
 
 export interface Department {
     id?: number
     name?: string
     code?:string
-    boss?: Teacher
+    boss?: ClasseTeacherBoss
     school?: School
     createdAt?: Date
     modifyAt?: Date

@@ -6,4 +6,5 @@ export enum Day {
     FRIDAY = 4,
     SATURDAY = 5,
     SUNDAY = 6,
+    ALL_DAY = 7,
 }

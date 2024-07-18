@@ -1,4 +1,3 @@
-import {School} from "./school.ts";
 import {Department} from "./department.ts";
 
 export interface Course {
@@ -6,7 +5,6 @@ export interface Course {
     course?: string
     abbr?: string
     department?: Department
-    school?: School
     createdAt?: Date
     modifyAt?: Date
 }

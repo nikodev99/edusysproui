@@ -16,7 +16,7 @@ export interface Guardian {
     telephone: string
     mobile: string
     address: Address | undefined
-    student: Student[] | undefined
+    students: Student[] | undefined
     createdAt: Date | undefined
     modifyAt: Date | undefined
 }

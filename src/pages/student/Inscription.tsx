@@ -213,13 +213,13 @@ const Inscription = () => {
         data = {
             ...data,
             school: {
-                id: '19e8cf01-5098-453b-9d65-d57cd17fc548'
+                id: text.schoolID
             },
             student: {
                 ...data.student,
                 reference: 'AMB000005',
                 school: {
-                    id: '19e8cf01-5098-453b-9d65-d57cd17fc548'
+                    id: text.schoolID
                 }
             }
         }

@@ -1,3 +1,4 @@
+export type { AcademicYear } from './domain/AcademicYear'
 export type { Address } from './domain/address'
 export type { Attendance } from './domain/attendance'
 export type { Classe } from './domain/classe'

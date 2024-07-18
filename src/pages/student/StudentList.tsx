@@ -13,7 +13,7 @@ import LocalStorageManager from "../../core/LocalStorageManager.ts";
 import Responsive from "../../components/ui/layout/Responsive.tsx";
 import {StudentList as DataType} from "../../utils/interfaces.ts";
 import {useNavigate} from "react-router-dom";
-import {useQuery} from "@tanstack/react-query";
+import {keepPreviousData, useQuery} from "@tanstack/react-query";
 import {fetchEnrolledStudents, fetchSearchedEnrolledStudents} from "../../data";
 import {Gender} from "../../entity/enums/gender.ts";
 import {chooseColor, enumToObjectArrayForFiltering, fDatetime, setFirstName} from "../../utils/utils.ts";
@@ -42,7 +42,7 @@ const StudentList = () => {
     const iconActive = LocalStorageManager.get<number>('activeIcon') ?? 1;
     const pageSizeCount = LocalStorageManager.get<number>('pageSize') ?? 10;
 
-    const [content, setContent] = useState<DataType[]>()
+    const [content, setContent] = useState<DataType[] | null>(null)
     const [studentCount, setStudentCount] = useState<number>(0)
     const [activeIcon, setActiveIcon] = useState<number>(iconActive)
     const [searchText, setSearchText] = useState<string>('');
@@ -68,7 +68,8 @@ const StudentList = () => {
 
     const { data, error, isLoading, refetch } = useQuery({
         queryKey: ['students'],
-        queryFn: async () => await fetchEnrolledStudents(pageCount, size, sortField, sortOrder).then(res => res.data)
+        queryFn: async () => await fetchEnrolledStudents(pageCount, size, sortField, sortOrder).then(res => res.data),
+        placeholderData: keepPreviousData
     })
 
     useEffect( () => {
@@ -299,7 +300,7 @@ const StudentList = () => {
                     <Button onClick={throughEnroll} type='primary' icon={<AiOutlineUserAdd size={20} />} className='add__btn'>Ajouter Étudiant</Button>
                 </div>
             </Flex>
-            {content && content.length !== 0 ? (
+            {content !== null ? (
                 <>
                     <div className='header__area'>
                         <PageDescription count={studentCount} title={`Étudiant${studentCount > 1 ? 's' : ''}`} isCount={true}/>

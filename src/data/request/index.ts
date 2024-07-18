@@ -35,3 +35,7 @@ export const searchEnrolledStudents = (searchInput: string) => {
         }
     })
 }
+
+export const getStudentById = (studentId: string) => {
+    return apiClient.get(`/student/${studentId}`)
+}

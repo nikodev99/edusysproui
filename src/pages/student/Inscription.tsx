@@ -101,7 +101,8 @@ const Inscription = () => {
         }else {
             setShowMaidenName(false)
         }
-    }, [formData]);
+        console.log('Error Occurred: ', errors)
+    }, [errors, formData]);
 
     const validate = (validateFields: boolean) => {
         if (validateFields) {
@@ -130,7 +131,7 @@ const Inscription = () => {
                     break
                 case 2:
                     validateFields = await trigger([
-                        'academicYear', 'classe.id'
+                        'academicYear.id', 'classe.id'
                     ])
                     validate(validateFields)
                     break
@@ -212,15 +213,9 @@ const Inscription = () => {
 
         data = {
             ...data,
-            school: {
-                id: text.schoolID
-            },
             student: {
                 ...data.student,
-                reference: 'AMB000005',
-                school: {
-                    id: text.schoolID
-                }
+                reference: 'AMB000005'
             }
         }
 

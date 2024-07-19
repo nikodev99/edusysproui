@@ -1,6 +1,10 @@
 import {apiClient, request} from "../axiosConfig.ts";
-import {Classe, Guardian} from "../../entity";
+import {AcademicYear, Classe, Guardian} from "../../entity";
 import {AxiosResponse} from "axios";
+
+export const getAcademicYear = (): Promise<AxiosResponse<AcademicYear>> => {
+    return apiClient.get<AcademicYear>('/academic')
+}
 
 export const getClassesBasicValues = (): Promise<AxiosResponse<Classe[]>> => {
     return apiClient.get<Classe[]>("/classes/basic");

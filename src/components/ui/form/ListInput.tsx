@@ -23,7 +23,7 @@ const ListInput = ({name, label, zodProps}: ZodListControl) => {
                     </Form.Item>
                     {fields.map(({key, name}) => (
                         <Form.Item key={key} label={`${pluralLabel(fields)} ${fields.length > 1 ? key + 1: ''}`}>
-                            <Controller name={`${zodProps.name}.${name}`} control={control} render={({field}) => (
+                            <Controller name={`${zodProps.name}.${name}` as 'academicYear'} control={control} render={({field}) => (
                                     <Input style={{width: '80%'}} {...field} />
                             )} />
                             {fields.length >= 1 ? (

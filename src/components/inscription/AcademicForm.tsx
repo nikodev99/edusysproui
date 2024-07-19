@@ -1,28 +1,39 @@
 import {ZodProps} from "../../utils/interfaces.ts";
 import Responsive from "../ui/layout/Responsive.tsx";
 import Grid from "../ui/layout/Grid.tsx";
-import {Form, Input, Select} from "antd";
+import {Form, Select} from "antd";
 import {Controller} from "react-hook-form";
-import {getAcademicYear} from "../../utils/utils.ts";
 import {useEffect, useMemo, useState} from "react";
-import {Classe} from "../../entity";
+import {AcademicYear, Classe} from "../../entity";
 import {findClassesBasicValue} from "../../data";
+import {findCurrentAcademicYear} from "../../data/action/fetch_academic_year.ts";
 
 const AcademicForm = ({control, errors}: ZodProps) => {
 
-    const academicYear = useMemo(() => getAcademicYear(), [])
     const [classes, setClasses] = useState<Classe[]>([])
+    const [academicYear, setAcademicYear] = useState<AcademicYear>({})
 
     useEffect(() => {
-        findClassesBasicValue()
-            .then((resp) => {
-                if (resp && resp.isSuccess) {
-                    setClasses(resp.data as Classe[])
-                }
-            })
+        const fetchData = async () => {
+            await findClassesBasicValue()
+                .then((resp) => {
+                    if (resp && resp.isSuccess) {
+                        setClasses(resp.data as Classe[])
+                    }
+                })
+
+            await findCurrentAcademicYear()
+                .then(async (resp) => {
+                    if (resp && resp.isSuccess) {
+                        setAcademicYear(resp.data as AcademicYear)
+
+                    }
+                })
+        }
+        fetchData().catch(e => console.error(e.message))
     }, []);
 
-    console.log('Classes: ', classes)
+    console.log('Academic Year: ', academicYear)
 
     //TODO ensure the client is connected
     const options = useMemo(() => classes.map(c => ({
@@ -38,8 +49,8 @@ const AcademicForm = ({control, errors}: ZodProps) => {
                     validateStatus={errors.academicYear ? 'error' : ''}
                     help={errors.academicYear ? errors.academicYear.message : ''}
                 >
-                    <Controller name='academicYear' defaultValue={academicYear} control={control} render={({field}) => (
-                        <Input {...field} />
+                    <Controller name='academicYear.id' defaultValue={academicYear.id} control={control} render={({field}) => (
+                        <Select options={[{value: academicYear.id, label: academicYear.academicYear}]} {...field} />
                     )} />
                 </Form.Item>
             </Grid>

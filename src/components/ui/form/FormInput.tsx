@@ -30,7 +30,7 @@ const FormInput = (inputProps :InputProps) => {
             validateStatus={validateStatus}
             help={help}
         >
-            <Controller name={name} defaultValue={defaultValue} control={control} render={({field}) => (
+            <Controller name={name as 'academicYear.id'} defaultValue={defaultValue} control={control} render={({field}) => (
                 <Input placeholder={placeholder} {...field} />
             )} />
         </Form.Item>

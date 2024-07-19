@@ -2,7 +2,6 @@ import {z} from "zod";
 import {addressSchema} from "./addressSchema.ts";
 import {guardianSchema} from "./guardianSchema.ts";
 import {healthSchema} from "./healthSchema.ts";
-import {schoolSchema} from "./schoolSchema.ts";
 
 export const studentSchema = z.object({
     lastName: z.string().min(3, {message: "Nom de famille est requis"}),
@@ -27,6 +26,5 @@ export const studentSchema = z.object({
     guardian: guardianSchema,
     healthCondition: healthSchema,
     reference: z.string().optional(),
-    image: z.string().optional(),
-    school: schoolSchema.optional()
+    image: z.string().optional()
 })

@@ -1,7 +1,20 @@
 import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
 import {setBreadcrumb} from "../../core/breadcrumb.tsx";
 import {ChangeEvent, ReactNode, useEffect, useRef, useState} from "react";
-import {Avatar, Button, Flex, Input, InputRef, Pagination, Space, Table, TableColumnsType, TableColumnType, TablePaginationConfig} from "antd";
+import {
+    Avatar,
+    Button,
+    Flex,
+    Input,
+    InputRef,
+    Pagination,
+    Space,
+    Table,
+    TableColumnsType,
+    TableColumnType,
+    TablePaginationConfig,
+    Tag
+} from "antd";
 import PageDescription from "../PageDescription.tsx";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {text} from "../../utils/text_display.ts";
@@ -20,7 +33,6 @@ import {chooseColor, enumToObjectArrayForFiltering, fDatetime, setFirstName} fro
 import PageError from "../PageError.tsx";
 import Highlighter from "react-highlight-words";
 import ActionButton from "../../components/list/ActionButton.tsx";
-import EmptyPage from "../EmptyPage.tsx";
 import CardList from "../../components/list/CardList.tsx";
 import {LuEye} from "react-icons/lu";
 
@@ -42,7 +54,7 @@ const StudentList = () => {
     const iconActive = LocalStorageManager.get<number>('activeIcon') ?? 1;
     const pageSizeCount = LocalStorageManager.get<number>('pageSize') ?? 10;
 
-    const [content, setContent] = useState<DataType[] | null>(null)
+    const [content, setContent] = useState<DataType[] | undefined>(undefined)
     const [studentCount, setStudentCount] = useState<number>(0)
     const [activeIcon, setActiveIcon] = useState<number>(iconActive)
     const [searchText, setSearchText] = useState<string>('');
@@ -214,7 +226,7 @@ const StudentList = () => {
             title: 'Nom(s) et Prénons',
             dataIndex: 'lastName',
             key: 'lastName',
-            width: '30%',
+            width: '20%',
             sorter: true,
             showSorterTooltip: false,
             className: 'col__name',
@@ -243,7 +255,7 @@ const StudentList = () => {
             key: 'gender',
             align: 'center',
             filters: enumToObjectArrayForFiltering(Gender),
-            onFilter: (value, record) => record.gender.indexOf(value as string) === 0,
+            onFilter: (value, record) => record.gender.indexOf(value as string) === 0
         },
         {
             title: "Date d'Inscription",
@@ -258,12 +270,20 @@ const StudentList = () => {
             dataIndex: 'classe',
             key: 'classe',
             align: 'center'
+            //TODO getting all the grade distinct classes and filter by grade
         },
         {
             title: "Section",
             dataIndex: 'grade',
             key: 'grade',
-            align: 'center'
+            align: 'center',
+            //TODO getting all the grade distinct grade and filter by grade
+        },
+        {
+            title: "Status",
+            key: 'status',
+            align: 'center',
+            render: () => (<Tag color='success'>inscrit</Tag>)
         },
         {
             title: "Action",
@@ -300,51 +320,46 @@ const StudentList = () => {
                     <Button onClick={throughEnroll} type='primary' icon={<AiOutlineUserAdd size={20} />} className='add__btn'>Ajouter Étudiant</Button>
                 </div>
             </Flex>
-            {content !== null ? (
-                <>
-                    <div className='header__area'>
-                        <PageDescription count={studentCount} title={`Étudiant${studentCount > 1 ? 's' : ''}`} isCount={true}/>
-                        <div className='flex__end'>
-                            <Input size='middle' placeholder='Recherche...' style={{width: '300px'}} className='search__input' onChange={handleSearchInput} />
-                            {selectableIcons.map(icon => (
-                                <span key={icon.key} className={`list__icon ${activeIcon === icon.key ? 'active' : ''}`} onClick={() => selectedIcon(icon.key)}>
-                                    {icon.element}
-                                </span>
-                            ))}
-                        </div>
+            <>
+                <div className='header__area'>
+                    <PageDescription count={studentCount} title={`Étudiant${studentCount > 1 ? 's' : ''}`} isCount={true}/>
+                    <div className='flex__end'>
+                        <Input size='middle' placeholder='Recherche...' style={{width: '300px'}} className='search__input' onChange={handleSearchInput} />
+                        {selectableIcons.map(icon => (
+                            <span key={icon.key} className={`list__icon ${activeIcon === icon.key ? 'active' : ''}`} onClick={() => selectedIcon(icon.key)}>
+                                {icon.element}
+                            </span>
+                        ))}
                     </div>
-                    <Responsive gutter={[16, 16]} className={`${activeIcon !== 2 ? 'student__list__datatable' : ''}`}>
-                        {
-                            activeIcon === 2 ? <CardList content={content} isActive={activeIcon === 2 } isLoading={isLoading} dropdownItems={getItems} />
-                            : <Table
-                                style={{width: '100%'}}
-                                rowKey="id"
-                                columns={columns}
-                                dataSource={content}
-                                loading={isLoading}
-                                onChange={handleSorterChange}
-                                pagination={false}
-                            />
-                        }
-                    </Responsive>
-                    <div style={{textAlign: 'right', marginTop: '30px'}}>
-                        <Pagination
-                            current={currentPage}
-                            defaultCurrent={1}
-                            total={studentCount}
-                            pageSize={size}
-                            responsive={true}
-                            onShowSizeChange={handleSizeChange}
-                            onChange={handleNavChange}
-                            disabled={!!(isLoading || searchQuery)}
+                </div>
+                <Responsive gutter={[16, 16]} className={`${activeIcon !== 2 ? 'student__list__datatable' : ''}`}>
+                    {
+                        activeIcon === 2 ? <CardList content={content} isActive={activeIcon === 2 } isLoading={isLoading} dropdownItems={getItems} />
+                        : <Table
+                            style={{width: '100%'}}
+                            rowKey="id"
+                            columns={columns}
+                            dataSource={content}
+                            loading={isLoading}
+                            onChange={handleSorterChange}
+                            pagination={false}
+                            scroll={{y: 550}}
                         />
-                    </div>
-                </>): <EmptyPage
-                        title="Organiser les étudiant de l'école x dans le tableau"
-                        subTitle='Work teams enable simpler and faster management of your users’ access rights. Simply add users to a team and they will inherit the access rights of that work team.'
-                        btnLabel='Créer un nouveau étudiant'
-                        btnUrl={enrollUrl.current}
-                />}
+                    }
+                </Responsive>
+                <div style={{textAlign: 'right', marginTop: '30px'}}>
+                    <Pagination
+                        current={currentPage}
+                        defaultCurrent={1}
+                        total={studentCount}
+                        pageSize={size}
+                        responsive={true}
+                        onShowSizeChange={handleSizeChange}
+                        onChange={handleNavChange}
+                        disabled={!!(isLoading || searchQuery)}
+                    />
+                </div>
+            </>
         </>
     )
 }

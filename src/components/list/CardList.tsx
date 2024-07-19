@@ -6,14 +6,21 @@ import {chooseColor, fDatetime, setFirstName} from "../../utils/utils.ts";
 import {StudentList} from "../../utils/interfaces.ts";
 import {ItemType} from "antd/es/menu/hooks/useItems";
 
-const CardList = ({content, isActive, isLoading, dropdownItems}: {content: StudentList[], isActive: boolean, isLoading: boolean, dropdownItems: (url: string) => ItemType[]}) => {
+interface CardListProps {
+    content?: StudentList[],
+    isActive: boolean,
+    isLoading: boolean,
+    dropdownItems: (url: string) => ItemType[]
+}
+
+const CardList = ({content, isActive, isLoading, dropdownItems}: CardListProps) => {
     return(
         <>
             {
                 isActive && (<Skeleton loading={isLoading} active={isLoading} avatar>
                     { content?.map(d => (
                         <Grid key={d.id} xs={24} md={12} lg={8} xl={6}>
-                            <Card actions={[
+                            <Card className='card__list' actions={[
                                 <ActionButton items={dropdownItems(d.id)} placement='topRight' />
                             ]}>
                                 <Skeleton loading={isLoading} avatar active={isLoading}>

@@ -91,12 +91,21 @@
   }
 }
 
-.card__desc {
-  .desc {
-    font-size: 14px;
-    color: $text_color;
+.card__list {
+  transition: .3s ease-in-out;
+
+  &:hover {
+    box-shadow: $box_shadow_message;
+  }
+
+  .card__desc {
+    .desc {
+      font-size: 14px;
+      color: $text_color;
+    }
   }
 }
+
 
 .empty__page__wrapper {
   .empty__page__box{

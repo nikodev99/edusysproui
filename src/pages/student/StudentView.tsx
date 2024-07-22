@@ -4,9 +4,9 @@ import {fetchStudentById} from "../../data";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {text} from "../../utils/text_display.ts";
 import {setBreadcrumb} from "../../core/breadcrumb.tsx";
-import {ReactNode, useEffect, useState} from "react";
+import {ReactNode, useEffect, useMemo, useState} from "react";
 import {Student} from "../../entity";
-import {setFirstName} from "../../utils/utils.ts";
+import {getCountry, setFirstName} from "../../utils/utils.ts";
 import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
 import ViewHeader from "../../components/ui/layout/ViewHeader.tsx";
 
@@ -32,6 +32,8 @@ const StudentView = () => {
         }
     }, [data, isSuccess]);
 
+    const country = useMemo(async () => getCountry(student.nationality as string), [student.nationality] );
+
     const pageHierarchy = setBreadcrumb([
         {
             title: text.student.label,
@@ -42,7 +44,7 @@ const StudentView = () => {
         }
     ])
 
-    console.log(data)
+    console.log('country in student', student.nationality, 'country:', country)
 
     return(
         <>

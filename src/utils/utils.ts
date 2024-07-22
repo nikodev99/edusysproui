@@ -60,6 +60,10 @@ export const getCountyListInFrench = () => {
     }))
 }
 
+export const getCountry = (cca3: string) => {
+    return countries.find(country => country.cca3 === cca3)
+}
+
 export const getAcademicYear = () => {
     const curentDate = new Date()
     const currentYear = curentDate.getFullYear()

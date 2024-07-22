@@ -2,7 +2,6 @@ import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
 import {setBreadcrumb} from "../../core/breadcrumb.tsx";
 import {ChangeEvent, ReactNode, useEffect, useRef, useState} from "react";
 import {
-    Avatar,
     Button,
     Flex,
     Input,
@@ -29,12 +28,13 @@ import {useNavigate} from "react-router-dom";
 import {keepPreviousData, useQuery} from "@tanstack/react-query";
 import {fetchEnrolledStudents, fetchSearchedEnrolledStudents} from "../../data";
 import {Gender} from "../../entity/enums/gender.ts";
-import {chooseColor, enumToObjectArrayForFiltering, fDatetime, setFirstName} from "../../utils/utils.ts";
+import {enumToObjectArrayForFiltering, fDatetime, setFirstName} from "../../utils/utils.ts";
 import PageError from "../PageError.tsx";
 import Highlighter from "react-highlight-words";
 import ActionButton from "../../components/list/ActionButton.tsx";
 import CardList from "../../components/list/CardList.tsx";
 import {LuEye} from "react-icons/lu";
+import Avatar from "../../components/ui/layout/Avatar.tsx";
 
 type DataIndex = keyof DataType;
 
@@ -236,12 +236,7 @@ const StudentList = () => {
             ...getColumnSearchProps('lastName'),
             render: (text, {firstName, image, reference}) => (
                 <div className='render__name'>
-                    {
-                        image ? <Avatar src={image} />
-                        : <Avatar style={{background: chooseColor(text) as string}}>
-                            {`${text.charAt(0)}${firstName.charAt(0)}`}
-                        </Avatar>
-                    }
+                    <Avatar image={image} firstText={firstName} lastText={text} />
                     <div>
                         <p>{`${text.toUpperCase()}, ${setFirstName(firstName)}`}</p>
                         <p className='st__ref'>{reference}</p>
@@ -256,6 +251,12 @@ const StudentList = () => {
             align: 'center',
             filters: enumToObjectArrayForFiltering(Gender),
             onFilter: (value, record) => record.gender.indexOf(value as string) === 0
+        },
+        {
+            title: "Status",
+            key: 'status',
+            align: 'center',
+            render: () => (<Tag color='success'>inscrit</Tag>)
         },
         {
             title: "Date d'Inscription",
@@ -278,12 +279,6 @@ const StudentList = () => {
             key: 'grade',
             align: 'center',
             //TODO getting all the grade distinct grade and filter by grade
-        },
-        {
-            title: "Status",
-            key: 'status',
-            align: 'center',
-            render: () => (<Tag color='success'>inscrit</Tag>)
         },
         {
             title: "Action",

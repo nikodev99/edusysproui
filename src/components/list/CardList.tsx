@@ -1,10 +1,11 @@
 import Grid from "../ui/layout/Grid.tsx";
-import {Avatar, Card, Skeleton} from "antd";
+import {Card, Skeleton, Tag} from "antd";
 import ActionButton from "./ActionButton.tsx";
 import Meta from "antd/es/card/Meta";
-import {chooseColor, fDatetime, setFirstName} from "../../utils/utils.ts";
+import {fDatetime, setFirstName} from "../../utils/utils.ts";
 import {StudentList} from "../../utils/interfaces.ts";
 import {ItemType} from "antd/es/menu/hooks/useItems";
+import Avatar from "../../components/ui/layout/Avatar.tsx";
 
 interface CardListProps {
     content?: StudentList[],
@@ -25,12 +26,7 @@ const CardList = ({content, isActive, isLoading, dropdownItems}: CardListProps) 
                             ]}>
                                 <Skeleton loading={isLoading} avatar active={isLoading}>
                                     <Meta
-                                        avatar={
-                                            d.image ? <Avatar src={d.image} />
-                                                : <Avatar style={{background: chooseColor(d.lastName) as string}}>
-                                                    {`${d.lastName.charAt(0)}${d.firstName.charAt(0)}`}
-                                                </Avatar>
-                                        }
+                                        avatar={<Avatar image={d.image} lastText={d.lastName} firstText={d.firstName} />}
                                         title={<div className='col__name'>
                                             <p>{`${d.lastName.toUpperCase()}, ${setFirstName(d.firstName)}`}</p>
                                             <p className='st__ref'>{d.reference}</p>
@@ -39,6 +35,7 @@ const CardList = ({content, isActive, isLoading, dropdownItems}: CardListProps) 
                                         }
                                         description={
                                             <div className='card__desc'>
+                                                <p className='desc'><Tag color='success'>inscrit</Tag></p>
                                                 <p className='desc'>{`${d.grade.toString()} - ${d.classe}`}</p>
                                                 <p className='desc'>Inscrit le {fDatetime(d.lastEnrolledDate, true)}</p>
                                             </div>

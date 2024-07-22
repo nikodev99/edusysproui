@@ -112,7 +112,7 @@ export const chooseColor = (name: string): string | null | undefined => {
         }
 }
 
-export const setFirstName = (firstName: string) => {
+export const setFirstName = (firstName?: string) => {
     if (firstName)
         return firstName.split(' ')
             .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())

@@ -3,7 +3,7 @@ import {z} from "zod";
 import {enrollmentSchema, guardianSchema} from "../schema";
 import {ValidateStatus} from "antd/es/form/FormItem";
 import {ReactNode} from "react";
-import {Guardian} from "../entity";
+import {AcademicYear, Guardian} from "../entity";
 import {SectionType} from "../entity/enums/section.ts";
 import {Gender} from "../entity/enums/gender.ts";
 
@@ -82,6 +82,7 @@ export interface AxiosConfig {
 
 export interface StudentList {
     id: string
+    academicYear: AcademicYear
     reference: string
     firstName: string
     lastName: string

@@ -12,7 +12,6 @@ import {
     TableColumnsType,
     TableColumnType,
     TablePaginationConfig,
-    Tag
 } from "antd";
 import PageDescription from "../PageDescription.tsx";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
@@ -28,13 +27,14 @@ import {useNavigate} from "react-router-dom";
 import {keepPreviousData, useQuery} from "@tanstack/react-query";
 import {fetchEnrolledStudents, fetchSearchedEnrolledStudents} from "../../data";
 import {Gender} from "../../entity/enums/gender.ts";
-import {enumToObjectArrayForFiltering, fDatetime, setFirstName} from "../../utils/utils.ts";
+import {dateCompare, enumToObjectArrayForFiltering, fDatetime, setFirstName} from "../../utils/utils.ts";
 import PageError from "../PageError.tsx";
 import Highlighter from "react-highlight-words";
 import ActionButton from "../../components/list/ActionButton.tsx";
 import CardList from "../../components/list/CardList.tsx";
 import {LuEye} from "react-icons/lu";
 import Avatar from "../../components/ui/layout/Avatar.tsx";
+import Tagger from "../../components/list/Tagger.tsx";
 
 type DataIndex = keyof DataType;
 
@@ -221,6 +221,8 @@ const StudentList = () => {
         setSearchQuery(e.target.value)
     }
 
+    console.log(content)
+
     const columns: TableColumnsType<DataType> = [
         {
             title: 'Nom(s) et Prénons',
@@ -254,9 +256,10 @@ const StudentList = () => {
         },
         {
             title: "Status",
+            dataIndex: 'academicYear',
             key: 'status',
             align: 'center',
-            render: () => (<Tag color='success'>inscrit</Tag>)
+            render: (text) => (<Tagger status={dateCompare(text.endDate)} successMessage={'inscrit'} warnMessage={'fin-année-scolaire'} />)
         },
         {
             title: "Date d'Inscription",

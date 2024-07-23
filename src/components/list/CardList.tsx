@@ -1,11 +1,12 @@
 import Grid from "../ui/layout/Grid.tsx";
-import {Card, Skeleton, Tag} from "antd";
+import {Card, Skeleton} from "antd";
 import ActionButton from "./ActionButton.tsx";
 import Meta from "antd/es/card/Meta";
-import {fDatetime, setFirstName} from "../../utils/utils.ts";
+import {dateCompare, fDatetime, setFirstName} from "../../utils/utils.ts";
 import {StudentList} from "../../utils/interfaces.ts";
 import {ItemType} from "antd/es/menu/hooks/useItems";
 import Avatar from "../../components/ui/layout/Avatar.tsx";
+import Tagger from "./Tagger.tsx";
 
 interface CardListProps {
     content?: StudentList[],
@@ -35,7 +36,7 @@ const CardList = ({content, isActive, isLoading, dropdownItems}: CardListProps) 
                                         }
                                         description={
                                             <div className='card__desc'>
-                                                <p className='desc'><Tag color='success'>inscrit</Tag></p>
+                                                <p className='desc'><Tagger status={dateCompare(d.academicYear.endDate as Date)} successMessage='inscrit' warnMessage='fin-annee-scolaire' /></p>
                                                 <p className='desc'>{`${d.grade.toString()} - ${d.classe}`}</p>
                                                 <p className='desc'>Inscrit le {fDatetime(d.lastEnrolledDate, true)}</p>
                                             </div>

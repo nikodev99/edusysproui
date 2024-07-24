@@ -1,23 +1,20 @@
-import {Button, Dropdown, Flex} from "antd";
+import {Button, Dropdown, Flex, Skeleton} from "antd";
 import {Student} from "../../../entity";
 import Avatar from "./Avatar.tsx";
-import {LuChevronDown, LuPencil, LuTrash, LuUserCircle, LuUserCog, LuUserPlus} from "react-icons/lu";
-import {useMemo} from "react";
-import {getCountry, setFirstName} from "../../../utils/utils.ts";
+import {LuChevronDown, LuPencil, LuTrash, LuUserCircle, LuUserPlus} from "react-icons/lu";
+import {setFirstName} from "../../../utils/utils.ts";
 
 interface ViewProps {
-    student: Student
+    student: Student,
+    isLoading: boolean,
 }
 
-const ViewHeader = ({student}: ViewProps) => {
-
-    //const country = useMemo( () => getCountry(student.nationality as string), [student.nationality] );
+const ViewHeader = ({student, isLoading}: ViewProps) => {
     const enrollment = student.enrollments?.find(e => !e.isArchive)
-
-    console.log('Enrollment: ', student)
 
     return(
         <Flex align='center' justify='space-between' component='header' className='view__block'>
+            <Skeleton loading={isLoading} active={isLoading} avatar paragraph={{rows: 1}}>
             <Flex className="avatar-container" align='center' gap={10}>
                 <Avatar image={student.image} firstText={student.firstName} lastText={student.lastName} size={60} />
                 <Flex className="legal" vertical justify='center'>
@@ -49,6 +46,7 @@ const ViewHeader = ({student}: ViewProps) => {
                     <Button type='primary' className='add__btn'>Gérer <LuChevronDown size={18} /></Button>
                 </Dropdown>
             </Flex>
+            </Skeleton>
         </Flex>
     )
 }

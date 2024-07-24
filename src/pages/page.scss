@@ -161,6 +161,7 @@
 //View Page
 .view__block {
   @include xs-screen;
+  margin-bottom: 30px;
 
   .block {
     p:first-child {
@@ -196,5 +197,14 @@
       line-height: 20px;
       color: #666666;
     }
+  }
+}
+
+.tabs {
+  &.sticky {
+    position: -webkit-sticky; /* For Safari */
+    position: sticky;
+    top: 0;
+    z-index: 1000; /* Adjust as needed */
   }
 }

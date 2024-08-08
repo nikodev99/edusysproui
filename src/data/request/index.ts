@@ -1,5 +1,5 @@
 import {apiClient, request} from "../axiosConfig.ts";
-import {AcademicYear, Classe, Guardian, Student} from "../../entity";
+import {AcademicYear, Classe, Enrollment, Guardian} from "../../entity";
 import {AxiosResponse} from "axios";
 
 export const getAcademicYear = (): Promise<AxiosResponse<AcademicYear>> => {
@@ -40,6 +40,6 @@ export const searchEnrolledStudents = (searchInput: string) => {
     })
 }
 
-export const getStudentById = (studentId: string): Promise<AxiosResponse<Student>> => {
-    return apiClient.get(`/student/${studentId}`)
+export const getStudentById = (studentId: string): Promise<AxiosResponse<Enrollment>> => {
+    return apiClient.get(`/enroll/student/${studentId}`)
 }

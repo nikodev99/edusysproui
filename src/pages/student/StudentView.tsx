@@ -4,8 +4,8 @@ import {fetchStudentById} from "../../data";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {text} from "../../utils/text_display.ts";
 import {setBreadcrumb} from "../../core/breadcrumb.tsx";
-import {ReactNode, useEffect, useRef, useState} from "react";
-import {Student} from "../../entity";
+import {ReactNode, useEffect, useState} from "react";
+import {Classe, Enrollment, Student} from "../../entity";
 import {setFirstName} from "../../utils/utils.ts";
 import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
 import ViewHeader from "../../components/ui/layout/ViewHeader.tsx";
@@ -22,7 +22,9 @@ const StudentView = () => {
 
     const { id } = useParams()
 
+    const [enrolledStudent, setEnrolledStudent] = useState<Enrollment>({})
     const [student, setStudent] = useState<Student>({})
+    const [classe, setClasse] = useState<Classe>({})
 
     const {data, isLoading, isSuccess, error, isError} = useQuery({
         queryKey: ['student-id'],
@@ -49,7 +51,9 @@ const StudentView = () => {
 
     useEffect(() => {
         if (isSuccess && data) {
-            setStudent(data)
+            setEnrolledStudent(data)
+            setStudent(data.student as Student)
+            setClasse(data.classe as Classe)
         }
     }, [data, isSuccess]);
     
@@ -61,21 +65,19 @@ const StudentView = () => {
     return(
         <>
             <PageHierarchy items={pageHierarchy as [{title: string | ReactNode, path?: string}]} mBottom={25} />
-            <ViewHeader student={student}  isLoading={isLoading}/>
-            <Sticky>
-                <Tabs rootClassName={`tabs`}
-                      items={[
-                          {key: '1', label: 'Info', children: <StudentInfo />},
-                          {key: '2', label: 'Examens', children: <StudentExam />},
-                          {key: '3', label: 'Presence', children: <StudentAttendance />},
-                          {key: '4', label: 'Classe', children: <StudentClasse />},
-                          {key: '5', label: 'Historique', children: <StudentHistory />},
-                      ]}
-                      onChange={handleTabChange}
-                      defaultActiveKey={tabKey}
-                      centered
-                />
-            </Sticky>
+            <ViewHeader student={student} classe={classe} isLoading={isLoading}/>
+            <Tabs rootClassName={`tabs`}
+                  items={[
+                      {key: '1', label: 'Info', children: <StudentInfo />},
+                      {key: '2', label: 'Examens', children: <StudentExam />},
+                      {key: '3', label: 'Presence', children: <StudentAttendance />},
+                      {key: '4', label: 'Classe', children: <StudentClasse />},
+                      {key: '5', label: 'Historique', children: <StudentHistory />},
+                  ]}
+                  onChange={handleTabChange}
+                  defaultActiveKey={tabKey}
+                  centered
+            />
         </>
     )
 }

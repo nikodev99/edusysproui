@@ -1,15 +1,16 @@
 import {Button, Dropdown, Flex, Skeleton} from "antd";
-import {Student} from "../../../entity";
+import {Classe, Student} from "../../../entity";
 import Avatar from "./Avatar.tsx";
 import {LuChevronDown, LuPencil, LuTrash, LuUserCircle, LuUserPlus} from "react-icons/lu";
 import {setFirstName} from "../../../utils/utils.ts";
 
 interface ViewProps {
     student: Student,
+    classe: Classe
     isLoading: boolean,
 }
 
-const ViewHeader = ({student, isLoading}: ViewProps) => {
+const ViewHeader = ({student, classe, isLoading}: ViewProps) => {
     const enrollment = student.enrollments?.find(e => !e.isArchive)
 
     return(
@@ -19,7 +20,7 @@ const ViewHeader = ({student, isLoading}: ViewProps) => {
                 <Avatar image={student.image} firstText={student.firstName} lastText={student.lastName} size={60} />
                 <Flex className="legal" vertical justify='center'>
                     <span className='title'>{setFirstName(`${student.lastName} ${student.firstName}`)}</span>
-                    <span className='mention'>Étudiant</span>
+                    <span className='mention'>{student.reference}</span>
                 </Flex>
             </Flex>
             <Flex className='block' align='flex-start' vertical gap={4}>
@@ -28,8 +29,8 @@ const ViewHeader = ({student, isLoading}: ViewProps) => {
             </Flex>
             {
                 enrollment ? (<Flex className='block' align='flex-start' vertical gap={4}>
-                    <p>Classe</p>
-                    <p>{enrollment?.classe?.name}</p>
+                    <p>{classe?.name}</p>
+                    <p>{classe?.grade?.section}</p>
                 </Flex>): (<Flex className='block' align='flex-start' vertical gap={4}>
                     <p>Tuteur téléphone</p>
                     <p>{student.guardian?.telephone}</p>

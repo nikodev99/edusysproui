@@ -1,1 +1,35 @@
 @import "../../assets/style/main";
+
+/*** Block UI ***/
+
+.block-wrapper {
+  width: 100%;
+  margin: .3em auto;
+
+  .block-mansory {
+    padding: 0;
+    @include column-gap(1em);
+
+    .block-item {
+      display: inline-block;
+      padding: 0;
+      margin: 0 0 1em;
+      width: 100%;
+      @include box-sizing(border-box);
+      -moz-transition: box-shadow 0.3s ease, transform 0.3s ease;
+      -webkit-transition: box-shadow 0.3s ease, transform 0.3s ease;
+      transition: box-shadow 0.3s ease, transform 0.3s ease;
+      box-shadow: $box-shadow-panel;
+
+      &:hover {
+        box-shadow: $box-shadow-panel-hover;
+      }
+    }
+
+    @include block-screen(400px,2);
+    @include block-screen(700px, 2);
+    @include block-screen(900px, 3);
+    @include block-screen(1100px, 3);
+    @include block-screen(1280px, 3);
+  }
+}

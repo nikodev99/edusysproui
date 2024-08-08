@@ -85,9 +85,7 @@ export const fDatetime = (timestamp: Date | number | string, to?: boolean) => {
 
 export const dateCompare = (date: Date) => {
     const today = dayjs()
-    console.log('today: ', today)
     const dateToCompareWith = dayjs(date)
-    console.log('dateToCompareWith: ', dateToCompareWith)
     return dateToCompareWith.isAfter(today)
 }
 

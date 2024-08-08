@@ -12,10 +12,11 @@ interface CardListProps {
     content?: StudentList[],
     isActive: boolean,
     isLoading: boolean,
-    dropdownItems: (url: string) => ItemType[]
+    dropdownItems: (url: string) => ItemType[],
+    throughDetails: (id: string) => void
 }
 
-const CardList = ({content, isActive, isLoading, dropdownItems}: CardListProps) => {
+const CardList = ({content, isActive, isLoading, dropdownItems, throughDetails}: CardListProps) => {
     return(
         <>
             {
@@ -29,7 +30,7 @@ const CardList = ({content, isActive, isLoading, dropdownItems}: CardListProps) 
                                     <Meta
                                         avatar={<Avatar image={d.image} lastText={d.lastName} firstText={d.firstName} />}
                                         title={<div className='col__name'>
-                                            <p>{`${d.lastName.toUpperCase()}, ${setFirstName(d.firstName)}`}</p>
+                                            <p onClick={() => throughDetails(d.id)}>{`${d.lastName.toUpperCase()}, ${setFirstName(d.firstName)}`}</p>
                                             <p className='st__ref'>{d.reference}</p>
                                             <p className='st__ref'>{d.gender.toString()}</p>
                                         </div>

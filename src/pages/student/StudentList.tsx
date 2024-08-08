@@ -332,7 +332,7 @@ const StudentList = () => {
                 </div>
                 <Responsive gutter={[16, 16]} className={`${activeIcon !== 2 ? 'student__list__datatable' : ''}`}>
                     {
-                        activeIcon === 2 ? <CardList content={content} isActive={activeIcon === 2 } isLoading={isLoading} dropdownItems={getItems} />
+                        activeIcon === 2 ? <CardList content={content} isActive={activeIcon === 2 } isLoading={isLoading} dropdownItems={getItems} throughDetails={throughDetails} />
                         : <Table
                             style={{width: '100%'}}
                             rowKey="id"

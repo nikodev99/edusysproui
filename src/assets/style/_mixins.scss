@@ -46,7 +46,25 @@
   @include flex-center;
 }
 
-@mixin md_screen {
+@mixin column-count($columnCount) {
+  -moz-column-count: $columnCount;
+  -webkit-column-count: $columnCount;
+  column-count: $columnCount;
+}
+
+@mixin column-gap($columnGap) {
+  -moz-column-gap: $columnGap;
+  -webkit-column-gap: $columnGap;
+  column-gap: $columnGap;
+}
+
+@mixin box-sizing($box-sizing) {
+  box-sizing: $box-sizing;
+  -moz-box-sizing: $box-sizing;
+  -webkit-box-sizing: $box-sizing;
+}
+
+@mixin hide_screen {
   @media (max-width: 767px) {
     display: none;
   }
@@ -58,5 +76,13 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 10px 0;
+  }
+}
+
+@mixin block-screen($width, $columnCount) {
+  @media only screen and (min-width: $width) {
+    -moz-column-count: $columnCount;
+    -webkit-column-count: $columnCount;
+    column-count: $columnCount;
   }
 }

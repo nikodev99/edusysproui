@@ -26,6 +26,9 @@ dependencies:
   axios:
     specifier: ^1.7.2
     version: 1.7.2
+  country-flag-icons:
+    specifier: ^1.5.13
+    version: 1.5.13
   dayjs:
     specifier: ^1.11.11
     version: 1.11.11
@@ -1545,6 +1548,10 @@ packages:
     resolution: {integrity: sha512-2KV8NhB5JqC3ky0r9PMCAZKbUHSwtEo4CwCs0KXgruG43gX5PMqDEBbVU4OUzw2MuAWUfsuFmWvEKG5QRfSnJA==}
     dependencies:
       toggle-selection: 1.0.6
+    dev: false
+
+  /country-flag-icons@1.5.13:
+    resolution: {integrity: sha512-4JwHNqaKZ19doQoNcBjsoYA+I7NqCH/mC/6f5cBWvdKzcK5TMmzLpq3Z/syVHMHJuDGFwJ+rPpGizvrqJybJow==}
     dev: false
 
   /cross-spawn@7.0.3:

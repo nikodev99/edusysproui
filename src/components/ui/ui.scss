@@ -22,7 +22,7 @@
       box-shadow: $box-shadow-panel;
 
       &:hover {
-        box-shadow: $box-shadow-panel-hover;
+        box-shadow: $box_shadow_colored;
       }
     }
 
@@ -31,5 +31,107 @@
     @include block-screen(900px, 3);
     @include block-screen(1100px, 3);
     @include block-screen(1280px, 3);
+  }
+}
+
+/*** Panel UI ***/
+
+.panel {
+  @include display(flex, center, space-around);
+  gap: 10px;
+  padding: 12px;
+
+  .panel-head {
+    @include flex-center;
+    -webkit-box-align: center;
+    -webkit-box-pack: center;
+
+    .stat {
+      display: flex;
+      flex-direction: column;
+      -webkit-box-align: center;
+      align-items: center;
+      text-align: center;
+
+      .big-row {
+        font-size: 20px;
+        color: $text-color;
+      }
+
+      .small-row {
+        font-size: 13px;
+        color: #717171;
+      }
+
+      .round-row {
+        border-radius: 50%;
+        overflow: hidden;
+        color: #fff;
+        width: 35px; height: 35px;
+        text-transform: uppercase;
+        font-weight: 700;
+        @include flex-center;
+        font-size: 13px;
+        border: 2px solid #e1e1e1;
+
+        span {
+          transform: translate(-2%, 18%);
+        }
+
+        span, img {
+          width: 46px;
+          height: 35px;
+          color: $text_color;
+        }
+      }
+    }
+  }
+}
+
+.panel-table {
+  position: relative;
+  background-color: #fff;
+
+  .table-head {
+    background-color: $primary_color;
+    text-align: center;
+    text-transform: uppercase;
+    padding: 4px 0;
+    color: $text_color_over_primary_color;
+  }
+
+  .table-body {
+    padding-top: 4px;
+
+    .table-row {
+      padding: 8px 10px;
+      @include display(flex, center, space-between);
+      font-size: 14px;
+      border-bottom: 1px solid #ececec;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      & > p:nth-child(odd) {
+        color: #717171;
+        max-width: 50%;
+      }
+
+      & > p:nth-child(even) {
+        color: $text_color;
+        max-width: 50%;
+        text-align: right;
+      }
+
+      p.linked {
+        cursor: pointer;
+        transition: .3s;
+
+        &:hover {
+          color: $primary_color;
+        }
+      }
+    }
   }
 }

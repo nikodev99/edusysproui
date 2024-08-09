@@ -13,7 +13,7 @@ export interface Student {
     gender?: Gender | string
     emailId?: string
     enrollments?: Enrollment[]
-    birthDate?: Date
+    birthDate?: Date | [number, number, number]
     birthCity?: string
     nationality?: string
     dadName?: string

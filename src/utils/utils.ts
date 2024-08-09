@@ -75,12 +75,42 @@ export const getAcademicYear = () => {
     return (currentYear - 1).toString() + '-' + currentYear.toString()
 }
 
+export const getAge = (dateArray?: [number, number, number]): number => {
+    const date = new Date()
+    const incomingYear = dateArray ? arrayToDate(dateArray).getFullYear() : 0
+    return date.getFullYear() - incomingYear
+}
+
+const arrayToDate = (dateArray: [number, number, number]): Date => {
+    const [year, month, day] = dateArray;
+    return new Date(year, month - 1, day);
+}
+
 export const fDatetime = (timestamp: Date | number | string, to?: boolean) => {
     const format: string = to ? 'DD/MM/YYYY à HH:mm' : 'DD/MM/YYYY HH:mm'
     if (timestamp) {
         return dayjs.unix(timestamp as number).format(format)
     }
     return undefined
+}
+
+export const fDate = (date?: Date | [number, number, number] | string) => {
+    const format: string = 'D MMMM YYYY';
+    if (date) {
+        let dayjsDate;
+
+        if (Array.isArray(date)) {
+            const [year, month, day] = date;
+            dayjsDate = dayjs(new Date(year, month - 1, day));
+        } else if (typeof date === 'string') {
+            dayjsDate = dayjs(date);
+        } else {
+            dayjsDate = dayjs(date);
+        }
+
+        return dayjsDate.locale('fr').format(format);
+    }
+    return undefined;
 }
 
 export const dateCompare = (date: Date) => {
@@ -128,6 +158,16 @@ export const setFirstName = (firstName?: string) => {
             .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
             .join(' ')
     return ''
+}
+
+export const firstLetter = (word?: string): string => {
+    if (!word) return '';
+    return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+}
+
+export const convertToM = (cm?: number) => {
+    const meters = cm ? cm / 100 : 0;
+    return `${meters}`;
 }
 
 export const getShortSortOrder = (order: string | undefined): 'asc' | 'desc' | undefined => {

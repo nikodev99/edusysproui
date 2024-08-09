@@ -208,3 +208,22 @@
     z-index: 1000; /* Adjust as needed */
   }
 }
+
+.profile-card {
+  .ant-card-body {
+    padding: 12px 0
+  }
+  .ant-card-head {
+    background-color: #f9f9f9;
+    border-radius: 0;
+  }
+  .ant-divider-horizontal {
+    margin: 0;
+  }
+
+  .birth-Body {
+    padding: 12px;
+    text-align: center;
+    color: #717171;
+  }
+}

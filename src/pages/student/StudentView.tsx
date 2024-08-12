@@ -66,10 +66,10 @@ const StudentView = () => {
         <>
             <PageHierarchy items={pageHierarchy as [{title: string | ReactNode, path?: string}]} mBottom={25} />
             <ViewHeader student={student} classe={classe} isLoading={isLoading}/>
-            <Sticky>
+            {/*<Sticky>*/}
                 <Tabs rootClassName={`tabs`}
                       items={[
-                          {key: '1', label: 'Info', children: <StudentInfo student={student} />},
+                          {key: '1', label: 'Info', children: <StudentInfo student={student} classe={classe} />},
                           {key: '2', label: 'Examens', children: <StudentExam />},
                           {key: '3', label: 'Presence', children: <StudentAttendance />},
                           {key: '4', label: 'Classe', children: <StudentClasse />},
@@ -79,7 +79,7 @@ const StudentView = () => {
                       defaultActiveKey={tabKey}
                       centered
                 />
-            </Sticky>
+            {/*</Sticky>*/}
         </>
     )
 }

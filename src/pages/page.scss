@@ -210,8 +210,10 @@
 }
 
 .profile-card {
+  border-radius: unset!important;
+
   .ant-card-body {
-    padding: 12px 0
+    padding: 0 0;
   }
   .ant-card-head {
     background-color: #f9f9f9;
@@ -225,5 +227,18 @@
     padding: 12px;
     text-align: center;
     color: #717171;
+  }
+
+  .btn-toggle {
+    color: $primary_color;
+    text-align: center;
+    font-size: 15px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: .4s;
+
+    &:hover {
+      color: lighten($primary_color, 60%);
+    }
   }
 }

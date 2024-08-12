@@ -170,6 +170,10 @@ export const convertToM = (cm?: number) => {
     return `${meters}`;
 }
 
+export const isNull = (word: string | undefined) => {
+    return word === null || word === undefined || word === '' || word.length === 0;
+}
+
 export const getShortSortOrder = (order: string | undefined): 'asc' | 'desc' | undefined => {
     switch (order) {
         case 'ascend':

@@ -9,17 +9,15 @@ import {
     convertToM,
     fDate,
     firstLetter,
-    isNull,
-    enumToObjectArrayForFiltering, dateCompare, fDatetime
+    isNull,fDatetime
 } from "../../utils/utils.ts";
 import PanelStat from "../ui/layout/PanelStat.tsx";
 import {Gender} from "../../entity/enums/gender.ts";
 import PanelTable from "../ui/layout/PanelTable.tsx";
 import {SectionType} from "../../entity/enums/section.ts";
-import {StudentList as DataType} from "../../utils/interfaces.ts";
-import Avatar from "../ui/layout/Avatar.tsx";
-import Tagger from "../list/Tagger.tsx";
-import ActionButton from "../list/ActionButton.tsx";
+import {
+    Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer
+} from 'recharts';
 
 interface StudentInfoProps {
     student: Student,
@@ -100,11 +98,11 @@ const ExamList = ({student, classe}: StudentInfoProps) => {
     }, [student.marks]);
 
     const data: DataType[] = scores?.map((s) => ({
-        examDate: s.exam?.examDate || '',
-        examName: s.exam?.examName || '',
-        classe: classe?.name || '',
-        obtainedMark: s.obtainedMark || '',
-    }));
+        examDate: fDate(s.exam?.examDate) ?? '',
+        examName: s.exam?.subject?.course ?? '',
+        classe: classe?.name ?? '',
+        obtainedMark: s.obtainedMark ?? 0,
+    })) ?? [];
     
     const columns: TableColumnsType<DataType> = [
         {
@@ -140,7 +138,34 @@ const ExamList = ({student, classe}: StudentInfoProps) => {
         <Card className='profile-card' title='Performance aux devoirs' size="small" extra={
             <p onClick={seeMore} className="btn-toggle">Plus</p>
         }>
-            <Table className='score-table' columns={columns} dataSource={data as DataType[]} />
+            <Table className='score-table' size='small' columns={columns} dataSource={data} />
+        </Card>
+    )
+}
+
+const GraphSection = ({notes}: {notes: Score[]}) => {
+    const data = notes.map((s) => ({
+        subject: s.exam?.subject?.course,
+        score: s.obtainedMark
+    }))
+
+    data.push({subject: 'Physique chimie', score: 20})
+    data.push({subject: 'French', score: 12})
+    data.push({subject: 'Anglais', score: 18})
+    data.push({subject: 'Music', score: 15})
+    data.push({subject: 'Math', score: 13})
+
+    return (
+        <Card className='profile-card' title='Progression aux examens' size='small'>
+            <ResponsiveContainer width="100%">
+                <RadarChart data={data}>
+                    <PolarGrid />
+                    <PolarAngleAxis dataKey="subject" fill='#000' />
+                    {/* TODO ajouter à combien vont les notes. Par défaut [0 à 20] puis customizable */}
+                    <PolarRadiusAxis angle={30} domain={[0, 20]} />
+                    <Radar name="Scores" dataKey="score" stroke="#000C40" fill="#000C40" fillOpacity={.5} />
+                </RadarChart>
+            </ResponsiveContainer>
         </Card>
     )
 }
@@ -149,7 +174,8 @@ const StudentInfo = ({student, classe}: StudentInfoProps) => {
 
     const items: ReactNode[] = [
         <IndividualInfo student={student} />,
-        ...(classe?.grade?.section != SectionType.MATERNELLE && classe?.grade?.section != SectionType.PRIMAIRE ? [<ExamList student={student} />] : [])
+        ...(classe?.grade?.section != SectionType.MATERNELLE && classe?.grade?.section != SectionType.PRIMAIRE ? [<ExamList student={student} />] : []),
+        ...(classe?.grade?.section != SectionType.MATERNELLE && classe?.grade?.section != SectionType.PRIMAIRE ? [<GraphSection notes={student?.marks ?? []} />] : [])
     ]
 
     return(

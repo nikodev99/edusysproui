@@ -64,15 +64,11 @@ export const getCountry = (cca3: string) => {
     return countries.find(country => country.cca3 === cca3)
 }
 
-export const getAcademicYear = () => {
-    const curentDate = new Date()
-    const currentYear = curentDate.getFullYear()
-    const curentMonth = curentDate.getMonth()
-    console.log(curentMonth)
-    if (curentMonth > 7) {
-        return currentYear.toString() + '-' + (currentYear + 1).toString()
+export const getStringAcademicYear = (startDate?: Date | [number, number, number], endDate?: Date | [number, number, number]) => {
+    if (startDate && endDate) {
+        return `${arrayToDate(startDate).getFullYear()} - ${arrayToDate(endDate).getFullYear()}`
     }
-    return (currentYear - 1).toString() + '-' + currentYear.toString()
+    return undefined
 }
 
 export const getAge = (dateArray?: [number, number, number]): number => {
@@ -81,9 +77,12 @@ export const getAge = (dateArray?: [number, number, number]): number => {
     return date.getFullYear() - incomingYear
 }
 
-const arrayToDate = (dateArray: [number, number, number]): Date => {
-    const [year, month, day] = dateArray;
-    return new Date(year, month - 1, day);
+const arrayToDate = (dateArray: Date | [number, number, number]): Date => {
+    if (Array.isArray(dateArray)) {
+        const [year, month, day] = dateArray
+        return new Date(year, month - 1, day);
+    }
+    return new Date(dateArray)
 }
 
 export const fDatetime = (timestamp: Date | number | string, to?: boolean) => {
@@ -96,9 +95,24 @@ export const fDatetime = (timestamp: Date | number | string, to?: boolean) => {
 
 export const fDate = (date?: Date | [number, number, number] | string) => {
     const format: string = 'D MMMM YYYY';
-    if (date) {
-        let dayjsDate;
+    return setDayJsDate(date)?.locale('fr').format(format);
+}
 
+export const monthsBetween = (startDate?: Date | number[] | string, endDate?: Date | number[] | string) => {
+    const end = setDayJsDate(endDate)
+    const start = setDayJsDate(startDate)
+    return end?.diff(start, 'month');
+}
+
+export const dateCompare = (date: Date) => {
+    const today = dayjs()
+    const dateToCompareWith = dayjs(date)
+    return dateToCompareWith.isAfter(today)
+}
+
+const setDayJsDate = (date?: Date | number[] | string) => {
+    if (date) {
+        let dayjsDate
         if (Array.isArray(date)) {
             const [year, month, day] = date;
             dayjsDate = dayjs(new Date(year, month - 1, day));
@@ -107,16 +121,9 @@ export const fDate = (date?: Date | [number, number, number] | string) => {
         } else {
             dayjsDate = dayjs(date);
         }
-
-        return dayjsDate.locale('fr').format(format);
+        return dayjsDate
     }
-    return undefined;
-}
-
-export const dateCompare = (date: Date) => {
-    const today = dayjs()
-    const dateToCompareWith = dayjs(date)
-    return dateToCompareWith.isAfter(today)
+    return undefined
 }
 
 export const chooseColor = (name: string): string | null | undefined => {

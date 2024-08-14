@@ -1,7 +1,7 @@
 import Block from "../ui/layout/Block.tsx";
 import {Card, Divider, Table, TableColumnsType} from "antd";
 import {ReactNode, useEffect, useState} from "react";
-import {Classe, Score, Student} from "../../entity";
+import {Classe, Enrollment, Score, Student} from "../../entity";
 import {
     getAge,
     getCountry,
@@ -9,7 +9,7 @@ import {
     convertToM,
     fDate,
     firstLetter,
-    isNull,fDatetime
+    isNull, fDatetime, getStringAcademicYear, monthsBetween
 } from "../../utils/utils.ts";
 import PanelStat from "../ui/layout/PanelStat.tsx";
 import {Gender} from "../../entity/enums/gender.ts";
@@ -21,7 +21,15 @@ import {
 
 interface StudentInfoProps {
     student: Student,
-    classe?: Classe
+    classe?: Classe,
+    seeMore?: () => void
+}
+
+interface DataTable {
+    year: string;
+    examName?: string;
+    classe: string;
+    obtainedMark: number;
 }
 
 const IndividualInfo = ({student}: StudentInfoProps) => {
@@ -41,7 +49,10 @@ const IndividualInfo = ({student}: StudentInfoProps) => {
         {statement: 'Numéro', response: student.address?.number},
         {statement: 'Rue', response: student.address?.street},
         {statement: 'Quartier', response: student.address?.neighborhood},
-        ...(!isNull(student.address?.borough) ? [{statement: 'Arrondissement', response: student.address?.borough}]: []),
+        ...(!isNull(student.address?.borough) ? [{
+            statement: 'Arrondissement',
+            response: student.address?.borough
+        }] : []),
         {statement: 'Ville', response: student.address?.city}
     ]
     const guardianData = [
@@ -55,56 +66,48 @@ const IndividualInfo = ({student}: StudentInfoProps) => {
     useEffect(() => {
         if (student && country && student.gender === Gender.FEMME) {
             setNationality(country?.demonyms.fra.f)
-        }else {
+        } else {
             setNationality(country?.demonyms.fra.m)
         }
     }, [country, student]);
-    
 
-    return(
+
+    return (
         <Card className='profile-card'
               title={`Profile de ${setFirstName(student.firstName + ' ' + student.lastName)}`} size="small">
             <div className='panel'>
                 <PanelStat title={studentAge} subTitle='ans' src={true} media={country?.cca2} desc={nationality}/>
                 <PanelStat title={student.healthCondition?.weight} subTitle='kgs' src={false} media={''} desc='Poids'/>
-                <PanelStat title={student.healthCondition?.height} subTitle='m' src={false} media={convertToM(student.healthCondition?.height as number)} desc='Taille'/>
+                <PanelStat title={student.healthCondition?.height} subTitle='m' src={false}
+                           media={convertToM(student.healthCondition?.height as number)} desc='Taille'/>
             </div>
             <div className='birth-Body'><p>Née le {birthDay} à {student.birthCity}</p></div>
-            <Divider />
+            <Divider/>
             <div className="panel-table">
-                <PanelTable  title='Données Personnelles' data={individualData} />
-                <PanelTable  title='Addresse' data={addressData} />
-                <PanelTable  title='Tuteur' data={guardianData} />
+                <PanelTable title='Données Personnelles' data={individualData}/>
+                <PanelTable title='Addresse' data={addressData}/>
+                <PanelTable title='Tuteur' data={guardianData}/>
             </div>
         </Card>
     )
 }
 
-const ExamList = ({student, classe}: StudentInfoProps) => {
-
-    const seeMore = () => {console.log('seing More')}
+const ExamList = ({student, classe, seeMore}: StudentInfoProps) => {
 
     const [scores, setScore] = useState<Score[]>()
-    
-    interface DataType {
-        examDate: string;
-        examName: string;
-        classe: string;
-        obtainedMark: number;
-    }
 
     useEffect(() => {
         setScore(student.marks)
     }, [student.marks]);
 
-    const data: DataType[] = scores?.map((s) => ({
-        examDate: fDate(s.exam?.examDate) ?? '',
+    const data: DataTable[] = scores?.map((s) => ({
+        year: fDate(s.exam?.examDate) ?? '',
         examName: s.exam?.subject?.course ?? '',
         classe: classe?.name ?? '',
         obtainedMark: s.obtainedMark ?? 0,
     })) ?? [];
-    
-    const columns: TableColumnsType<DataType> = [
+
+    const columns: TableColumnsType<DataTable> = [
         {
             title: "Date",
             dataIndex: 'examDate',
@@ -138,12 +141,12 @@ const ExamList = ({student, classe}: StudentInfoProps) => {
         <Card className='profile-card' title='Performance aux devoirs' size="small" extra={
             <p onClick={seeMore} className="btn-toggle">Plus</p>
         }>
-            <Table className='score-table' size='small' columns={columns} dataSource={data} />
+            <Table className='score-table' size='small' columns={columns} dataSource={data}/>
         </Card>
     )
 }
 
-const GraphSection = ({notes}: {notes: Score[]}) => {
+const GraphSection = ({notes}: { notes: Score[] }) => {
     const data = notes.map((s) => ({
         subject: s.exam?.subject?.course,
         score: s.obtainedMark
@@ -157,15 +160,56 @@ const GraphSection = ({notes}: {notes: Score[]}) => {
 
     return (
         <Card className='profile-card' title='Progression aux examens' size='small'>
-            <ResponsiveContainer width="100%">
+            <ResponsiveContainer height={400} minHeight={300}>
                 <RadarChart data={data}>
-                    <PolarGrid />
-                    <PolarAngleAxis dataKey="subject" fill='#000' />
+                    <PolarGrid/>
+                    <PolarAngleAxis dataKey="subject"/>
                     {/* TODO ajouter à combien vont les notes. Par défaut [0 à 20] puis customizable */}
-                    <PolarRadiusAxis angle={30} domain={[0, 20]} />
-                    <Radar name="Scores" dataKey="score" stroke="#000C40" fill="#000C40" fillOpacity={.5} />
+                    <PolarRadiusAxis angle={30} domain={[0, 20]}/>
+                    <Radar name="Scores" dataKey="score" stroke="#137333" fill="#137333" fillOpacity={0.4}/>
                 </RadarChart>
             </ResponsiveContainer>
+        </Card>
+    )
+}
+
+const SchoolHistory = ({student, seeMore}: StudentInfoProps) => {
+    const enrollments: Enrollment[] = student.enrollments ?? []
+
+    const columns: TableColumnsType<DataTable> = [
+        {
+            title: "Année",
+            dataIndex: 'examDate',
+            key: 'examDate',
+            align: 'center',
+            render: (text) => (<span>{fDatetime(text)}</span>),
+            responsive: ['md'],
+        },
+        {
+            title: "Classe",
+            dataIndex: 'classe',
+            key: 'classe',
+            align: 'center'
+        },
+        {
+            title: "Montant Total",
+            dataIndex: 'ExamName',
+            key: 'ExamName',
+            align: 'center'
+        },
+    ];
+
+    const data: DataTable[] = enrollments?.map((e) => ({
+        year: getStringAcademicYear(e.academicYear?.startDate, e.academicYear?.endDate) ?? '',
+        classe: e.classe?.name ?? '',
+        obtainedMark: (e.classe?.monthCost * monthsBetween(e.academicYear?.startDate, e.academicYear?.endDate)) ?? 0,
+    })) ?? [];
+
+    return (
+        <Card className='profile-card' title='Hystorique' size='small' extra={
+            <p onClick={seeMore} className="btn-toggle">Plus</p>
+        }>
+            <Table className='score-table' size='small' columns={columns} dataSource={data}></Table>
         </Card>
     )
 }
@@ -173,13 +217,16 @@ const GraphSection = ({notes}: {notes: Score[]}) => {
 const StudentInfo = ({student, classe}: StudentInfoProps) => {
 
     const items: ReactNode[] = [
-        <IndividualInfo student={student} />,
-        ...(classe?.grade?.section != SectionType.MATERNELLE && classe?.grade?.section != SectionType.PRIMAIRE ? [<ExamList student={student} />] : []),
-        ...(classe?.grade?.section != SectionType.MATERNELLE && classe?.grade?.section != SectionType.PRIMAIRE ? [<GraphSection notes={student?.marks ?? []} />] : [])
+        <IndividualInfo student={student}/>,
+        ...(classe?.grade?.section != SectionType.MATERNELLE && classe?.grade?.section != SectionType.PRIMAIRE ? [
+            <ExamList student={student}/>] : []),
+        ...(classe?.grade?.section != SectionType.MATERNELLE && classe?.grade?.section != SectionType.PRIMAIRE ? [
+            <GraphSection notes={student?.marks ?? []}/>] : []),
+        <SchoolHistory student={student} />
     ]
 
-    return(
-        <Block items={items} />
+    return (
+        <Block items={items}/>
     )
 }
 

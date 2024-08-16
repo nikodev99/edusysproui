@@ -1,10 +1,11 @@
 import {useNavigate} from "react-router-dom";
+import {ReactNode} from "react";
 
 interface PanelTableProps {
     title: string
     data?: {
         statement: string,
-        response?: string | number
+        response?: string | number | ReactNode
         link?: string
     }[]
 }

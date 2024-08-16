@@ -53,6 +53,8 @@ const StudentList = () => {
 
     const iconActive = LocalStorageManager.get<number>('activeIcon') ?? 1;
     const pageSizeCount = LocalStorageManager.get<number>('pageSize') ?? 10;
+    const paginationPage = LocalStorageManager.get<number>('page') ?? 1;
+    const count = LocalStorageManager.get<number>('pageCount') ?? 0;
 
     const [content, setContent] = useState<DataType[] | undefined>(undefined)
     const [studentCount, setStudentCount] = useState<number>(0)
@@ -61,8 +63,8 @@ const StudentList = () => {
     const [searchedColumn, setSearchedColumn] = useState('');
     const [sortOrder, setSortOrder] = useState<string | undefined>(undefined)
     const [sortField, setSortField] = useState<string | undefined>(undefined)
-    const [pageCount, setPageCount] = useState<number>(0)
-    const [currentPage, setCurrentPage] = useState<number>(1)
+    const [pageCount, setPageCount] = useState<number>(count)
+    const [currentPage, setCurrentPage] = useState<number>(paginationPage)
     const [size, setSize] = useState<number>(pageSizeCount)
     const [searchQuery, setSearchQuery] = useState<string>('')
     const searchInput = useRef<InputRef>(null);
@@ -208,6 +210,7 @@ const StudentList = () => {
         setCurrentPage(current)
         setSize(pageSize)
         LocalStorageManager.update('pageSize', () => pageSize)
+        LocalStorageManager.update('page', () => current)
     }
 
     const handleNavChange = (page: number, pageSize: number) => {
@@ -215,6 +218,8 @@ const StudentList = () => {
         setCurrentPage(page)
         setSize(pageSize)
         LocalStorageManager.update('pageSize', () => pageSize)
+        LocalStorageManager.update('page', () => page)
+        LocalStorageManager.update('pageCount', () => page - 1)
     }
 
     const handleSearchInput = (e: ChangeEvent<HTMLInputElement>) => {

@@ -65,7 +65,7 @@ const StudentView = () => {
     return(
         <>
             <PageHierarchy items={pageHierarchy as [{title: string | ReactNode, path?: string}]} mBottom={25} />
-            <ViewHeader student={student} classe={classe} isLoading={isLoading}/>
+            <ViewHeader enrollment={enrolledStudent} isLoading={isLoading}/>
             {/*<Sticky>*/}
                 <Tabs rootClassName={`tabs`}
                       items={[

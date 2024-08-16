@@ -1,23 +1,24 @@
 import Block from "../ui/layout/Block.tsx";
-import {Card, Divider, Table, TableColumnsType} from "antd";
+import {Card, Divider, Table, TableColumnsType, Tag} from "antd";
 import {ReactNode, useEffect, useState} from "react";
 import {Classe, Enrollment, Score, Student} from "../../entity";
 import {
-    getAge,
-    getCountry,
-    setFirstName,
     convertToM,
     fDate,
-    firstLetter,
-    isNull, fDatetime, getStringAcademicYear, monthsBetween
+    fDatetime,
+    firstLetter, fullDay,
+    getAge,
+    getCountry,
+    isNull,
+    monthsBetween,
+    setFirstName
 } from "../../utils/utils.ts";
 import PanelStat from "../ui/layout/PanelStat.tsx";
 import {Gender} from "../../entity/enums/gender.ts";
 import PanelTable from "../ui/layout/PanelTable.tsx";
 import {SectionType} from "../../entity/enums/section.ts";
-import {
-    Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer
-} from 'recharts';
+import {PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, ResponsiveContainer} from 'recharts';
+import {Attendance} from "../../entity/enums/attendance.ts";
 
 interface StudentInfoProps {
     student: Student,
@@ -110,7 +111,7 @@ const ExamList = ({student, classe, seeMore}: StudentInfoProps) => {
     const columns: TableColumnsType<DataTable> = [
         {
             title: "Date",
-            dataIndex: 'examDate',
+            dataIndex: 'year',
             key: 'examDate',
             align: 'center',
             render: (text) => (<span>{fDatetime(text)}</span>),
@@ -124,7 +125,7 @@ const ExamList = ({student, classe, seeMore}: StudentInfoProps) => {
         },
         {
             title: "Examen",
-            dataIndex: 'ExamName',
+            dataIndex: 'examName',
             key: 'ExamName',
             align: 'center'
         },
@@ -141,7 +142,7 @@ const ExamList = ({student, classe, seeMore}: StudentInfoProps) => {
         <Card className='profile-card' title='Performance aux devoirs' size="small" extra={
             <p onClick={seeMore} className="btn-toggle">Plus</p>
         }>
-            <Table className='score-table' size='small' columns={columns} dataSource={data}/>
+            <Table className='score-table' size='small' columns={columns} dataSource={data} pagination={false} />
         </Card>
     )
 }
@@ -179,37 +180,83 @@ const SchoolHistory = ({student, seeMore}: StudentInfoProps) => {
     const columns: TableColumnsType<DataTable> = [
         {
             title: "Année",
-            dataIndex: 'examDate',
-            key: 'examDate',
+            dataIndex: 'year',
+            key: 'academicYear',
             align: 'center',
-            render: (text) => (<span>{fDatetime(text)}</span>),
+            render: (text) => (<span>{text}</span>),
             responsive: ['md'],
         },
         {
             title: "Classe",
             dataIndex: 'classe',
-            key: 'classe',
+            key: 'enrollmentClasse',
             align: 'center'
         },
         {
             title: "Montant Total",
-            dataIndex: 'ExamName',
-            key: 'ExamName',
+            dataIndex: 'obtainedMark',
+            key: 'totalAmount',
             align: 'center'
         },
     ];
 
     const data: DataTable[] = enrollments?.map((e) => ({
-        year: getStringAcademicYear(e.academicYear?.startDate, e.academicYear?.endDate) ?? '',
+        year: e.academicYear?.academicYear ?? '',
         classe: e.classe?.name ?? '',
-        obtainedMark: (e.classe?.monthCost * monthsBetween(e.academicYear?.startDate, e.academicYear?.endDate)) ?? 0,
+        obtainedMark: (e.classe?.monthCost ?? 0) * (monthsBetween(e.academicYear?.startDate, e.academicYear?.endDate) ?? 0),
     })) ?? [];
 
     return (
         <Card className='profile-card' title='Hystorique' size='small' extra={
             <p onClick={seeMore} className="btn-toggle">Plus</p>
         }>
-            <Table className='score-table' size='small' columns={columns} dataSource={data}></Table>
+            <Table className='score-table' size='small' columns={columns} dataSource={data} pagination={false}></Table>
+        </Card>
+    )
+}
+
+const AttendanceSection = ({student, seeMore}: StudentInfoProps) => {
+
+    const { attendances } = student
+
+    const attendanceData = attendances?.map((a) => {
+        let tagColor
+        let tagText
+
+        switch (a.status) {
+            case 'ABSENT' as Attendance:
+                tagColor = 'error'
+                tagText = Attendance.ABSENT
+                break;
+            case 'EXCUSED' as Attendance:
+                tagColor = 'processing'
+                tagText = Attendance.EXCUSED
+                break;
+            case 'PRESENT' as Attendance:
+                tagColor = 'success'
+                tagText = Attendance.PRESENT
+                break;
+            case 'LATE' as Attendance:
+                tagColor = 'warning'
+                tagText = Attendance.LATE
+                break;
+            default:
+                tagColor = 'gray'; // Default color for unexpected statuses
+        }
+
+        return {
+            statement: fullDay(a.attendanceDate) as string,
+            response: <Tag bordered={false} color={tagColor}>{tagText?.toLowerCase()}</Tag>
+        };
+    }) ?? [];
+
+    return (
+        <Card className='profile-card' title='Suivis de présence' size='small' extra={
+            <p onClick={seeMore} className="btn-toggle">Plus</p>
+        }>
+            <div className="panel-table">
+                <PanelTable title='Données des présences' data={attendanceData}/>
+            </div>
         </Card>
     )
 }
@@ -222,7 +269,8 @@ const StudentInfo = ({student, classe}: StudentInfoProps) => {
             <ExamList student={student}/>] : []),
         ...(classe?.grade?.section != SectionType.MATERNELLE && classe?.grade?.section != SectionType.PRIMAIRE ? [
             <GraphSection notes={student?.marks ?? []}/>] : []),
-        <SchoolHistory student={student} />
+        <SchoolHistory student={student} />,
+        <AttendanceSection student={student} />
     ]
 
     return (

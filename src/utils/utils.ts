@@ -1,6 +1,7 @@
 import {EnumType} from "./interfaces.ts"
 import countries from 'world-countries'
 import dayjs from "dayjs";
+import 'dayjs/locale/fr.js'
 
 export const createElement = (htmlElement: string, parentNode: Element|null, attributes?: {[key: string]: string}, content?: string) => {
 
@@ -95,13 +96,19 @@ export const fDatetime = (timestamp: Date | number | string, to?: boolean) => {
 
 export const fDate = (date?: Date | [number, number, number] | string) => {
     const format: string = 'D MMMM YYYY';
-    return setDayJsDate(date)?.locale('fr').format(format);
+    return formattedDate(date, format);
+}
+
+export const fullDay = (date?: Date | [number, number, number] | string) => {
+    const format: string = 'dddd D MMMM YYYY';
+    return formattedDate(date, format);
 }
 
 export const monthsBetween = (startDate?: Date | number[] | string, endDate?: Date | number[] | string) => {
     const end = setDayJsDate(endDate)
     const start = setDayJsDate(startDate)
-    return end?.diff(start, 'month');
+    const monthNum = end?.diff(start, 'month')
+    return monthNum && monthNum < 9 ? 9 : monthNum;
 }
 
 export const dateCompare = (date: Date) => {
@@ -124,6 +131,10 @@ const setDayJsDate = (date?: Date | number[] | string) => {
         return dayjsDate
     }
     return undefined
+}
+
+const formattedDate = (date?: Date | number[] | string, format?: string) => {
+    return setDayJsDate(date)?.locale('fr').format(format);
 }
 
 export const chooseColor = (name: string): string | null | undefined => {

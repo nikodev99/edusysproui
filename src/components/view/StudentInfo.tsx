@@ -1,5 +1,5 @@
 import Block from "../ui/layout/Block.tsx";
-import {Card, Divider, Table, TableColumnsType, Tag} from "antd";
+import {Card, Carousel, Divider, Table, TableColumnsType, Tag} from "antd";
 import {ReactNode, useEffect, useState} from "react";
 import {Classe, Enrollment, Score, Student} from "../../entity";
 import {
@@ -19,6 +19,7 @@ import PanelTable from "../ui/layout/PanelTable.tsx";
 import {SectionType} from "../../entity/enums/section.ts";
 import {PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, ResponsiveContainer} from 'recharts';
 import {Attendance} from "../../entity/enums/attendance.ts";
+import {fetchStudentClassmatesRandomly} from "../../data/action/fetch_student.ts";
 
 interface StudentInfoProps {
     student: Student,
@@ -245,7 +246,7 @@ const AttendanceSection = ({student, seeMore}: StudentInfoProps) => {
         }
 
         return {
-            statement: fullDay(a.attendanceDate) as string,
+            statement: setFirstName(fullDay(a.attendanceDate)) as string,
             response: <Tag bordered={false} color={tagColor}>{tagText?.toLowerCase()}</Tag>
         };
     }) ?? [];
@@ -261,6 +262,34 @@ const AttendanceSection = ({student, seeMore}: StudentInfoProps) => {
     )
 }
 
+const SchoolColleagues = ({student, seeMore}: StudentInfoProps) => {
+
+    const {id} = student
+    const [classmates, setClassmates] = useState<Student[]>([])
+
+    useEffect(() => {
+        const fetchData = async () => {
+            await fetchStudentClassmatesRandomly(id as string).then(async (res) => {
+                if (res?.isSuccess) {
+                    setClassmates(res?.data ?? [])
+                }
+            }).catch((error) => `Failed to fetch classmates ${error.errorCode}: ${error.message}`)
+        }
+        
+        fetchData().then()
+    }, [id]);
+
+    console.log(classmates)
+    
+    return (
+        <Card className='profile-card' title='Condisciples' size='small' extra={
+            <p onClick={seeMore} className="btn-toggle">Plus</p>
+        }>
+            <Carousel />
+        </Card>
+    )
+}
+
 const StudentInfo = ({student, classe}: StudentInfoProps) => {
 
     const items: ReactNode[] = [
@@ -270,7 +299,8 @@ const StudentInfo = ({student, classe}: StudentInfoProps) => {
         ...(classe?.grade?.section != SectionType.MATERNELLE && classe?.grade?.section != SectionType.PRIMAIRE ? [
             <GraphSection notes={student?.marks ?? []}/>] : []),
         <SchoolHistory student={student} />,
-        <AttendanceSection student={student} />
+        <AttendanceSection student={student} />,
+        <SchoolColleagues student={student} />
     ]
 
     return (

@@ -7,25 +7,25 @@ import {Score} from "./score.ts";
 import {Attendance} from "./attendance.ts";
 
 export interface Student {
-    id?: string
-    firstName?: string
-    lastName?: string
-    gender?: Gender | string
-    emailId?: string
-    enrollments?: Enrollment[]
-    birthDate?: Date | [number, number, number]
-    birthCity?: string
-    nationality?: string
-    dadName?: string
-    momName?: string
-    reference?: string
-    telephone?: string
-    address?: Address
-    guardian?: Guardian
-    healthCondition?: HealthCondition
-    marks?: Score[]
-    attendances?: Attendance[]
-    image?: string
-    createdAt?: Date
-    modifyAt?: Date
+    id: string
+    firstName: string
+    lastName: string
+    gender: Gender | string
+    emailId: string
+    enrollments: Enrollment[]
+    birthDate: Date | number[] | string
+    birthCity: string
+    nationality: string
+    dadName: string
+    momName: string
+    reference: string
+    telephone: string
+    address: Address
+    guardian: Guardian
+    healthCondition: HealthCondition
+    marks: Score[]
+    attendances: Attendance[]
+    image: string
+    createdAt: Date | number | string
+    modifyAt: Date | number | string
 }

@@ -5,17 +5,22 @@ import {LuChevronDown, LuPencil, LuTrash, LuUserCircle, LuUserPlus} from "react-
 import {setFirstName} from "../../../utils/utils.ts";
 
 interface ViewProps {
-    enrollment: Enrollment,
+    enrollment: Enrollment | null,
     isLoading: boolean,
 }
 
 const ViewHeader = ({enrollment, isLoading}: ViewProps) => {
 
-    const {student, isArchive, classe } = enrollment!
+    if (enrollment == null) {
+        return (
+            <Skeleton loading={isLoading} active={isLoading} avatar paragraph={{rows: 2}} />
+        )
+    }
+
+    const {student, student: {guardian}, isArchive, classe, classe: {grade} } = enrollment!
 
     return(
         <Flex align='center' justify='space-between' component='header' className='view__block'>
-            <Skeleton loading={isLoading} active={isLoading} avatar paragraph={{rows: 1}}>
             <Flex className="avatar-container" align='center' gap={10}>
                 <Avatar image={student?.image} firstText={student?.firstName} lastText={student?.lastName} size={60} />
                 <Flex className="legal" vertical justify='center'>
@@ -25,15 +30,15 @@ const ViewHeader = ({enrollment, isLoading}: ViewProps) => {
             </Flex>
             <Flex className='block' align='flex-start' vertical gap={4}>
                 <p>Tuteur Légal</p>
-                <p>{setFirstName(`${student?.guardian?.lastName} ${student?.guardian?.firstName}`)}</p>
+                <p>{setFirstName(`${guardian?.lastName} ${guardian?.firstName}`)}</p>
             </Flex>
             {
                 !isArchive ? (<Flex className='block' align='flex-start' vertical gap={4}>
                     <p>{classe?.name}</p>
-                    <p>{classe?.grade?.section}</p>
+                    <p>{grade?.section}</p>
                 </Flex>): (<Flex className='block' align='flex-start' vertical gap={4}>
                     <p>Tuteur téléphone</p>
-                    <p>{student?.guardian?.telephone}</p>
+                    <p>{guardian?.telephone}</p>
                 </Flex>)
             }
 
@@ -47,7 +52,6 @@ const ViewHeader = ({enrollment, isLoading}: ViewProps) => {
                     <Button type='primary' className='add__btn'>Gérer <LuChevronDown size={18} /></Button>
                 </Dropdown>
             </Flex>
-            </Skeleton>
         </Flex>
     )
 }

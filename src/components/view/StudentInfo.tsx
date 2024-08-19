@@ -1,7 +1,7 @@
 import Block from "../ui/layout/Block.tsx";
 import {Card, Carousel, Divider, Table, TableColumnsType, Tag} from "antd";
 import {ReactNode, useEffect, useState} from "react";
-import {Classe, Enrollment, Score, Student} from "../../entity";
+import {Enrollment} from "../../entity";
 import {
     convertToM,
     fDate,
@@ -20,10 +20,10 @@ import {SectionType} from "../../entity/enums/section.ts";
 import {PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, ResponsiveContainer} from 'recharts';
 import {Attendance} from "../../entity/enums/attendance.ts";
 import {fetchStudentClassmatesRandomly} from "../../data/action/fetch_student.ts";
+import Avatar from "../ui/layout/Avatar.tsx";
 
 interface StudentInfoProps {
-    student: Student,
-    classe?: Classe,
+    enrollment: Enrollment
     seeMore?: () => void
 }
 
@@ -34,7 +34,9 @@ interface DataTable {
     obtainedMark: number;
 }
 
-const IndividualInfo = ({student}: StudentInfoProps) => {
+const IndividualInfo = ({enrollment}: StudentInfoProps) => {
+
+    const {student, student: {address, guardian, healthCondition} } = enrollment
 
     const [nationality, setNationality] = useState<string>()
     const country = getCountry(student.nationality as string)
@@ -48,21 +50,21 @@ const IndividualInfo = ({student}: StudentInfoProps) => {
         ...(isNull(student.emailId) ? [] : [{statement: '@', response: student.emailId}]),
     ]
     const addressData = [
-        {statement: 'Numéro', response: student.address?.number},
-        {statement: 'Rue', response: student.address?.street},
-        {statement: 'Quartier', response: student.address?.neighborhood},
-        ...(!isNull(student.address?.borough) ? [{
+        {statement: 'Numéro', response: address?.number},
+        {statement: 'Rue', response: address?.street},
+        {statement: 'Quartier', response: address?.neighborhood},
+        ...(!isNull(address?.borough) ? [{
             statement: 'Arrondissement',
-            response: student.address?.borough
+            response: address?.borough
         }] : []),
         {statement: 'Ville', response: student.address?.city}
     ]
     const guardianData = [
-        {statement: 'Nom(s)', response: student.guardian?.lastName},
-        {statement: 'Prénoms(s)', response: student.guardian?.firstName},
-        {statement: 'Téléphone', response: student.guardian?.telephone},
-        ...(isNull(student.guardian?.mobile) ? [] : [{statement: 'Mobile', response: student.guardian?.mobile}]),
-        {statement: '@', response: student.guardian?.emailId}
+        {statement: 'Nom(s)', response: guardian?.lastName},
+        {statement: 'Prénoms(s)', response: guardian?.firstName},
+        {statement: 'Téléphone', response: guardian?.telephone},
+        ...(isNull(guardian?.mobile) ? [] : [{statement: 'Mobile', response: guardian?.mobile}]),
+        {statement: '@', response: guardian?.emailId}
     ]
 
     useEffect(() => {
@@ -79,9 +81,9 @@ const IndividualInfo = ({student}: StudentInfoProps) => {
               title={`Profile de ${setFirstName(student.firstName + ' ' + student.lastName)}`} size="small">
             <div className='panel'>
                 <PanelStat title={studentAge} subTitle='ans' src={true} media={country?.cca2} desc={nationality}/>
-                <PanelStat title={student.healthCondition?.weight} subTitle='kgs' src={false} media={''} desc='Poids'/>
-                <PanelStat title={student.healthCondition?.height} subTitle='m' src={false}
-                           media={convertToM(student.healthCondition?.height as number)} desc='Taille'/>
+                <PanelStat title={healthCondition?.weight} subTitle='kgs' src={false} media={''} desc='Poids'/>
+                <PanelStat title={healthCondition?.height} subTitle='m' src={false}
+                           media={convertToM(healthCondition?.height as number)} desc='Taille'/>
             </div>
             <div className='birth-Body'><p>Née le {birthDay} à {student.birthCity}</p></div>
             <Divider/>
@@ -94,15 +96,11 @@ const IndividualInfo = ({student}: StudentInfoProps) => {
     )
 }
 
-const ExamList = ({student, classe, seeMore}: StudentInfoProps) => {
+const ExamList = ({enrollment, seeMore}: StudentInfoProps) => {
 
-    const [scores, setScore] = useState<Score[]>()
+    const {student: {marks}, classe} = enrollment
 
-    useEffect(() => {
-        setScore(student.marks)
-    }, [student.marks]);
-
-    const data: DataTable[] = scores?.map((s) => ({
+    const data: DataTable[] = marks?.map((s) => ({
         year: fDate(s.exam?.examDate) ?? '',
         examName: s.exam?.subject?.course ?? '',
         classe: classe?.name ?? '',
@@ -148,8 +146,11 @@ const ExamList = ({student, classe, seeMore}: StudentInfoProps) => {
     )
 }
 
-const GraphSection = ({notes}: { notes: Score[] }) => {
-    const data = notes.map((s) => ({
+const GraphSection = ({enrollment}: StudentInfoProps) => {
+
+    const {student: {marks}} = enrollment
+
+    const data = marks.map((s) => ({
         subject: s.exam?.subject?.course,
         score: s.obtainedMark
     }))
@@ -163,7 +164,7 @@ const GraphSection = ({notes}: { notes: Score[] }) => {
     return (
         <Card className='profile-card' title='Progression aux examens' size='small'>
             <ResponsiveContainer height={400} minHeight={300}>
-                <RadarChart data={data}>
+                <RadarChart data={data} dataKey={1}>
                     <PolarGrid/>
                     <PolarAngleAxis dataKey="subject"/>
                     {/* TODO ajouter à combien vont les notes. Par défaut [0 à 20] puis customizable */}
@@ -175,8 +176,8 @@ const GraphSection = ({notes}: { notes: Score[] }) => {
     )
 }
 
-const SchoolHistory = ({student, seeMore}: StudentInfoProps) => {
-    const enrollments: Enrollment[] = student.enrollments ?? []
+const SchoolHistory = ({enrollment, seeMore}: StudentInfoProps) => {
+    const {student: {enrollments}} = enrollment
 
     const columns: TableColumnsType<DataTable> = [
         {
@@ -216,9 +217,9 @@ const SchoolHistory = ({student, seeMore}: StudentInfoProps) => {
     )
 }
 
-const AttendanceSection = ({student, seeMore}: StudentInfoProps) => {
+const AttendanceSection = ({enrollment, seeMore}: StudentInfoProps) => {
 
-    const { attendances } = student
+    const { student: { attendances } } = enrollment
 
     const attendanceData = attendances?.map((a) => {
         let tagColor
@@ -262,45 +263,53 @@ const AttendanceSection = ({student, seeMore}: StudentInfoProps) => {
     )
 }
 
-const SchoolColleagues = ({student, seeMore}: StudentInfoProps) => {
-
-    const {id} = student
-    const [classmates, setClassmates] = useState<Student[]>([])
+const SchoolColleagues = ({enrollment, seeMore}: StudentInfoProps) => {
+    
+    const [classmates, setClassmates] = useState<Enrollment[]>([])
 
     useEffect(() => {
         const fetchData = async () => {
-            await fetchStudentClassmatesRandomly(id as string).then(async (res) => {
+            await fetchStudentClassmatesRandomly(enrollment).then(async (res) => {
                 if (res?.isSuccess) {
-                    setClassmates(res?.data ?? [])
+                    setClassmates(res?.data as Enrollment[])
                 }
             }).catch((error) => `Failed to fetch classmates ${error.errorCode}: ${error.message}`)
         }
-        
-        fetchData().then()
-    }, [id]);
 
-    console.log(classmates)
-    
+        fetchData().then()
+    }, [enrollment]);
+
+    console.log('classmates: ', classmates)
+
     return (
         <Card className='profile-card' title='Condisciples' size='small' extra={
             <p onClick={seeMore} className="btn-toggle">Plus</p>
         }>
-            <Carousel />
+            <Carousel slidesToShow={3} slidesToScroll={1} dots arrows infinite adaptiveHeight centerMode draggable autoplay>
+                {classmates && classmates.map((c, i) => (<Avatar
+                    image={c.student.image}
+                    size={{ xs: 24, sm: 32, md: 40, lg: 64, xl: 80, xxl: 100 }}
+                    firstText={c.student.firstName} lastText={c.student.lastName} key={i} />))}
+            </Carousel>
         </Card>
     )
 }
 
-const StudentInfo = ({student, classe}: StudentInfoProps) => {
+const StudentInfo = ({enrollment}: {enrollment: Enrollment}) => {
+
+    const {classe: {grade}} = enrollment
 
     const items: ReactNode[] = [
-        <IndividualInfo student={student}/>,
-        ...(classe?.grade?.section != SectionType.MATERNELLE && classe?.grade?.section != SectionType.PRIMAIRE ? [
-            <ExamList student={student}/>] : []),
-        ...(classe?.grade?.section != SectionType.MATERNELLE && classe?.grade?.section != SectionType.PRIMAIRE ? [
-            <GraphSection notes={student?.marks ?? []}/>] : []),
-        <SchoolHistory student={student} />,
-        <AttendanceSection student={student} />,
-        <SchoolColleagues student={student} />
+        <IndividualInfo enrollment={enrollment}/>,
+        ...(grade?.section != SectionType.MATERNELLE && grade?.section != SectionType.PRIMAIRE ? [
+            <ExamList enrollment={enrollment} />
+        ] : []),
+        ...(grade?.section != SectionType.MATERNELLE && grade?.section != SectionType.PRIMAIRE ? [
+            <GraphSection enrollment={enrollment} />
+        ] : []),
+        <SchoolHistory enrollment={enrollment} />,
+        <AttendanceSection enrollment={enrollment} />,
+        <SchoolColleagues enrollment={enrollment} />
     ]
 
     return (

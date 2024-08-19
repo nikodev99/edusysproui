@@ -5,7 +5,7 @@ interface AvatarProps {
     image?: string
     firstText?: string
     lastText?: string
-    size?: number
+    size?: number | object
 }
 
 const Avatar = ({image, firstText, lastText, size}: AvatarProps) => {

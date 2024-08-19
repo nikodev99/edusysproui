@@ -35,9 +35,9 @@ export const searchEnrolledStudents = (searchInput: string) => {
 }
 
 export const getStudentById = (studentId: string): Promise<AxiosResponse<Enrollment>> => {
-    return apiClient.get(`/enroll/student/${studentId}`)
+    return apiClient.get<Enrollment>(`/enroll/student/${studentId}`)
 }
 
-export const getRandomStudentClassmate = (studentId: string) => {
-    return apiClient.get(`/enroll/student/${studentId}/classmate`)
+export const getRandomStudentClassmate = (studentId: string, classeId: number): Promise<AxiosResponse<Enrollment[]>> => {
+    return apiClient.get<Enrollment[]>(`enroll/classmates/${studentId}-${classeId}`)
 }

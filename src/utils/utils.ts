@@ -72,13 +72,13 @@ export const getStringAcademicYear = (startDate?: Date | [number, number, number
     return undefined
 }
 
-export const getAge = (dateArray?: [number, number, number]): number => {
+export const getAge = (dateArray?: number[]): number => {
     const date = new Date()
     const incomingYear = dateArray ? arrayToDate(dateArray).getFullYear() : 0
     return date.getFullYear() - incomingYear
 }
 
-const arrayToDate = (dateArray: Date | [number, number, number]): Date => {
+const arrayToDate = (dateArray: Date | number[]): Date => {
     if (Array.isArray(dateArray)) {
         const [year, month, day] = dateArray
         return new Date(year, month - 1, day);
@@ -94,12 +94,12 @@ export const fDatetime = (timestamp: Date | number | string, to?: boolean) => {
     return undefined
 }
 
-export const fDate = (date?: Date | [number, number, number] | string) => {
+export const fDate = (date?: Date | number[] | string) => {
     const format: string = 'D MMMM YYYY';
     return formattedDate(date, format);
 }
 
-export const fullDay = (date?: Date | [number, number, number] | string) => {
+export const fullDay = (date?: Date | number[] | string) => {
     const format: string = 'dddd D MMMM YYYY';
     return formattedDate(date, format);
 }

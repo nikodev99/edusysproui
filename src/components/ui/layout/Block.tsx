@@ -10,7 +10,7 @@ const Block = ({items}: BlockProps) => {
 
     return(
         <div className='block-wrapper'>
-            <div className='block-mansory'>{items.map((item, index) => (<BlockItem key={index} children={item} />))}</div>
+            <div className='block-mansory'>{items.map((item, index) => (<BlockItem key={`block-item-${index}`} children={item} />))}</div>
         </div>
     )
 }

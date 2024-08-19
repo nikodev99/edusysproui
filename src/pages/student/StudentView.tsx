@@ -9,7 +9,7 @@ import {Classe, Enrollment, Student} from "../../entity";
 import {setFirstName} from "../../utils/utils.ts";
 import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
 import ViewHeader from "../../components/ui/layout/ViewHeader.tsx";
-import {Tabs} from "antd";
+import {Skeleton, Tabs} from "antd";
 import StudentInfo from "../../components/view/StudentInfo.tsx";
 import StudentExam from "../../components/view/StudentExam.tsx";
 import StudentAttendance from "../../components/view/StudentAttendance.tsx";
@@ -22,17 +22,15 @@ const StudentView = () => {
 
     const { id } = useParams()
 
-    const [enrolledStudent, setEnrolledStudent] = useState<Enrollment>({})
-    const [student, setStudent] = useState<Student>({})
-    const [classe, setClasse] = useState<Classe>({})
+    const [enrolledStudent, setEnrolledStudent] = useState<Enrollment | null>(null);
 
     const {data, isLoading, isSuccess, error, isError} = useQuery({
-        queryKey: ['student-id'],
-        queryFn: async () => await fetchStudentById(id as string).then(res => res.data)
+        queryKey: ['student-id', id],
+        queryFn: async () => await fetchStudentById(id as string).then(async (res) => res.data)
     })
 
     useDocumentTitle({
-        title: `EduSysPro - ${setFirstName(student.lastName)} ${setFirstName(student.firstName)}`,
+        title: `EduSysPro - étudiant`,
         description: "Student description",
     })
 
@@ -42,7 +40,7 @@ const StudentView = () => {
             path: text.student.href
         },
         {
-            title: `${setFirstName(student.lastName)} ${setFirstName(student.firstName)}`
+            title: 'Un titre'//`${setFirstName(student.lastName)} ${setFirstName(student.firstName)}`
         }
     ])
 
@@ -52,8 +50,6 @@ const StudentView = () => {
     useEffect(() => {
         if (isSuccess && data) {
             setEnrolledStudent(data)
-            setStudent(data.student as Student)
-            setClasse(data.classe as Classe)
         }
     }, [data, isSuccess]);
     
@@ -62,14 +58,21 @@ const StudentView = () => {
         LocalStorageManager.update('tabKey', () => activeKey)
     }
 
+    console.log('error encountered: ', error)
+    console.log('data retrieved: ', data)
+    console.log('retrieved successful: ', isSuccess)
+    console.log('enrollment: ', enrolledStudent)
+
     return(
         <>
             <PageHierarchy items={pageHierarchy as [{title: string | ReactNode, path?: string}]} mBottom={25} />
-            <ViewHeader enrollment={enrolledStudent} isLoading={isLoading}/>
+            <ViewHeader enrollment={enrolledStudent} isLoading={isLoading} />
             {/*<Sticky>*/}
                 <Tabs rootClassName={`tabs`}
                       items={[
-                          {key: '1', label: 'Info', children: <StudentInfo student={student} classe={classe} />},
+                          ...(enrolledStudent ?
+                              [{key: '1', label: 'Info', children: <StudentInfo enrollment={enrolledStudent} />}] :
+                              [{key: '1', label: 'Info', children: <Skeleton loading={isLoading} active={isLoading} paragraph={{rows: 5}} />}]),
                           {key: '2', label: 'Examens', children: <StudentExam />},
                           {key: '3', label: 'Presence', children: <StudentAttendance />},
                           {key: '4', label: 'Classe', children: <StudentClasse />},

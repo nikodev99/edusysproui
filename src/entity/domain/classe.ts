@@ -7,17 +7,17 @@ import {ClasseTeacherBoss} from "./ClasseTeacherBoss.ts";
 import {ClasseStudentBoss} from "./ClasseStudentBoss.ts";
 
 export interface Classe {
-    id?: number
-    name?: string
-    grade?: Grade
-    schedule?: Schedule[]
-    roomNumber?: number
-    principalTeacher?: ClasseTeacherBoss
-    principalStudent?: ClasseStudentBoss
-    principalCourse?: Course
-    students?: Student[]
-    teachers?: Teacher[]
-    monthCost?: number
-    createdAt?: Date
-    modifiedAt?: Date
+    id: number
+    name: string
+    grade: Grade
+    schedule: Schedule[]
+    roomNumber: number
+    principalTeacher: ClasseTeacherBoss
+    principalStudent: ClasseStudentBoss
+    principalCourse: Course
+    students: Student[]
+    teachers: Teacher[]
+    monthCost: number
+    createdAt: Date
+    modifiedAt: Date
 }

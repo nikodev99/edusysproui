@@ -2,7 +2,7 @@ import '../ui.scss'
 
 const PanelStat = ({title, subTitle, media, desc, src}: {title?: string | number, subTitle: string, media?: string, desc?: string, src?: boolean}) => {
     return (
-        <div className='panel-head'>
+        <div className='panel-head' key={subTitle}>
             <div className="stat">
                 <div className='big-row'>{title}</div>
                 <div className='small-row'>{subTitle}</div>

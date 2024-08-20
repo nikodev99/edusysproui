@@ -13,7 +13,7 @@ const Avatar = ({image, firstText, lastText, size}: AvatarProps) => {
         <>
         {
             image ? <AntAvatar src={image} size={size} />
-                : <AntAvatar style={{background: chooseColor(lastText as string) as string}} size={size}>
+                : <AntAvatar style={{background: chooseColor(firstText as string) as string}} size={size}>
                     {`${lastText?.charAt(0)}${firstText?.charAt(0)}`}
                 </AntAvatar>
         }

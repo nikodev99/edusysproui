@@ -5,8 +5,7 @@ import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {text} from "../../utils/text_display.ts";
 import {setBreadcrumb} from "../../core/breadcrumb.tsx";
 import {ReactNode, useEffect, useState} from "react";
-import {Classe, Enrollment, Student} from "../../entity";
-import {setFirstName} from "../../utils/utils.ts";
+import {Enrollment} from "../../entity";
 import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
 import ViewHeader from "../../components/ui/layout/ViewHeader.tsx";
 import {Skeleton, Tabs} from "antd";
@@ -57,11 +56,6 @@ const StudentView = () => {
         setTabKey(activeKey)
         LocalStorageManager.update('tabKey', () => activeKey)
     }
-
-    console.log('error encountered: ', error)
-    console.log('data retrieved: ', data)
-    console.log('retrieved successful: ', isSuccess)
-    console.log('enrollment: ', enrolledStudent)
 
     return(
         <>

@@ -1,5 +1,5 @@
 import Block from "../ui/layout/Block.tsx";
-import {Card, Carousel, Divider, Table, TableColumnsType, Tag} from "antd";
+import {Button, Card, Carousel, Divider, Table, TableColumnsType, Tag} from "antd";
 import {ReactNode, useEffect, useState} from "react";
 import {Enrollment} from "../../entity";
 import {
@@ -9,7 +9,7 @@ import {
     firstLetter, fullDay,
     getAge,
     getCountry,
-    isNull,
+    isNull, lowerName,
     monthsBetween,
     setFirstName
 } from "../../utils/utils.ts";
@@ -21,17 +21,26 @@ import {PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, Responsiv
 import {Attendance} from "../../entity/enums/attendance.ts";
 import {fetchStudentClassmatesRandomly} from "../../data/action/fetch_student.ts";
 import Avatar from "../ui/layout/Avatar.tsx";
+import {text} from "../../utils/text_display.ts";
+import {useNavigate} from "react-router-dom";
 
 interface StudentInfoProps {
     enrollment: Enrollment
+    dataKey: string
     seeMore?: () => void
 }
 
-interface DataTable {
-    year: string;
-    examName?: string;
+interface ExamData {
+    examDate: string;
+    examName: string;
     classe: string;
     obtainedMark: number;
+}
+
+interface HistoryData {
+    academicYear: string;
+    classeName: string;
+    yearAmount: number;
 }
 
 const IndividualInfo = ({enrollment}: StudentInfoProps) => {
@@ -100,14 +109,14 @@ const ExamList = ({enrollment, seeMore}: StudentInfoProps) => {
 
     const {student: {marks}, classe} = enrollment
 
-    const data: DataTable[] = marks?.map((s) => ({
-        year: fDate(s.exam?.examDate) ?? '',
+    const data: ExamData[] = marks?.map((s) => ({
+        examDate: fDate(s.exam?.examDate) ?? '',
         examName: s.exam?.subject?.course ?? '',
         classe: classe?.name ?? '',
         obtainedMark: s.obtainedMark ?? 0,
     })) ?? [];
 
-    const columns: TableColumnsType<DataTable> = [
+    const columns: TableColumnsType<ExamData> = [
         {
             title: "Date",
             dataIndex: 'year',
@@ -164,7 +173,7 @@ const GraphSection = ({enrollment}: StudentInfoProps) => {
     return (
         <Card className='profile-card' title='Progression aux examens' size='small'>
             <ResponsiveContainer height={400} minHeight={300}>
-                <RadarChart data={data} dataKey={1}>
+                <RadarChart data={data} >
                     <PolarGrid/>
                     <PolarAngleAxis dataKey="subject"/>
                     {/* TODO ajouter à combien vont les notes. Par défaut [0 à 20] puis customizable */}
@@ -179,10 +188,10 @@ const GraphSection = ({enrollment}: StudentInfoProps) => {
 const SchoolHistory = ({enrollment, seeMore}: StudentInfoProps) => {
     const {student: {enrollments}} = enrollment
 
-    const columns: TableColumnsType<DataTable> = [
+    const columns: TableColumnsType<HistoryData> = [
         {
             title: "Année",
-            dataIndex: 'year',
+            dataIndex: 'academicYear',
             key: 'academicYear',
             align: 'center',
             render: (text) => (<span>{text}</span>),
@@ -190,29 +199,36 @@ const SchoolHistory = ({enrollment, seeMore}: StudentInfoProps) => {
         },
         {
             title: "Classe",
-            dataIndex: 'classe',
-            key: 'enrollmentClasse',
+            dataIndex: 'classeName',
+            key: 'classeName',
             align: 'center'
         },
         {
-            title: "Montant Total",
-            dataIndex: 'obtainedMark',
-            key: 'totalAmount',
+            title: "Montant Annuel",
+            dataIndex: 'yearAmount',
+            key: 'yearAmount',
             align: 'center'
         },
     ];
 
-    const data: DataTable[] = enrollments?.map((e) => ({
-        year: e.academicYear?.academicYear ?? '',
-        classe: e.classe?.name ?? '',
-        obtainedMark: (e.classe?.monthCost ?? 0) * (monthsBetween(e.academicYear?.startDate, e.academicYear?.endDate) ?? 0),
+    const data: HistoryData[] = enrollments?.map((e) => ({
+        academicYear: e.academicYear?.academicYear ?? '',
+        classeName: e.classe?.name ?? '',
+        yearAmount: (e.classe?.monthCost ?? 0) * (monthsBetween(e.academicYear?.startDate, e.academicYear?.endDate) ?? 0),
     })) ?? [];
 
     return (
         <Card className='profile-card' title='Hystorique' size='small' extra={
             <p onClick={seeMore} className="btn-toggle">Plus</p>
         }>
-            <Table className='score-table' size='small' columns={columns} dataSource={data} pagination={false}></Table>
+            <Table
+                className='score-table'
+                size='small'
+                columns={columns}
+                dataSource={data}
+                pagination={false}
+                rowKey={(record) => record.classeName}
+            />
         </Card>
     )
 }
@@ -257,7 +273,10 @@ const AttendanceSection = ({enrollment, seeMore}: StudentInfoProps) => {
             <p onClick={seeMore} className="btn-toggle">Plus</p>
         }>
             <div className="panel-table">
-                <PanelTable title='Données des présences' data={attendanceData}/>
+                {attendanceData ?
+                    <PanelTable title='Données des présences' data={attendanceData}/> :
+                    <Voiddata />
+                }
             </div>
         </Card>
     )
@@ -266,6 +285,7 @@ const AttendanceSection = ({enrollment, seeMore}: StudentInfoProps) => {
 const SchoolColleagues = ({enrollment, seeMore}: StudentInfoProps) => {
     
     const [classmates, setClassmates] = useState<Enrollment[]>([])
+    const navigate = useNavigate()
 
     useEffect(() => {
         const fetchData = async () => {
@@ -279,37 +299,64 @@ const SchoolColleagues = ({enrollment, seeMore}: StudentInfoProps) => {
         fetchData().then()
     }, [enrollment]);
 
-    console.log('classmates: ', classmates)
+    const handleSeeDetails = (id: string) => {
+        navigate(`${text.student.group.view.href}${id}`)
+    }
 
     return (
         <Card className='profile-card' title='Condisciples' size='small' extra={
             <p onClick={seeMore} className="btn-toggle">Plus</p>
         }>
-            <Carousel slidesToShow={3} slidesToScroll={1} dots arrows infinite adaptiveHeight centerMode draggable autoplay>
-                {classmates && classmates.map((c, i) => (<Avatar
-                    image={c.student.image}
-                    size={{ xs: 24, sm: 32, md: 40, lg: 64, xl: 80, xxl: 100 }}
-                    firstText={c.student.firstName} lastText={c.student.lastName} key={i} />))}
+            <Carousel slidesToShow={3} slidesToScroll={1} dots={false} arrows draggable autoplay>
+                {classmates && classmates.map((c, i) => (<div className='classmate-team' key={`${c.student.id}-${i}`}>
+                    <div className='scroll-box'>
+                        <a onClick={() => handleSeeDetails(c.student.id)}>
+                            <div className='avatar'>
+                                <Avatar
+                                    image={c.student.image}
+                                    size={{xs: 24, sm: 32, md: 40, lg: 64, xl: 80, xxl: 100}}
+                                    firstText={c.student.firstName} lastText={c.student.lastName}
+                                />
+                            </div>
+                            <div className='name'>
+                                <span>{lowerName(c.student.firstName, c.student.lastName)}</span>
+                            </div>
+                        </a>
+                        <div className='view__button'>
+                            <Button type='primary' style={{width: '100%'}}>Voir</Button>
+                        </div>
+                    </div>
+
+                </div>))}
             </Carousel>
         </Card>
     )
 }
 
-const StudentInfo = ({enrollment}: {enrollment: Enrollment}) => {
+const HealthData = ({enrollment}: StudentInfoProps) => {
+    return(
+        <Card className='profile-card' title='Santé' size='small'>
+            <div>Ici pour la santé</div>
+        </Card>
+    )
+}
+
+const StudentInfo = ({enrollment}: { enrollment: Enrollment }) => {
 
     const {classe: {grade}} = enrollment
 
     const items: ReactNode[] = [
-        <IndividualInfo enrollment={enrollment}/>,
+        <IndividualInfo enrollment={enrollment} dataKey='individual-block'/>,
         ...(grade?.section != SectionType.MATERNELLE && grade?.section != SectionType.PRIMAIRE ? [
-            <ExamList enrollment={enrollment} />
+            <ExamList enrollment={enrollment}  dataKey='exam-block'/>
         ] : []),
         ...(grade?.section != SectionType.MATERNELLE && grade?.section != SectionType.PRIMAIRE ? [
-            <GraphSection enrollment={enrollment} />
+            <GraphSection enrollment={enrollment}  dataKey='graph-block'/>
         ] : []),
-        <SchoolHistory enrollment={enrollment} />,
-        <AttendanceSection enrollment={enrollment} />,
-        <SchoolColleagues enrollment={enrollment} />
+        <SchoolHistory enrollment={enrollment}  dataKey='school-history-block'/>,
+        <AttendanceSection enrollment={enrollment}  dataKey='attendance-block'/>,
+        <SchoolColleagues enrollment={enrollment}  dataKey='classmates-block'/>,
+        <HealthData enrollment={enrollment} dataKey='health-section' />
     ]
 
     return (

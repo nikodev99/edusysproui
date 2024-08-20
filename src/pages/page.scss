@@ -252,4 +252,46 @@
       color: $text-color_over_primary_color!important;
     }
   }
+
+  .classmate-team {
+    position: relative;
+    padding: 12px;
+    background: #fff;
+    width: 100%;
+    border-top: 1px solid #ececec;
+
+    .scroll-box {
+      margin-bottom: 0;
+      overflow-x: auto;
+      white-space: nowrap;
+      padding: 2px 0;
+      min-width: 120px;
+      width: 23.8%;
+      vertical-align: top;
+
+      a {
+        min-width: 100px;
+        display: block;
+        margin: 0 2px;
+      }
+
+      .avatar {
+        margin-bottom: 6px;
+        @include flex-center;
+      }
+
+      .name {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding: 0 0 2px;
+        text-align: center;
+        color: $text_color;
+      }
+
+      .view__button {
+        padding: 5px 5px 0;
+      }
+    }
+  }
 }

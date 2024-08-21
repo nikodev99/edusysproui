@@ -2,6 +2,7 @@
 
 .container {
   padding: 20px;
+  background: #f4f6fd!important;
 }
 
 .page-wrapper {
@@ -291,6 +292,19 @@
 
       .view__button {
         padding: 5px 5px 0;
+      }
+    }
+  }
+
+  .health {
+    @include flex-center;
+    gap: 5px;
+
+    .health-icon {
+      color: #008000;
+
+      &.decrease {
+        color: #FF0000;
       }
     }
   }

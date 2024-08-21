@@ -18,8 +18,8 @@ const HealthConditionForm = ({control, errors, }: ZodProps,) => {
                             {value: BloodType.A_, label: 'A-'},
                             {value: BloodType.B, label: 'B+'},
                             {value: BloodType.B_, label: 'B-'},
-                            {value: BloodType.AB, label: 'AB-'},
-                            {value: BloodType.AB_, label: 'AB+'},
+                            {value: BloodType.AB, label: 'AB+'},
+                            {value: BloodType.AB_, label: 'AB-'},
                             {value: BloodType.O, label: 'O+'},
                             {value: BloodType.O_, label: 'O-'},
                         ]} placeholder='Selectionez le groupe sanguin' {...field} />

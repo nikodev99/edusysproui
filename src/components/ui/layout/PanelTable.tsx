@@ -1,11 +1,12 @@
 import {useNavigate} from "react-router-dom";
 import {ReactNode} from "react";
+import VoidData from "./VoidData.tsx";
 
 interface PanelTableProps {
     title: string
     data?: {
-        statement: string,
-        response?: string | number | ReactNode
+        statement?: string
+        response: string | number | ReactNode
         link?: string
     }[]
 }
@@ -20,7 +21,7 @@ const PanelTable = ({title, data}: PanelTableProps) => {
         <>
             <div className="table-head"><span>{title}</span></div>
             <div className="table-body">
-                {data && data.map((d, i) => (
+                {data?.length === 0 ? <VoidData /> : data?.map((d, i) => (
                     <div className="table-row" key={`${d.statement}-${i}`}>
                         <p>{d.statement}</p>
                         {d.link ? (

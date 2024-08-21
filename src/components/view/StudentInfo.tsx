@@ -1,7 +1,7 @@
 import Block from "../ui/layout/Block.tsx";
-import {Button, Card, Carousel, Divider, Table, TableColumnsType, Tag} from "antd";
+import {Button, Card, Carousel, Divider, Table, TableColumnsType, Tag, Avatar as AntAvatar} from "antd";
 import {ReactNode, useEffect, useState} from "react";
-import {Enrollment} from "../../entity";
+import {Enrollment, HealthCondition} from "../../entity";
 import {
     convertToM,
     fDate,
@@ -23,6 +23,9 @@ import {fetchStudentClassmatesRandomly} from "../../data/action/fetch_student.ts
 import Avatar from "../ui/layout/Avatar.tsx";
 import {text} from "../../utils/text_display.ts";
 import {useNavigate} from "react-router-dom";
+import {BloodType} from "../../entity/enums/bloodType.ts";
+import {MdHealthAndSafety} from "react-icons/md";
+import {GiHealthDecrease} from "react-icons/gi";
 
 interface StudentInfoProps {
     enrollment: Enrollment
@@ -273,10 +276,7 @@ const AttendanceSection = ({enrollment, seeMore}: StudentInfoProps) => {
             <p onClick={seeMore} className="btn-toggle">Plus</p>
         }>
             <div className="panel-table">
-                {attendanceData ?
-                    <PanelTable title='Données des présences' data={attendanceData}/> :
-                    <Voiddata />
-                }
+                <PanelTable title='Données des présences' data={attendanceData}/>
             </div>
         </Card>
     )
@@ -334,9 +334,39 @@ const SchoolColleagues = ({enrollment, seeMore}: StudentInfoProps) => {
 }
 
 const HealthData = ({enrollment}: StudentInfoProps) => {
+
+    const {student} = enrollment
+    const healthCondition: HealthCondition = student.healthCondition !== null ? student.healthCondition : {} as HealthCondition
+
+    const conditions = healthCondition.medicalConditions?.map((condition) => ({
+        response: <div className='health'>
+            <span>{condition}</span>
+            <GiHealthDecrease  className='health-icon decrease' size={35}/>
+        </div>
+    }))
+    const allergies = healthCondition.allergies?.map((allergy) => ({
+        response: <div>{allergy}</div>
+    }))
+    const medications = healthCondition.medications?.map((medication) => ({
+        response: <div>{medication}</div>
+    }))
+    const blood = healthCondition?.bloodType as unknown as keyof typeof BloodType
+    const healthData = [
+        {statement: 'Groupe Sanguin', response: <AntAvatar style={{backgroundColor: '#4B1E24'}}>{BloodType[blood]}</AntAvatar>},
+        ...(!conditions && !allergies && !medications ? [{response: <div className='health'>
+                <span>Etat de santé Normal</span>
+                <MdHealthAndSafety className='health-icon' size={35} />
+        </div>}] : [])
+    ]
+
     return(
         <Card className='profile-card' title='Santé' size='small'>
-            <div>Ici pour la santé</div>
+            <div className="panel-table">
+                <PanelTable title='Etat de santé' data={healthData}/>
+                {conditions && (<PanelTable title='Condition Médicale' data={conditions} />)}
+                {allergies && (<PanelTable title='Allergies' data={allergies} />)}
+                {medications && (<PanelTable title='Medicamennt Chronique' data={medications} />)}
+            </div>
         </Card>
     )
 }

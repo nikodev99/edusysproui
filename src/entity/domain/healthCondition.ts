@@ -1,12 +1,12 @@
 import {BloodType} from "../enums/bloodType.ts";
 
 export interface HealthCondition {
-    id?: bigint
+    id: bigint
     medicalConditions?: string[]
-    allergies: string[]
-    medications: string[]
-    bloodType?: BloodType
-    handicap?: string
-    weight?: number
-    height?: number
+    allergies?: string[]
+    medications?: string[]
+    bloodType: BloodType
+    handicap: string
+    weight: number
+    height: number
 }

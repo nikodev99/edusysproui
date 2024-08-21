@@ -57,6 +57,8 @@ const StudentView = () => {
         LocalStorageManager.update('tabKey', () => activeKey)
     }
 
+    console.log(enrolledStudent)
+
     return(
         <>
             <PageHierarchy items={pageHierarchy as [{title: string | ReactNode, path?: string}]} mBottom={25} />

@@ -135,3 +135,32 @@
     }
   }
 }
+
+.void__wrapper {
+  box-sizing: border-box;
+  background: #fff;
+  text-align: center;
+  color: rgba(0,0,0,.25);
+
+  .empty {
+    padding: 8px 8px;
+    transition: background .2s, border-color .2s;
+    position: relative;
+    overflow-wrap: break-word;
+    margin-block: 32px;
+    margin-inline: 8px;
+    font-size: 14px;
+    line-height: 1.6;
+    text-align: center;
+
+    .empty__image {
+      height: 48px;
+      margin-bottom: 8px;
+      opacity: 1;
+    }
+
+    .empty__desc {
+      color: rgba(0,0,0,.45);
+    }
+  }
+}

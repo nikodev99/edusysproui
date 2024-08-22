@@ -1,17 +1,17 @@
 import Block from "../ui/layout/Block.tsx";
 import {Button, Card, Carousel, Divider, Table, TableColumnsType, Tag, Avatar as AntAvatar} from "antd";
 import {ReactNode, useEffect, useState} from "react";
-import {Enrollment, HealthCondition} from "../../entity";
+import {Enrollment, HealthCondition, Schedule} from "../../entity";
 import {
     convertToM,
     fDate,
     fDatetime,
     firstLetter, fullDay,
     getAge,
-    getCountry,
+    getCountry, isCurrentTimeBetween,
     isNull, lowerName,
     monthsBetween,
-    setFirstName
+    setFirstName, timeConcat
 } from "../../utils/utils.ts";
 import PanelStat from "../ui/layout/PanelStat.tsx";
 import {Gender} from "../../entity/enums/gender.ts";
@@ -48,7 +48,7 @@ interface HistoryData {
 
 const IndividualInfo = ({enrollment}: StudentInfoProps) => {
 
-    const {student, student: {address, guardian, healthCondition} } = enrollment
+    const {student, student: {address, healthCondition} } = enrollment
 
     const [nationality, setNationality] = useState<string>()
     const country = getCountry(student.nationality as string)
@@ -70,13 +70,6 @@ const IndividualInfo = ({enrollment}: StudentInfoProps) => {
             response: address?.borough
         }] : []),
         {statement: 'Ville', response: student.address?.city}
-    ]
-    const guardianData = [
-        {statement: 'Nom(s)', response: guardian?.lastName},
-        {statement: 'Prénoms(s)', response: guardian?.firstName},
-        {statement: 'Téléphone', response: guardian?.telephone},
-        ...(isNull(guardian?.mobile) ? [] : [{statement: 'Mobile', response: guardian?.mobile}]),
-        {statement: '@', response: guardian?.emailId}
     ]
 
     useEffect(() => {
@@ -102,6 +95,25 @@ const IndividualInfo = ({enrollment}: StudentInfoProps) => {
             <div className="panel-table">
                 <PanelTable title='Données Personnelles' data={individualData}/>
                 <PanelTable title='Addresse' data={addressData}/>
+            </div>
+        </Card>
+    )
+}
+
+const GuardianBlock = ({enrollment}: StudentInfoProps) => {
+    const {student: { guardian } } = enrollment
+
+    const guardianData = [
+        {statement: 'Nom(s)', response: guardian?.lastName},
+        {statement: 'Prénoms(s)', response: guardian?.firstName},
+        {statement: 'Téléphone', response: guardian?.telephone},
+        ...(isNull(guardian?.mobile) ? [] : [{statement: 'Mobile', response: guardian?.mobile}]),
+        {statement: '@', response: guardian?.emailId}
+    ]
+
+    return(
+        <Card className='profile-card' title='Tuteur legal' size="small">
+            <div className="panel-table">
                 <PanelTable title='Tuteur' data={guardianData}/>
             </div>
         </Card>
@@ -371,12 +383,49 @@ const HealthData = ({enrollment}: StudentInfoProps) => {
     )
 }
 
+const CourseSchedule = ({enrollment}: StudentInfoProps) => {
+    const {classe} = enrollment
+    const schedules: Schedule[] = classe.schedule !== null ? classe.schedule : []
+
+    const columns: TableColumnsType<Schedule> = [
+        {
+            title: "Heures",
+            dataIndex: 'startTime',
+            key: 'time',
+            align: 'center',
+            render: (text, s) => (<p style={{textAlign: 'left'}}>{timeConcat(text, s.endTime as number[])}</p>),
+            responsive: ['md'],
+        },
+        {
+            title: "Matières",
+            dataIndex: 'course',
+            key: 'course',
+            align: 'center',
+            render: (c, r) => (<p style={{textAlign: 'left'}}>{c?.course ?? r.designation}</p>),
+        },
+    ];
+
+    return(
+        <Card className='profile-card' title={`Emploi du temps: ${setFirstName(fullDay(new Date()))}`} size='small'>
+            <Table
+                className='score-table'
+                columns={columns}
+                dataSource={schedules}
+                pagination={false}
+                size='small'
+                rowClassName={(record) => isCurrentTimeBetween(record.startTime as number[], record.endTime as number[]) ? 'highlight-row' : ''}
+            />
+        </Card>
+    )
+}
+
 const StudentInfo = ({enrollment}: { enrollment: Enrollment }) => {
 
     const {classe: {grade}} = enrollment
 
     const items: ReactNode[] = [
         <IndividualInfo enrollment={enrollment} dataKey='individual-block'/>,
+        <GuardianBlock enrollment={enrollment} dataKey='guardian-section' />,
         ...(grade?.section != SectionType.MATERNELLE && grade?.section != SectionType.PRIMAIRE ? [
             <ExamList enrollment={enrollment}  dataKey='exam-block'/>
         ] : []),
@@ -386,7 +435,8 @@ const StudentInfo = ({enrollment}: { enrollment: Enrollment }) => {
         <SchoolHistory enrollment={enrollment}  dataKey='school-history-block'/>,
         <AttendanceSection enrollment={enrollment}  dataKey='attendance-block'/>,
         <SchoolColleagues enrollment={enrollment}  dataKey='classmates-block'/>,
-        <HealthData enrollment={enrollment} dataKey='health-section' />
+        <HealthData enrollment={enrollment} dataKey='health-section' />,
+        <CourseSchedule enrollment={enrollment} dataKey='schedule-section' />
     ]
 
     return (

@@ -15,7 +15,6 @@ import StudentAttendance from "../../components/view/StudentAttendance.tsx";
 import StudentClasse from "../../components/view/StudentClasse.tsx";
 import StudentHistory from "../../components/view/StudentHistory.tsx";
 import LocalStorageManager from "../../core/LocalStorageManager.ts";
-import Sticky from "react-sticky-el";
 
 const StudentView = () => {
 
@@ -63,7 +62,7 @@ const StudentView = () => {
         <>
             <PageHierarchy items={pageHierarchy as [{title: string | ReactNode, path?: string}]} mBottom={25} />
             <ViewHeader enrollment={enrolledStudent} isLoading={isLoading} />
-            {/*<Sticky>*/}
+            <section className="sticky-wrapper" style={{ position: 'relative' }}>
                 <Tabs rootClassName={`tabs`}
                       items={[
                           ...(enrolledStudent ?
@@ -78,7 +77,7 @@ const StudentView = () => {
                       defaultActiveKey={tabKey}
                       centered
                 />
-            {/*</Sticky>*/}
+            </section>
         </>
     )
 }

@@ -137,6 +137,22 @@ const formattedDate = (date?: Date | number[] | string, format?: string) => {
     return setDayJsDate(date)?.locale('fr').format(format);
 }
 
+export const setTime = (time: number[]) => {
+    const [hour, minute] = time;
+    return dayjs().hour(hour).minute(minute).format('HH:mm');
+}
+
+export const timeConcat = (startTime: number[], endTime: number[]) => {
+    return `${setTime(startTime)} - ${setTime(endTime)}`;
+}
+
+export const isCurrentTimeBetween = (startTime: number[], endTime: number[]): boolean => {
+    const now = dayjs();
+    const start = dayjs().hour(startTime[0]).minute(startTime[1]);
+    const end = dayjs().hour(endTime[0]).minute(endTime[1]);
+    return now.isAfter(start) && now.isBefore(end);
+};
+
 export const chooseColor = (name: string): string | null | undefined => {
     if (name)
         switch (name.toUpperCase().charAt(0)) {

@@ -7,9 +7,9 @@ export interface Schedule {
     id?: number
     classe?: Classe
     teacher?: Teacher
-    course?: Course
+    course: Course
     designation?: string
     dayOfWeek?: Day | number
-    startTime?: Date
-    endTime?: Date
+    startTime: Date | number[]
+    endTime: Date | number[]
 }

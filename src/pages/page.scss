@@ -252,6 +252,17 @@
       background-color: $primary_color!important;
       color: $text-color_over_primary_color!important;
     }
+
+    .highlight-row {
+      background-color: lighten(#006400, 70%);
+      color: inherit;
+
+      &.ant-table-row {
+        &:hover > .ant-table-cell {
+          background-color: lighten(#006400, 70%)!important;
+        }
+      }
+    }
   }
 
   .classmate-team {

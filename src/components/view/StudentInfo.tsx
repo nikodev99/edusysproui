@@ -22,10 +22,10 @@ import {Attendance} from "../../entity/enums/attendance.ts";
 import {fetchStudentClassmatesRandomly} from "../../data/action/fetch_student.ts";
 import Avatar from "../ui/layout/Avatar.tsx";
 import {text} from "../../utils/text_display.ts";
-import {useNavigate} from "react-router-dom";
 import {BloodType} from "../../entity/enums/bloodType.ts";
 import {MdHealthAndSafety} from "react-icons/md";
 import {GiHealthDecrease} from "react-icons/gi";
+import {redirectTo} from "../../context/RedirectContext.ts";
 
 interface StudentInfoProps {
     enrollment: Enrollment
@@ -187,8 +187,8 @@ const GraphSection = ({enrollment}: StudentInfoProps) => {
 
     return (
         <Card className='profile-card' title='Progression aux examens' size='small'>
-            <ResponsiveContainer height={400} minHeight={300}>
-                <RadarChart data={data} >
+            <ResponsiveContainer height={350} minHeight={300}>
+                <RadarChart data={data}>
                     <PolarGrid/>
                     <PolarAngleAxis dataKey="subject"/>
                     {/* TODO ajouter à combien vont les notes. Par défaut [0 à 20] puis customizable */}
@@ -297,7 +297,6 @@ const AttendanceSection = ({enrollment, seeMore}: StudentInfoProps) => {
 const SchoolColleagues = ({enrollment, seeMore}: StudentInfoProps) => {
     
     const [classmates, setClassmates] = useState<Enrollment[]>([])
-    const navigate = useNavigate()
 
     useEffect(() => {
         const fetchData = async () => {
@@ -312,7 +311,7 @@ const SchoolColleagues = ({enrollment, seeMore}: StudentInfoProps) => {
     }, [enrollment]);
 
     const handleSeeDetails = (id: string) => {
-        navigate(`${text.student.group.view.href}${id}`)
+        redirectTo(`${text.student.group.view.href}${id}`)
     }
 
     return (
@@ -413,6 +412,7 @@ const CourseSchedule = ({enrollment}: StudentInfoProps) => {
                 dataSource={schedules}
                 pagination={false}
                 size='small'
+                rowKey={(record) => `row-${record.id}`}
                 rowClassName={(record) => isCurrentTimeBetween(record.startTime as number[], record.endTime as number[]) ? 'highlight-row' : ''}
             />
         </Card>

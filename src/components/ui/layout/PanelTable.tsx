@@ -23,13 +23,13 @@ const PanelTable = ({title, data}: PanelTableProps) => {
             <div className="table-body">
                 {data?.length === 0 ? <VoidData /> : data?.map((d, i) => (
                     <div className="table-row" key={`${d.statement}-${i}`}>
-                        <p>{d.statement}</p>
+                        <div>{d.statement}</div>
                         {d.link ? (
-                            <p className="linked" onClick={() => goThrough(d.link!)}>
+                            <div className="linked" onClick={() => goThrough(d.link!)}>
                                 {d.response}
-                            </p>
+                            </div>
                         ) : (
-                            <p>{d.response}</p>
+                            <div>{d.response}</div>
                         )}
                     </div>
                 ))}

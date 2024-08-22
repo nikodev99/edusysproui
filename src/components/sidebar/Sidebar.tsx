@@ -2,14 +2,13 @@ import "./sidebar.scss"
 import {Flex, Menu, Image, Layout, Button} from "antd";
 import {menuItems} from "../../core/menuItems.tsx";
 import {useToggle} from "../../hooks/useToggle.ts";
-import {useNavigate} from "react-router-dom";
 import {LuChevronLeft, LuChevronRight} from "react-icons/lu";
+import {redirectTo} from "../../context/RedirectContext.ts";
 
 const Sidebar = ({onCollapsed}: {onCollapsed?: boolean}) => {
 
     const [collapsed, setCollapsed] = useToggle(false)
-    const navigate = useNavigate();
-    const handleMenuItemClick = ({key}: {key: string|null}) => {key ? navigate(key) : navigate('/')}
+    const handleMenuItemClick = ({key}: {key: string|null}) => {key ? redirectTo(key) : redirectTo('/')}
 
     return(
         <Layout.Sider theme="light" trigger={null} collapsed={collapsed} collapsible className={`sidebar ${onCollapsed ? "show" : ""}`} width={250}>

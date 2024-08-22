@@ -94,3 +94,4 @@ export interface StudentList {
 }
 
 export type StudentListIndex = keyof StudentList;
+export type RedirectFunction = (link: string) => void;

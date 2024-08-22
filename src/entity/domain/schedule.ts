@@ -4,7 +4,7 @@ import {Day} from "../enums/day.ts";
 import {Course} from "./course.ts";
 
 export interface Schedule {
-    id?: number
+    id: number
     classe?: Classe
     teacher?: Teacher
     course: Course

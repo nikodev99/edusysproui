@@ -17,15 +17,17 @@ import PanelStat from "../ui/layout/PanelStat.tsx";
 import {Gender} from "../../entity/enums/gender.ts";
 import PanelTable from "../ui/layout/PanelTable.tsx";
 import {SectionType} from "../../entity/enums/section.ts";
-import {PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, ResponsiveContainer} from 'recharts';
 import {Attendance} from "../../entity/enums/attendance.ts";
 import {fetchStudentClassmatesRandomly} from "../../data/action/fetch_student.ts";
 import Avatar from "../ui/layout/Avatar.tsx";
 import {text} from "../../utils/text_display.ts";
 import {BloodType} from "../../entity/enums/bloodType.ts";
 import {MdHealthAndSafety} from "react-icons/md";
-import {GiHealthDecrease} from "react-icons/gi";
+import {GiAchievement, GiHealthDecrease} from "react-icons/gi";
 import {redirectTo} from "../../context/RedirectContext.ts";
+import RadarChart from "../graph/RadarChart.tsx";
+import PieChart from "../graph/PieChart.tsx";
+import {Reprimand} from "../../entity/domain/reprimand.ts";
 
 interface StudentInfoProps {
     enrollment: Enrollment
@@ -69,7 +71,7 @@ const IndividualInfo = ({enrollment}: StudentInfoProps) => {
             statement: 'Arrondissement',
             response: address?.borough
         }] : []),
-        {statement: 'Ville', response: student.address?.city}
+        {statement: 'Ville', response: address?.city}
     ]
 
     useEffect(() => {
@@ -101,7 +103,7 @@ const IndividualInfo = ({enrollment}: StudentInfoProps) => {
 }
 
 const GuardianBlock = ({enrollment}: StudentInfoProps) => {
-    const {student: { guardian } } = enrollment
+    const {student: { guardian, guardian: { address } } } = enrollment
 
     const guardianData = [
         {statement: 'Nom(s)', response: guardian?.lastName},
@@ -110,11 +112,22 @@ const GuardianBlock = ({enrollment}: StudentInfoProps) => {
         ...(isNull(guardian?.mobile) ? [] : [{statement: 'Mobile', response: guardian?.mobile}]),
         {statement: '@', response: guardian?.emailId}
     ]
+    const addressData = [
+        {statement: 'Numéro', response: address?.number},
+        {statement: 'Rue', response: address?.street},
+        {statement: 'Quartier', response: address?.neighborhood},
+        ...(!isNull(address?.borough) ? [{
+            statement: 'Arrondissement',
+            response: address?.borough
+        }] : []),
+        {statement: 'Ville', response: address?.city}
+    ]
 
     return(
         <Card className='profile-card' title='Tuteur legal' size="small">
             <div className="panel-table">
                 <PanelTable title='Tuteur' data={guardianData}/>
+                <PanelTable title='Addresse' data={addressData}/>
             </div>
         </Card>
     )
@@ -179,23 +192,17 @@ const GraphSection = ({enrollment}: StudentInfoProps) => {
         score: s.obtainedMark
     }))
 
-    data.push({subject: 'Physique chimie', score: 20})
+    //TODO this should be average score
+    data.push({subject: 'Physique chimie', score: 16})
     data.push({subject: 'French', score: 12})
     data.push({subject: 'Anglais', score: 18})
     data.push({subject: 'Music', score: 15})
     data.push({subject: 'Math', score: 13})
 
+
     return (
         <Card className='profile-card' title='Progression aux examens' size='small'>
-            <ResponsiveContainer height={350} minHeight={300}>
-                <RadarChart data={data}>
-                    <PolarGrid/>
-                    <PolarAngleAxis dataKey="subject"/>
-                    {/* TODO ajouter à combien vont les notes. Par défaut [0 à 20] puis customizable */}
-                    <PolarRadiusAxis angle={30} domain={[0, 20]}/>
-                    <Radar name="Scores" dataKey="score" stroke="#137333" fill="#137333" fillOpacity={0.4}/>
-                </RadarChart>
-            </ResponsiveContainer>
+            <RadarChart data={data} xField='subject' yField='score' />
         </Card>
     )
 }
@@ -419,6 +426,42 @@ const CourseSchedule = ({enrollment}: StudentInfoProps) => {
     )
 }
 
+const DisciplinaryRecords = ({enrollment, seeMore}: StudentInfoProps) => {
+
+    const {student: {firstName}} = enrollment
+    const reprimands = [] as Reprimand[]
+    const data = Object.values(
+        reprimands.reduce((acc, curr) => {
+            if (!acc[curr.type]) {
+                acc[curr.type] = {type: curr.type, value: 0}
+            }
+            acc[curr.type].value += 1;
+            return acc;
+        }, {} as Record<string, { type: string; value: number }>)
+    )
+
+    return (
+        <Card className='profile-card' title={`Dossiers disciplinaires de ${setFirstName(firstName)}`} size='small' extra={
+            <p onClick={seeMore} className="btn-toggle">Plus</p>
+        }>
+            {reprimands.length !== 0 ? (<PieChart data={data} />) : (
+                <div className='panel-table'>
+                    <PanelTable title='Dossiers disciplinaires' data={[{
+                        response: (
+                            <div className='health'>
+                                <span className='big-text'>Aucune réprimande trouvée</span>
+                                <GiAchievement className='health-icon' size={65}/>
+                            </div>
+                        )
+                    }]}/>
+                </div>
+            )}
+        </Card>
+    )
+}
+
+//TODO add the bar graph for the 5 last exams
+
 const StudentInfo = ({enrollment}: { enrollment: Enrollment }) => {
 
     const {classe: {grade}} = enrollment
@@ -436,7 +479,8 @@ const StudentInfo = ({enrollment}: { enrollment: Enrollment }) => {
         <AttendanceSection enrollment={enrollment}  dataKey='attendance-block'/>,
         <SchoolColleagues enrollment={enrollment}  dataKey='classmates-block'/>,
         <HealthData enrollment={enrollment} dataKey='health-section' />,
-        <CourseSchedule enrollment={enrollment} dataKey='schedule-section' />
+        <CourseSchedule enrollment={enrollment} dataKey='schedule-section' />,
+        <DisciplinaryRecords enrollment={enrollment} dataKey='disciplinary-section' />
     ]
 
     return (

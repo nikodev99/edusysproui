@@ -1,17 +1,10 @@
 import Block from "../ui/layout/Block.tsx";
-import {Button, Card, Carousel, Divider, Table, TableColumnsType, Tag, Avatar as AntAvatar} from "antd";
+import {Button, Carousel, Divider, Table, TableColumnsType, Tag, Avatar as AntAvatar} from "antd";
 import {ReactNode, useEffect, useState} from "react";
 import {Enrollment, HealthCondition, Schedule} from "../../entity";
 import {
-    convertToM,
-    fDate,
-    fDatetime,
-    firstLetter, fullDay,
-    getAge,
-    getCountry, isCurrentTimeBetween,
-    isNull, lowerName,
-    monthsBetween,
-    setFirstName, timeConcat
+    convertToM, fDate, fDatetime, firstLetter, fullDay, getAge, getCountry, isCurrentTimeBetween,
+    isNull, lowerName, monthsBetween, setFirstName, timeConcat
 } from "../../utils/utils.ts";
 import PanelStat from "../ui/layout/PanelStat.tsx";
 import {Gender} from "../../entity/enums/gender.ts";
@@ -28,6 +21,8 @@ import {redirectTo} from "../../context/RedirectContext.ts";
 import RadarChart from "../graph/RadarChart.tsx";
 import PieChart from "../graph/PieChart.tsx";
 import {Reprimand} from "../../entity/domain/reprimand.ts";
+import Section from "../ui/layout/Section.tsx";
+import PanelSection from "../ui/layout/PanelSection.tsx";
 
 interface StudentInfoProps {
     enrollment: Enrollment
@@ -82,10 +77,8 @@ const IndividualInfo = ({enrollment}: StudentInfoProps) => {
         }
     }, [country, student]);
 
-
     return (
-        <Card className='profile-card'
-              title={`Profile de ${setFirstName(student.firstName + ' ' + student.lastName)}`} size="small">
+        <Section title={`Profile de ${setFirstName(student.firstName + ' ' + student.lastName)}`}>
             <div className='panel'>
                 <PanelStat title={studentAge} subTitle='ans' src={true} media={country?.cca2} desc={nationality}/>
                 <PanelStat title={healthCondition?.weight} subTitle='kgs' src={false} media={''} desc='Poids'/>
@@ -98,12 +91,12 @@ const IndividualInfo = ({enrollment}: StudentInfoProps) => {
                 <PanelTable title='Données Personnelles' data={individualData}/>
                 <PanelTable title='Addresse' data={addressData}/>
             </div>
-        </Card>
+        </Section>
     )
 }
 
 const GuardianBlock = ({enrollment}: StudentInfoProps) => {
-    const {student: { guardian, guardian: { address } } } = enrollment
+    const {student: {guardian, guardian: {address}}} = enrollment
 
     const guardianData = [
         {statement: 'Nom(s)', response: guardian?.lastName},
@@ -124,12 +117,10 @@ const GuardianBlock = ({enrollment}: StudentInfoProps) => {
     ]
 
     return(
-        <Card className='profile-card' title='Tuteur legal' size="small">
-            <div className="panel-table">
-                <PanelTable title='Tuteur' data={guardianData}/>
-                <PanelTable title='Addresse' data={addressData}/>
-            </div>
-        </Card>
+        <PanelSection title='Tuteur legal'>
+            <PanelTable title='Tuteur' data={guardianData}/>
+            <PanelTable title='Addresse' data={addressData}/>
+        </PanelSection>
     )
 }
 
@@ -173,13 +164,10 @@ const ExamList = ({enrollment, seeMore}: StudentInfoProps) => {
         }
     ];
 
-
     return (
-        <Card className='profile-card' title='Performance aux devoirs' size="small" extra={
-            <p onClick={seeMore} className="btn-toggle">Plus</p>
-        }>
+        <Section title='Performance aux devoirs' more={true} seeMore={seeMore}>
             <Table className='score-table' size='small' columns={columns} dataSource={data} pagination={false} />
-        </Card>
+        </Section>
     )
 }
 
@@ -199,11 +187,10 @@ const GraphSection = ({enrollment}: StudentInfoProps) => {
     data.push({subject: 'Music', score: 15})
     data.push({subject: 'Math', score: 13})
 
-
     return (
-        <Card className='profile-card' title='Progression aux examens' size='small'>
+        <Section title='Progression aux examens'>
             <RadarChart data={data} xField='subject' yField='score' />
-        </Card>
+        </Section>
     )
 }
 
@@ -240,9 +227,7 @@ const SchoolHistory = ({enrollment, seeMore}: StudentInfoProps) => {
     })) ?? [];
 
     return (
-        <Card className='profile-card' title='Hystorique' size='small' extra={
-            <p onClick={seeMore} className="btn-toggle">Plus</p>
-        }>
+        <Section title='Hystorique' more={true} seeMore={seeMore}>
             <Table
                 className='score-table'
                 size='small'
@@ -251,7 +236,7 @@ const SchoolHistory = ({enrollment, seeMore}: StudentInfoProps) => {
                 pagination={false}
                 rowKey={(record) => record.classeName}
             />
-        </Card>
+        </Section>
     )
 }
 
@@ -291,13 +276,9 @@ const AttendanceSection = ({enrollment, seeMore}: StudentInfoProps) => {
     }) ?? [];
 
     return (
-        <Card className='profile-card' title='Suivis de présence' size='small' extra={
-            <p onClick={seeMore} className="btn-toggle">Plus</p>
-        }>
-            <div className="panel-table">
-                <PanelTable title='Données des présences' data={attendanceData}/>
-            </div>
-        </Card>
+        <PanelSection title='Suivis de présence' more={true} seeMore={seeMore}>
+            <PanelTable title='Données des présences' data={attendanceData}/>
+        </PanelSection>
     )
 }
 
@@ -322,9 +303,7 @@ const SchoolColleagues = ({enrollment, seeMore}: StudentInfoProps) => {
     }
 
     return (
-        <Card className='profile-card' title='Condisciples' size='small' extra={
-            <p onClick={seeMore} className="btn-toggle">Plus</p>
-        }>
+        <Section title='Condisciples' more={true} seeMore={seeMore}>
             <Carousel slidesToShow={3} slidesToScroll={1} dots={false} arrows draggable autoplay>
                 {classmates && classmates.map((c, i) => (<div className='classmate-team' key={`${c.student.id}-${i}`}>
                     <div className='scroll-box'>
@@ -347,7 +326,7 @@ const SchoolColleagues = ({enrollment, seeMore}: StudentInfoProps) => {
 
                 </div>))}
             </Carousel>
-        </Card>
+        </Section>
     )
 }
 
@@ -378,14 +357,12 @@ const HealthData = ({enrollment}: StudentInfoProps) => {
     ]
 
     return(
-        <Card className='profile-card' title='Santé' size='small'>
-            <div className="panel-table">
-                <PanelTable title='Etat de santé' data={healthData}/>
-                {conditions && (<PanelTable title='Condition Médicale' data={conditions} />)}
-                {allergies && (<PanelTable title='Allergies' data={allergies} />)}
-                {medications && (<PanelTable title='Medicamennt Chronique' data={medications} />)}
-            </div>
-        </Card>
+        <PanelSection title='Santé'>
+            <PanelTable title='Etat de santé' data={healthData}/>
+            {conditions && (<PanelTable title='Condition Médicale' data={conditions} />)}
+            {allergies && (<PanelTable title='Allergies' data={allergies} />)}
+            {medications && (<PanelTable title='Medicamennt Chronique' data={medications} />)}
+        </PanelSection>
     )
 }
 
@@ -412,7 +389,7 @@ const CourseSchedule = ({enrollment}: StudentInfoProps) => {
     ];
 
     return(
-        <Card className='profile-card' title={`Emploi du temps: ${setFirstName(fullDay(new Date()))}`} size='small'>
+        <Section title={`Emploi du temps: ${setFirstName(fullDay(new Date()))}`}>
             <Table
                 className='score-table'
                 columns={columns}
@@ -422,7 +399,7 @@ const CourseSchedule = ({enrollment}: StudentInfoProps) => {
                 rowKey={(record) => `row-${record.id}`}
                 rowClassName={(record) => isCurrentTimeBetween(record.startTime as number[], record.endTime as number[]) ? 'highlight-row' : ''}
             />
-        </Card>
+        </Section>
     )
 }
 
@@ -441,22 +418,20 @@ const DisciplinaryRecords = ({enrollment, seeMore}: StudentInfoProps) => {
     )
 
     return (
-        <Card className='profile-card' title={`Dossiers disciplinaires de ${setFirstName(firstName)}`} size='small' extra={
-            <p onClick={seeMore} className="btn-toggle">Plus</p>
-        }>
+        <Section title={`Dossiers disciplinaires de ${setFirstName(firstName)}`} more={true} seeMore={seeMore}>
             {reprimands.length !== 0 ? (<PieChart data={data} />) : (
                 <div className='panel-table'>
                     <PanelTable title='Dossiers disciplinaires' data={[{
                         response: (
                             <div className='health'>
                                 <span className='big-text'>Aucune réprimande trouvée</span>
-                                <GiAchievement className='health-icon' size={65}/>
+                                <GiAchievement className='health-icon' size={100}/>
                             </div>
                         )
                     }]}/>
                 </div>
             )}
-        </Card>
+        </Section>
     )
 }
 

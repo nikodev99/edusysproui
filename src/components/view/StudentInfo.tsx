@@ -189,7 +189,7 @@ const GraphSection = ({enrollment}: StudentInfoProps) => {
 
     return (
         <Section title='Progression aux examens'>
-            <RadarChart data={data} xField='subject' yField='score' />
+            <RadarChart data={data}  xField='subject' yField='score'/>
         </Section>
     )
 }

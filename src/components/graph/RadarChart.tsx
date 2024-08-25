@@ -1,4 +1,11 @@
-import { Radar } from '@ant-design/plots';
+import {
+    ResponsiveContainer,
+    RadarChart as ReChartRadarChart,
+    PolarGrid,
+    PolarAngleAxis,
+    PolarRadiusAxis,
+    Radar
+} from "recharts";
 
 interface RadarProps {
     data: object[]
@@ -9,46 +16,15 @@ interface RadarProps {
 
 const RadarChart = ({data, xField, yField}: RadarProps) => {
 
-    const config = {
-        data: data,
-        xField: xField,
-        yField: yField,
-        meta: {
-          score: {
-              min: 0,
-              max: 20,
-              tickInterval: 20
-          }
-        },
-        area: {
-            style: {
-                fillOpacity: 0.2,
-            },
-        },
-        scale: {
-            x: {
-                padding: 0.5,
-                align: 0,
-            },
-            y: {
-                nice: true,
-            },
-        },
-        axis: {
-            x: {
-                title: false,
-                grid: true,
-            },
-            y: {
-                gridAreaFill: 'rgba(0, 0, 0, 0.04)',
-                label: true,
-                title: false,
-            },
-        }
-    };
-
-    return(
-        <Radar {...config} />
+    return (
+        <ResponsiveContainer width="100%" height={350} maxHeight={400}>
+            <ReChartRadarChart cx="50%" cy="50%" outerRadius="80%" data={data}>
+                <PolarGrid />
+                <PolarAngleAxis dataKey={xField} />
+                <PolarRadiusAxis />
+                <Radar dataKey={yField} stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
+            </ReChartRadarChart>
+        </ResponsiveContainer>
     )
 }
 

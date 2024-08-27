@@ -23,18 +23,13 @@ import PieChart from "../graph/PieChart.tsx";
 import {Reprimand} from "../../entity/domain/reprimand.ts";
 import Section from "../ui/layout/Section.tsx";
 import PanelSection from "../ui/layout/PanelSection.tsx";
+import {ExamData} from "../../utils/interfaces.ts";
+import {initExamData} from "../../entity/domain/score.ts";
 
 interface StudentInfoProps {
     enrollment: Enrollment
     dataKey: string
     seeMore?: () => void
-}
-
-interface ExamData {
-    examDate: string;
-    examName: string;
-    classe: string;
-    obtainedMark: number;
 }
 
 interface HistoryData {
@@ -126,19 +121,12 @@ const GuardianBlock = ({enrollment}: StudentInfoProps) => {
 
 const ExamList = ({enrollment, seeMore}: StudentInfoProps) => {
 
-    const {student: {marks}, classe} = enrollment
-
-    const data: ExamData[] = marks?.map((s) => ({
-        examDate: fDate(s.exam?.examDate) ?? '',
-        examName: s.exam?.subject?.course ?? '',
-        classe: classe?.name ?? '',
-        obtainedMark: s.obtainedMark ?? 0,
-    })) ?? [];
+    const {student: {marks}} = enrollment
 
     const columns: TableColumnsType<ExamData> = [
         {
             title: "Date",
-            dataIndex: 'year',
+            dataIndex: 'examDate',
             key: 'examDate',
             align: 'center',
             render: (text) => (<span>{fDatetime(text)}</span>),
@@ -166,7 +154,7 @@ const ExamList = ({enrollment, seeMore}: StudentInfoProps) => {
 
     return (
         <Section title='Performance aux devoirs' more={true} seeMore={seeMore}>
-            <Table className='score-table' size='small' columns={columns} dataSource={data} pagination={false} />
+            <Table className='score-table' size='small' columns={columns} dataSource={initExamData(marks)} pagination={false} />
         </Section>
     )
 }

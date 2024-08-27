@@ -9,11 +9,11 @@ export interface Exam {
     semester?: Planning
     examType?: ExamType
     preparedBy?: string
-    classe?: Classe
+    classe: Classe
     subject?: Course
-    examName?: string
-    examDate?: Date
-    startTime?: Date
-    endTime?: Date
+    examName: string
+    examDate: Date | number[] | string
+    startTime?: Date | number[] | string
+    endTime?: Date | number[] | string
     marks?: Score[]
 }

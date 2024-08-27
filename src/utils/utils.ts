@@ -194,6 +194,11 @@ export const setFirstName = (firstName?: string) => {
     return ''
 }
 
+export const startsWithVowel = (word?: string): boolean => {
+    const vowels = ['a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'];
+    return word ? vowels.includes(word.charAt(0)) : false;
+}
+
 export const firstLetter = (word?: string): string => {
     if (!word) return '';
     return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();

@@ -70,6 +70,12 @@
   }
 }
 
+@mixin grid_block_display($screen) {
+  @media (max-width: $screen) {
+    display: block;
+  }
+}
+
 @mixin xs-screen {
   @media (max-width: 500px) {
     display: flex;

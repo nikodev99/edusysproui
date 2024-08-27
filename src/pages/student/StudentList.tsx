@@ -16,14 +16,12 @@ import {
 import PageDescription from "../PageDescription.tsx";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {text} from "../../utils/text_display.ts";
-import {useNavigation} from "../../hooks/useNavigation.ts";
 import {TfiLayoutGrid2Alt, TfiViewList} from "react-icons/tfi";
 import {FilterDropdownProps, FilterValue, SorterResult} from "antd/es/table/interface";
 import {AiOutlineSearch, AiOutlineUserAdd} from "react-icons/ai";
 import LocalStorageManager from "../../core/LocalStorageManager.ts";
 import Responsive from "../../components/ui/layout/Responsive.tsx";
 import {StudentList as DataType} from "../../utils/interfaces.ts";
-import {useNavigate} from "react-router-dom";
 import {keepPreviousData, useQuery} from "@tanstack/react-query";
 import {fetchEnrolledStudents, fetchSearchedEnrolledStudents} from "../../data";
 import {Gender} from "../../entity/enums/gender.ts";
@@ -35,6 +33,7 @@ import CardList from "../../components/list/CardList.tsx";
 import {LuEye} from "react-icons/lu";
 import Avatar from "../../components/ui/layout/Avatar.tsx";
 import Tagger from "../../components/list/Tagger.tsx";
+import {redirectTo} from "../../context/RedirectContext.ts";
 
 type DataIndex = keyof DataType;
 
@@ -69,15 +68,13 @@ const StudentList = () => {
     const [searchQuery, setSearchQuery] = useState<string>('')
     const searchInput = useRef<InputRef>(null);
     const enrollUrl = useRef<string>(text.student.group.enroll.href);
-    const navigate = useNavigation(enrollUrl.current)
-    const nav = useNavigate();
 
     const throughEnroll = () => {
-        navigate()
+        redirectTo(enrollUrl.current)
     }
 
     const throughDetails = (link: string) => {
-        nav(`${text.student.group.view.href}${link}`)
+        redirectTo(`${text.student.group.view.href}${link}`)
     }
 
     const { data, error, isLoading, refetch } = useQuery({
@@ -87,7 +84,6 @@ const StudentList = () => {
     })
 
     useEffect( () => {
-        console.log('field: ', sortField, 'Order: ', sortOrder)
         if (searchQuery) {
             fetchSearchedEnrolledStudents(searchQuery)
                 .then((resp) => {
@@ -256,6 +252,7 @@ const StudentList = () => {
             dataIndex: 'gender',
             key: 'gender',
             align: 'center',
+            //TODO the filter directly to the database
             filters: enumToObjectArrayForFiltering(Gender),
             onFilter: (value, record) => record.gender.indexOf(value as string) === 0
         },

@@ -12,7 +12,7 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import HealthConditionForm from "../../components/inscription/HealthConditionForm.tsx";
 import AttachmentForm from "../../components/inscription/AttachmentForm.tsx";
 import AcademicForm from "../../components/inscription/AcademicForm.tsx";
-import {useLocation, useNavigate} from "react-router-dom";
+import {useLocation} from "react-router-dom";
 import queryString from 'query-string'
 import {Gender} from "../../entity/enums/gender.ts";
 import {Status} from "../../entity/enums/status.ts";
@@ -23,6 +23,8 @@ import FormSuccess from "../../components/ui/form/FormSuccess.tsx";
 import {OutputFileEntry} from "@uploadcare/blocks";
 import {Guardian} from "../../entity";
 import {text} from "../../utils/text_display.ts";
+import PageWrapper from "../../components/ui/layout/PageWrapper.tsx";
+import {redirectTo} from "../../context/RedirectContext.ts";
 
 const Inscription = () => {
 
@@ -87,7 +89,6 @@ const Inscription = () => {
     const [guardian, setGuardian] = useState<Guardian | object>({})
     const [isExists, setIsExists] = useState<boolean>(false)
     const location = useLocation()
-    const navigate = useNavigate()
     const [isPending, startTransition] = useTransition()
     const queryParam = queryString.parse(location.search)
     const stepNumber = Number(queryParam.step) || 0
@@ -107,7 +108,7 @@ const Inscription = () => {
     const validate = (validateFields: boolean) => {
         if (validateFields) {
             setValidationTriggered(true);
-            navigate(`${text.student.group.enroll.href}?step=${current + 1}`)
+            redirectTo(`${text.student.group.enroll.href}?step=${current + 1}`)
         }
     }
 
@@ -159,7 +160,7 @@ const Inscription = () => {
         }
     }
 
-    const prev = () => navigate(`${text.student.group.enroll.href}?step=${current - 1}`)
+    const prev = () => redirectTo(`${text.student.group.enroll.href}?step=${current - 1}`)
 
     const handleUploadChange = (items?: {allEntries: OutputFileEntry[]}) => {
         const file = items?.allEntries[0]
@@ -286,31 +287,33 @@ const Inscription = () => {
     return(
         <>
             <PageHierarchy items={items as [{title: string|ReactNode, path?: string}]}/>
-            <Flex className='page-wrapper inscription-wrapper' vertical>
-                <div className='form-wrapper'>
-                    <Form layout="vertical" initialValues={{requiredMarkValue: 'customize'}} requiredMark={requiredMark} onFinish={handleSubmit(onSubmit)}>
-                        <div className="step-wrapper">
-                            <Steps current={current} items={stepItems}/>
-                        </div>
-                        {steps[current].content}
-                        {error && (<FormError message={error}/>)}
-                        {success && (<FormSuccess message={success}/>)}
-                        <Flex gap='small'>
-                            {current > 0 && (
-                                <Button onClick={prev}>précédent</Button>
-                            )}
-                            {current < steps.length - 1 && (
-                                <Button type='primary' onClick={next}>Suivant</Button>
-                            )}
-                            {current === steps.length - 1 && (
-                                <Button disabled={isPending} type='primary' loading={btnLoading[0]} onClick={() => {
-                                    onConfirmModal(0)
-                                }}>Terminer</Button>
-                            )}
-                        </Flex>
-                    </Form>
-                </div>
-            </Flex>
+            <PageWrapper>
+                <Flex className='inscription-wrapper' vertical>
+                    <div className='form-wrapper'>
+                        <Form layout="vertical" initialValues={{requiredMarkValue: 'customize'}} requiredMark={requiredMark} onFinish={handleSubmit(onSubmit)}>
+                            <div className="step-wrapper">
+                                <Steps current={current} items={stepItems}/>
+                            </div>
+                            {steps[current].content}
+                            {error && (<FormError message={error}/>)}
+                            {success && (<FormSuccess message={success}/>)}
+                            <Flex gap='small'>
+                                {current > 0 && (
+                                    <Button onClick={prev}>précédent</Button>
+                                )}
+                                {current < steps.length - 1 && (
+                                    <Button type='primary' onClick={next}>Suivant</Button>
+                                )}
+                                {current === steps.length - 1 && (
+                                    <Button disabled={isPending} type='primary' loading={btnLoading[0]} onClick={() => {
+                                        onConfirmModal(0)
+                                    }}>Terminer</Button>
+                                )}
+                            </Flex>
+                        </Form>
+                    </div>
+                </Flex>
+            </PageWrapper>
         </>
 
     )

@@ -93,6 +93,14 @@ export interface StudentList {
     image: string
 }
 
+export interface ExamData {
+    examId?: number
+    examDate: string;
+    examName: string;
+    classe: string;
+    obtainedMark: number;
+}
+
 export type StudentListIndex = keyof StudentList;
 export type RedirectFunction = (link: string) => void;
 export type PrimitiveDate = Date | number[] | string

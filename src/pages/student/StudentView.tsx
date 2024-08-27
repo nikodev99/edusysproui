@@ -15,6 +15,7 @@ import StudentAttendance from "../../components/view/StudentAttendance.tsx";
 import StudentClasse from "../../components/view/StudentClasse.tsx";
 import StudentHistory from "../../components/view/StudentHistory.tsx";
 import LocalStorageManager from "../../core/LocalStorageManager.ts";
+import {setFirstName} from "../../utils/utils.ts";
 
 const StudentView = () => {
 
@@ -38,7 +39,7 @@ const StudentView = () => {
             path: text.student.href
         },
         {
-            title: 'Un titre'//`${setFirstName(student.lastName)} ${setFirstName(student.firstName)}`
+            title: `${setFirstName(enrolledStudent?.student.lastName)} ${setFirstName(enrolledStudent?.student.firstName)}`
         }
     ])
 
@@ -68,7 +69,9 @@ const StudentView = () => {
                           ...(enrolledStudent ?
                               [{key: '1', label: 'Info', children: <StudentInfo enrollment={enrolledStudent} />}] :
                               [{key: '1', label: 'Info', children: <Skeleton loading={isLoading} active={isLoading} paragraph={{rows: 5}} />}]),
-                          {key: '2', label: 'Examens', children: <StudentExam />},
+                          ...(enrolledStudent ?
+                              [{key: '2', label: 'Examens', children: <StudentExam enrolledStudent={enrolledStudent} />}] :
+                              [{key: '2', label: 'Examens', children: <Skeleton loading={isLoading} active={isLoading} paragraph={{rows: 5}} />}]),
                           {key: '3', label: 'Presence', children: <StudentAttendance />},
                           {key: '4', label: 'Classe', children: <StudentClasse />},
                           {key: '5', label: 'Historique', children: <StudentHistory />},

@@ -101,6 +101,14 @@ export interface ExamData {
     obtainedMark: number;
 }
 
+export interface AttendanceRecord {
+    id: number
+    date: string
+    classe: string
+    section: string
+    status: ReactNode
+}
+
 export interface Pageable {
     page: number,
     size: number,

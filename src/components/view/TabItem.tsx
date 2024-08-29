@@ -7,9 +7,10 @@ interface TabItemProps {
     title: string
     selects?: ReactNode[]
     items?: { key: string; label: ReactNode, children?: ReactNode }[]
+    onTabChange?: (tabKey: string) => void
 }
 
-const TabItem = ({title, selects, items}: TabItemProps) => {
+const TabItem = ({title, selects, items, onTabChange}: TabItemProps) => {
 
     return (
         <PageWrapper classNameList='item'>
@@ -27,7 +28,7 @@ const TabItem = ({title, selects, items}: TabItemProps) => {
                                     </div>
                                 ))}
                             </div>
-                            <Tabs centered size='small' items={items} />
+                            <Tabs centered size='small' items={items} onChange={onTabChange} />
                         </div>
                     </div>
                 </div>

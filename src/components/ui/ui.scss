@@ -165,3 +165,39 @@
     }
   }
 }
+
+/*** Tag UI ***/
+.tag__wrapper {
+  display: inline-flex;
+  min-height: 1.25rem;
+  max-width: 5rem;
+  padding-inline: .375rem;
+  border-radius: 1.5rem;
+  position: relative;
+  vertical-align: middle;
+  font-weight: 700;
+  font-size: .75rem;
+  line-height: 1.5;
+
+  &.success {
+    background: #E3FBE3;
+    color: #0A470A;
+  }
+  &.warning {
+    background: #FDF0E1;
+    color: #492B08;
+  }
+  &.processing {
+    background: #F0F4F8;
+    color: #32383E;
+  }
+  &.error {
+    background: #FCE4E4;
+    color: #7D1212;
+  }
+
+  .tagged {
+    @include flex-center;
+    gap: 3px;
+  }
+}

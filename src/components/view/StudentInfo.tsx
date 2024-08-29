@@ -24,7 +24,7 @@ import Section from "../ui/layout/Section.tsx";
 import PanelSection from "../ui/layout/PanelSection.tsx";
 import {ExamData} from "../../utils/interfaces.ts";
 import {initExamData} from "../../entity/domain/score.ts";
-import {attendanceTag} from "../../entity/domain/attendance.ts";
+import {attendanceTag} from "../../entity/enums/attendance.ts";
 
 interface StudentInfoProps {
     enrollment: Enrollment

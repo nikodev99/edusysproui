@@ -9,6 +9,7 @@ import {ClasseStudentBoss} from "./ClasseStudentBoss.ts";
 export interface Classe {
     id: number
     name: string
+    category: string
     grade: Grade
     schedule: Schedule[]
     roomNumber: number

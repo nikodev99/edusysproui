@@ -101,6 +101,11 @@ export interface ExamData {
     obtainedMark: number;
 }
 
+export interface Pageable {
+    page: number,
+    size: number,
+}
+
 export type StudentListIndex = keyof StudentList;
 export type RedirectFunction = (link: string) => void;
 export type PrimitiveDate = Date | number[] | string

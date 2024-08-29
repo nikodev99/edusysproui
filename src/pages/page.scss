@@ -10,8 +10,9 @@
   background: #fff;
   margin-top: 20px;
 
-  &.student__list__datatable {
-    padding: 0;
+  &.item {
+    padding: 20px;
+    margin: auto;
   }
 
   button {
@@ -326,7 +327,7 @@
   }
 }
 
-.exam-section-container {
+.item-section-container {
   .full__name {
     padding: 5px 0;
     h1 {

@@ -94,8 +94,10 @@ export const fDatetime = (timestamp: Date | number | string, to?: boolean) => {
     return undefined
 }
 
-export const fDate = (date?: Date | number[] | string) => {
-    const format: string = 'D MMMM YYYY';
+export const fDate = (date?: Date | number[] | string, format?: string) => {
+    if (!format) {
+        format = 'D MMMM YYYY';
+    }
     return formattedDate(date, format);
 }
 

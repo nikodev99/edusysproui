@@ -28,8 +28,11 @@ const StudentView = () => {
         queryFn: async () => await fetchStudentById(id as string).then(async (res) => res.data)
     })
 
+    const studentName = enrolledStudent ?
+        `${setFirstName(enrolledStudent?.student.lastName)} ${setFirstName(enrolledStudent?.student.firstName)}` : 'Étudiant'
+
     useDocumentTitle({
-        title: `EduSysPro - étudiant`,
+        title: `EduSysPro - ${studentName}`,
         description: "Student description",
     })
 
@@ -39,7 +42,7 @@ const StudentView = () => {
             path: text.student.href
         },
         {
-            title: `${setFirstName(enrolledStudent?.student.lastName)} ${setFirstName(enrolledStudent?.student.firstName)}`
+            title: studentName
         }
     ])
 
@@ -72,8 +75,10 @@ const StudentView = () => {
                           ...(enrolledStudent ?
                               [{key: '2', label: 'Examens', children: <StudentExam enrolledStudent={enrolledStudent} />}] :
                               [{key: '2', label: 'Examens', children: <Skeleton loading={isLoading} active={isLoading} paragraph={{rows: 5}} />}]),
-                          {key: '3', label: 'Presence', children: <StudentAttendance />},
-                          {key: '4', label: 'Classe', children: <StudentClasse />},
+                          ...(enrolledStudent ?
+                              [{key: '3', label: 'Présence', children: <StudentAttendance  enrolledStudent={enrolledStudent}/>}] :
+                              [{key: '3', label: 'Présence', children: <Skeleton loading={isLoading} active={isLoading} paragraph={{rows: 5}} />}]),
+                          {key: '4', label: 'Condisciples', children: <StudentClasse />},
                           {key: '5', label: 'Historique', children: <StudentHistory />},
                       ]}
                       onChange={handleTabChange}

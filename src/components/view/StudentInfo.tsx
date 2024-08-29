@@ -10,7 +10,6 @@ import PanelStat from "../ui/layout/PanelStat.tsx";
 import {Gender} from "../../entity/enums/gender.ts";
 import PanelTable from "../ui/layout/PanelTable.tsx";
 import {SectionType} from "../../entity/enums/section.ts";
-import {Attendance} from "../../entity/enums/attendance.ts";
 import {fetchStudentClassmatesRandomly} from "../../data/action/fetch_student.ts";
 import Avatar from "../ui/layout/Avatar.tsx";
 import {text} from "../../utils/text_display.ts";
@@ -25,6 +24,7 @@ import Section from "../ui/layout/Section.tsx";
 import PanelSection from "../ui/layout/PanelSection.tsx";
 import {ExamData} from "../../utils/interfaces.ts";
 import {initExamData} from "../../entity/domain/score.ts";
+import {attendanceTag} from "../../entity/domain/attendance.ts";
 
 interface StudentInfoProps {
     enrollment: Enrollment
@@ -233,29 +233,7 @@ const AttendanceSection = ({enrollment, seeMore}: StudentInfoProps) => {
     const { student: { attendances } } = enrollment
 
     const attendanceData = attendances?.map((a) => {
-        let tagColor
-        let tagText
-
-        switch (a.status) {
-            case 'ABSENT' as Attendance:
-                tagColor = 'error'
-                tagText = Attendance.ABSENT
-                break;
-            case 'EXCUSED' as Attendance:
-                tagColor = 'processing'
-                tagText = Attendance.EXCUSED
-                break;
-            case 'PRESENT' as Attendance:
-                tagColor = 'success'
-                tagText = Attendance.PRESENT
-                break;
-            case 'LATE' as Attendance:
-                tagColor = 'warning'
-                tagText = Attendance.LATE
-                break;
-            default:
-                tagColor = 'gray'; // Default color for unexpected statuses
-        }
+        const [tagColor, tagText] = attendanceTag(a.status)
 
         return {
             statement: setFirstName(fullDay(a.attendanceDate)) as string,

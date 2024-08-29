@@ -1,8 +1,8 @@
 import {ReactNode} from "react";
 
-const PageWrapper = ({children}: {children: ReactNode}) => {
+const PageWrapper = ({children, classNameList}: {children: ReactNode, classNameList?: string}) => {
     return (
-        <section className='page-wrapper'>{children}</section>
+        <section className={`page-wrapper ${classNameList}`}>{children}</section>
     )
 }
 

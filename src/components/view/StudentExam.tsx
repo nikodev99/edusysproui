@@ -1,9 +1,7 @@
-import PageWrapper from "../ui/layout/PageWrapper.tsx";
 import {Enrollment, Score} from "../../entity";
 import {fDatetime, setFirstName, startsWithVowel} from "../../utils/utils.ts";
-import {Select, Table, TableColumnsType, Tabs} from "antd";
+import {Select, Table, TableColumnsType} from "antd";
 import {ExamData} from "../../utils/interfaces.ts";
-import {keepPreviousData, useQuery} from "@tanstack/react-query";
 import {fetchAllStudentScores, fetchAllStudentScoresBySubject} from "../../data/action/fetch_score.ts";
 import LocalStorageManager from "../../core/LocalStorageManager.ts";
 import {useEffect, useState} from "react";
@@ -11,6 +9,8 @@ import {initExamData} from "../../entity/domain/score.ts";
 import PageError from "../../pages/PageError.tsx";
 import {LuEye} from "react-icons/lu";
 import {Link} from "react-router-dom";
+import TabItem from "./TabItem.tsx";
+import {useFetch} from "../../hooks/useFetch.ts";
 
 interface StudentExamProps {
     enrolledStudent: Enrollment
@@ -20,7 +20,7 @@ const StudentExam = ({enrolledStudent}: StudentExamProps) => {
 
     const examCount = LocalStorageManager.get<number>('examCount') ?? 0;
 
-    const {academicYear: {id, academicYear}, student: {firstName, lastName, enrollments}} = enrolledStudent
+    const {academicYear: {id, academicYear}, student, student: {firstName, lastName, enrollments}} = enrolledStudent
 
     const [scores, setScores] = useState<Score[]>([])
     const [subjectValue, setSubjectValue] = useState<number>(0)
@@ -28,11 +28,7 @@ const StudentExam = ({enrolledStudent}: StudentExamProps) => {
 
     const studentName = `${setFirstName(lastName)} ${setFirstName(firstName)}`
 
-    const {data, error, isLoading, refetch} = useQuery({
-        queryKey: ['student-scores'],
-        queryFn: async () => await fetchAllStudentScores(examCount, 10, academicYearId).then(res => res.data),
-        placeholderData: keepPreviousData
-    })
+    const {data, error, isLoading, refetch} = useFetch('student-scores', fetchAllStudentScores, [examCount, 10, student.id, academicYearId])
 
     useEffect(() => {
         if (subjectValue != 0) {
@@ -91,7 +87,7 @@ const StudentExam = ({enrolledStudent}: StudentExamProps) => {
             key: 'examId',
             align: 'right',
             width: '50px',
-            //TODO redirect to the exact link
+            //TODO redirect to the exam link
             render: (examId) => <Link to={examId}>Voir</Link>
         }
     ];
@@ -120,54 +116,40 @@ const StudentExam = ({enrolledStudent}: StudentExamProps) => {
         setSubjectValue(value)
     }
 
-    console.log('SubjectId: ', subjectValue, 'academicYearId: ', academicYearId)
-
     return(
-        <PageWrapper>
-            <div className='exam-section-container'>
-                <div className='full__name'>
-                    <h1>Les notes d{startsWithVowel(lastName) ? "'" : 'e '}{studentName}</h1>
-                </div>
-                <div className="scores">
-                    <div className="pl-scores">
-                        <div className="head">
-                            <div className="multi-head-select">
-                                <div className="head-select">
-                                    <Select
-                                        className='select-control'
-                                        defaultValue={0}
-                                        options={subjects}
-                                        onChange={handleSubjectValue}
-                                    />
-                                </div>
-                                <div className="head-select">
-                                    <Select
-                                        className='select-control'
-                                        defaultValue={id}
-                                        options={academicYears}
-                                        onChange={handleAcademicYearIdValue}
-                                    />
-                                </div>
-                            </div>
-                            <Tabs centered size='small' items={[
-                                {
-                                    key: 'score-table',
-                                    label: 'Performance aux examens',
-                                    children: <Table
-                                        columns={columns}
-                                        dataSource={initExamData(scores)}
-                                        size='small'
-                                        pagination={false}
-                                        className='score-table'
-                                        loading={isLoading}
-                                        scroll={{y: 500}}
-                                    />}
-                            ]} />
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </PageWrapper>
+        <TabItem
+            title={`Les notes d${startsWithVowel(lastName) ? "'" : 'e '}${studentName}`}
+            selects={[
+                <Select
+                    className='select-control'
+                    defaultValue={0}
+                    options={subjects}
+                    onChange={handleSubjectValue}
+                    variant='borderless'
+                />,
+                <Select
+                    className='select-control'
+                    defaultValue={id}
+                    options={academicYears}
+                    onChange={handleAcademicYearIdValue}
+                    variant='borderless'
+                />
+            ]}
+            items={[
+                {
+                    key: 'score-table',
+                    label: 'Performance aux examens',
+                    children: <Table
+                        columns={columns}
+                        dataSource={initExamData(scores)}
+                        size='small'
+                        pagination={false}
+                        className='score-table'
+                        loading={isLoading}
+                        scroll={{y: 500}}
+                    />}
+            ]}
+        />
     )
 }
 

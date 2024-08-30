@@ -13,8 +13,6 @@ import Tag from "../ui/layout/Tag.tsx";
 import {attendanceTag} from "../../entity/enums/attendance.ts";
 import {AttendanceRecord} from "../../utils/interfaces.ts";
 
-type DataIndex = AttendanceRecord
-
 const StudentAttendance = ({enrolledStudent}: {enrolledStudent: Enrollment}) => {
 
     const {
@@ -27,8 +25,6 @@ const StudentAttendance = ({enrolledStudent}: {enrolledStudent: Enrollment}) => 
     const [size, setSize] = useState<number>(10)
     const [pageCount, setPageCount] = useState<number>(0)
     const [attendances, setAttendances] = useState<Attendance[]>([])
-    const [allCount, setAllCount] = useState<number>(0)
-    const [tabKey, setTabKey] = useState<number>(0)
     const {data, error, isLoading, isSuccess, refetch} = useFetch('attendance-list', getStudentAttendances, [
         student.id, {page: pageCount, size: size}, academicYearId
     ])
@@ -43,54 +39,37 @@ const StudentAttendance = ({enrolledStudent}: {enrolledStudent: Enrollment}) => 
         ];
     }, [id, academicYear, enrollments]);
 
-    const dataSource = useMemo(() => {
+    const dataSource: AttendanceRecord[] = useMemo(() => {
         return attendances.map(att => {
             const [tagColor, tagText] = attendanceTag(att.status);
             return {
-                id: att.id,
+                id: att?.id,
                 date: setFirstName(fDate(att.attendanceDate)),
-                classe: `${att.classe.name}, ${att.classe.category}`,
-                section: att.classe.grade.section as string,
+                classe: `${att?.classe.name}, ${att?.classe.category}`,
+                section: att?.classe.grade.section as string,
                 status: <Tag color={tagColor as 'processing'}>{firstLetter(tagText)}</Tag>,
-            } ?? [];
-        });
-    }, [attendances]);
+            };
+        })
+    }, [attendances])
 
     useEffect(() => {
-        if (tabKey !== 0 && tabKey > 1) {
-            setSize(allCount)
-            refetch().then(r => {
-                if (r.data && 'content' in r.data) {
-                    setAttendances(r.data.content as Attendance[])
-                }
-            })
-        }else {
-            setSize(1)
-            if (academicYearId || size) {
-                refetch().then(r => r.data)
-            }
-            if (isSuccess && !isLoading && data && 'content' in data && 'totalElements' in data) {
-                setAttendances(data.content as Attendance[])
-                setAllCount(data.totalElements as number)
-            }
+        if (academicYearId || size) {
+            refetch().then(r => r.data)
         }
-
-    }, [isSuccess, isLoading, data, academicYearId, refetch, tabKey, allCount, size])
-
-    console.log('Variation de la size: ', size)
+        if (isSuccess && !isLoading && data && 'content' in data) {
+            setAttendances(data.content as Attendance[])
+        }
+    }, [academicYearId, data, isLoading, isSuccess, refetch, size])
 
     if(error) return <PageError />
 
     const studentName = `${setFirstName(lastName)} ${setFirstName(firstName)}`
 
-    console.log(student.id)
-    console.log(attendances)
-
     const handleAcademicYearIdValue = (value: string) => {
         setAcademicYearId(value)
     }
 
-    const columns: TableColumnsType<DataIndex> = [
+    const columns: TableColumnsType<AttendanceRecord> = [
         {
             title: "Date",
             dataIndex: 'date',
@@ -130,10 +109,6 @@ const StudentAttendance = ({enrolledStudent}: {enrolledStudent: Enrollment}) => 
         }
     ];
 
-    const  handleTabChange = (tabKey: string) => {
-        setTabKey(Number.parseInt(tabKey))
-    }
-
     return(
         <TabItem
             title={`Suivis de présence d${startsWithVowel(lastName) ? "'" : 'e '}${studentName}`}
@@ -159,11 +134,8 @@ const StudentAttendance = ({enrolledStudent}: {enrolledStudent: Enrollment}) => 
                         rowKey={record => `row-${record.id}`}
                     />
                 )},
-                {key: '2', label: 'Etude Analytique', children: (
-                    <AttendanceAnalysis data={dataSource} />
-                )}
+                {key: '2', label: 'Etude Analytique', children: (<AttendanceAnalysis enrollment={enrolledStudent} />)}
             ]}
-            onTabChange={handleTabChange}
         />
     )
 }

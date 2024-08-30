@@ -6,6 +6,8 @@ import {ReactNode} from "react";
 import {AcademicYear, Guardian} from "../entity";
 import {SectionType} from "../entity/enums/section.ts";
 import {Gender} from "../entity/enums/gender.ts";
+import {AxiosResponse} from "axios";
+import {Response} from "../data/action/response.ts";
 
 export interface Metadata {
     title: string;
@@ -116,4 +118,5 @@ export interface Pageable {
 
 export type StudentListIndex = keyof StudentList;
 export type RedirectFunction = (link: string) => void;
+export type FetchFunction = <T>(callback: (...args: any[]) => Promise<AxiosResponse<T | T[]>>, params: any[]) => Promise<Response<T | T[]>>
 export type PrimitiveDate = Date | number[] | string

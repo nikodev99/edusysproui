@@ -11,7 +11,7 @@ const RedirectProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     useEffect(() => {
         setNavigate(navigate)
-    }, []);
+    }, [navigate]);
 
     return(
         <NavigationContext.Provider value={undefined}>

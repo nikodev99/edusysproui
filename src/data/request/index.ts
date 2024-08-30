@@ -8,7 +8,7 @@ export {getClassesBasicValues} from '../repository/classeRepository'
 export {getAcademicYear} from '../repository/academicYearRepository'
 export {getEnrolledStudentsGuardians, getGuardianById} from '../repository/guardianRepository'
 export {getAllStudentScores} from '../repository/scoreRepository'
-export {getStudentAttendances} from '../repository/attendanceRepository.ts'
+export {getStudentAttendances, getAllStudentAttendances} from '../repository/attendanceRepository.ts'
 
 
 

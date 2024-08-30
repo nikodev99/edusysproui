@@ -69,15 +69,9 @@ const StudentView = () => {
             <section className="sticky-wrapper" style={{ position: 'relative' }}>
                 <Tabs rootClassName={`tabs`}
                       items={[
-                          ...(enrolledStudent ?
-                              [{key: '1', label: 'Info', children: <StudentInfo enrollment={enrolledStudent} />}] :
-                              [{key: '1', label: 'Info', children: <Skeleton loading={isLoading} active={isLoading} paragraph={{rows: 5}} />}]),
-                          ...(enrolledStudent ?
-                              [{key: '2', label: 'Examens', children: <StudentExam enrolledStudent={enrolledStudent} />}] :
-                              [{key: '2', label: 'Examens', children: <Skeleton loading={isLoading} active={isLoading} paragraph={{rows: 5}} />}]),
-                          ...(enrolledStudent ?
-                              [{key: '3', label: 'Présence', children: <StudentAttendance  enrolledStudent={enrolledStudent}/>}] :
-                              [{key: '3', label: 'Présence', children: <Skeleton loading={isLoading} active={isLoading} paragraph={{rows: 5}} />}]),
+                          {key: '1', label: 'Info', children: (enrolledStudent ? <StudentInfo enrollment={enrolledStudent} /> : <Skeleton loading={isLoading} active={isLoading} paragraph={{rows: 5}} />)},
+                          {key: '2', label: 'Examens', children: (enrolledStudent ? <StudentExam enrolledStudent={enrolledStudent} />: <Skeleton loading={isLoading} active={isLoading} paragraph={{rows: 5}} />)},
+                          {key: '3', label: 'Présence', children: (enrolledStudent ? <StudentAttendance  enrolledStudent={enrolledStudent}/>: <Skeleton loading={isLoading} active={isLoading} paragraph={{rows: 5}} />)},
                           {key: '4', label: 'Condisciples', children: <StudentClasse />},
                           {key: '5', label: 'Historique', children: <StudentHistory />},
                       ]}

@@ -15,3 +15,13 @@ export const getStudentAttendances = (studentId: string, pageable: Pageable, aca
         }
     })
 }
+
+export const getAllStudentAttendances = (studentId: string, academicYearId: string): Promise<AxiosResponse<Attendance[]>> => {
+    return request({
+        method: 'GET',
+        url: `/attendance/all/${studentId}`,
+        params: {
+            academicYear: academicYearId
+        }
+    })
+}

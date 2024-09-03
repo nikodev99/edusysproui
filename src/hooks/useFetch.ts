@@ -2,6 +2,7 @@ import {keepPreviousData, useQuery, UseQueryResult} from "@tanstack/react-query"
 import {AxiosResponse} from "axios";
 import {Response} from "../data/action/response.ts"
 import {ErrorCatch} from "../data/action/error_catch.ts";
+import {useCallback} from "react";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const useFetch = <TData, TError>(
@@ -16,23 +17,26 @@ export const useFetch = <TData, TError>(
     })
 }
 
+export const useRawFetch = () => {
+    return useCallback(<T, >(callback: (...args: any[]) => Promise<AxiosResponse<T | T[]>>, params: any[] = []) => {
+        return customFetch(callback, params);
+    }, []);
+};
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export const customFetch = async <T>(
+const customFetch = async <T>(
     callback: (...args: any[]) => Promise<AxiosResponse<T | T[]>>,
     params: any[] = []
 ): Promise<Response<T | T[]>> => {
-    let loading = true
     try {
         const response = await callback(...params);
-        loading = response.status === 200
         if(response && response.status === 200) {
-            loading = false
             return {
                 isSuccess: true,
                 data: response.data as T | T[],
                 error: '',
                 success: 'Data successfully fetched',
-                isLoading: loading
+                isLoading: false
             }
         }else {
             return {
@@ -40,14 +44,17 @@ export const customFetch = async <T>(
                 error: `${response.status}: ${response.statusText}`,
                 success: '',
                 data: [] as T | T[],
-                isLoading: loading
+                isLoading: false
             }
         }
     }catch (error: unknown) {
         ErrorCatch(error)
-    }
-    return {
-        isSuccess: false,
-        isLoading: loading
+        return {
+            isSuccess: false,
+            data: [] as T | T[],
+            error: 'An error occurred during the fetch operation',
+            success: '',
+            isLoading: false
+        };
     }
 }

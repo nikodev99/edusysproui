@@ -10,7 +10,7 @@ import {useFetch} from "../../hooks/useFetch.ts";
 import {getStudentAttendances} from "../../data/repository/attendanceRepository.ts";
 import PageError from "../../pages/PageError.tsx";
 import Tag from "../ui/layout/Tag.tsx";
-import {attendanceTag} from "../../entity/enums/attendance.ts";
+import {attendanceTag} from "../../entity/enums/attendanceStatus.ts";
 import {AttendanceRecord} from "../../utils/interfaces.ts";
 
 const StudentAttendance = ({enrolledStudent}: {enrolledStudent: Enrollment}) => {
@@ -47,7 +47,7 @@ const StudentAttendance = ({enrolledStudent}: {enrolledStudent: Enrollment}) => 
                 date: setFirstName(fDate(att.attendanceDate)),
                 classe: `${att?.classe.name}, ${att?.classe.category}`,
                 section: att?.classe.grade.section as string,
-                status: <Tag color={tagColor as 'processing'}>{firstLetter(tagText)}</Tag>,
+                status: <Tag color={tagColor as 'danger'}>{firstLetter(tagText)}</Tag>,
             };
         })
     }, [attendances])
@@ -134,7 +134,7 @@ const StudentAttendance = ({enrolledStudent}: {enrolledStudent: Enrollment}) => 
                         rowKey={record => `row-${record.id}`}
                     />
                 )},
-                {key: '2', label: 'Etude Analytique', children: (<AttendanceAnalysis enrollment={enrolledStudent} />)}
+                {key: '2', label: 'Etude Analytique', children: (<AttendanceAnalysis enrollment={enrolledStudent} academicYear={academicYearId} />)}
             ]}
         />
     )

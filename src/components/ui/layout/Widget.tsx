@@ -1,23 +1,36 @@
-import {Card, Statistic} from "antd";
-import {AttendanceRecord} from "../../../utils/interfaces.ts";
+import {Card, Progress, Statistic} from "antd";
 
 interface WidgetProps {
     title: string;
-    data: AttendanceRecord[]
+    value: string | number;
+    progress?: {
+        active: boolean
+        status?: string
+        type?: string
+        percent: number
+        color?: string
+    }
 }
 
-const Widget = ({title, data}: WidgetProps) => {
+const Widget = ({title, value, progress}: WidgetProps) => {
 
-    console.log('Stats: ', data);
-    console.log('Stats: ', data);
-    console.log('Stats: ', data);
+
+    const progressElement = progress && progress.active ?
+        <Progress
+            type={progress.type ? progress.type as 'line' : 'line'}
+            percent={progress.percent}
+            status={progress.status ? progress.status as 'success': 'normal'}
+            strokeColor={progress.color ? progress.color : undefined}
+        />
+        : undefined
 
     return (
         <Card bordered={false} className='widget'>
             <Statistic
                 title={title}
-                value={data.length}
+                value={value}
             />
+            {progressElement}
         </Card>
     )
 }

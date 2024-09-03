@@ -1,6 +1,6 @@
 import {Student} from "./student.ts";
 import {Classe} from "./classe.ts";
-import {Attendance as Att} from "../enums/attendance.ts";
+import {AttendanceStatus} from "../enums/attendanceStatus.ts";
 import {AcademicYear} from "./AcademicYear.ts";
 
 export interface Attendance {
@@ -9,5 +9,5 @@ export interface Attendance {
     student: Student
     classe: Classe
     attendanceDate: Date | number[] | string
-    status: Att
+    status: AttendanceStatus
 }

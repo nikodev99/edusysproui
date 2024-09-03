@@ -119,7 +119,7 @@ export const dateCompare = (date: Date) => {
     return dateToCompareWith.isAfter(today)
 }
 
-const setDayJsDate = (date?: Date | number[] | string) => {
+export const setDayJsDate = (date?: Date | number[] | string) => {
     if (date) {
         let dayjsDate
         if (Array.isArray(date)) {

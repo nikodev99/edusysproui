@@ -8,6 +8,7 @@ import {SectionType} from "../entity/enums/section.ts";
 import {Gender} from "../entity/enums/gender.ts";
 import {AxiosResponse} from "axios";
 import {Response} from "../data/action/response.ts";
+import {AttendanceStatus} from "../entity/enums/attendanceStatus.ts";
 
 export interface Metadata {
     title: string;
@@ -108,7 +109,7 @@ export interface AttendanceRecord {
     date: string
     classe: string
     section: string
-    status: ReactNode
+    status: ReactNode | AttendanceStatus
 }
 
 export interface Pageable {
@@ -119,4 +120,4 @@ export interface Pageable {
 export type StudentListIndex = keyof StudentList;
 export type RedirectFunction = (link: string) => void;
 export type FetchFunction = <T>(callback: (...args: any[]) => Promise<AxiosResponse<T | T[]>>, params: any[]) => Promise<Response<T | T[]>>
-export type PrimitiveDate = Date | number[] | string
+export type Moment = Date | number[] | string

@@ -1,6 +1,6 @@
 import {ReactNode} from "react";
 import '../ui.scss'
-import {LuBadgeAlert, LuBadgeCheck, LuBadgeMinus, LuClock4} from "react-icons/lu";
+import {LuBadgeAlert, LuBadgeCheck, LuClock4} from "react-icons/lu";
 
 interface TagProps {
     children?: ReactNode;
@@ -14,16 +14,16 @@ const Tag = ({color, children, icon}: TagProps) => {
 
     switch(color) {
         case 'success':
-            customIcon = <LuBadgeCheck  />
+            customIcon = <LuBadgeCheck />
             break
         case 'danger':
-            customIcon = <LuBadgeMinus  />
+            customIcon = <LuBadgeAlert />
             break
         case 'warning':
-            customIcon = <LuBadgeAlert  />
+            customIcon = <LuClock4 />
             break
         default:
-            customIcon = <LuClock4  />
+            customIcon = <LuClock4 />
 
     }
 

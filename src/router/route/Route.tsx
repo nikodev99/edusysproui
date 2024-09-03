@@ -7,16 +7,13 @@ import Inscription from "../../pages/student/Inscription.tsx";
 import Setting from "../../pages/setting/page.tsx";
 import StudentView from "../../pages/student/StudentView.tsx";
 import RedirectProvider from "../../providers/RedirectProvider.tsx";
-import FetchProvider from "../../providers/FetchProvider.tsx";
 
 export const Route = createBrowserRouter([
     {
         path: '/',
         element: (
             <RedirectProvider>
-                <FetchProvider>
-                    <PageLayout />
-                </FetchProvider>
+                <PageLayout />
             </RedirectProvider>
         ),
         errorElement: <PageError />,

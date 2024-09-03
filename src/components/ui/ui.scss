@@ -191,7 +191,7 @@
     background: #F0F4F8;
     color: #32383E;
   }
-  &.error {
+  &.danger {
     background: #FCE4E4;
     color: #7D1212;
   }
@@ -200,4 +200,8 @@
     @include flex-center;
     gap: 3px;
   }
+}
+
+.widget {
+  box-shadow: $box-shadow-panel!important;
 }

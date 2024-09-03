@@ -376,3 +376,33 @@
     }
   }
 }
+
+.attendance-analysis {
+  padding: 0 .75rem;
+}
+
+.date-wrapper {
+  position: absolute;
+  top: 0;
+  inset-inline-end: 0;
+  bottom: 0;
+  inset-inline-start: 0;
+  z-index: 1;
+  border-radius: 50%;
+  &.success {
+    background: #28a745;
+    color: #071e07 !important;
+  }
+  &.warning {
+    background: #ffc107;
+    color: #1a1107 !important;
+  }
+  &.processing {
+    background: #17a2b8;
+    color: #07121e !important;
+  }
+  &.danger {
+    background: #dc3545;
+    color: #210808 !important;
+  }
+}

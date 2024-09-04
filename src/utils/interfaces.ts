@@ -6,8 +6,6 @@ import {ReactNode} from "react";
 import {AcademicYear, Guardian} from "../entity";
 import {SectionType} from "../entity/enums/section.ts";
 import {Gender} from "../entity/enums/gender.ts";
-import {AxiosResponse} from "axios";
-import {Response} from "../data/action/response.ts";
 import {AttendanceStatus} from "../entity/enums/attendanceStatus.ts";
 
 export interface Metadata {
@@ -117,7 +115,12 @@ export interface Pageable {
     size: number,
 }
 
-export type StudentListIndex = keyof StudentList;
+export interface PieProps {
+    data: {type: string, value: number}[];
+    label?: (obj: object) => string;
+    colors?: Color[];
+}
+
 export type RedirectFunction = (link: string) => void;
-export type FetchFunction = <T>(callback: (...args: any[]) => Promise<AxiosResponse<T | T[]>>, params: any[]) => Promise<Response<T | T[]>>
 export type Moment = Date | number[] | string
+export type Color = string

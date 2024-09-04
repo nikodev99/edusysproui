@@ -8,12 +8,16 @@ import {getAllStudentAttendances} from "../../data/repository/attendanceReposito
 import {fDate, setDayJsDate} from "../../utils/utils.ts";
 import {useRawFetch} from "../../hooks/useFetch.ts";
 import {Calendar, Card, Skeleton} from "antd";
-import {attendanceTag, countAttendanceStatuses} from "../../entity/enums/attendanceStatus.ts";
+import {AttendanceStatus, attendanceTag, countAttendanceStatuses} from "../../entity/enums/attendanceStatus.ts";
+import {Dayjs} from "dayjs";
+import VerticalComposeChart from "../graph/VerticalComposeChart.tsx";
 
 interface AnalysisProps {
     enrollment: Enrollment;
     academicYear: string
 }
+
+const COLORS = ['#28a745', '#dc3545', '#ffc107', '#17a2b8']
 
 const AttendanceAnalysis = ({enrollment, academicYear}: AnalysisProps) => {
     
@@ -59,7 +63,28 @@ const AttendanceAnalysis = ({enrollment, academicYear}: AnalysisProps) => {
     }
 
     const counts = countAttendanceStatuses(dataSource)
-    console.log('Status count: ', counts)
+    const composeData = [
+        {
+            name: AttendanceStatus.PRESENT as string,
+            valeur: counts.present,
+            '%': Math.round((counts.present/allRecord) * 100)
+        },
+        {
+            name: AttendanceStatus.ABSENT as string,
+            valeur: counts.absent,
+            '%': Math.round((counts.absent/allRecord) * 100)
+        },
+        {
+            name: AttendanceStatus.LATE as string,
+            valeur: counts.late,
+            '%': Math.round((counts.late/allRecord) * 100)
+        },
+        {
+            name: AttendanceStatus.EXCUSED as string,
+            valeur: counts.excused,
+            '%': Math.round((counts.excused/allRecord) * 100)
+        }
+    ];
 
     return (
         <Responsive gutter={[16, 16]} className='attendance-analysis'>
@@ -73,28 +98,28 @@ const AttendanceAnalysis = ({enrollment, academicYear}: AnalysisProps) => {
                                     <Widget title='Total Jours Present' value={counts.present} progress={{
                                         active: true,
                                         percent: Math.round((counts.present/allRecord) * 100),
-                                        color: '#28a745'
+                                        color: COLORS[0]
                                     }} />
                                 </Grid>
                                 <Grid xs={24} md={8} lg={6}>
                                     <Widget title='Total Jours Absent' value={counts.absent} progress={{
                                         active: true,
                                         percent: Math.round((counts.absent/allRecord) * 100),
-                                        color: '#dc3545'
+                                        color: COLORS[1]
                                     }} />
                                 </Grid>
                                 <Grid xs={24} md={8} lg={6}>
                                     <Widget title='Total Jours en retard' value={counts.late} progress={{
                                         active: true,
                                         percent: Math.round((counts.late/allRecord) * 100),
-                                        color: '#ffc107'
+                                        color: COLORS[2]
                                     }} />
                                 </Grid>
                                 <Grid xs={24} md={8} lg={6}>
                                     <Widget title='Total Jours excusé' value={counts.excused} progress={{
                                         active: true,
                                         percent: Math.round((counts.excused/allRecord) * 100),
-                                        color: '#17a2b8'
+                                        color: COLORS[3]
                                     }} />
                                 </Grid>
                             </>)}
@@ -102,17 +127,16 @@ const AttendanceAnalysis = ({enrollment, academicYear}: AnalysisProps) => {
                     }
                 </Responsive>
             </Grid>
-            <Grid xs={24} md={12} lg={8}>
+            <Grid xs={24} md={12} lg={12}>
                 <Card >
                     <Calendar fullscreen={false} cellRender={dateCellRender} />
                 </Card>
             </Grid>
-            <Grid xs={24} md={12} lg={8}>3</Grid>
-            <Grid xs={24} md={12} lg={8}>4</Grid>
-            <Grid xs={24} md={12} lg={8}>5</Grid>
-            <Grid xs={24} md={12} lg={8}>6</Grid>
-            <Grid xs={24} md={12} lg={8}>7</Grid>
-            <Grid xs={24} md={12} lg={8}>8</Grid>
+            <Grid xs={24} md={12} lg={12}>
+                <Card>
+                    <VerticalComposeChart data={composeData} barColor={COLORS} />
+                </Card>
+            </Grid>
         </Responsive>
     )
 }

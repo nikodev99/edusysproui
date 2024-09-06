@@ -2,7 +2,8 @@ export {
     getEnrolledStudents,
     searchEnrolledStudents,
     getStudentById,
-    getRandomStudentClassmate
+    getRandomStudentClassmate,
+    getAllStudentClassmate
 } from '../repository/studentRepository'
 export {getClassesBasicValues} from '../repository/classeRepository'
 export {getAcademicYear} from '../repository/academicYearRepository'

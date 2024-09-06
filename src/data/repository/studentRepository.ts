@@ -1,4 +1,4 @@
-import {EnrollmentSchema} from "../../utils/interfaces.ts";
+import {EnrollmentSchema, Pageable} from "../../utils/interfaces.ts";
 import {AxiosResponse} from "axios";
 import {Enrollment} from "../../entity";
 import {apiClient, request} from "../axiosConfig.ts";
@@ -40,4 +40,16 @@ export const getStudentById = (studentId: string): Promise<AxiosResponse<Enrollm
 
 export const getRandomStudentClassmate = (studentId: string, classeId: number): Promise<AxiosResponse<Enrollment[]>> => {
     return apiClient.get<Enrollment[]>(`enroll/classmates/${studentId}-${classeId}`)
+}
+
+export const getAllStudentClassmate = (studentId: string, classeId: number, academicYearId: string, pageable: Pageable) => {
+    return request({
+        method: 'GET',
+        url: `/enroll/${studentId}-${classeId}`,
+        params: {
+            academicYearId: academicYearId,
+            page: pageable.page,
+            size: pageable.size,
+        }
+    })
 }

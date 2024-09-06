@@ -4,7 +4,7 @@ import {Select, Table, TableColumnsType} from "antd";
 import {ExamData} from "../../utils/interfaces.ts";
 import {fetchAllStudentScores, fetchAllStudentScoresBySubject} from "../../data/action/fetch_score.ts";
 import LocalStorageManager from "../../core/LocalStorageManager.ts";
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {initExamData} from "../../entity/domain/score.ts";
 import PageError from "../../pages/PageError.tsx";
 import {LuEye} from "react-icons/lu";
@@ -30,6 +30,25 @@ const StudentExam = ({enrolledStudent}: StudentExamProps) => {
 
     const {data, error, isLoading, refetch} = useFetch('student-scores', fetchAllStudentScores, [examCount, 10, student.id, academicYearId])
 
+    const subjects = useMemo(() => {
+        return [
+            {value: 0, label: 'Tous'},
+            ...scores.map(s => ({
+                value: s.exam.subject?.id,
+                label: s.exam.subject?.course,
+            }))]
+    }, [scores])
+
+    const academicYears = useMemo(() => {
+        return [
+            { value: id, label: academicYear},
+            ...enrollments.map(e => ({
+                value: e.academicYear.id,
+                label: e.academicYear.academicYear
+            }))
+        ];
+    }, [id, academicYear, enrollments]);
+    
     useEffect(() => {
         if (subjectValue != 0) {
             fetchAllStudentScoresBySubject(academicYearId, subjectValue)
@@ -91,22 +110,6 @@ const StudentExam = ({enrolledStudent}: StudentExamProps) => {
             render: (examId) => <Link to={examId}>Voir</Link>
         }
     ];
-
-    const subjects = [
-        ...[{value: 0, label: 'Tous'}],
-        scores.map(s => ({
-            value: s.exam.subject?.id,
-            label: s.exam.subject?.course,
-        }))
-    ]
-
-    const academicYears = [
-        ...[{value: id, label: academicYear}],
-        enrollments.map(e => ({
-            value: e.academicYear.id,
-            label: e.academicYear.academicYear
-        }))
-    ]
 
     const handleAcademicYearIdValue = (value: string) => {
         setAcademicYearId(value)

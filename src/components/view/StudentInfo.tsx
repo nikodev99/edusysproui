@@ -1,5 +1,5 @@
 import Block from "../ui/layout/Block.tsx";
-import {Button, Carousel, Divider, Table, TableColumnsType, Tag, Avatar as AntAvatar} from "antd";
+import {Button, Carousel, Divider, Table, TableColumnsType, Avatar as AntAvatar} from "antd";
 import {ReactNode, useEffect, useState} from "react";
 import {Enrollment, HealthCondition, Schedule} from "../../entity";
 import {
@@ -25,11 +25,12 @@ import PanelSection from "../ui/layout/PanelSection.tsx";
 import {ExamData} from "../../utils/interfaces.ts";
 import {initExamData} from "../../entity/domain/score.ts";
 import {attendanceTag} from "../../entity/enums/attendanceStatus.ts";
+import Tag from "../ui/layout/Tag.tsx";
 
 interface StudentInfoProps {
     enrollment: Enrollment
     dataKey: string
-    seeMore?: () => void
+    seeMore?: (key: string) => void
 }
 
 interface HistoryData {
@@ -123,6 +124,10 @@ const ExamList = ({enrollment, seeMore}: StudentInfoProps) => {
 
     const {student: {marks}} = enrollment
 
+    const handleClick = () => {
+        seeMore && seeMore('2')
+    }
+
     const columns: TableColumnsType<ExamData> = [
         {
             title: "Date",
@@ -153,7 +158,7 @@ const ExamList = ({enrollment, seeMore}: StudentInfoProps) => {
     ];
 
     return (
-        <Section title='Performance aux devoirs' more={true} seeMore={seeMore}>
+        <Section title='Performance aux devoirs' more={true} seeMore={handleClick}>
             <Table className='score-table' size='small' columns={columns} dataSource={initExamData(marks)} pagination={false} />
         </Section>
     )
@@ -185,6 +190,10 @@ const GraphSection = ({enrollment}: StudentInfoProps) => {
 const SchoolHistory = ({enrollment, seeMore}: StudentInfoProps) => {
     const {student: {enrollments}} = enrollment
 
+    const handleClick = () => {
+        seeMore && seeMore('5')
+    }
+
     const columns: TableColumnsType<HistoryData> = [
         {
             title: "Année",
@@ -215,7 +224,7 @@ const SchoolHistory = ({enrollment, seeMore}: StudentInfoProps) => {
     })) ?? [];
 
     return (
-        <Section title='Hystorique' more={true} seeMore={seeMore}>
+        <Section title='Hystorique' more={true} seeMore={handleClick}>
             <Table
                 className='score-table'
                 size='small'
@@ -232,17 +241,21 @@ const AttendanceSection = ({enrollment, seeMore}: StudentInfoProps) => {
 
     const { student: { attendances } } = enrollment
 
+    const handleClick = () => {
+        seeMore && seeMore('3')
+    }
+
     const attendanceData = attendances?.map((a) => {
         const [tagColor, tagText] = attendanceTag(a.status)
 
         return {
             statement: setFirstName(fullDay(a.attendanceDate)) as string,
-            response: <Tag bordered={false} color={tagColor}>{tagText?.toLowerCase()}</Tag>
+            response: <Tag color={tagColor as 'success'}>{tagText?.toLowerCase()}</Tag>
         };
     }) ?? [];
 
     return (
-        <PanelSection title='Suivis de présence' more={true} seeMore={seeMore}>
+        <PanelSection title='Suivis de présence' more={true} seeMore={handleClick}>
             <PanelTable title='Données des présences' data={attendanceData}/>
         </PanelSection>
     )
@@ -251,6 +264,10 @@ const AttendanceSection = ({enrollment, seeMore}: StudentInfoProps) => {
 const SchoolColleagues = ({enrollment, seeMore}: StudentInfoProps) => {
     
     const [classmates, setClassmates] = useState<Enrollment[]>([])
+
+    const handleClick = () => {
+        seeMore && seeMore('4')
+    }
 
     useEffect(() => {
         const fetchData = async () => {
@@ -269,7 +286,7 @@ const SchoolColleagues = ({enrollment, seeMore}: StudentInfoProps) => {
     }
 
     return (
-        <Section title='Condisciples' more={true} seeMore={seeMore}>
+        <Section title='Condisciples' more={true} seeMore={handleClick}>
             <Carousel slidesToShow={3} slidesToScroll={1} dots={false} arrows draggable autoplay>
                 {classmates && classmates.map((c, i) => (<div className='classmate-team' key={`${c.student.id}-${i}`}>
                     <div className='scroll-box'>
@@ -403,7 +420,7 @@ const DisciplinaryRecords = ({enrollment, seeMore}: StudentInfoProps) => {
 
 //TODO add the bar graph for the 5 last exams
 
-const StudentInfo = ({enrollment}: { enrollment: Enrollment }) => {
+const StudentInfo = ({enrollment, seeMore}: { enrollment: Enrollment, seeMore: (key: string) => void }) => {
 
     const {classe: {grade}} = enrollment
 
@@ -411,14 +428,14 @@ const StudentInfo = ({enrollment}: { enrollment: Enrollment }) => {
         <IndividualInfo enrollment={enrollment} dataKey='individual-block'/>,
         <GuardianBlock enrollment={enrollment} dataKey='guardian-section' />,
         ...(grade?.section != SectionType.MATERNELLE && grade?.section != SectionType.PRIMAIRE ? [
-            <ExamList enrollment={enrollment}  dataKey='exam-block'/>
+            <ExamList enrollment={enrollment}  seeMore={seeMore} dataKey='exam-block'/>
         ] : []),
         ...(grade?.section != SectionType.MATERNELLE && grade?.section != SectionType.PRIMAIRE ? [
             <GraphSection enrollment={enrollment}  dataKey='graph-block'/>
         ] : []),
-        <SchoolHistory enrollment={enrollment}  dataKey='school-history-block'/>,
-        <AttendanceSection enrollment={enrollment}  dataKey='attendance-block'/>,
-        <SchoolColleagues enrollment={enrollment}  dataKey='classmates-block'/>,
+        <SchoolHistory enrollment={enrollment} seeMore={seeMore}  dataKey='school-history-block'/>,
+        <AttendanceSection enrollment={enrollment} seeMore={seeMore} dataKey='attendance-block'/>,
+        <SchoolColleagues enrollment={enrollment} seeMore={seeMore} dataKey='classmates-block'/>,
         <HealthData enrollment={enrollment} dataKey='health-section' />,
         <CourseSchedule enrollment={enrollment} dataKey='schedule-section' />,
         <DisciplinaryRecords enrollment={enrollment} dataKey='disciplinary-section' />

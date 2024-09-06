@@ -1,5 +1,4 @@
 import {useParams} from "react-router-dom";
-import {useQuery} from "@tanstack/react-query";
 import {fetchStudentById} from "../../data";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {text} from "../../utils/text_display.ts";
@@ -16,17 +15,18 @@ import StudentClasse from "../../components/view/StudentClasse.tsx";
 import StudentHistory from "../../components/view/StudentHistory.tsx";
 import LocalStorageManager from "../../core/LocalStorageManager.ts";
 import {setFirstName} from "../../utils/utils.ts";
+import {useFetch} from "../../hooks/useFetch.ts";
+import Sticky from "react-sticky-el";
 
 const StudentView = () => {
 
     const { id } = useParams()
 
+    const activeTabKey = LocalStorageManager.get("tabKey") as string || "1"
     const [enrolledStudent, setEnrolledStudent] = useState<Enrollment | null>(null);
+    const [tabKey, setTabKey] = useState<string>(activeTabKey)
 
-    const {data, isLoading, isSuccess, error, isError} = useQuery({
-        queryKey: ['student-id', id],
-        queryFn: async () => await fetchStudentById(id as string).then(async (res) => res.data)
-    })
+    const {data, isLoading, isSuccess, error, isError} = useFetch(['student-id', id as string], fetchStudentById, [id])
 
     const studentName = enrolledStudent ?
         `${setFirstName(enrolledStudent?.student.lastName)} ${setFirstName(enrolledStudent?.student.firstName)}` : 'Étudiant'
@@ -46,9 +46,6 @@ const StudentView = () => {
         }
     ])
 
-    const activeTabKey = LocalStorageManager.get("tabKey") as string|| "1"
-    const [tabKey, setTabKey] = useState<string>(activeTabKey)
-
     useEffect(() => {
         if (isSuccess && data) {
             setEnrolledStudent(data)
@@ -60,7 +57,7 @@ const StudentView = () => {
         LocalStorageManager.update('tabKey', () => activeKey)
     }
 
-    console.log(enrolledStudent)
+    const skeleton = <Skeleton loading={isLoading} active={isLoading} paragraph={{rows: 5}} />
 
     return(
         <>
@@ -69,14 +66,15 @@ const StudentView = () => {
             <section className="sticky-wrapper" style={{ position: 'relative' }}>
                 <Tabs rootClassName={`tabs`}
                       items={[
-                          {key: '1', label: 'Info', children: (enrolledStudent ? <StudentInfo enrollment={enrolledStudent} /> : <Skeleton loading={isLoading} active={isLoading} paragraph={{rows: 5}} />)},
-                          {key: '2', label: 'Examens', children: (enrolledStudent ? <StudentExam enrolledStudent={enrolledStudent} />: <Skeleton loading={isLoading} active={isLoading} paragraph={{rows: 5}} />)},
-                          {key: '3', label: 'Présence', children: (enrolledStudent ? <StudentAttendance  enrolledStudent={enrolledStudent}/>: <Skeleton loading={isLoading} active={isLoading} paragraph={{rows: 5}} />)},
-                          {key: '4', label: 'Condisciples', children: <StudentClasse />},
+                          {key: '1', label: 'Info', children: (enrolledStudent ? <StudentInfo enrollment={enrolledStudent} seeMore={handleTabChange} /> : skeleton)},
+                          {key: '2', label: 'Examens', children: (enrolledStudent ? <StudentExam enrolledStudent={enrolledStudent} />: skeleton)},
+                          {key: '3', label: 'Présence', children: (enrolledStudent ? <StudentAttendance  enrolledStudent={enrolledStudent}/>: skeleton)},
+                          {key: '4', label: 'Condisciples', children: (enrolledStudent ? <StudentClasse setActiveKey={handleTabChange} enrolledStudent={enrolledStudent} />: skeleton)},
                           {key: '5', label: 'Historique', children: <StudentHistory />},
                       ]}
                       onChange={handleTabChange}
                       defaultActiveKey={tabKey}
+                      activeKey={tabKey}
                       centered
                 />
             </section>

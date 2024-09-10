@@ -1,6 +1,6 @@
 const StudentHistory = () => {
     return(
-        <div>Student History</div>
+        <div>Lister les status disciplinaire de l'étudiants</div>
     )
 }
 

@@ -3,6 +3,7 @@ import {Button, Carousel, Divider, Table, TableColumnsType, Avatar as AntAvatar}
 import {ReactNode, useEffect, useState} from "react";
 import {Enrollment, HealthCondition, Schedule} from "../../entity";
 import {
+    chooseColor,
     convertToM, fDate, fDatetime, firstLetter, fullDay, getAge, getCountry, isCurrentTimeBetween,
     isNull, lowerName, monthsBetween, setFirstName, timeConcat
 } from "../../utils/utils.ts";
@@ -166,7 +167,7 @@ const ExamList = ({enrollment, seeMore}: StudentInfoProps) => {
 
 const GraphSection = ({enrollment}: StudentInfoProps) => {
 
-    const {student: {marks}} = enrollment
+    const {student: {firstName, marks}} = enrollment
 
     const data = marks.map((s) => ({
         subject: s.exam?.subject?.course,
@@ -182,17 +183,13 @@ const GraphSection = ({enrollment}: StudentInfoProps) => {
 
     return (
         <Section title='Progression aux examens'>
-            <RadarChart data={data}  xField='subject' yField='score'/>
+            <RadarChart data={data}  xField='subject' yField='score' color={chooseColor(firstName)as string}/>
         </Section>
     )
 }
 
-const SchoolHistory = ({enrollment, seeMore}: StudentInfoProps) => {
+const SchoolHistory = ({enrollment}: StudentInfoProps) => {
     const {student: {enrollments}} = enrollment
-
-    const handleClick = () => {
-        seeMore && seeMore('5')
-    }
 
     const columns: TableColumnsType<HistoryData> = [
         {
@@ -224,7 +221,7 @@ const SchoolHistory = ({enrollment, seeMore}: StudentInfoProps) => {
     })) ?? [];
 
     return (
-        <Section title='Hystorique' more={true} seeMore={handleClick}>
+        <Section title='Hystorique'>
             <Table
                 className='score-table'
                 size='small'
@@ -400,8 +397,12 @@ const DisciplinaryRecords = ({enrollment, seeMore}: StudentInfoProps) => {
         }, {} as Record<string, { type: string; value: number }>)
     )
 
+    const handClick = () => {
+        seeMore && seeMore('5')
+    }
+
     return (
-        <Section title={`Dossiers disciplinaires de ${setFirstName(firstName)}`} more={true} seeMore={seeMore}>
+        <Section title={`Dossiers disciplinaires de ${setFirstName(firstName)}`} more={true} seeMore={handClick}>
             {reprimands.length !== 0 ? (<PieChart data={data} />) : (
                 <div className='panel-table'>
                     <PanelTable title='Dossiers disciplinaires' data={[{

@@ -8,7 +8,7 @@ import {enumToObjectArray} from "../../utils/utils.ts";
 import {Gender} from "../../entity/enums/gender.ts";
 import {Status} from "../../entity/enums/status.ts";
 import GuardianAddressForm from "./GuardianAddressForm.tsx";
-import FormInput from "../ui/form/FormInput.tsx";
+import TextInput from "../ui/form/TextInput.tsx";
 import GuardianDetails from "./GuardianDetails.tsx";
 import {fetchEnrolledStudentsGuardians, fetchGuardian} from "../../data";
 import {Guardian} from "../../entity";
@@ -103,77 +103,49 @@ const GuardianForm = ({control, errors, showField, checked, onChecked, value, se
                     </>
                 }
             </Grid>
-            <Grid xs={24} md={12} lg={8}>
-                <FormInput
-                    label='Nom(s) du tuteur' control={control} name='student.guardian.lastName' required defaultValue='' placeholder='Malonga'
-                    validateStatus={errors.student?.guardian?.lastName ? 'error': ''} help={errors.student?.guardian?.lastName ? errors.student?.guardian?.lastName.message : ''}
-                />
-            </Grid>
+            <TextInput
+                label='Nom(s) du tuteur' control={control} name='student.guardian.lastName' required defaultValue='' placeholder='Malonga'
+                validateStatus={errors?.student?.guardian?.lastName ? 'error': ''} help={errors?.student?.guardian?.lastName ? errors?.student?.guardian?.lastName.message : ''}
+            />
+            <TextInput
+                label='Prénom(s) du tuteur' control={control} name='student.guardian.firstName' required defaultValue='' placeholder='Patrick'
+                validateStatus={errors?.student?.guardian?.firstName ? 'error': ''} help={errors?.student?.guardian?.firstName ? errors?.student?.guardian?.firstName.message : ''}
+            />
+            <Form.Item label='Genre' required tooltip='requis' validateStatus={errors?.student?.guardian?.gender ? 'error': ''} help={errors?.student?.guardian?.gender ? errors.student?.guardian?.gender.message : ''}>
+                <Controller name='student.guardian.gender' control={control} render={({field}) => (
+                    <Select placeholder='Selectionner le genre' options={genderOptions} {...field} />
+                )} />
+            </Form.Item>
+            <Form.Item label='Status Matrimonial' required tooltip='requis' validateStatus={errors?.student?.guardian?.status ? 'error': ''} help={errors?.student?.guardian?.status ? errors.student?.guardian?.status.message : ''}>
+                <Controller name='student.guardian.status' control={control} render={({field}) => (
+                    <Select placeholder='Selectionner le status matrimonial du tuteur' options={statusOptions} {...field} />
+                )} />
+            </Form.Item>
 
-            <Grid xs={24} md={12} lg={8}>
-                <FormInput
-                    label='Prénom(s) du tuteur' control={control} name='student.guardian.firstName' required defaultValue='' placeholder='Patrick'
-                    validateStatus={errors.student?.guardian?.firstName ? 'error': ''} help={errors.student?.guardian?.firstName ? errors.student?.guardian?.firstName.message : ''}
-                />
-            </Grid>
-
-            <Grid xs={24} md={12} lg={8}>
-                <Form.Item label='Genre' required tooltip='requis' validateStatus={errors.student?.guardian?.gender ? 'error': ''} help={errors.student?.guardian?.gender ? errors.student?.guardian?.gender.message : ''}>
-                    <Controller name='student.guardian.gender' control={control} render={({field}) => (
-                        <Select placeholder='Selectionner le genre' options={genderOptions} {...field} />
-                    )} />
-                </Form.Item>
-            </Grid>
-
-            <Grid xs={24} md={12} lg={8}>
-                <Form.Item label='Status Matrimonial' required tooltip='requis' validateStatus={errors.student?.guardian?.status ? 'error': ''} help={errors.student?.guardian?.status ? errors.student?.guardian?.status.message : ''}>
-                    <Controller name='student.guardian.status' control={control} render={({field}) => (
-                        <Select placeholder='Selectionner le status matrimonial du tuteur' options={statusOptions} {...field} />
-                    )} />
-                </Form.Item>
-            </Grid>
-
-            {showField && <Grid xs={24} md={12} lg={8}>
-                <FormInput
+            {showField && <TextInput
                     label='Nom(s) de jeune fille' control={control} name='student.guardian.maidenName' defaultValue='' placeholder='Mavouanga'
-                    validateStatus={errors.student?.guardian?.maidenName ? 'error': ''} help={errors.student?.guardian?.maidenName ? errors.student?.guardian?.maidenName.message : ''}
-                />
-            </Grid>}
-
-            <Grid xs={24} md={12} lg={8}>
-                <FormInput
-                    label='E-mail' control={control} name='student.guardian.emailId' defaultValue='' placeholder='p.malonga@gmail.com'
-                    validateStatus={errors.student?.guardian?.emailId ? 'error': ''} help={errors.student?.guardian?.emailId ? errors.student?.guardian?.emailId.message : ''}
-                />
-            </Grid>
-
-            <Grid xs={24} md={12} lg={8}>
-                <FormInput
-                    label='Employeur' control={control} name='student.guardian.company' defaultValue='' placeholder='Total Energie'
-                    validateStatus={errors.student?.guardian?.company ? 'error': ''} help={errors.student?.guardian?.company ? errors.student?.guardian?.company.message : ''}
-                />
-            </Grid>
-
-            <Grid xs={24} md={12} lg={8}>
-                <FormInput
-                    label='Poste' control={control} name='student.guardian.jobTitle' defaultValue='' placeholder='Operateur de maintenance'
-                    validateStatus={errors.student?.guardian?.jobTitle ? 'error': ''} help={errors.student?.guardian?.jobTitle ? errors.student?.guardian?.jobTitle.message : ''}
-                />
-            </Grid>
-
-            <Grid xs={24} md={12} lg={8}>
-                <FormInput
-                    label='Téléphone' control={control} name='student.guardian.telephone' defaultValue='' placeholder='060000000' required
-                    validateStatus={errors.student?.guardian?.telephone ? 'error': ''} help={errors.student?.guardian?.telephone ? errors.student?.guardian?.telephone.message : ''}
-                />
-            </Grid>
-
-            <Grid xs={24} md={12} lg={8}>
-                <FormInput
-                    label='Mobile' control={control} name='student.guardian.mobile' defaultValue='' placeholder='060000000'
-                    validateStatus={errors.student?.guardian?.mobile ? 'error': ''} help={errors.student?.guardian?.mobile ? errors.student?.guardian?.mobile.message : ''}
-                />
-            </Grid>
+                    validateStatus={errors?.student?.guardian?.maidenName ? 'error': ''} help={errors?.student?.guardian?.maidenName ? errors?.student?.guardian?.maidenName.message : ''}
+            />}
+            <TextInput
+                label='E-mail' control={control} name='student.guardian.emailId' defaultValue='' placeholder='p.malonga@gmail.com'
+                validateStatus={errors?.student?.guardian?.emailId ? 'error': ''} help={errors?.student?.guardian?.emailId ? errors?.student?.guardian?.emailId.message : ''}
+            />
+            <TextInput
+                label='Employeur' control={control} name='student.guardian.company' defaultValue='' placeholder='Total Energie'
+                validateStatus={errors?.student?.guardian?.company ? 'error': ''} help={errors?.student?.guardian?.company ? errors?.student?.guardian?.company.message : ''}
+            />
+            <TextInput
+                label='Poste' control={control} name='student.guardian.jobTitle' defaultValue='' placeholder='Operateur de maintenance'
+                validateStatus={errors?.student?.guardian?.jobTitle ? 'error': ''} help={errors?.student?.guardian?.jobTitle ? errors?.student?.guardian?.jobTitle.message : ''}
+            />
+            <TextInput
+                label='Téléphone' control={control} name='student.guardian.telephone' defaultValue='' placeholder='060000000' required
+                validateStatus={errors?.student?.guardian?.telephone ? 'error': ''} help={errors?.student?.guardian?.telephone ? errors?.student?.guardian?.telephone.message : ''}
+            />
+            <TextInput
+                label='Mobile' control={control} name='student.guardian.mobile' defaultValue='' placeholder='060000000'
+                validateStatus={errors?.student?.guardian?.mobile ? 'error': ''} help={errors?.student?.guardian?.mobile ? errors?.student?.guardian?.mobile.message : ''}
+            />
 
             <Grid xs={24} md={24} lg={24} className='guardian__address__check'>
                 <Collapse defaultActiveKey={['1']} items={[

@@ -12,9 +12,12 @@ interface RadarProps {
     xField: string,
     yField: string
     config?: object
+    color?: string
 }
 
-const RadarChart = ({data, xField, yField}: RadarProps) => {
+const RadarChart = ({data, xField, yField, color}: RadarProps) => {
+
+    const COLOR = color ? color : '#8884d8'
 
     return (
         <ResponsiveContainer width="100%" height={350} maxHeight={400}>
@@ -22,7 +25,7 @@ const RadarChart = ({data, xField, yField}: RadarProps) => {
                 <PolarGrid />
                 <PolarAngleAxis dataKey={xField} />
                 <PolarRadiusAxis />
-                <Radar dataKey={yField} stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
+                <Radar dataKey={yField} stroke={COLOR} fill={COLOR} fillOpacity={0.6} />
             </ReChartRadarChart>
         </ResponsiveContainer>
     )

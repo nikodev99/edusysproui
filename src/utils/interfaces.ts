@@ -1,8 +1,8 @@
 import {Control, FieldErrors} from "react-hook-form";
 import {z} from "zod";
-import {enrollmentSchema, guardianSchema} from "../schema";
+import {enrollmentSchema, guardianSchema, studentSchema} from "../schema";
 import {ValidateStatus} from "antd/es/form/FormItem";
-import {ReactNode} from "react";
+import {CSSProperties, ReactNode} from "react";
 import {AcademicYear, Guardian} from "../entity";
 import {SectionType} from "../entity/enums/section.ts";
 import {Gender} from "../entity/enums/gender.ts";
@@ -15,6 +15,7 @@ export interface Metadata {
 
 export type GuardianSchema = z.infer<typeof guardianSchema>;
 export type EnrollmentSchema = z.infer<typeof enrollmentSchema>;
+export type StudentSchema = z.infer<typeof studentSchema>;
 
 type NestedKeyOf<ObjectType extends object> = {
     [Key in keyof ObjectType & (string | number)]: ObjectType[Key] extends object
@@ -30,8 +31,8 @@ export interface BreadcrumbItems {
 }
 
 export interface ZodProps {
-    control: Control<EnrollmentSchema>
-    errors: FieldErrors<EnrollmentSchema>
+    control?: Control<EnrollmentSchema>
+    errors?: FieldErrors<EnrollmentSchema>
     validationTriggered?: boolean,
     showField?: boolean
 }
@@ -56,11 +57,24 @@ export interface GuardianProps extends ZodProps {
 }
 
 export interface ZodControl {
-    control: Control<EnrollmentSchema>
+    control?: Control<EnrollmentSchema>
     label?: string
     name: TName
     validateStatus?: ValidateStatus
     help?: ReactNode
+    defaultValue?: string,
+    style?: CSSProperties
+    required?: boolean,
+    placeholder?: string,
+}
+
+export interface InputProps extends ZodControl {
+    xs?: number,
+    md?: number
+    lg?: number
+    isCompact?: boolean
+    onFinish?: (value: string) => void
+    type?: string
 }
 
 export interface ZodListControl {

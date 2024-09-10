@@ -3,13 +3,25 @@ import {Enrollment} from "../../../entity";
 import Avatar from "./Avatar.tsx";
 import {LuChevronDown, LuPencil, LuTrash, LuUserCircle, LuUserPlus} from "react-icons/lu";
 import {setFirstName} from "../../../utils/utils.ts";
+import {useToggle} from "../../../hooks/useToggle.ts";
+import {useEffect} from "react";
 
 interface ViewProps {
     enrollment: Enrollment | null,
     isLoading: boolean,
+    setEdit: (toEdit: boolean) => void
+    closeState: boolean
 }
 
-const ViewHeader = ({enrollment, isLoading}: ViewProps) => {
+const ViewHeader = ({enrollment, isLoading, setEdit, closeState}: ViewProps) => {
+
+    const [open, setOpen] = useToggle(false);
+
+    useEffect(() => {
+        if (closeState !== open) {
+            setOpen()
+        }
+    }, [closeState, open, setOpen]);
 
     if (enrollment == null) {
         return (
@@ -18,6 +30,11 @@ const ViewHeader = ({enrollment, isLoading}: ViewProps) => {
     }
 
     const {student, student: {guardian}, isArchive, classe, classe: {grade} } = enrollment!
+
+    const handleClick = () => {
+        setOpen()
+        setEdit(!open)
+    }
 
     return(
         <Flex align='center' justify='space-between' component='header' className='view__block'>
@@ -44,7 +61,7 @@ const ViewHeader = ({enrollment, isLoading}: ViewProps) => {
 
             <Flex className='block' align='flex-start' vertical gap={4}>
                 <Dropdown menu={{items: [
-                        {key: 1, label: 'Editer', icon: <LuPencil />},
+                        {key: 1, label: 'Editer', icon: <LuPencil />, onClick: handleClick},
                         {key: 2, label: 'Tuteur légal', icon: <LuUserCircle />},
                         {key: 3, label: 'Réinscrire', icon: <LuUserPlus />},
                         {key: 4, label: 'Retirer l\'étudiant', danger: true, icon: <LuTrash />}

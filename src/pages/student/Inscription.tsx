@@ -21,7 +21,7 @@ import {addStudent} from "../../data";
 import FormError from "../../components/ui/form/FormError.tsx";
 import FormSuccess from "../../components/ui/form/FormSuccess.tsx";
 import {OutputFileEntry} from "@uploadcare/blocks";
-import {Guardian} from "../../entity";
+import {Guardian, toGuardianSchema} from "../../entity";
 import {text} from "../../utils/text_display.ts";
 import PageWrapper from "../../components/ui/layout/PageWrapper.tsx";
 import {redirectTo} from "../../context/RedirectContext.ts";
@@ -50,30 +50,7 @@ const Inscription = () => {
     //TODO in production stop the watching
     const formData = watch()
     const setGuardianValues = (guardian: Guardian) => {
-        const newGuardian: GuardianSchema = {
-            id: guardian.id,
-            lastName: guardian.lastName,
-            firstName: guardian.firstName,
-            gender: guardian.gender,
-            status: guardian.status,
-            maidenName: guardian.maidenName,
-            emailId: guardian.emailId,
-            company: guardian.company,
-            jobTitle: guardian.jobTitle,
-            telephone: guardian.telephone,
-            mobile: guardian.mobile,
-            address: {
-                id: guardian.address?.id,
-                number: guardian.address?.number as number,
-                street: guardian.address?.street as string,
-                secondStreet: guardian.address?.secondStreet,
-                neighborhood: guardian.address?.neighborhood as string,
-                borough: guardian.address?.borough,
-                city: guardian.address?.city as string,
-                zipCode: guardian.address?.zipCode,
-                country: guardian.address?.country as string,
-            }
-        }
+        const newGuardian: GuardianSchema = toGuardianSchema(guardian)
         setValue('student.guardian', newGuardian, {
             shouldValidate: true
         })

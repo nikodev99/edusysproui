@@ -17,6 +17,7 @@ import LocalStorageManager from "../../core/LocalStorageManager.ts";
 import {setFirstName} from "../../utils/utils.ts";
 import {useFetch} from "../../hooks/useFetch.ts";
 import Sticky from "react-sticky-el";
+import StudentEditDrawer from "../../components/view/StudentEditDrawer.tsx";
 
 const StudentView = () => {
 
@@ -25,8 +26,9 @@ const StudentView = () => {
     const activeTabKey = LocalStorageManager.get("tabKey") as string || "1"
     const [enrolledStudent, setEnrolledStudent] = useState<Enrollment | null>(null);
     const [tabKey, setTabKey] = useState<string>(activeTabKey)
+    const [openDrawer, setOpenDrawer] = useState(false)
 
-    const {data, isLoading, isSuccess, error, isError} = useFetch(['student-id', id as string], fetchStudentById, [id])
+    const {data, isLoading, isSuccess, error} = useFetch(['student-id', id as string], fetchStudentById, [id])
 
     const studentName = enrolledStudent ?
         `${setFirstName(enrolledStudent?.student.lastName)} ${setFirstName(enrolledStudent?.student.firstName)}` : 'Étudiant'
@@ -57,12 +59,20 @@ const StudentView = () => {
         LocalStorageManager.update('tabKey', () => activeKey)
     }
 
+    const handleOpenDrawer = (state: boolean) => {
+        setOpenDrawer(state)
+    }
+
+    const handleCloseDrawer = () => {
+        setOpenDrawer(false)
+    }
+
     const skeleton = <Skeleton loading={isLoading} active={isLoading} paragraph={{rows: 5}} />
 
     return(
         <>
             <PageHierarchy items={pageHierarchy as [{title: string | ReactNode, path?: string}]} mBottom={25} />
-            <ViewHeader enrollment={enrolledStudent} isLoading={isLoading} />
+            <ViewHeader enrollment={enrolledStudent} isLoading={isLoading} setEdit={handleOpenDrawer} closeState={openDrawer} />
             <section className="sticky-wrapper" style={{ position: 'relative' }}>
                 <Tabs rootClassName={`tabs`}
                       items={[
@@ -70,12 +80,20 @@ const StudentView = () => {
                           {key: '2', label: 'Examens', children: (enrolledStudent ? <StudentExam enrolledStudent={enrolledStudent} />: skeleton)},
                           {key: '3', label: 'Présence', children: (enrolledStudent ? <StudentAttendance  enrolledStudent={enrolledStudent}/>: skeleton)},
                           {key: '4', label: 'Condisciples', children: (enrolledStudent ? <StudentClasse setActiveKey={handleTabChange} enrolledStudent={enrolledStudent} />: skeleton)},
-                          {key: '5', label: 'Historique', children: <StudentHistory />},
+                          {key: '5', label: 'Discipline', children: (enrolledStudent ? <StudentHistory /> : skeleton)},
                       ]}
                       onChange={handleTabChange}
                       defaultActiveKey={tabKey}
                       activeKey={tabKey}
                       centered
+                />
+            </section>
+            <section>
+                <StudentEditDrawer
+                    open={openDrawer}
+                    close={handleCloseDrawer}
+                    isLoading={enrolledStudent !== null}
+                    data={enrolledStudent ? enrolledStudent.student : []}
                 />
             </section>
         </>

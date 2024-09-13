@@ -1,20 +1,24 @@
-import {Controller} from "react-hook-form";
-import {Form, Select} from "antd";
+import {FieldValues} from "react-hook-form";
 import {getCountyListInFrench} from "../../../utils/utils.ts";
-import {ZodControl} from "../../../utils/interfaces.ts";
+import {TypedInputType} from "../../../utils/interfaces.ts";
 import {useMemo} from "react";
+import SelectInput from "./SelectInput.tsx";
 
-const CountrySelect = ({control, label, validateStatus, help, name}: ZodControl) => {
+const CountrySelect = <T extends FieldValues>(countryOptionsProps: TypedInputType<T>) => {
 
     const countryOptions = useMemo(() => getCountyListInFrench(), [])
     const filterOption = (input: string, option?: { label: string; value: string }) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
 
+    const {defaultValue} = countryOptionsProps
+
     return(
-        <Form.Item label={label} required tooltip='requis' validateStatus={validateStatus} help={help}>
-            <Controller name={name as 'academicYear'} control={control} render={({field}) => (
-                <Select showSearch options={countryOptions} filterOption={filterOption} placeholder='Selection votre pays' {...field} />
-            )} />
-        </Form.Item>
+        <SelectInput
+            {...countryOptionsProps}
+            selectedValue={defaultValue}
+            options={countryOptions}
+            filterOption={filterOption}
+            placeholder='Sélectionner le pays'
+        />
     )
 }
 

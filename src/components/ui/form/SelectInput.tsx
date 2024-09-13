@@ -1,37 +1,42 @@
-import {InputProps} from "../../../utils/interfaces.ts";
-import {Button, Form, Select, Space} from "antd";
-import {Controller} from "react-hook-form";
+import { Button, Form, Select, Space } from "antd";
+import { FieldValues } from "react-hook-form";
 import Grid from "../layout/Grid.tsx";
-import {LuSave} from "react-icons/lu";
+import { LuSave } from "react-icons/lu";
+import {SelectType, TypedInputType} from "../../../utils/interfaces.ts";
+import FormItem from "./FormItem.tsx";
 
-interface SelectProps extends InputProps {
-    options: {value: string | number, label: string | number}[],
-    selectedValue?: string
+export const FormSelect = <T extends FieldValues>(selectProps: SelectType<T>) => {
+
+    const {isCompact, placeholder, options, selectedValue} = selectProps
+
+    return(
+        <FormItem {...selectProps} {...(selectedValue ? { defaultValue: selectedValue } : {})} render={({field}) => (
+            <>
+                {isCompact ? (
+                    <Space.Compact style={{ width: '100%' }}>
+                        <Select placeholder={placeholder} options={options} {...field} />
+                        <Button htmlType='submit' disabled={true}><LuSave /></Button>
+                    </Space.Compact>
+                ) : (
+                    <Select placeholder={placeholder} options={options} {...field} />
+                )}
+            </>
+        )} />
+    )
 }
 
-const SelectInput = ({
-     control, label, validateStatus, help, name, placeholder, options, selectedValue,
-    xs, md, lg, isCompact, onFinish
-}: SelectProps) => {
+const SelectInput = <T extends FieldValues>(selectProps: TypedInputType<T>) => {
+
+    const {xs, md, lg, hasForm, onFinish} = selectProps
+
     return(
         <Grid xs={xs ?? 24} md={md ?? 12} lg={ lg ?? 8}>
-            {isCompact ? (
+            {hasForm ? (
                 <Form layout="vertical" onFinish={onFinish}>
-                    <Form.Item label={label} required tooltip='requis' validateStatus={validateStatus} help={help}>
-                        <Controller name={name as 'academicYear.id'} defaultValue={selectedValue ? selectedValue : ''} control={control} render={({field}) => (
-                            <Space.Compact style={{ width: '100%' }}>
-                                <Select placeholder={placeholder} options={options} {...field} />
-                                <Button htmlType='submit' disabled={true}><LuSave /></Button>
-                            </Space.Compact>
-                        )} />
-                    </Form.Item>
+                    <FormSelect {...selectProps} isCompact={hasForm} />
                 </Form>
-                ): (
-                <Form.Item label={label} required tooltip='requis' validateStatus={validateStatus} help={help}>
-                    <Controller name={name as 'academicYear.id'} control={control} render={({field}) => (
-                        <Select placeholder={placeholder} options={options} {...field} />
-                    )} />
-                </Form.Item>
+            ): (
+                <FormSelect {...selectProps} />
             )}
 
         </Grid>

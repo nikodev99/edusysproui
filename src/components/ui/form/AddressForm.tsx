@@ -3,9 +3,9 @@ import Grid from "../layout/Grid.tsx";
 import {Form, Input, InputNumber} from "antd";
 import {Controller} from "react-hook-form";
 import CountrySelect from "./CountrySelect.tsx";
-import {ZodControl} from "../../../utils/interfaces.ts";
+import {ZodFormItemProps} from "../../../utils/interfaces.ts";
 
-const AddressForm = ({addressProps}: {addressProps: ZodControl[]}) => {
+const AddressForm = ({addressProps}: {addressProps: ZodFormItemProps[]}) => {
     return (
         <Responsive gutter={[16, 16]}>
             <Grid xs={24} md={12} lg={8}>

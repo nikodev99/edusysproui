@@ -1,58 +1,55 @@
-import {Controller} from "react-hook-form";
+import {FieldValues} from "react-hook-form";
 import {Button, Form, Input, Space} from "antd";
-import {InputProps} from "../../../utils/interfaces.ts";
+import {InputType, TypedInputType} from "../../../utils/interfaces.ts";
 import Grid from "../layout/Grid.tsx";
 import {LuSave} from "react-icons/lu";
+import FormItem from "./FormItem.tsx";
 
-const TextInput = (inputProps :InputProps) => {
-    const {
-        control, defaultValue, name, label, validateStatus, help, style, required, isCompact,
-        placeholder, xs, md, lg, onFinish
-    } = inputProps
+export const FormInput = <T extends FieldValues>(inputProps: InputType<T>) => {
+
+    const {placeholder, isCompact, buttonLabel} = inputProps
+
+    return(
+        <FormItem {...inputProps} render={({field}) => (
+            <>
+                {isCompact ? (
+                        <Space.Compact style={{ width: '100%' }}>
+                            <Input placeholder={placeholder} {...field} />
+                            <Button disabled={true}>{buttonLabel ?? <LuSave />}</Button>
+                        </Space.Compact>
+                    ) :
+                    (
+                        <Input placeholder={placeholder} {...field} />
+                    )
+                }
+            </>
+        )}/>
+    )
+}
+
+const TextInput = <T extends FieldValues>(inputProps :TypedInputType<T>) => {
+    const { hasForm, xs, md, lg, onFinish} = inputProps
 
     return(
         <Grid xs={xs ?? 24} md={md ?? 12} lg={lg ?? 8}>
-            {isCompact ? (
-                <Form layout="vertical" onFinish={onFinish}>
-                    <Form.Item
-                        style={style}
-                        label={label}
-                        required={required}
-                        tooltip={required ? 'requis' : undefined}
-                        validateStatus={validateStatus}
-                        help={help}
-                    >
-                        <Controller name={name as 'academicYear.id'} defaultValue={defaultValue} control={control} render={({field}) => (
-                            <Space.Compact style={{ width: '100%' }}>
-                                <Input placeholder={placeholder} {...field} />
-                                <Button disabled={true}><LuSave /></Button>
-                            </Space.Compact>
-                        )} />
-                    </Form.Item>
-                </Form>
-                ) : (
-                <Form.Item
-                    style={style}
-                    label={label}
-                    required={required}
-                    tooltip={required ? 'requis' : undefined}
-                    validateStatus={validateStatus}
-                    help={help}
-                >
-                    <Controller name={name as 'academicYear.id'} defaultValue={defaultValue} control={control} render={({field}) => (
-                        <Input placeholder={placeholder} {...field} />
-                    )} />
-                </Form.Item>
-            )}
+            {hasForm ? (
+                    <Form layout="vertical" onFinish={onFinish}>
+                        <FormInput {...inputProps} isCompact={hasForm} />
+                    </Form>
+                ) :
+                (
+                    <FormInput {...inputProps} />
+                )
+            }
         </Grid>
     )
 }
 
-TextInput.Email = (props: Omit<InputProps, 'type'>) => (
+TextInput.Email = <T extends FieldValues>(props: Omit<TypedInputType<T>, 'type'>) => (
     <TextInput {...props} type='email' />
 )
 
-TextInput.Password = (props: Omit<InputProps, 'type'>) => (
+TextInput.Password = <T extends FieldValues>(props: Omit<TypedInputType<T>, 'type'>) => (
     <TextInput {...props} type='password' />
 )
 

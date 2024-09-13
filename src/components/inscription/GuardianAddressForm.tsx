@@ -1,9 +1,9 @@
-import {ZodControl, ZodProps} from "../../utils/interfaces.ts";
+import {ZodFormItemProps, ZodProps} from "../../utils/interfaces.ts";
 import AddressForm from "../ui/form/AddressForm.tsx";
 
 const GuardianAddressForm = ({errors, control}: ZodProps) => {
 
-    const addressProps: ZodControl[] = [
+    const addressProps: ZodFormItemProps[] = [
         {
             validateStatus: errors?.student?.guardian?.address?.number ? 'error': '',
             help: errors?.student?.guardian?.address?.number ? errors.student?.guardian?.address.number.message : '',

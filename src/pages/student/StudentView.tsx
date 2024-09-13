@@ -4,7 +4,7 @@ import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {text} from "../../utils/text_display.ts";
 import {setBreadcrumb} from "../../core/breadcrumb.tsx";
 import {ReactNode, useEffect, useState} from "react";
-import {Enrollment} from "../../entity";
+import {Enrollment, Student} from "../../entity";
 import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
 import ViewHeader from "../../components/ui/layout/ViewHeader.tsx";
 import {Skeleton, Tabs} from "antd";
@@ -28,7 +28,7 @@ const StudentView = () => {
     const [tabKey, setTabKey] = useState<string>(activeTabKey)
     const [openDrawer, setOpenDrawer] = useState(false)
 
-    const {data, isLoading, isSuccess, error} = useFetch(['student-id', id as string], fetchStudentById, [id])
+    const {data, isLoading, isSuccess, error, refetch} = useFetch(['student-id', id as string], fetchStudentById, [id])
 
     const studentName = enrolledStudent ?
         `${setFirstName(enrolledStudent?.student.lastName)} ${setFirstName(enrolledStudent?.student.firstName)}` : 'Étudiant'
@@ -65,9 +65,12 @@ const StudentView = () => {
 
     const handleCloseDrawer = () => {
         setOpenDrawer(false)
+        refetch().then(r => r.data)
     }
 
     const skeleton = <Skeleton loading={isLoading} active={isLoading} paragraph={{rows: 5}} />
+
+    console.log('Enrolled Student is null: ', enrolledStudent !== null)
 
     return(
         <>
@@ -92,8 +95,8 @@ const StudentView = () => {
                 <StudentEditDrawer
                     open={openDrawer}
                     close={handleCloseDrawer}
-                    isLoading={enrolledStudent !== null}
-                    data={enrolledStudent ? enrolledStudent.student : []}
+                    isLoading={enrolledStudent === null}
+                    data={enrolledStudent ? enrolledStudent.student : {} as Student}
                 />
             </section>
         </>

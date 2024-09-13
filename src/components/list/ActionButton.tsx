@@ -1,6 +1,6 @@
 import {AiOutlineEllipsis} from "react-icons/ai";
 import {Dropdown} from "antd";
-import {ItemType} from "antd/es/menu/hooks/useItems";
+import {ItemType} from "antd/es/menu/interface";
 
 const ActionButton = ({items, placement}: {items?: ItemType[], placement?: "bottomLeft" | "topLeft" | "topCenter" | "topRight" | "bottomCenter" | "bottomRight" | "top" | "bottom" | undefined}) => {
     return(

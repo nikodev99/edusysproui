@@ -1,8 +1,18 @@
-import {Control, FieldErrors} from "react-hook-form";
+import {
+    Control as HookControl,
+    FieldErrors,
+    FieldValues,
+    Path,
+    PathValue,
+    UseFormStateReturn,
+    ControllerFieldState,
+    ControllerRenderProps,
+    FieldPath,
+} from "react-hook-form";
 import {z} from "zod";
 import {enrollmentSchema, guardianSchema, studentSchema} from "../schema";
 import {ValidateStatus} from "antd/es/form/FormItem";
-import {CSSProperties, ReactNode} from "react";
+import React, {CSSProperties, ReactNode} from "react";
 import {AcademicYear, Guardian} from "../entity";
 import {SectionType} from "../entity/enums/section.ts";
 import {Gender} from "../entity/enums/gender.ts";
@@ -23,21 +33,26 @@ type NestedKeyOf<ObjectType extends object> = {
         : `${Key}`;
 }[keyof ObjectType & (string | number)];
 
-export type TName = NestedKeyOf<EnrollmentSchema>;
+export type TName<T extends object> = NestedKeyOf<T>;
+export type TFieldValues<T extends object> = NestedKeyOf<T>
 
 export interface BreadcrumbItems {
     title: string | ReactNode,
     path?: string
 }
 
-export interface ZodProps {
-    control?: Control<EnrollmentSchema>
-    errors?: FieldErrors<EnrollmentSchema>
+export interface Control<T extends FieldValues> {
+    control: HookControl<T>
+}
+
+export interface ZodProps<T extends FieldValues> {
+    control: HookControl<T>
+    errors?: FieldErrors<T>
     validationTriggered?: boolean,
     showField?: boolean
 }
 
-export interface HealthProps extends ZodProps{
+export interface HealthProps<T extends FieldValues> extends ZodProps<T>{
     healthProps: [{
         conditions: string[],
         allergies: string[],
@@ -45,7 +60,7 @@ export interface HealthProps extends ZodProps{
     }]
 }
 
-export interface GuardianProps extends ZodProps {
+export interface GuardianProps<T extends FieldValues> extends ZodProps<T> {
     checked: boolean
     value?: string
     onChecked: () => void
@@ -56,31 +71,55 @@ export interface GuardianProps extends ZodProps {
     setGuardian: (guardian: Guardian) => void
 }
 
-export interface ZodControl {
-    control?: Control<EnrollmentSchema>
+export interface ZodFormItemProps {
     label?: string
-    name: TName
     validateStatus?: ValidateStatus
     help?: ReactNode
-    defaultValue?: string,
     style?: CSSProperties
-    required?: boolean,
-    placeholder?: string,
+    required?: boolean
 }
 
-export interface InputProps extends ZodControl {
-    xs?: number,
+export type FormType<T extends FieldValues> = ZodFormItemProps & ZodControl<T>
+export type FormItemType<T extends FieldValues> = FormType<T> & ZodControlRender<T> & Control<T>
+export type TypedInputType<T extends FieldValues> = Control<T> & FormType<T> & InputProps & ZodSelect<T>
+export type InputType<T extends FieldValues> = TypedInputType<T> & {isCompact?: boolean}
+export type SelectType<T extends FieldValues> = TypedInputType<T> & {isCompact?: boolean}
+export type DatePickerType<T extends FieldValues> = TypedInputType<T> & {isCompact?: boolean}
+
+export interface ZodControl<TFieldValues extends FieldValues> {
+    name: Path<TFieldValues>
+    defaultValue?: PathValue<TFieldValues, Path<TFieldValues>>,
+}
+
+export interface ZodControlRender<TFieldValues extends FieldValues, TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>> {
+    render: ({ field, fieldState, formState, }: {
+        field: ControllerRenderProps<TFieldValues, TName>;
+        fieldState: ControllerFieldState;
+        formState: UseFormStateReturn<TFieldValues>;
+    }) => React.ReactElement;
+}
+
+export interface ZodSelect<T extends FieldValues> {
+    options?: {value: string | number, label: string | number}[],
+    selectedValue?: PathValue<T, Path<T>>
+    filterOption?: boolean | ((input: string, option?: { label: string; value: string }) => boolean)
+}
+
+export interface InputProps extends ZodFormItemProps {
+    placeholder?: string
+    xs?: number
     md?: number
     lg?: number
-    isCompact?: boolean
+    hasForm?: boolean
     onFinish?: (value: string) => void
     type?: string
+    buttonLabel?: ReactNode
 }
 
 export interface ZodListControl {
     name: string
     label: string
-    zodProps: ZodControl
+    zodProps: ZodFormItemProps
 }
 
 export interface EnumType {

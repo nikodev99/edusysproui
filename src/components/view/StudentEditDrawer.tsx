@@ -1,10 +1,10 @@
 import RightSidePane from "../ui/layout/RightSidePane.tsx";
-import IndividualForm from "../inscription/IndividualForm.tsx";
 import {useForm} from "react-hook-form";
 import {StudentSchema} from "../../utils/interfaces.ts";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {enrollmentSchema} from "../../schema";
 import {Student} from "../../entity";
+import StudentForm from "../forms/StudentForm.tsx";
 
 interface EditProps {
     open: boolean
@@ -24,7 +24,7 @@ const StudentEditDrawer = ({open, close, isLoading, data}: EditProps) => {
 
     return (
         <RightSidePane loading={isLoading} open={open} onClose={close} className='edit-drawer' destroyOnClose>
-            <IndividualForm control={control} errors={errors} edit={true} data={data} />
+            <StudentForm control={control} errors={errors} edit={true} data={data} />
         </RightSidePane>
     )
 }

@@ -1,11 +1,11 @@
 import {Button, Form, FormListFieldData, Input} from "antd";
 import {LuMinusCircle, LuPlus} from "react-icons/lu";
-import {Controller} from "react-hook-form";
-import {ZodListControl} from "../../../utils/interfaces.ts";
+import {Controller, FieldValues} from "react-hook-form";
+import {Control, ZodListControl} from "../../../utils/interfaces.ts";
 
-const ListInput = ({name, label, zodProps}: ZodListControl) => {
+type InputListProps<T extends FieldValues> = ZodListControl<T> & Control<T>
 
-    const {control} = zodProps
+const ListInput = <T extends FieldValues>({name, label, control, zodProps}: InputListProps<T>) => {
 
     const pluralLabel = (inputArray: FormListFieldData[]) => {
         if (inputArray.length > 1) {

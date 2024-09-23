@@ -13,10 +13,11 @@ interface InputProps<TFieldValues extends FieldValues> {
 }
 
 interface FormContentProps<T extends FieldValues> {
-    formItems: InputProps<T>[]
+    formItems: InputProps<T>[],
+    responsiveness?: boolean
 }
 
-const FormContent = <T extends FieldValues>({formItems}: FormContentProps<T>) => {
+const FormContent = <T extends FieldValues>({formItems, responsiveness}: FormContentProps<T>) => {
 
     const renderInput = ({type, inputProps}: InputProps<T>, index: string) => {
         switch (type) {
@@ -28,19 +29,29 @@ const FormContent = <T extends FieldValues>({formItems}: FormContentProps<T>) =>
                 return <DateInput key={index} {...inputProps} />
             case InputTypeEnum.COUNTRY:
                 return <CountrySelect key={index} {...inputProps} />
+            case InputTypeEnum.NUMBER:
+                return <TextInput.Number key={index} {...inputProps} />
             default:
                 return null;
         }
     }
 
     return(
-        <Responsive gutter={[16, 16]}>
-            {
+        <>
+            {responsiveness ? (
                 formItems.map((input, index) => (
                     renderInput(input, `input-${index}`)
                 ))
-            }
-        </Responsive>
+            ): (
+                <Responsive gutter={[16, 16]}>
+                    {
+                        formItems.map((input, index) => (
+                            renderInput(input, `input-${index}`)
+                        ))
+                    }
+                </Responsive>
+            )}
+        </>
     )
 }
 

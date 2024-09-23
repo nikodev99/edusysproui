@@ -47,7 +47,7 @@ export interface Control<T extends FieldValues> {
 
 export interface ZodProps<T extends FieldValues> {
     control: HookControl<T>
-    errors?: FieldErrors<T>
+    errors: FieldErrors<T>
     validationTriggered?: boolean,
     showField?: boolean
 }
@@ -60,7 +60,7 @@ export interface HealthProps<T extends FieldValues> extends ZodProps<T>{
     }]
 }
 
-export interface GuardianProps<T extends FieldValues> extends ZodProps<T> {
+export interface GuardianProps<T extends FieldValues, Q extends object> extends FormContentProps<T, Q> {
     checked: boolean
     value?: string
     onChecked: () => void
@@ -103,6 +103,12 @@ export interface ZodSelect<T extends FieldValues> {
     options?: {value: string | number, label: string | number}[],
     selectedValue?: PathValue<T, Path<T>>
     filterOption?: boolean | ((input: string, option?: { label: string; value: string }) => boolean)
+    showSearch?: boolean
+    defaultActiveFirstOption?: boolean
+    suffixIcon?: ReactNode,
+    onSearch?:  ((value: string) => void) | undefined
+    onChange?:  ((value: string, option?: ({label: string, value: string } | {label: string, value: string }[])) => void) | undefined
+    notFoundContent?: ReactNode
 }
 
 export interface InputProps extends ZodFormItemProps {
@@ -114,12 +120,25 @@ export interface InputProps extends ZodFormItemProps {
     onFinish?: (value: string) => void
     type?: string
     buttonLabel?: ReactNode
+    inputType?: string
+    addonAfter?: ReactNode,
+    min?: number
 }
 
-export interface ZodListControl {
-    name: string
+export interface ZodListControl<T extends FieldValues> {
+    name: Path<T>
     label: string
     zodProps: ZodFormItemProps
+}
+
+export interface FormContentProps<T extends FieldValues, Q extends object> extends ZodProps<T> {
+    edit?: boolean
+    data?: Q
+    enroll?: boolean
+}
+
+export interface FormInitialProps<T extends FieldValues> extends ZodProps<T>{
+
 }
 
 export interface EnumType {

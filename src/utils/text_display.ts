@@ -17,5 +17,19 @@ export const text = {
             }
         }
     },
+    teacher: {
+        label: 'Enseignants',
+        href: '/teachers',
+        group: {
+            view: {
+                label: 'Voir',
+                href: '/teacher/'
+            },
+            add: {
+                label: 'Ajouter',
+                href: '/teacher/new'
+            }
+        }
+    },
     schoolID: 'e4525e5a-2c64-44c4-b40b-82aeeebef2ce'
 }

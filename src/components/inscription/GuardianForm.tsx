@@ -1,22 +1,15 @@
-import {GuardianProps} from "../../utils/interfaces.ts";
+import {EnrollmentSchema, GuardianProps} from "../../utils/interfaces.ts";
 import Responsive from "../ui/layout/Responsive.tsx";
 import Grid from "../ui/layout/Grid.tsx";
-import {Alert, Button, Checkbox, Collapse, Divider, Form, Modal, Select, SelectProps} from "antd";
-import {Controller} from "react-hook-form";
-import {useMemo, useRef, useState} from "react";
-import {enumToObjectArray} from "../../utils/utils.ts";
-import {Gender} from "../../entity/enums/gender.ts";
-import {Status} from "../../entity/enums/status.ts";
+import {Alert, Button, Checkbox, Collapse, Divider, Modal, SelectProps} from "antd";
+import {useRef, useState} from "react";
 import GuardianAddressForm from "./GuardianAddressForm.tsx";
-import TextInput from "../ui/form/TextInput.tsx";
 import GuardianDetails from "./GuardianDetails.tsx";
 import {fetchEnrolledStudentsGuardians, fetchGuardian} from "../../data";
 import {Guardian} from "../../entity";
+import GuardianFormContent from '../forms/GuardianForm.tsx'
 
-const GuardianForm = ({control, errors, showField, checked, onChecked, value, setValue, isExists, setIsExists, guardian, setGuardian}: GuardianProps) => {
-
-    const genderOptions = useMemo(() => enumToObjectArray(Gender), [])
-    const statusOptions = useMemo(() => enumToObjectArray(Status), [])
+const GuardianForm = ({control, errors, showField, checked, onChecked, value, setValue, isExists, setIsExists, guardian, setGuardian}: GuardianProps<EnrollmentSchema, Guardian>) => {
 
     const [open, setOPen] = useState<boolean>(false)
 
@@ -83,82 +76,49 @@ const GuardianForm = ({control, errors, showField, checked, onChecked, value, se
     }
 
     return(
-        <Responsive gutter={[16, 16]}>
-            <Grid xs={24} md={24} lg={24}>
-                <div className='linked_button'>
-                    <Button type='link' onClick={onModalOpen}>Rechercher un tuteur existant</Button>
-                </div>
-                <Divider />
-                <Modal title="Rechercher le tuteur" centered open={open} width={1000}
-                       okText='Confirmer'
-                       cancelText='Annuler'
-                       onOk={() => onConfirm()}
-                       onCancel={() => onModalOpen()}
-                >
-                    <GuardianDetails data={data} value={value} fetching={fetching} onSearch={handleSearch} onChange={handleChange}/>
-                </Modal>
-                {isExists && <>
-                        <Alert type='success' message={`${guardian.lastName} ${guardian.firstName}`} showIcon />
-                        <Divider />
-                    </>
-                }
-            </Grid>
-            <TextInput
-                label='Nom(s) du tuteur' control={control} name='student.guardian.lastName' required defaultValue='' placeholder='Malonga'
-                validateStatus={errors?.student?.guardian?.lastName ? 'error': ''} help={errors?.student?.guardian?.lastName ? errors?.student?.guardian?.lastName.message : ''}
+        <>
+            <Responsive gutter={[16, 16]}>
+                <Grid xs={24} md={24} lg={24}>
+                    <div className='linked_button'>
+                        <Button type='link' onClick={onModalOpen}>Rechercher un tuteur existant</Button>
+                    </div>
+                    <Divider />
+                    <Modal title="Rechercher le tuteur" centered open={open} width={1000}
+                           okText='Confirmer'
+                           cancelText='Annuler'
+                           onOk={() => onConfirm()}
+                           onCancel={() => onModalOpen()}
+                    >
+                        <GuardianDetails data={data} value={value} fetching={fetching} onSearch={handleSearch} onChange={handleChange}/>
+                    </Modal>
+                    {isExists && <>
+                            <Alert type='success' message={`${guardian.lastName} ${guardian.firstName}`} showIcon />
+                            <Divider />
+                        </>
+                    }
+                </Grid>
+            </Responsive>
+            <GuardianFormContent
+                control={control}
+                errors={errors}
+                edit={false}
+                enroll={true}
+                showField={showField}
             />
-            <TextInput
-                label='Prénom(s) du tuteur' control={control} name='student.guardian.firstName' required defaultValue='' placeholder='Patrick'
-                validateStatus={errors?.student?.guardian?.firstName ? 'error': ''} help={errors?.student?.guardian?.firstName ? errors?.student?.guardian?.firstName.message : ''}
-            />
-            <Form.Item label='Genre' required tooltip='requis' validateStatus={errors?.student?.guardian?.gender ? 'error': ''} help={errors?.student?.guardian?.gender ? errors.student?.guardian?.gender.message : ''}>
-                <Controller name='student.guardian.gender' control={control} render={({field}) => (
-                    <Select placeholder='Selectionner le genre' options={genderOptions} {...field} />
-                )} />
-            </Form.Item>
-            <Form.Item label='Status Matrimonial' required tooltip='requis' validateStatus={errors?.student?.guardian?.status ? 'error': ''} help={errors?.student?.guardian?.status ? errors.student?.guardian?.status.message : ''}>
-                <Controller name='student.guardian.status' control={control} render={({field}) => (
-                    <Select placeholder='Selectionner le status matrimonial du tuteur' options={statusOptions} {...field} />
-                )} />
-            </Form.Item>
-
-            {showField && <TextInput
-                    label='Nom(s) de jeune fille' control={control} name='student.guardian.maidenName' defaultValue='' placeholder='Mavouanga'
-                    validateStatus={errors?.student?.guardian?.maidenName ? 'error': ''} help={errors?.student?.guardian?.maidenName ? errors?.student?.guardian?.maidenName.message : ''}
-            />}
-            <TextInput
-                label='E-mail' control={control} name='student.guardian.emailId' defaultValue='' placeholder='p.malonga@gmail.com'
-                validateStatus={errors?.student?.guardian?.emailId ? 'error': ''} help={errors?.student?.guardian?.emailId ? errors?.student?.guardian?.emailId.message : ''}
-            />
-            <TextInput
-                label='Employeur' control={control} name='student.guardian.company' defaultValue='' placeholder='Total Energie'
-                validateStatus={errors?.student?.guardian?.company ? 'error': ''} help={errors?.student?.guardian?.company ? errors?.student?.guardian?.company.message : ''}
-            />
-            <TextInput
-                label='Poste' control={control} name='student.guardian.jobTitle' defaultValue='' placeholder='Operateur de maintenance'
-                validateStatus={errors?.student?.guardian?.jobTitle ? 'error': ''} help={errors?.student?.guardian?.jobTitle ? errors?.student?.guardian?.jobTitle.message : ''}
-            />
-            <TextInput
-                label='Téléphone' control={control} name='student.guardian.telephone' defaultValue='' placeholder='060000000' required
-                validateStatus={errors?.student?.guardian?.telephone ? 'error': ''} help={errors?.student?.guardian?.telephone ? errors?.student?.guardian?.telephone.message : ''}
-            />
-            <TextInput
-                label='Mobile' control={control} name='student.guardian.mobile' defaultValue='' placeholder='060000000'
-                validateStatus={errors?.student?.guardian?.mobile ? 'error': ''} help={errors?.student?.guardian?.mobile ? errors?.student?.guardian?.mobile.message : ''}
-            />
-
-            <Grid xs={24} md={24} lg={24} className='guardian__address__check'>
-                <Collapse defaultActiveKey={['1']} items={[
-                    {
-                        key: 1,
-                        label: <Checkbox checked={checked} onClick={onChecked}>L'adresse du tuteur correspond à celui de l'élève/étudiant</Checkbox>,
-                        children: <GuardianAddressForm control={control} errors={errors}/>,
-                        showArrow: false,
-                        collapsible: 'icon'
-                    }]
-                } activeKey={!checked ? 1 : ''} />
-            </Grid>
-        </Responsive>
+            <Responsive>
+                <Grid xs={24} md={24} lg={24} className='guardian__address__check'>
+                    <Collapse defaultActiveKey={['1']} items={[
+                        {
+                            key: 1,
+                            label: <Checkbox checked={checked} onClick={onChecked}>L'adresse du tuteur correspond à celui de l'élève/étudiant</Checkbox>,
+                            children: <GuardianAddressForm control={control} errors={errors}/>,
+                            showArrow: false,
+                            collapsible: 'icon'
+                        }]
+                    } activeKey={!checked ? 1 : ''} />
+                </Grid>
+            </Responsive>
+        </>
     )
 }
 

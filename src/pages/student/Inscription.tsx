@@ -80,6 +80,7 @@ const Inscription = () => {
             setShowMaidenName(false)
         }
         console.log('Error Occurred: ', errors)
+        console.log('Data entered: ', formData)
     }, [errors, formData]);
 
     const validate = (validateFields: boolean) => {

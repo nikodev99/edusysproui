@@ -1,41 +1,25 @@
-import {ZodProps} from "../../utils/interfaces.ts";
-import {Student} from "../../entity";
+import {FormContentProps} from "../../utils/interfaces.ts";
 import {FieldValues, Path, PathValue} from "react-hook-form";
 import {InputTypeEnum} from "../../core/shared/sharedEnums.ts";
 import FormContent from "../ui/form/FormContent.tsx";
 import {useMemo} from "react";
 import {enumToObjectArray} from "../../utils/utils.ts";
 import {Gender} from "../../entity/enums/gender.ts";
+import {Student} from "../../entity";
+import {FormUtils} from "../../utils/formUtils.ts";
 
-interface StudentProps<T extends FieldValues> extends ZodProps<T> {
-    edit?: boolean
-    data?: Student
-}
-
-const StudentForm = <T extends FieldValues>(studentProps:  StudentProps<T>) => {
+const StudentForm = <T extends FieldValues>(studentProps:  FormContentProps<T, Student>) => {
 
     const genderOptions = useMemo(() => enumToObjectArray(Gender), [])
     const {edit, data, control, errors} = studentProps
-    const onlyField = edit ? 24 : undefined
+    const onlyField = FormUtils.onlyField(edit as boolean, 24, undefined)
 
     const getValidationStatus = (fieldName: string) => {
-        if (edit) {
-            return errors?.[fieldName] ? 'error' : '';
-        } else {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-expect-error
-            return errors?.student?.[fieldName] ? 'error' : '';
-        }
+        return FormUtils.getValidationStatus(fieldName, errors, edit as boolean, 'student', !edit)
     };
 
     const getErrorMessage = (fieldName: string) => {
-        if (edit) {
-            return errors?.[fieldName]?.message || '';
-        } else {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-expect-error
-            return errors?.student?.[fieldName]?.message || '';
-        }
+        return FormUtils.getErrorMessage(fieldName, errors, edit as boolean, 'student', !edit)
     };
 
     return(

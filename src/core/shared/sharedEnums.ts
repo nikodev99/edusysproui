@@ -1,3 +1,7 @@
 export enum InputTypeEnum {
     TEXT, NUMBER, SELECT, DATE, COUNTRY, TEXTAREA, CHECKBOX, RADIO
 }
+
+export enum AddressOwner {
+    STUDENT, TEACHER, ADMIN, GUARDIAN, ENROLLMENT
+}

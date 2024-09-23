@@ -14,7 +14,8 @@ export const FormSelect = <T extends FieldValues>(selectProps: SelectType<T>) =>
             <>
                 {isCompact ? (
                     <Space.Compact style={{ width: '100%' }}>
-                        <Select placeholder={placeholder} options={options} {...field} />
+                        <Select
+                            placeholder={placeholder} options={options} {...field} />
                         <Button htmlType='submit' disabled={true}><LuSave /></Button>
                     </Space.Compact>
                 ) : (

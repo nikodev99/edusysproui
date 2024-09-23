@@ -7,6 +7,7 @@ import Inscription from "../../pages/student/Inscription.tsx";
 import Setting from "../../pages/setting/page.tsx";
 import StudentView from "../../pages/student/StudentView.tsx";
 import RedirectProvider from "../../providers/RedirectProvider.tsx";
+import TeacherList from "../../pages/teacher/TeacherList.tsx";
 
 export const Route = createBrowserRouter([
     {
@@ -18,29 +19,20 @@ export const Route = createBrowserRouter([
         ),
         errorElement: <PageError />,
         children: [
-            {
-                path: '/',
-                element: <Dashboard />
-            },
-            {
-                path: 'dashboard',
-                element: <Dashboard />
-            },
+            { path: '/', element: <Dashboard />},
+            { path: 'dashboard', element: <Dashboard />},
             {
                 path: 'students',
                 children: [
-                    {
-                        path: '',
-                        element: <StudentList />
-                    },
-                    {
-                        path: "new",
-                        element: <Inscription />
-                    },
-                    {
-                        path: ':id',
-                        element: <StudentView />
-                    }
+                    { path: '', element: <StudentList />},
+                    { path: "new", element: <Inscription />},
+                    { path: ':id', element: <StudentView />}
+                ]
+            },
+            {
+                path: 'teachers',
+                children: [
+                    { path: '', element: <TeacherList /> }
                 ]
             },
             {

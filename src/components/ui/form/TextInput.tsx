@@ -1,25 +1,49 @@
 import {FieldValues} from "react-hook-form";
-import {Button, Form, Input, Space} from "antd";
+import {Button, Form, Input, InputNumber, Space} from "antd";
 import {InputType, TypedInputType} from "../../../utils/interfaces.ts";
 import Grid from "../layout/Grid.tsx";
 import {LuSave} from "react-icons/lu";
 import FormItem from "./FormItem.tsx";
 
-export const FormInput = <T extends FieldValues>(inputProps: InputType<T>) => {
+type dataEntryProps<T extends FieldValues> = InputType<T> & {inputType?: string}
 
-    const {placeholder, isCompact, buttonLabel} = inputProps
+export const FormInput = <T extends FieldValues>(inputProps: dataEntryProps<T>) => {
+
+    const {placeholder, isCompact, buttonLabel, inputType, addonAfter, min} = inputProps
 
     return(
         <FormItem {...inputProps} render={({field}) => (
             <>
                 {isCompact ? (
                         <Space.Compact style={{ width: '100%' }}>
-                            <Input placeholder={placeholder} {...field} />
+                            {inputType === 'number' &&  <InputNumber
+                                placeholder={placeholder}
+                                min={min}
+                                {...field} 
+                                style={{width: '100%'}}
+                            />}
+                            {!inputType && <Input
+                                placeholder={placeholder}
+                                {...field}
+                            />}
                             <Button disabled={true}>{buttonLabel ?? <LuSave />}</Button>
                         </Space.Compact>
                     ) :
                     (
-                        <Input placeholder={placeholder} {...field} />
+                        <>
+                            {inputType === 'number' &&  <InputNumber
+                                placeholder={placeholder}
+                                addonAfter={addonAfter}
+                                min={min}
+                                {...field}
+                                style={{width: '100%'}}
+                            />}
+                            {!inputType && <Input
+                                placeholder={placeholder}
+                                addonAfter={addonAfter}
+                                {...field}
+                            />}
+                        </>
                     )
                 }
             </>
@@ -28,17 +52,17 @@ export const FormInput = <T extends FieldValues>(inputProps: InputType<T>) => {
 }
 
 const TextInput = <T extends FieldValues>(inputProps :TypedInputType<T>) => {
-    const { hasForm, xs, md, lg, onFinish} = inputProps
+    const { hasForm, xs, md, lg, onFinish, inputType} = inputProps
 
     return(
         <Grid xs={xs ?? 24} md={md ?? 12} lg={lg ?? 8}>
             {hasForm ? (
                     <Form layout="vertical" onFinish={onFinish}>
-                        <FormInput {...inputProps} isCompact={hasForm} />
+                        <FormInput {...inputProps} isCompact={hasForm} inputType={inputType} />
                     </Form>
                 ) :
                 (
-                    <FormInput {...inputProps} />
+                    <FormInput {...inputProps} inputType={inputType} />
                 )
             }
         </Grid>
@@ -51,6 +75,10 @@ TextInput.Email = <T extends FieldValues>(props: Omit<TypedInputType<T>, 'type'>
 
 TextInput.Password = <T extends FieldValues>(props: Omit<TypedInputType<T>, 'type'>) => (
     <TextInput {...props} type='password' />
+)
+
+TextInput.Number = <T extends FieldValues>(props: Omit<TypedInputType<T>, 'type'>) => (
+    <TextInput {...props} inputType='number' />
 )
 
 export default TextInput

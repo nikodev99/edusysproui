@@ -14,7 +14,7 @@ const CountrySelect = <T extends FieldValues>(countryOptionsProps: TypedInputTyp
     return(
         <SelectInput
             {...countryOptionsProps}
-            selectedValue={defaultValue}
+            defaultValue={defaultValue}
             options={countryOptions}
             filterOption={filterOption}
             placeholder='Sélectionner le pays'

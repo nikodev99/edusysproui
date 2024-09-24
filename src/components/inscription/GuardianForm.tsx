@@ -3,11 +3,12 @@ import Responsive from "../ui/layout/Responsive.tsx";
 import Grid from "../ui/layout/Grid.tsx";
 import {Alert, Button, Checkbox, Collapse, Divider, Modal, SelectProps} from "antd";
 import {useRef, useState} from "react";
-import GuardianAddressForm from "./GuardianAddressForm.tsx";
 import GuardianDetails from "./GuardianDetails.tsx";
 import {fetchEnrolledStudentsGuardians, fetchGuardian} from "../../data";
 import {Guardian} from "../../entity";
 import GuardianFormContent from '../forms/GuardianForm.tsx'
+import {AddressOwner} from "../../core/shared/sharedEnums.ts";
+import AddressForm from "../forms/AddressForm.tsx";
 
 const GuardianForm = ({control, errors, showField, checked, onChecked, value, setValue, isExists, setIsExists, guardian, setGuardian}: GuardianProps<EnrollmentSchema, Guardian>) => {
 
@@ -111,7 +112,13 @@ const GuardianForm = ({control, errors, showField, checked, onChecked, value, se
                         {
                             key: 1,
                             label: <Checkbox checked={checked} onClick={onChecked}>L'adresse du tuteur correspond à celui de l'élève/étudiant</Checkbox>,
-                            children: <GuardianAddressForm control={control} errors={errors}/>,
+                            children: <AddressForm
+                                enroll={true}
+                                control={control}
+                                type={AddressOwner.GUARDIAN}
+                                edit={false}
+                                errors={errors}
+                            />,
                             showArrow: false,
                             collapsible: 'icon'
                         }]

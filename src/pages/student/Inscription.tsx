@@ -4,12 +4,10 @@ import {setBreadcrumb} from "../../core/breadcrumb.tsx";
 import {Button, Flex, Form, Modal, Steps, Tag} from "antd";
 import {useForm} from "react-hook-form";
 import React, {ReactNode, useEffect, useState, useTransition} from "react";
-import IndividualForm from "../../components/inscription/IndividualForm.tsx";
-import StudentAddressForm from "../../components/inscription/StudentAddressForm.tsx";
 import GuardianForm from "../../components/inscription/GuardianForm.tsx";
 import {enrollmentSchema} from "../../schema";
 import {zodResolver} from "@hookform/resolvers/zod";
-import HealthConditionForm from "../../components/inscription/HealthConditionForm.tsx";
+import HealthConditionForm from "../../components/forms/HealthConditionForm.tsx";
 import AttachmentForm from "../../components/inscription/AttachmentForm.tsx";
 import AcademicForm from "../../components/inscription/AcademicForm.tsx";
 import {useLocation} from "react-router-dom";
@@ -25,6 +23,9 @@ import {Guardian, toGuardianSchema} from "../../entity";
 import {text} from "../../utils/text_display.ts";
 import PageWrapper from "../../components/ui/layout/PageWrapper.tsx";
 import {redirectTo} from "../../context/RedirectContext.ts";
+import StudentForm from "../../components/forms/StudentForm.tsx";
+import {AddressOwner} from "../../core/shared/sharedEnums.ts";
+import AddressForm from "../../components/forms/AddressForm.tsx";
 
 const Inscription = () => {
 
@@ -216,11 +217,18 @@ const Inscription = () => {
     const steps = [
         {
             title: 'Individuelle',
-            content: <IndividualForm control={control} errors={errors} validationTriggered={validationTriggered} />
+            content: <StudentForm control={control} errors={errors} edit={false} enroll={true} />
         },
         {
             title: 'Adresse',
-            content: <StudentAddressForm control={control} errors={errors} validationTriggered={validationTriggered} />
+            content: <AddressForm
+                enroll={true}
+                control={control}
+                type={AddressOwner.STUDENT}
+                edit={false}
+                errors={errors}
+                validationTriggered={validationTriggered}
+            />
         },
         {
             title: 'Scolarité',
@@ -245,7 +253,7 @@ const Inscription = () => {
         },
         {
             title: 'Santé',
-            content: <HealthConditionForm control={control} errors={errors} />
+            content: <HealthConditionForm control={control} errors={errors} edit={false} enroll={true} />
         },
         {
             title: 'Attachements',

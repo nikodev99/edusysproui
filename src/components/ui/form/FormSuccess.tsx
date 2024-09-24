@@ -21,7 +21,8 @@ const FormSuccess = ({message}: {message?: string}) => {
                 content: message,
                 duration: 2,
             }).then(() => {
-                navigate()
+                alert('réussi.')
+                //navigate()
             })
         }, 1000)
     }, [message, messageApi, navigate])

@@ -6,6 +6,7 @@ import SelectInput from "./SelectInput.tsx";
 import DateInput from "./DateInput.tsx";
 import CountrySelect from "./CountrySelect.tsx";
 import {InputTypeEnum} from "../../../core/shared/sharedEnums.ts";
+import ListInput from "./ListInput.tsx";
 
 interface InputProps<TFieldValues extends FieldValues> {
     inputProps: TypedInputType<TFieldValues>,
@@ -31,6 +32,8 @@ const FormContent = <T extends FieldValues>({formItems, responsiveness}: FormCon
                 return <CountrySelect key={index} {...inputProps} />
             case InputTypeEnum.NUMBER:
                 return <TextInput.Number key={index} {...inputProps} />
+            case InputTypeEnum.LIST:
+                return <ListInput key={index} {...inputProps} />
             default:
                 return null;
         }

@@ -174,6 +174,7 @@ const AddressForm = <T extends FieldValues>(addressProps: AddressFormProps<T>) =
                 {
                     type: InputTypeEnum.COUNTRY,
                     inputProps: {
+                        showSearch: true,
                         hasForm: edit,
                         md: onlyField,
                         lg: onlyField,

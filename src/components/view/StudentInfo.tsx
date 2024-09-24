@@ -3,6 +3,7 @@ import {Button, Carousel, Divider, Table, TableColumnsType, Avatar as AntAvatar}
 import {ReactNode, useEffect, useState} from "react";
 import {Enrollment, HealthCondition, Schedule} from "../../entity";
 import {
+    bloodLabel,
     chooseColor,
     convertToM, fDate, fDatetime, firstLetter, fullDay, getAge, getCountry, isCurrentTimeBetween,
     isNull, lowerName, monthsBetween, setFirstName, timeConcat
@@ -27,6 +28,7 @@ import {ExamData} from "../../utils/interfaces.ts";
 import {initExamData} from "../../entity/domain/score.ts";
 import {attendanceTag} from "../../entity/enums/attendanceStatus.ts";
 import Tag from "../ui/layout/Tag.tsx";
+import {LuBan} from "react-icons/lu";
 
 interface StudentInfoProps {
     enrollment: Enrollment
@@ -318,18 +320,21 @@ const HealthData = ({enrollment}: StudentInfoProps) => {
     const conditions = healthCondition.medicalConditions?.map((condition) => ({
         response: <div className='health'>
             <span>{condition}</span>
-            <GiHealthDecrease  className='health-icon decrease' size={35}/>
+            <GiHealthDecrease  className='health-icon decrease' size={25}/>
         </div>
     }))
     const allergies = healthCondition.allergies?.map((allergy) => ({
-        response: <div>{allergy}</div>
+        response: <div className='health'>
+            <span>{allergy}</span>
+            <LuBan className='health-icon allergy' size={25} />
+        </div>
     }))
     const medications = healthCondition.medications?.map((medication) => ({
         response: <div>{medication}</div>
     }))
     const blood = healthCondition?.bloodType as unknown as keyof typeof BloodType
     const healthData = [
-        {statement: 'Groupe Sanguin', response: <AntAvatar style={{backgroundColor: '#4B1E24'}}>{BloodType[blood]}</AntAvatar>},
+        {statement: 'Groupe Sanguin', response: <AntAvatar style={{backgroundColor: '#4B1E24'}}>{bloodLabel(BloodType[blood])}</AntAvatar>},
         ...(!conditions && !allergies && !medications ? [{response: <div className='health'>
                 <span>Etat de santé Normal</span>
                 <MdHealthAndSafety className='health-icon' size={35} />

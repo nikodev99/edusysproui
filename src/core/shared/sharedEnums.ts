@@ -1,5 +1,5 @@
 export enum InputTypeEnum {
-    TEXT, NUMBER, SELECT, DATE, COUNTRY, TEXTAREA, CHECKBOX, RADIO
+    TEXT, NUMBER, SELECT, DATE, COUNTRY, TEXTAREA, CHECKBOX, RADIO, LIST
 }
 
 export enum AddressOwner {

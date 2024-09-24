@@ -2,6 +2,7 @@ import {EnumType} from "./interfaces.ts"
 import countries from 'world-countries'
 import dayjs from "dayjs";
 import 'dayjs/locale/fr.js'
+import {BloodType} from "../entity/enums/bloodType.ts";
 
 export const createElement = (htmlElement: string, parentNode: Element|null, attributes?: {[key: string]: string}, content?: string) => {
 
@@ -186,6 +187,19 @@ export const chooseColor = (name: string): string | null | undefined => {
             case 'Z': return '#4682B4'; // Dark Steel Blue
             default: return null;
         }
+}
+
+export const bloodLabel = (blood: BloodType) => {
+    switch (blood) {
+        case BloodType.A: return 'A+'
+        case BloodType.A_: return 'A-'
+        case BloodType.B: return 'B+'
+        case BloodType.B_: return 'B-'
+        case BloodType.AB: return 'AB+'
+        case BloodType.AB_: return 'AB-'
+        case BloodType.O: return 'O+'
+        case BloodType.O_: return 'O-'
+    }
 }
 
 export const setFirstName = (firstName?: string) => {

@@ -107,6 +107,7 @@ const StudentForm = <T extends FieldValues>(studentProps:  FormContentProps<T, S
             {
                 type: InputTypeEnum.COUNTRY,
                 inputProps: {
+                    showSearch: true,
                     hasForm: edit,
                     md: onlyField,
                     lg: onlyField,
@@ -114,7 +115,7 @@ const StudentForm = <T extends FieldValues>(studentProps:  FormContentProps<T, S
                     control: control,
                     name: (edit ? 'nationality' : 'student.nationality') as Path<T>,
                     required: true,
-                    defaultValue: (edit && data ? data.nationality : '') as PathValue<T, Path<T>>,
+                    selectedValue: (edit && data ? data.nationality : '') as PathValue<T, Path<T>>,
                     validateStatus: getValidationStatus('nationality'),
                     help: getErrorMessage('nationality'),
                 }

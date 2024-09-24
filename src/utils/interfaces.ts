@@ -81,7 +81,7 @@ export interface ZodFormItemProps {
 
 export type FormType<T extends FieldValues> = ZodFormItemProps & ZodControl<T>
 export type FormItemType<T extends FieldValues> = FormType<T> & ZodControlRender<T> & Control<T>
-export type TypedInputType<T extends FieldValues> = Control<T> & FormType<T> & InputProps & ZodSelect<T>
+export type TypedInputType<T extends FieldValues> = Control<T> & FormType<T> & InputProps & ZodSelect<T> & ZodListControl<T> & {wrapper?: ReactNode}
 export type InputType<T extends FieldValues> = TypedInputType<T> & {isCompact?: boolean}
 export type SelectType<T extends FieldValues> = TypedInputType<T> & {isCompact?: boolean}
 export type DatePickerType<T extends FieldValues> = TypedInputType<T> & {isCompact?: boolean}
@@ -102,7 +102,7 @@ export interface ZodControlRender<TFieldValues extends FieldValues, TName extend
 export interface ZodSelect<T extends FieldValues> {
     options?: {value: string | number, label: string | number}[],
     selectedValue?: PathValue<T, Path<T>>
-    filterOption?: boolean | ((input: string, option?: { label: string; value: string }) => boolean)
+    filterOption?: boolean | ((input: string, option?: { label: string, value: string }) => boolean) | undefined
     showSearch?: boolean
     defaultActiveFirstOption?: boolean
     suffixIcon?: ReactNode,
@@ -125,10 +125,9 @@ export interface InputProps extends ZodFormItemProps {
     min?: number
 }
 
-export interface ZodListControl<T extends FieldValues> {
-    name: Path<T>
-    label: string
-    zodProps: ZodFormItemProps
+export interface ZodListControl<T extends FieldValues> extends ZodControl<T>{
+    listName?: string | number | (string | number)[]
+    dataField?: string
 }
 
 export interface FormContentProps<T extends FieldValues, Q extends object> extends ZodProps<T> {

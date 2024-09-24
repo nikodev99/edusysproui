@@ -6,6 +6,7 @@ import {HealthCondition} from "../../entity";
 import {FormUtils} from "../../utils/formUtils.ts";
 import {FormConfig} from "../../config/FormConfig.ts";
 import {BloodType} from "../../entity/enums/bloodType.ts";
+import {Card} from "antd";
 
 const HealthConditionForm = <T extends FieldValues>({control, errors, edit, enroll, data}: FormContentProps<T, HealthCondition>) => {
 
@@ -24,7 +25,7 @@ const HealthConditionForm = <T extends FieldValues>({control, errors, edit, enro
     ]
 
     return(
-        <FormContent responsiveness formItems={[
+        <FormContent formItems={[
             {
                 type: InputTypeEnum.SELECT,
                 inputProps: {
@@ -76,6 +77,57 @@ const HealthConditionForm = <T extends FieldValues>({control, errors, edit, enro
                     addonAfter: 'cm',
                     min: 0,
                     placeholder:'167'
+                }
+            },
+            {
+                type: InputTypeEnum.LIST,
+                inputProps: {
+                    md: onlyField,
+                    lg: onlyField,
+                    control: control,
+                    label: 'Conditions Médicales',
+                    required: false,
+                    listName: 'conditions',
+                    name: form.name('medicalConditions', parent),
+                    validateStatus: form.validate('medicalConditions', parent),
+                    help: form.error('medicalConditions', parent),
+                    hasForm: edit,
+                    defaultValue: (edit && data ? data.medicalConditions : 0) as PathValue<T, Path<T>>,
+                    wrapper: <Card style={{width: '100%', marginBottom: '20px'}} />
+                }
+            },
+            {
+                type: InputTypeEnum.LIST,
+                inputProps: {
+                    md: onlyField,
+                    lg: onlyField,
+                    control: control,
+                    label: 'Allergie',
+                    required: false,
+                    listName: 'allergies',
+                    name: form.name('allergies', parent),
+                    validateStatus: form.validate('allergies', parent),
+                    help: form.error('allergies', parent),
+                    hasForm: edit,
+                    defaultValue: (edit && data ? data.allergies : 0) as PathValue<T, Path<T>>,
+                    wrapper: <Card style={{width: '100%', marginBottom: '20px'}} />
+                }
+            },
+            {
+                type: InputTypeEnum.LIST,
+                inputProps: {
+                    md: onlyField,
+                    lg: onlyField,
+                    control: control,
+                    label: 'Medicament Obligatoire',
+                    required: false,
+                    listName: 'medications',
+                    name: form.name('medications', parent),
+                    validateStatus: form.validate('medications', parent),
+                    help: form.error('medications', parent),
+                    hasForm: edit,
+                    defaultValue: (edit && data ? data.medications : 0) as PathValue<T, Path<T>>,
+                    wrapper: <Card style={{width: '100%', marginBottom: '20px'}} />
                 }
             }
         ]} />

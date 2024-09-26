@@ -282,7 +282,7 @@ const Inscription = () => {
                             </div>
                             {steps[current].content}
                             {error && (<FormError message={error}/>)}
-                            {success && (<FormSuccess message={success}/>)}
+                            {success && (<FormSuccess message={success} toRedirect={true}/>)}
                             <Flex gap='small'>
                                 {current > 0 && (
                                     <Button onClick={prev}>précédent</Button>

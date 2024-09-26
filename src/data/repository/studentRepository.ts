@@ -53,3 +53,26 @@ export const getAllStudentClassmate = (studentId: string, classeId: number, acad
         }
     })
 }
+
+export const updateStudentByField = <T>(field: keyof T, value: unknown, studentId: string | number, type?: number) => {
+    let url: string
+    switch (type) {
+        case 0:
+            url = '/student/address'
+            break
+        case 1:
+            url = '/student/health'
+            break
+        default:
+            url = '/student'
+            break
+    }
+    return request({
+        method: 'PATCH',
+        url: `${url}/${studentId}`,
+        data: {
+            field: field,
+            value: value,
+        }
+    })
+}

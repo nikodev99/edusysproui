@@ -17,15 +17,19 @@ import {AcademicYear, Guardian} from "../entity";
 import {SectionType} from "../entity/enums/section.ts";
 import {Gender} from "../entity/enums/gender.ts";
 import {AttendanceStatus} from "../entity/enums/attendanceStatus.ts";
+import {addressSchema} from "../schema/models/addressSchema.ts";
+import {healthSchema} from "../schema/models/healthSchema.ts";
 
 export interface Metadata {
     title: string;
     description: string;
 }
 
-export type GuardianSchema = z.infer<typeof guardianSchema>;
-export type EnrollmentSchema = z.infer<typeof enrollmentSchema>;
-export type StudentSchema = z.infer<typeof studentSchema>;
+export type GuardianSchema = z.infer<typeof guardianSchema>
+export type EnrollmentSchema = z.infer<typeof enrollmentSchema>
+export type StudentSchema = z.infer<typeof studentSchema>
+export type AddressSchema = z.infer<typeof addressSchema>
+export type HealthSchema = z.infer<typeof healthSchema>
 
 type NestedKeyOf<ObjectType extends object> = {
     [Key in keyof ObjectType & (string | number)]: ObjectType[Key] extends object
@@ -117,7 +121,7 @@ export interface InputProps extends ZodFormItemProps {
     md?: number
     lg?: number
     hasForm?: boolean
-    onFinish?: (value: string) => void
+    onFinish?: (values: unknown) => void
     type?: string
     buttonLabel?: ReactNode
     inputType?: string

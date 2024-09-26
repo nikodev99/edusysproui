@@ -1,11 +1,10 @@
 import {message as successMassage} from 'antd'
 import {useEffect} from "react";
-import {useNavigation} from "../../../hooks/useNavigation.ts";
 import {text} from "../../../utils/text_display.ts";
+import {redirect} from "react-router-dom";
 
-const FormSuccess = ({message}: {message?: string}) => {
+const FormSuccess = ({message, toRedirect, redirectLink}: {message?: string, toRedirect?: boolean, redirectLink?: string}) => {
     const [messageApi, contextHolder] = successMassage.useMessage()
-    const navigate = useNavigation(text.student.href)
     const key = 'updatable'
 
     useEffect( () => {
@@ -21,11 +20,12 @@ const FormSuccess = ({message}: {message?: string}) => {
                 content: message,
                 duration: 2,
             }).then(() => {
-                alert('réussi.')
-                //navigate()
+                if (toRedirect){
+                    redirect(redirectLink ? redirectLink : text.student.href)
+                }
             })
         }, 1000)
-    }, [message, messageApi, navigate])
+    }, [message, messageApi, redirectLink, toRedirect])
 
     return(
         <>

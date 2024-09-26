@@ -41,7 +41,7 @@ const ViewHeader = ({enrollment, isLoading, setEdit, closeState}: ViewProps) => 
             <Flex className="avatar-container" align='center' gap={10}>
                 <Avatar image={student?.image} firstText={student?.firstName} lastText={student?.lastName} size={60} />
                 <Flex className="legal" vertical justify='center'>
-                    <span className='title'>{setFirstName(`${student?.lastName} ${student?.firstName}`)}</span>
+                    <span className='title'>{`${student?.lastName?.toUpperCase()}, ${setFirstName(student?.firstName)}`}</span>
                     <span className='mention'>{student?.reference}</span>
                 </Flex>
             </Flex>

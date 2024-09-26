@@ -8,7 +8,9 @@ import {FormConfig} from "../../config/FormConfig.ts";
 import {BloodType} from "../../entity/enums/bloodType.ts";
 import {Card} from "antd";
 
-const HealthConditionForm = <T extends FieldValues>({control, errors, edit, enroll, data}: FormContentProps<T, HealthCondition>) => {
+type HealthProps<T extends FieldValues> = FormContentProps<T, HealthCondition> & { handleUpdate?: (field: keyof HealthCondition, value: unknown) => void }
+
+const HealthConditionForm = <T extends FieldValues>({control, errors, edit, enroll, data, handleUpdate}: HealthProps<T>) => {
 
     const form = new FormConfig(errors, edit, enroll)
     const onlyField = FormUtils.onlyField(edit as boolean, 24, undefined)
@@ -40,7 +42,8 @@ const HealthConditionForm = <T extends FieldValues>({control, errors, edit, enro
                     hasForm: edit,
                     selectedValue: (edit && data ? data.bloodType : undefined) as PathValue<T, Path<T>>,
                     placeholder: 'Sélectionner le groupe sanguin',
-                    options: bloodOptions
+                    options: bloodOptions,
+                    onFinish: edit && handleUpdate ? (value) => handleUpdate('bloodType', value) : undefined
                 }
             },
             {
@@ -58,7 +61,8 @@ const HealthConditionForm = <T extends FieldValues>({control, errors, edit, enro
                     defaultValue: (edit && data ? data.weight : 0) as PathValue<T, Path<T>>,
                     addonAfter: 'kg',
                     min: 0,
-                    placeholder:'67'
+                    placeholder:'67',
+                    onFinish: edit && handleUpdate ? (value) => handleUpdate('weight', value) : undefined
                 }
             },
             {
@@ -76,7 +80,8 @@ const HealthConditionForm = <T extends FieldValues>({control, errors, edit, enro
                     defaultValue: (edit && data ? data.height : 0) as PathValue<T, Path<T>>,
                     addonAfter: 'cm',
                     min: 0,
-                    placeholder:'167'
+                    placeholder:'167',
+                    onFinish: edit && handleUpdate ? (value) => handleUpdate('height', value) : undefined
                 }
             },
             {
@@ -93,7 +98,8 @@ const HealthConditionForm = <T extends FieldValues>({control, errors, edit, enro
                     help: form.error('medicalConditions', parent),
                     hasForm: edit,
                     defaultValue: (edit && data ? data.medicalConditions : 0) as PathValue<T, Path<T>>,
-                    wrapper: <Card style={{width: '100%', marginBottom: '20px'}} />
+                    wrapper: <Card style={{width: '100%', marginBottom: '20px'}} />,
+                    onFinish: edit && handleUpdate ? (value) => handleUpdate('medicalConditions', value) : undefined
                 }
             },
             {
@@ -110,7 +116,8 @@ const HealthConditionForm = <T extends FieldValues>({control, errors, edit, enro
                     help: form.error('allergies', parent),
                     hasForm: edit,
                     defaultValue: (edit && data ? data.allergies : 0) as PathValue<T, Path<T>>,
-                    wrapper: <Card style={{width: '100%', marginBottom: '20px'}} />
+                    wrapper: <Card style={{width: '100%', marginBottom: '20px'}} />,
+                    onFinish: edit && handleUpdate ? (value) => handleUpdate('allergies', value) : undefined
                 }
             },
             {
@@ -127,7 +134,8 @@ const HealthConditionForm = <T extends FieldValues>({control, errors, edit, enro
                     help: form.error('medications', parent),
                     hasForm: edit,
                     defaultValue: (edit && data ? data.medications : 0) as PathValue<T, Path<T>>,
-                    wrapper: <Card style={{width: '100%', marginBottom: '20px'}} />
+                    wrapper: <Card style={{width: '100%', marginBottom: '20px'}} />,
+                    onFinish: edit && handleUpdate ? (value) => handleUpdate('medications', value) : undefined
                 }
             }
         ]} />

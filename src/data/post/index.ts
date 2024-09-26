@@ -1,1 +1,1 @@
-export {enrollStudent} from '../repository/studentRepository.ts'
+export {enrollStudent, updateStudentByField} from '../repository/studentRepository.ts'

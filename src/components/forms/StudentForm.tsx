@@ -8,19 +8,21 @@ import {Gender} from "../../entity/enums/gender.ts";
 import {Student} from "../../entity";
 import {FormUtils} from "../../utils/formUtils.ts";
 
-const StudentForm = <T extends FieldValues>(studentProps:  FormContentProps<T, Student>) => {
+type StudentFormProps<T extends FieldValues> = FormContentProps<T, Student> & { handleUpdate?: (field: keyof Student, value: unknown) => void };
+
+const StudentForm = <T extends FieldValues>(studentProps:  StudentFormProps<T>) => {
 
     const genderOptions = useMemo(() => enumToObjectArray(Gender), [])
-    const {edit, data, control, errors} = studentProps
+    const {edit, data, control, errors, handleUpdate} = studentProps
     const onlyField = FormUtils.onlyField(edit as boolean, 24, undefined)
 
     const getValidationStatus = (fieldName: string) => {
         return FormUtils.getValidationStatus(fieldName, errors, edit as boolean, 'student', !edit)
-    };
+    }
 
     const getErrorMessage = (fieldName: string) => {
         return FormUtils.getErrorMessage(fieldName, errors, edit as boolean, 'student', !edit)
-    };
+    }
 
     return(
         <FormContent formItems={[
@@ -37,7 +39,8 @@ const StudentForm = <T extends FieldValues>(studentProps:  FormContentProps<T, S
                     defaultValue: (edit && data ? data.lastName : '') as PathValue<T, Path<T>>,
                     placeholder: 'Malonga',
                     validateStatus: getValidationStatus('lastName'),
-                    help: getErrorMessage('lastName')
+                    help: getErrorMessage('lastName'),
+                    onFinish: edit && handleUpdate ? (value) => handleUpdate('lastName', value) : undefined
                 }
             },
             {
@@ -53,7 +56,8 @@ const StudentForm = <T extends FieldValues>(studentProps:  FormContentProps<T, S
                     defaultValue: (edit && data ? data.firstName : '') as PathValue<T, Path<T>>,
                     placeholder: 'Patrick',
                     validateStatus: getValidationStatus('firstName'),
-                    help: getErrorMessage('firstName')
+                    help: getErrorMessage('firstName'),
+                    onFinish: edit && handleUpdate ? (value) => handleUpdate('firstName', value) : undefined
                 }
             },
             {
@@ -70,7 +74,8 @@ const StudentForm = <T extends FieldValues>(studentProps:  FormContentProps<T, S
                     md: onlyField,
                     lg: onlyField,
                     hasForm: edit,
-                    selectedValue: (edit && data ? data.gender : '') as PathValue<T, Path<T>>
+                    selectedValue: (edit && data ? data.gender : '') as PathValue<T, Path<T>>,
+                    onFinish: edit && handleUpdate ? (value) => handleUpdate('gender', value) : undefined
                 }
             },
             {
@@ -85,7 +90,8 @@ const StudentForm = <T extends FieldValues>(studentProps:  FormContentProps<T, S
                     defaultValue: (edit && data ? data.birthDate : '') as PathValue<T, Path<T>>,
                     hasForm: edit,
                     md: onlyField,
-                    lg: onlyField
+                    lg: onlyField,
+                    onFinish: edit && handleUpdate ? (value) => handleUpdate('birthDate', value) : undefined
                 }
             },
             {
@@ -101,7 +107,8 @@ const StudentForm = <T extends FieldValues>(studentProps:  FormContentProps<T, S
                     defaultValue: (edit && data ? data.birthCity : '') as PathValue<T, Path<T>>,
                     placeholder: 'Brazzaville',
                     validateStatus: getValidationStatus('birthCity'),
-                    help: getErrorMessage('birthCity')
+                    help: getErrorMessage('birthCity'),
+                    onFinish: edit && handleUpdate ? (value) => handleUpdate('birthCity', value) : undefined
                 }
             },
             {
@@ -118,6 +125,7 @@ const StudentForm = <T extends FieldValues>(studentProps:  FormContentProps<T, S
                     selectedValue: (edit && data ? data.nationality : '') as PathValue<T, Path<T>>,
                     validateStatus: getValidationStatus('nationality'),
                     help: getErrorMessage('nationality'),
+                    onFinish: edit && handleUpdate ? (value) => handleUpdate('nationality', value) : undefined
                 }
             },
             {
@@ -133,7 +141,8 @@ const StudentForm = <T extends FieldValues>(studentProps:  FormContentProps<T, S
                     defaultValue: (edit && data ? data.dadName : '') as PathValue<T, Path<T>>,
                     placeholder: 'Malonga Patrick',
                     validateStatus: getValidationStatus('dadName'),
-                    help: getErrorMessage('dadName')
+                    help: getErrorMessage('dadName'),
+                    onFinish: edit && handleUpdate ? (value) => handleUpdate('dadName', value) : undefined
                 }
             },
             {
@@ -149,7 +158,8 @@ const StudentForm = <T extends FieldValues>(studentProps:  FormContentProps<T, S
                     defaultValue: (edit && data ? data.momName : '') as PathValue<T, Path<T>>,
                     placeholder: 'Malonga Marie',
                     validateStatus: getValidationStatus('momName'),
-                    help: getErrorMessage('momName')
+                    help: getErrorMessage('momName'),
+                    onFinish: edit && handleUpdate ? (value) => handleUpdate('momName', value) : undefined
                 }
             },
             {
@@ -164,7 +174,8 @@ const StudentForm = <T extends FieldValues>(studentProps:  FormContentProps<T, S
                     defaultValue: (edit && data ? data.emailId : '') as PathValue<T, Path<T>>,
                     placeholder: 'p.malonga@gmail.com',
                     validateStatus: getValidationStatus('emailId'),
-                    help: getErrorMessage('emailId')
+                    help: getErrorMessage('emailId'),
+                    onFinish: edit && handleUpdate ? (value) => handleUpdate('emailId', value) : undefined
                 }
             },
             {
@@ -179,7 +190,8 @@ const StudentForm = <T extends FieldValues>(studentProps:  FormContentProps<T, S
                     defaultValue: (edit && data ? data.telephone : '') as PathValue<T, Path<T>>,
                     placeholder: '060000000',
                     validateStatus: getValidationStatus('telephone'),
-                    help: getErrorMessage('telephone')
+                    help: getErrorMessage('telephone'),
+                    onFinish: edit && handleUpdate ? (value) => handleUpdate('telephone', value) : undefined
                 }
             }
         ]} />

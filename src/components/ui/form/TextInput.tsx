@@ -9,29 +9,29 @@ type dataEntryProps<T extends FieldValues> = InputType<T> & {inputType?: string}
 
 export const FormInput = <T extends FieldValues>(inputProps: dataEntryProps<T>) => {
 
-    const {placeholder, isCompact, buttonLabel, inputType, addonAfter, min} = inputProps
+    const {placeholder, isCompact, buttonLabel, inputType, addonAfter, min, defaultValue} = inputProps
 
     return(
         <FormItem {...inputProps} render={({field}) => (
             <>
                 {isCompact ? (
-                        <Space.Compact style={{ width: '100%' }}>
-                            {inputType === 'number' &&  <InputNumber
+                        <Space.Compact style={{width: '100%'}}>
+                            {inputType === 'number' && <InputNumber
                                 placeholder={placeholder}
                                 min={min}
-                                {...field} 
+                                {...field}
                                 style={{width: '100%'}}
                             />}
                             {!inputType && <Input
                                 placeholder={placeholder}
                                 {...field}
                             />}
-                            <Button disabled={true}>{buttonLabel ?? <LuSave />}</Button>
+                            <Button disabled={field.value === defaultValue} htmlType='submit'>{buttonLabel ?? <LuSave/>}</Button>
                         </Space.Compact>
                     ) :
                     (
                         <>
-                            {inputType === 'number' &&  <InputNumber
+                            {inputType === 'number' && <InputNumber
                                 placeholder={placeholder}
                                 addonAfter={addonAfter}
                                 min={min}
@@ -54,10 +54,16 @@ export const FormInput = <T extends FieldValues>(inputProps: dataEntryProps<T>) 
 const TextInput = <T extends FieldValues>(inputProps :TypedInputType<T>) => {
     const { hasForm, xs, md, lg, onFinish, inputType} = inputProps
 
+    const handleFinish = (values: unknown) => {
+        if (onFinish) {
+            onFinish(values)
+        }
+    }
+
     return(
         <Grid xs={xs ?? 24} md={md ?? 12} lg={lg ?? 8}>
             {hasForm ? (
-                    <Form layout="vertical" onFinish={onFinish}>
+                    <Form layout="vertical" onFinish={handleFinish}>
                         <FormInput {...inputProps} isCompact={hasForm} inputType={inputType} />
                     </Form>
                 ) :

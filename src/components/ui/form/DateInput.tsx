@@ -8,7 +8,7 @@ import {LuSave} from "react-icons/lu";
 
 export const FormDateInput = <T extends FieldValues>(datePickerProps: DatePickerType<T>) => {
 
-    const {isCompact, placeholder, buttonLabel} = datePickerProps
+    const {isCompact, placeholder, buttonLabel, defaultValue} = datePickerProps
 
     return(
         <FormItem {...datePickerProps} render={({field}) => (
@@ -23,7 +23,7 @@ export const FormDateInput = <T extends FieldValues>(datePickerProps: DatePicker
                             onChange={(date) => field.onChange(date ? date.toDate() : null)}
                             value={field.value ? dayjs(field.value) : null}
                         />
-                        <Button disabled={true}>{buttonLabel ?? <LuSave />}</Button>
+                        <Button disabled={field.value === defaultValue} htmlType='submit'>{buttonLabel ?? <LuSave />}</Button>
                     </Space.Compact>
                 ) : (
                     <DatePicker
@@ -44,10 +44,16 @@ const DateInput = <T extends FieldValues>(dateInputProps: TypedInputType<T>) => 
 
     const {xs, md, lg, hasForm, onFinish} = dateInputProps
 
+    const handleFinish = (values: unknown) => {
+        if (onFinish) {
+            onFinish(values)
+        }
+    }
+
     return(
         <Grid xs={xs ?? 24} md={md ?? 12} lg={lg ?? 8}>
             {hasForm ? (
-                <Form layout='vertical' onFinish={onFinish}>
+                <Form layout='vertical' onFinish={handleFinish}>
                     <FormDateInput {...dateInputProps} isCompact={hasForm} />
                 </Form>
             ) : (

@@ -1,4 +1,4 @@
-import {Button, Form, FormListFieldData, Input, Space} from "antd";
+import {Button, Form, FormListFieldData, Input} from "antd";
 import {LuMinusCircle, LuPlus, LuSave} from "react-icons/lu";
 import {Controller, FieldValues, Path} from "react-hook-form";
 import {InputType, TypedInputType, ZodListControl} from "../../../utils/interfaces.ts";
@@ -9,7 +9,7 @@ type InputListProps<T extends FieldValues> = ZodListControl<T> & InputType<T>
 
 export const ListTextInput = <T extends FieldValues>(listProps: InputListProps<T>) => {
 
-    const {listName, label, control, defaultValue, isCompact, buttonLabel, wrapper} = listProps
+    const {listName, label, control, defaultValue, isCompact, buttonLabel, wrapper, onFinish} = listProps
 
     const pluralLabel = (inputArray: FormListFieldData[]) => {
         if (inputArray.length > 1) {
@@ -17,6 +17,8 @@ export const ListTextInput = <T extends FieldValues>(listProps: InputListProps<T
         }
         return label
     }
+
+    console.log('Initial Value: ', defaultValue)
 
     const content = (
         <Form.List name={listName as string} initialValue={defaultValue}>
@@ -27,17 +29,8 @@ export const ListTextInput = <T extends FieldValues>(listProps: InputListProps<T
                     </Form.Item>
                     {fields.map(({key, name}) => (
                         <Form.Item key={key} label={`${pluralLabel(fields)} ${fields.length > 1 ? key + 1: ''}`}>
-                            <Controller name={`${listProps.name}.${name}` as Path<T>} control={control} render={({field}) => (
-                                <>
-                                    {isCompact ? (
-                                        <Space.Compact style={{width: '100%'}}>
-                                            <Input style={{width: '80%'}} {...field} />
-                                            <Button disabled={true}>{buttonLabel ?? <LuSave />}</Button>
-                                        </Space.Compact>
-                                    ) : (
-                                        <Input style={{width: '80%'}} {...field} />
-                                    )}
-                                </>
+                            <Controller defaultValue={defaultValue ? defaultValue[name] : ''} name={`${listProps.name}.${name}` as Path<T>} control={control} render={({field}) => (
+                                <Input style={{width: '80%'}} {...field} />
                             )} />
                             {fields.length >= 1 ? (
                                 <LuMinusCircle className='dynamic_delete_button' onClick={() => remove(name)} />
@@ -49,7 +42,16 @@ export const ListTextInput = <T extends FieldValues>(listProps: InputListProps<T
         </Form.List>
     )
 
-    return wrapper ? cloneElement(wrapper as ReactElement, {}, content) : content
+    const formList = (
+        isCompact ? <Form layout='vertical' onFinish={onFinish}>
+            {content}
+            <Form.Item>
+                <Button htmlType='submit'>{buttonLabel ?? <LuSave />}</Button>
+            </Form.Item>
+        </Form> : content
+    )
+
+    return wrapper ? cloneElement(wrapper as ReactElement, {}, formList) : formList
 }
 
 const ListInput = <T extends FieldValues>(inputProps :TypedInputType<T>) => {

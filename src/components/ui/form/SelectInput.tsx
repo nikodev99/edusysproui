@@ -22,7 +22,7 @@ export const FormSelect = <T extends FieldValues>(selectProps: SelectType<T>) =>
                             filterOption={filterOption as boolean}
                             {...field}
                         />
-                        <Button htmlType='submit' disabled={true}><LuSave /></Button>
+                        <Button htmlType='submit' disabled={field.value === selectedValue}><LuSave /></Button>
                     </Space.Compact>
                 ) : (
                     <Select
@@ -43,10 +43,16 @@ const SelectInput = <T extends FieldValues>(selectProps: TypedInputType<T>) => {
 
     const {xs, md, lg, hasForm, onFinish} = selectProps
 
+    const handleFinish = (values: unknown) => {
+        if (onFinish) {
+            onFinish(values)
+        }
+    }
+
     return(
         <Grid xs={xs ?? 24} md={md ?? 12} lg={ lg ?? 8}>
             {hasForm ? (
-                <Form layout="vertical" onFinish={onFinish}>
+                <Form layout="vertical" onFinish={handleFinish}>
                     <FormSelect {...selectProps} isCompact={hasForm} />
                 </Form>
             ): (

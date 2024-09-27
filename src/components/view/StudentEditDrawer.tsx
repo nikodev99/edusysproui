@@ -76,8 +76,6 @@ const StudentEditDrawer = ({open, close, isLoading, data}: EditProps) => {
     }
 
     const handleStudentUpdate = async (field: keyof Student) => {
-        console.log('value: ', field)
-        console.log('value: ', studentData[field as keyof StudentSchema])
         if (data.id) {
             await updateStudent(field, studentData[field as keyof StudentSchema], data.id)
                 .then(({isSuccess, success, error}) => {

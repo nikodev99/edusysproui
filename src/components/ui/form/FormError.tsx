@@ -11,14 +11,14 @@ const FormError = ({message}: {message?: string}) => {
                 key,
                 type: 'loading',
                 content: 'chargement...'
-            })
+            }).then()
             setTimeout(() => {
                 messageApi.open({
                     key,
                     type: 'error',
                     content: message,
-                    duration: 2,
-                })
+                    duration: 5000,
+                }).then()
             }, 2000)
         }
     }, [message, messageApi]);

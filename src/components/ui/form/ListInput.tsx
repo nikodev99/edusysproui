@@ -57,10 +57,16 @@ export const ListTextInput = <T extends FieldValues>(listProps: InputListProps<T
 const ListInput = <T extends FieldValues>(inputProps :TypedInputType<T>) => {
     const { hasForm, xs, md, lg, onFinish, inputType} = inputProps
 
+    const handleFinish = (values: unknown) => {
+        if (onFinish) {
+            onFinish(values)
+        }
+    }
+
     return(
         <Grid xs={xs ?? 24} md={md ?? 12} lg={lg ?? 8}>
             {hasForm ? (
-                    <Form layout="vertical" onFinish={onFinish}>
+                    <Form layout="vertical" onFinish={handleFinish}>
                         <ListTextInput {...inputProps} isCompact={hasForm} inputType={inputType} />
                     </Form>
                 ) :

@@ -40,10 +40,12 @@ export const updateStudent = async <T>(field: keyof T, value: unknown, studentId
     const dynamicSchema = studentSchema.pick({[field]: true});
     const validation = dynamicSchema.safeParse({[field]: value});
 
+    console.log('validation: ', validation)
+
     if (!validation.success) {
         return {
             isSuccess: false,
-            error: 'Something went wrong',
+            error: validation.error.issues[0].message,
             isLoading: false,
         }
     }

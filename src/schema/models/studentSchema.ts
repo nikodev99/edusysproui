@@ -2,6 +2,7 @@ import {z} from "zod";
 import {addressSchema} from "./addressSchema.ts";
 import {guardianSchema} from "./guardianSchema.ts";
 import {healthSchema} from "./healthSchema.ts";
+import dayjs from "dayjs";
 
 export const studentSchema = z.object({
     lastName: z.string().min(3, {message: "Nom de famille est requis"}),
@@ -14,8 +15,16 @@ export const studentSchema = z.object({
         })
     ]).optional().transform(e => e === "" ? undefined : e),
     birthDate: z.preprocess(
-        (arg) => (typeof arg === "string" || arg instanceof Date ? new Date(arg) : undefined),
-        z.date().refine((date) => !isNaN(date.getTime()), { message: "Date invalide" }),
+        (arg) => {
+            if (dayjs.isDayjs(arg)) {
+                return arg.toDate()
+            }
+            if (typeof arg === "string" || arg instanceof Date) {
+                const date = dayjs(arg);
+                return date.isValid() ? date.toDate() : undefined
+            }
+            return undefined
+        }, z.date().refine(date => !isNaN(date.getTime()), {message: 'Date invalide'})
     ),
     birthCity: z.string().min(1, {message: "Ville est requise"}),
     nationality: z.string().min(1, {message: "Nationalité est requise"}),

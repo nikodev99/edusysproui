@@ -1,19 +1,19 @@
-import TabItem from "./TabItem.tsx";
-import {Attendance, Enrollment} from "../../entity";
-import {fDate, firstLetter, setFirstName, startsWithVowel} from "../../utils/utils.ts";
+import TabItem from "../../view/TabItem.tsx";
+import {Attendance, Enrollment} from "../../../entity";
+import {fDate, firstLetter, setFirstName, startsWithVowel} from "../../../utils/utils.ts";
 import {Select, Table, TableColumnsType} from "antd";
 import {useEffect, useState, useMemo} from "react";
-import AttendanceAnalysis from "./AttendanceAnalysis.tsx";
 import {LuEye} from "react-icons/lu";
 import {Link} from "react-router-dom";
-import {useFetch} from "../../hooks/useFetch.ts";
-import {getStudentAttendances} from "../../data/repository/attendanceRepository.ts";
-import PageError from "../../pages/PageError.tsx";
-import Tag from "../ui/layout/Tag.tsx";
-import {attendanceTag} from "../../entity/enums/attendanceStatus.ts";
-import {AttendanceRecord} from "../../utils/interfaces.ts";
+import {useFetch} from "../../../hooks/useFetch.ts";
+import {getStudentAttendances} from "../../../data/repository/attendanceRepository.ts";
+import PageError from "../../../pages/PageError.tsx";
+import Tag from "../../ui/layout/Tag.tsx";
+import {attendanceTag} from "../../../entity/enums/attendanceStatus.ts";
+import {AttendanceRecord} from "../../../utils/interfaces.ts";
+import {AttendanceAnalysis} from "./AttendanceAnalysis.tsx";
 
-const StudentAttendance = ({enrolledStudent}: {enrolledStudent: Enrollment}) => {
+export const StudentAttendance = ({enrolledStudent}: {enrolledStudent: Enrollment}) => {
 
     const {
         academicYear: {id, academicYear},
@@ -139,5 +139,3 @@ const StudentAttendance = ({enrolledStudent}: {enrolledStudent: Enrollment}) => 
         />
     )
 }
-
-export default StudentAttendance;

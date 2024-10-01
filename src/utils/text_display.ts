@@ -7,7 +7,7 @@ export const text = {
         label: 'Étudiants',
         href: '/students',
         group: {
-            enroll: {
+            add: {
                 label: 'Inscription',
                 href: '/students/new'
             },
@@ -28,6 +28,16 @@ export const text = {
             add: {
                 label: 'Ajouter',
                 href: '/teacher/new'
+            }
+        }
+    },
+    guardian: {
+        label: 'Tuteurs',
+        href: '/guardians',
+        group: {
+            view: {
+                label: 'Voir',
+                href: '/guardian/'
             }
         }
     },

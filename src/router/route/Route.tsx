@@ -8,6 +8,8 @@ import Setting from "../../pages/setting/page.tsx";
 import StudentView from "../../pages/student/StudentView.tsx";
 import RedirectProvider from "../../providers/RedirectProvider.tsx";
 import TeacherList from "../../pages/teacher/TeacherList.tsx";
+import GuardianList from "../../pages/guardian/GuardianList.tsx";
+import GuardianView from "../../pages/guardian/GuardianView.tsx";
 
 export const Route = createBrowserRouter([
     {
@@ -33,6 +35,13 @@ export const Route = createBrowserRouter([
                 path: 'teachers',
                 children: [
                     { path: '', element: <TeacherList /> }
+                ]
+            },
+            {
+                path: 'guardians',
+                children: [
+                    { path: '', element: <GuardianList /> },
+                    { path: ':id', element: <GuardianView /> }
                 ]
             },
             {

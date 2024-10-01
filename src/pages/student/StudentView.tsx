@@ -8,16 +8,16 @@ import {Enrollment, Student} from "../../entity";
 import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
 import ViewHeader from "../../components/ui/layout/ViewHeader.tsx";
 import {Skeleton, Tabs} from "antd";
-import StudentInfo from "../../components/view/StudentInfo.tsx";
-import StudentExam from "../../components/view/StudentExam.tsx";
-import StudentAttendance from "../../components/view/StudentAttendance.tsx";
-import StudentClasse from "../../components/view/StudentClasse.tsx";
-import StudentHistory from "../../components/view/StudentHistory.tsx";
 import LocalStorageManager from "../../core/LocalStorageManager.ts";
 import {setFirstName} from "../../utils/utils.ts";
 import {useFetch} from "../../hooks/useFetch.ts";
-import Sticky from "react-sticky-el";
-import StudentEditDrawer from "../../components/view/StudentEditDrawer.tsx";
+import {
+    StudentAttendance,
+    StudentClasse, StudentEditDrawer,
+    StudentExam,
+    StudentHistory,
+    StudentInfo
+} from "../../components/ui-kit-student";
 
 const StudentView = () => {
 

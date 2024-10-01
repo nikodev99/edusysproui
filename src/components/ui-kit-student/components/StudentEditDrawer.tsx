@@ -1,20 +1,20 @@
-import RightSidePane from "../ui/layout/RightSidePane.tsx";
+import RightSidePane from "../../ui/layout/RightSidePane.tsx";
 import {useForm} from "react-hook-form";
-import {AddressSchema, HealthSchema, StudentSchema} from "../../utils/interfaces.ts";
+import {AddressSchema, HealthSchema, StudentSchema} from "../../../utils/interfaces.ts";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {studentSchema} from "../../schema";
-import {Address, HealthCondition, Student} from "../../entity";
-import StudentForm from "../forms/StudentForm.tsx";
+import {studentSchema} from "../../../schema";
+import {Address, HealthCondition, Student} from "../../../entity";
+import StudentForm from "../../forms/StudentForm.tsx";
 import {Button} from "antd";
 import {useEffect, useState} from "react";
-import AddressForm from "../forms/AddressForm.tsx";
-import {AddressOwner} from "../../core/shared/sharedEnums.ts";
-import {addressSchema} from "../../schema/models/addressSchema.ts";
-import HealthConditionForm from "../forms/HealthConditionForm.tsx";
-import {healthSchema} from "../../schema/models/healthSchema.ts";
-import {updateStudent} from "../../data";
-import FormSuccess from "../ui/form/FormSuccess.tsx";
-import FormError from "../ui/form/FormError.tsx";
+import AddressForm from "../../forms/AddressForm.tsx";
+import {AddressOwner} from "../../../core/shared/sharedEnums.ts";
+import {addressSchema} from "../../../schema/models/addressSchema.ts";
+import HealthConditionForm from "../../forms/HealthConditionForm.tsx";
+import {healthSchema} from "../../../schema/models/healthSchema.ts";
+import {updateStudent} from "../../../data";
+import FormSuccess from "../../ui/form/FormSuccess.tsx";
+import FormError from "../../ui/form/FormError.tsx";
 
 interface EditProps {
     open: boolean
@@ -23,7 +23,7 @@ interface EditProps {
     data: Student
 }
 
-const StudentEditDrawer = ({open, close, isLoading, data}: EditProps) => {
+export const StudentEditDrawer = ({open, close, isLoading, data}: EditProps) => {
 
     const [addressDrawer, setAddressDrawer] = useState<boolean>(false)
     const [healthDrawer, setHealthDrawer] = useState<boolean>(false)
@@ -53,9 +53,6 @@ const StudentEditDrawer = ({open, close, isLoading, data}: EditProps) => {
     const studentData = watch()
     const addressData = zodAddress.watch()
     const healthData = zodHealth.watch()
-
-    console.log('Student: ', watch())
-    console.log('Errors: ', errors)
 
     const showAddressDrawer = () => {
         setAddressDrawer(true)
@@ -154,5 +151,3 @@ const StudentEditDrawer = ({open, close, isLoading, data}: EditProps) => {
         </RightSidePane>
     )
 }
-
-export default StudentEditDrawer;

@@ -18,8 +18,6 @@ export const ListTextInput = <T extends FieldValues>(listProps: InputListProps<T
         return label
     }
 
-    console.log('Initial Value: ', defaultValue)
-
     const content = (
         <Form.List name={listName as string} initialValue={defaultValue}>
             {(fields, {add, remove}) => (
@@ -58,6 +56,7 @@ const ListInput = <T extends FieldValues>(inputProps :TypedInputType<T>) => {
     const { hasForm, xs, md, lg, onFinish, inputType} = inputProps
 
     const handleFinish = (values: unknown) => {
+        console.log('Valeurs: ' + values)
         if (onFinish) {
             onFinish(values)
         }
@@ -65,15 +64,7 @@ const ListInput = <T extends FieldValues>(inputProps :TypedInputType<T>) => {
 
     return(
         <Grid xs={xs ?? 24} md={md ?? 12} lg={lg ?? 8}>
-            {hasForm ? (
-                    <Form layout="vertical" onFinish={handleFinish}>
-                        <ListTextInput {...inputProps} isCompact={hasForm} inputType={inputType} />
-                    </Form>
-                ) :
-                (
-                    <ListTextInput {...inputProps} inputType={inputType} />
-                )
-            }
+            <ListTextInput {...inputProps} isCompact={hasForm} inputType={inputType} onFinish={handleFinish} />
         </Grid>
     )
 }

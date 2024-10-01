@@ -1,12 +1,12 @@
-import {EnrollmentSchema, ZodProps} from "../../utils/interfaces.ts";
-import Responsive from "../ui/layout/Responsive.tsx";
+import {EnrollmentSchema, ZodProps} from "../../../utils/interfaces.ts";
+import Responsive from "../../ui/layout/Responsive.tsx";
 import {useEffect, useMemo, useState} from "react";
-import {AcademicYear, Classe} from "../../entity";
-import {findClassesBasicValue} from "../../data";
-import {findCurrentAcademicYear} from "../../data/action/fetch_academic_year.ts";
-import SelectInput from "../ui/form/SelectInput.tsx";
+import {AcademicYear, Classe} from "../../../entity";
+import {findClassesBasicValue} from "../../../data";
+import {findCurrentAcademicYear} from "../../../data/action/fetch_academic_year.ts";
+import SelectInput from "../../ui/form/SelectInput.tsx";
 
-const AcademicForm = ({control, errors}: ZodProps<EnrollmentSchema>) => {
+export const AcademicForm = ({control, errors}: ZodProps<EnrollmentSchema>) => {
 
     const [classes, setClasses] = useState<Classe[]>([])
     const [academicYear, setAcademicYear] = useState<AcademicYear | undefined>(undefined)
@@ -67,5 +67,3 @@ const AcademicForm = ({control, errors}: ZodProps<EnrollmentSchema>) => {
         </Responsive>
     )
 }
-
-export default AcademicForm

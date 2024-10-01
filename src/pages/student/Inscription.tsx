@@ -4,12 +4,9 @@ import {setBreadcrumb} from "../../core/breadcrumb.tsx";
 import {Button, Flex, Form, Modal, Steps, Tag} from "antd";
 import {useForm} from "react-hook-form";
 import React, {ReactNode, useEffect, useState, useTransition} from "react";
-import GuardianForm from "../../components/inscription/GuardianForm.tsx";
 import {enrollmentSchema} from "../../schema";
 import {zodResolver} from "@hookform/resolvers/zod";
 import HealthConditionForm from "../../components/forms/HealthConditionForm.tsx";
-import AttachmentForm from "../../components/inscription/AttachmentForm.tsx";
-import AcademicForm from "../../components/inscription/AcademicForm.tsx";
 import {useLocation} from "react-router-dom";
 import queryString from 'query-string'
 import {Gender} from "../../entity/enums/gender.ts";
@@ -26,6 +23,7 @@ import {redirectTo} from "../../context/RedirectContext.ts";
 import StudentForm from "../../components/forms/StudentForm.tsx";
 import {AddressOwner} from "../../core/shared/sharedEnums.ts";
 import AddressForm from "../../components/forms/AddressForm.tsx";
+import {AcademicForm, AttachmentForm, GuardianForm} from "../../components/ui-kit-student";
 
 const Inscription = () => {
 
@@ -40,7 +38,7 @@ const Inscription = () => {
             path: text.student.href
         },
         {
-            title: text.student.group.enroll.label
+            title: text.student.group.add.label
         }
     ]);
 
@@ -87,7 +85,7 @@ const Inscription = () => {
     const validate = (validateFields: boolean) => {
         if (validateFields) {
             setValidationTriggered(true);
-            redirectTo(`${text.student.group.enroll.href}?step=${current + 1}`)
+            redirectTo(`${text.student.group.add.href}?step=${current + 1}`)
         }
     }
 
@@ -139,7 +137,7 @@ const Inscription = () => {
         }
     }
 
-    const prev = () => redirectTo(`${text.student.group.enroll.href}?step=${current - 1}`)
+    const prev = () => redirectTo(`${text.student.group.add.href}?step=${current - 1}`)
 
     const handleUploadChange = (items?: {allEntries: OutputFileEntry[]}) => {
         const file = items?.allEntries[0]

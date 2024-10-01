@@ -28,11 +28,11 @@ import {Gender} from "../../entity/enums/gender.ts";
 import {dateCompare, enumToObjectArrayForFiltering, fDatetime, setFirstName} from "../../utils/utils.ts";
 import PageError from "../PageError.tsx";
 import Highlighter from "react-highlight-words";
-import ActionButton from "../../components/list/ActionButton.tsx";
-import CardList from "../../components/list/CardList.tsx";
+import ActionButton from "../../components/ui/layout/ActionButton.tsx";
+import CardList from "../../components/ui/layout/CardList.tsx";
 import {LuEye} from "react-icons/lu";
 import Avatar from "../../components/ui/layout/Avatar.tsx";
-import Tagger from "../../components/list/Tagger.tsx";
+import Tagger from "../../components/ui/layout/Tagger.tsx";
 import {redirectTo} from "../../context/RedirectContext.ts";
 
 type DataIndex = keyof DataType;
@@ -67,7 +67,7 @@ const StudentList = () => {
     const [size, setSize] = useState<number>(pageSizeCount)
     const [searchQuery, setSearchQuery] = useState<string>('')
     const searchInput = useRef<InputRef>(null);
-    const enrollUrl = useRef<string>(text.student.group.enroll.href);
+    const enrollUrl = useRef<string>(text.student.group.add.href);
 
     const throughEnroll = () => {
         redirectTo(enrollUrl.current)

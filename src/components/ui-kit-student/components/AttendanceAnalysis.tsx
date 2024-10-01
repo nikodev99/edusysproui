@@ -1,16 +1,16 @@
-import Responsive from "../ui/layout/Responsive.tsx";
-import Grid from "../ui/layout/Grid.tsx";
-import Widget from "../ui/layout/Widget.tsx";
-import {AttendanceRecord} from "../../utils/interfaces.ts";
+import Responsive from "../../ui/layout/Responsive.tsx";
+import Grid from "../../ui/layout/Grid.tsx";
+import Widget from "../../ui/layout/Widget.tsx";
+import {AttendanceRecord} from "../../../utils/interfaces.ts";
 import {useEffect, useState} from "react";
-import {Attendance, Enrollment} from "../../entity";
-import {getAllStudentAttendances} from "../../data/repository/attendanceRepository.ts";
-import {fDate, setDayJsDate} from "../../utils/utils.ts";
-import {useRawFetch} from "../../hooks/useFetch.ts";
+import {Attendance, Enrollment} from "../../../entity";
+import {getAllStudentAttendances} from "../../../data/repository/attendanceRepository.ts";
+import {fDate, setDayJsDate} from "../../../utils/utils.ts";
+import {useRawFetch} from "../../../hooks/useFetch.ts";
 import {Calendar, Card, Skeleton} from "antd";
-import {AttendanceStatus, attendanceTag, countAttendanceStatuses} from "../../entity/enums/attendanceStatus.ts";
+import {AttendanceStatus, attendanceTag, countAttendanceStatuses} from "../../../entity/enums/attendanceStatus.ts";
 import {Dayjs} from "dayjs";
-import VerticalComposeChart from "../graph/VerticalComposeChart.tsx";
+import VerticalComposeChart from "../../graph/VerticalComposeChart.tsx";
 
 interface AnalysisProps {
     enrollment: Enrollment;
@@ -19,7 +19,7 @@ interface AnalysisProps {
 
 const COLORS = ['#28a745', '#dc3545', '#ffc107', '#17a2b8']
 
-const AttendanceAnalysis = ({enrollment, academicYear}: AnalysisProps) => {
+export const AttendanceAnalysis = ({enrollment, academicYear}: AnalysisProps) => {
     
     const {student} = enrollment
 
@@ -140,5 +140,3 @@ const AttendanceAnalysis = ({enrollment, academicYear}: AnalysisProps) => {
         </Responsive>
     )
 }
-
-export default AttendanceAnalysis

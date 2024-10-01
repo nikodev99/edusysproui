@@ -9,7 +9,7 @@ interface GuardianDetailsProps {
     onChange?: (value: string) => void,
 }
 
-const GuardianDetails = ({data, value, fetching, onSearch, onChange}: GuardianDetailsProps) => {
+export const GuardianDetails = ({data, value, fetching, onSearch, onChange}: GuardianDetailsProps) => {
 
     const filterOption = (input: string, option?: { label: string; value: string }) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
 
@@ -39,5 +39,3 @@ const GuardianDetails = ({data, value, fetching, onSearch, onChange}: GuardianDe
         </>
     )
 }
-
-export default GuardianDetails;

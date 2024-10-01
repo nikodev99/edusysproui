@@ -1,22 +1,22 @@
-import {Enrollment, Score} from "../../entity";
-import {fDatetime, setFirstName, startsWithVowel} from "../../utils/utils.ts";
+import {Enrollment, Score} from "../../../entity";
+import {fDatetime, setFirstName, startsWithVowel} from "../../../utils/utils.ts";
 import {Select, Table, TableColumnsType} from "antd";
-import {ExamData} from "../../utils/interfaces.ts";
-import {fetchAllStudentScores, fetchAllStudentScoresBySubject} from "../../data/action/fetch_score.ts";
-import LocalStorageManager from "../../core/LocalStorageManager.ts";
+import {ExamData} from "../../../utils/interfaces.ts";
+import {fetchAllStudentScores, fetchAllStudentScoresBySubject} from "../../../data/action/fetch_score.ts";
+import LocalStorageManager from "../../../core/LocalStorageManager.ts";
 import {useEffect, useMemo, useState} from "react";
-import {initExamData} from "../../entity/domain/score.ts";
-import PageError from "../../pages/PageError.tsx";
+import {initExamData} from "../../../entity/domain/score.ts";
+import PageError from "../../../pages/PageError.tsx";
 import {LuEye} from "react-icons/lu";
 import {Link} from "react-router-dom";
-import TabItem from "./TabItem.tsx";
-import {useFetch} from "../../hooks/useFetch.ts";
+import TabItem from "../../view/TabItem.tsx";
+import {useFetch} from "../../../hooks/useFetch.ts";
 
 interface StudentExamProps {
     enrolledStudent: Enrollment
 }
 
-const StudentExam = ({enrolledStudent}: StudentExamProps) => {
+export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
 
     const examCount = LocalStorageManager.get<number>('examCount') ?? 0;
 
@@ -155,5 +155,3 @@ const StudentExam = ({enrolledStudent}: StudentExamProps) => {
         />
     )
 }
-
-export default StudentExam

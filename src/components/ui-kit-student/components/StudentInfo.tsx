@@ -1,33 +1,33 @@
-import Block from "../ui/layout/Block.tsx";
+import Block from "../../ui/layout/Block.tsx";
 import {Button, Carousel, Divider, Table, TableColumnsType, Avatar as AntAvatar} from "antd";
 import {ReactNode, useEffect, useState} from "react";
-import {Enrollment, HealthCondition, Schedule} from "../../entity";
+import {Enrollment, HealthCondition, Schedule} from "../../../entity";
 import {
     bloodLabel,
     chooseColor,
     convertToM, fDate, fDatetime, firstLetter, fullDay, getAge, getCountry, isCurrentTimeBetween,
     isNull, lowerName, monthsBetween, setFirstName, timeConcat
-} from "../../utils/utils.ts";
-import PanelStat from "../ui/layout/PanelStat.tsx";
-import {Gender} from "../../entity/enums/gender.ts";
-import PanelTable from "../ui/layout/PanelTable.tsx";
-import {SectionType} from "../../entity/enums/section.ts";
-import {fetchStudentClassmatesRandomly} from "../../data/action/fetch_student.ts";
-import Avatar from "../ui/layout/Avatar.tsx";
-import {text} from "../../utils/text_display.ts";
-import {BloodType} from "../../entity/enums/bloodType.ts";
+} from "../../../utils/utils.ts";
+import PanelStat from "../../ui/layout/PanelStat.tsx";
+import {Gender} from "../../../entity/enums/gender.ts";
+import PanelTable from "../../ui/layout/PanelTable.tsx";
+import {SectionType} from "../../../entity/enums/section.ts";
+import {fetchStudentClassmatesRandomly} from "../../../data/action/fetch_student.ts";
+import Avatar from "../../ui/layout/Avatar.tsx";
+import {text} from "../../../utils/text_display.ts";
+import {BloodType} from "../../../entity/enums/bloodType.ts";
 import {MdHealthAndSafety} from "react-icons/md";
 import {GiAchievement, GiHealthDecrease} from "react-icons/gi";
-import {redirectTo} from "../../context/RedirectContext.ts";
-import RadarChart from "../graph/RadarChart.tsx";
-import PieChart from "../graph/PieChart.tsx";
-import {Reprimand} from "../../entity/domain/reprimand.ts";
-import Section from "../ui/layout/Section.tsx";
-import PanelSection from "../ui/layout/PanelSection.tsx";
-import {ExamData} from "../../utils/interfaces.ts";
-import {initExamData} from "../../entity/domain/score.ts";
-import {attendanceTag} from "../../entity/enums/attendanceStatus.ts";
-import Tag from "../ui/layout/Tag.tsx";
+import {redirectTo} from "../../../context/RedirectContext.ts";
+import RadarChart from "../../graph/RadarChart.tsx";
+import PieChart from "../../graph/PieChart.tsx";
+import {Reprimand} from "../../../entity/domain/reprimand.ts";
+import Section from "../../ui/layout/Section.tsx";
+import PanelSection from "../../ui/layout/PanelSection.tsx";
+import {ExamData} from "../../../utils/interfaces.ts";
+import {initExamData} from "../../../entity/domain/score.ts";
+import {attendanceTag} from "../../../entity/enums/attendanceStatus.ts";
+import Tag from "../../ui/layout/Tag.tsx";
 import {LuBan} from "react-icons/lu";
 
 interface StudentInfoProps {
@@ -426,7 +426,7 @@ const DisciplinaryRecords = ({enrollment, seeMore}: StudentInfoProps) => {
 
 //TODO add the bar graph for the 5 last exams
 
-const StudentInfo = ({enrollment, seeMore}: { enrollment: Enrollment, seeMore: (key: string) => void }) => {
+export const StudentInfo = ({enrollment, seeMore}: { enrollment: Enrollment, seeMore: (key: string) => void }) => {
 
     const {classe: {grade}} = enrollment
 
@@ -451,5 +451,3 @@ const StudentInfo = ({enrollment, seeMore}: { enrollment: Enrollment, seeMore: (
         <Block items={items}/>
     )
 }
-
-export default StudentInfo

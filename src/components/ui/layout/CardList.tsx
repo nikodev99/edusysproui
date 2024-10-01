@@ -1,12 +1,12 @@
-import Grid from "../ui/layout/Grid.tsx";
+import Grid from "./Grid.tsx";
 import {Card, Skeleton} from "antd";
 import ActionButton from "./ActionButton.tsx";
 import Meta from "antd/es/card/Meta";
-import {dateCompare, fDatetime, setFirstName} from "../../utils/utils.ts";
-import {StudentList} from "../../utils/interfaces.ts";
-import {ItemType} from "antd/es/menu/hooks/useItems";
-import Avatar from "../../components/ui/layout/Avatar.tsx";
+import {dateCompare, fDatetime, setFirstName} from "../../../utils/utils.ts";
+import {StudentList} from "../../../utils/interfaces.ts";
+import Avatar from "./Avatar.tsx";
 import Tagger from "./Tagger.tsx";
+import {ItemType} from "antd/es/menu/interface";
 
 interface CardListProps {
     content?: StudentList[],

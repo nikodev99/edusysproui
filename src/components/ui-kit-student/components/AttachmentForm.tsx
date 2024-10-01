@@ -1,11 +1,11 @@
 import {Form, Image} from 'antd'
-import Responsive from "../ui/layout/Responsive.tsx";
-import Grid from "../ui/layout/Grid.tsx";
+import Responsive from "../../ui/layout/Responsive.tsx";
+import Grid from "../../ui/layout/Grid.tsx";
 import {FileUploaderRegular} from '@uploadcare/react-uploader';
 import '@uploadcare/react-uploader/core.css';
 import {OutputFileEntry} from "@uploadcare/blocks";
 
-const AttachmentForm = ({imageCdn, onChange}: {imageCdn?: string, onChange: (items?: {allEntries: OutputFileEntry[]}) => void}) => {
+export const AttachmentForm = ({imageCdn, onChange}: {imageCdn?: string, onChange: (items?: {allEntries: OutputFileEntry[]}) => void}) => {
 
     return(
         <Responsive gutter={[16, 16]}>
@@ -46,5 +46,3 @@ const AttachmentForm = ({imageCdn, onChange}: {imageCdn?: string, onChange: (ite
         </Responsive>
     )
 }
-
-export default AttachmentForm

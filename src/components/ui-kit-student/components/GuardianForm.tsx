@@ -1,16 +1,16 @@
-import {EnrollmentSchema, GuardianProps} from "../../utils/interfaces.ts";
-import Responsive from "../ui/layout/Responsive.tsx";
-import Grid from "../ui/layout/Grid.tsx";
+import {EnrollmentSchema, GuardianProps} from "../../../utils/interfaces.ts";
+import Responsive from "../../ui/layout/Responsive.tsx";
+import Grid from "../../ui/layout/Grid.tsx";
 import {Alert, Button, Checkbox, Collapse, Divider, Modal, SelectProps} from "antd";
 import {useRef, useState} from "react";
-import GuardianDetails from "./GuardianDetails.tsx";
-import {fetchEnrolledStudentsGuardians, fetchGuardian} from "../../data";
-import {Guardian} from "../../entity";
-import GuardianFormContent from '../forms/GuardianForm.tsx'
-import {AddressOwner} from "../../core/shared/sharedEnums.ts";
-import AddressForm from "../forms/AddressForm.tsx";
+import { GuardianDetails } from "./GuardianDetails.tsx";
+import {fetchEnrolledStudentsGuardians, fetchGuardian} from "../../../data";
+import {Guardian} from "../../../entity";
+import GuardianFormContent from '../../forms/GuardianForm.tsx'
+import {AddressOwner} from "../../../core/shared/sharedEnums.ts";
+import AddressForm from "../../forms/AddressForm.tsx";
 
-const GuardianForm = ({control, errors, showField, checked, onChecked, value, setValue, isExists, setIsExists, guardian, setGuardian}: GuardianProps<EnrollmentSchema, Guardian>) => {
+export const GuardianForm = ({control, errors, showField, checked, onChecked, value, setValue, isExists, setIsExists, guardian, setGuardian}: GuardianProps<EnrollmentSchema, Guardian>) => {
 
     const [open, setOPen] = useState<boolean>(false)
 
@@ -128,5 +128,3 @@ const GuardianForm = ({control, errors, showField, checked, onChecked, value, se
         </>
     )
 }
-
-export default GuardianForm

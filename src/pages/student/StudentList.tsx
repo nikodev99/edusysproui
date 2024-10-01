@@ -1,41 +1,23 @@
-import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
-import {setBreadcrumb} from "../../core/breadcrumb.tsx";
-import {ChangeEvent, ReactNode, useEffect, useRef, useState} from "react";
-import {
-    Button,
-    Flex,
-    Input,
-    InputRef,
-    Pagination,
-    Space,
-    Table,
-    TableColumnsType,
-    TableColumnType,
-    TablePaginationConfig,
-} from "antd";
-import PageDescription from "../PageDescription.tsx";
+import {StudentListDataType as DataType} from "../../utils/interfaces.ts";
+import ListViewer from "../../components/list/ListViewer.tsx";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {text} from "../../utils/text_display.ts";
-import {TfiLayoutGrid2Alt, TfiViewList} from "react-icons/tfi";
-import {FilterDropdownProps, FilterValue, SorterResult} from "antd/es/table/interface";
-import {AiOutlineSearch, AiOutlineUserAdd} from "react-icons/ai";
-import LocalStorageManager from "../../core/LocalStorageManager.ts";
-import Responsive from "../../components/ui/layout/Responsive.tsx";
-import {StudentList as DataType} from "../../utils/interfaces.ts";
-import {keepPreviousData, useQuery} from "@tanstack/react-query";
-import {fetchEnrolledStudents, fetchSearchedEnrolledStudents} from "../../data";
-import {Gender} from "../../entity/enums/gender.ts";
-import {dateCompare, enumToObjectArrayForFiltering, fDatetime, setFirstName} from "../../utils/utils.ts";
-import PageError from "../PageError.tsx";
-import Highlighter from "react-highlight-words";
-import ActionButton from "../../components/ui/layout/ActionButton.tsx";
-import CardList from "../../components/ui/layout/CardList.tsx";
-import {LuEye} from "react-icons/lu";
-import Avatar from "../../components/ui/layout/Avatar.tsx";
-import Tagger from "../../components/ui/layout/Tagger.tsx";
+import {setBreadcrumb} from "../../core/breadcrumb.tsx";
+import {ListPageHierarchy} from "../../components/list/ListPageHierarchy.tsx";
+import {ReactNode, useRef} from "react";
 import {redirectTo} from "../../context/RedirectContext.ts";
-
-type DataIndex = keyof DataType;
+import {AiOutlineUserAdd} from "react-icons/ai";
+import {fetchEnrolledStudents, fetchSearchedEnrolledStudents} from "../../data";
+import {AxiosResponse} from "axios";
+import {Response} from '../../data/action/response.ts'
+import {TableColumnsType} from "antd";
+import Avatar from "../../components/ui/layout/Avatar.tsx";
+import {dateCompare, enumToObjectArrayForFiltering, fDatetime, setFirstName} from "../../utils/utils.ts";
+import {Gender} from "../../entity/enums/gender.ts";
+import Tagger from "../../components/ui/layout/Tagger.tsx";
+import ActionButton from "../../components/ui/layout/ActionButton.tsx";
+import {useColumnSearch} from "../../hooks/useColumnSearch.tsx";
+import {LuEye} from "react-icons/lu";
 
 const StudentList = () => {
 
@@ -50,179 +32,19 @@ const StudentList = () => {
         }
     ])
 
-    const iconActive = LocalStorageManager.get<number>('activeIcon') ?? 1;
-    const pageSizeCount = LocalStorageManager.get<number>('pageSize') ?? 10;
-    const paginationPage = LocalStorageManager.get<number>('page') ?? 1;
-    const count = LocalStorageManager.get<number>('pageCount') ?? 0;
-
-    const [content, setContent] = useState<DataType[] | undefined>(undefined)
-    const [studentCount, setStudentCount] = useState<number>(0)
-    const [activeIcon, setActiveIcon] = useState<number>(iconActive)
-    const [searchText, setSearchText] = useState<string>('');
-    const [searchedColumn, setSearchedColumn] = useState('');
-    const [sortOrder, setSortOrder] = useState<string | undefined>(undefined)
-    const [sortField, setSortField] = useState<string | undefined>(undefined)
-    const [pageCount, setPageCount] = useState<number>(count)
-    const [currentPage, setCurrentPage] = useState<number>(paginationPage)
-    const [size, setSize] = useState<number>(pageSizeCount)
-    const [searchQuery, setSearchQuery] = useState<string>('')
-    const searchInput = useRef<InputRef>(null);
     const enrollUrl = useRef<string>(text.student.group.add.href);
+    const {getColumnSearchProps} = useColumnSearch<DataType>()
 
-    const throughEnroll = () => {
-        redirectTo(enrollUrl.current)
+    const getItems = (url: string) => {
+        return [
+            {key: `details-${url}`, icon: <LuEye size={20} />, label: 'Voir l\'étudiant', onClick: () => throughDetails(url)},
+            {key: `delete-${url}`, label: 'Delete', danger: true}
+        ]
     }
 
     const throughDetails = (link: string) => {
         redirectTo(`${text.student.group.view.href}${link}`)
     }
-
-    const { data, error, isLoading, refetch } = useQuery({
-        queryKey: ['students'],
-        queryFn: async () => await fetchEnrolledStudents(pageCount, size, sortField, sortOrder).then(res => res.data),
-        placeholderData: keepPreviousData
-    })
-
-    useEffect( () => {
-        if (searchQuery) {
-            fetchSearchedEnrolledStudents(searchQuery)
-                .then((resp) => {
-                    if (resp && resp.isSuccess) {
-                        setContent(resp.data as DataType[])
-                    }
-                })
-
-        }else {
-            refetch().then(r => r.data)
-            if (sortField && sortOrder || size || pageCount) {
-                refetch().then(r => r.data)
-            }
-
-            if (!isLoading && data) {
-                setContent(data.content)
-                setStudentCount(data.totalElements)
-            }
-        }
-        
-    }, [data, isLoading, pageCount, refetch, searchQuery, size, sortField, sortOrder]);
-
-    if (error) {
-        return <PageError />
-    }
-
-    const selectedIcon = (index: number) => {
-        setActiveIcon(index)
-        LocalStorageManager.update<number>('activeIcon', () => index)
-    }
-
-    const handleSearch = (selectedKeys: string[], confirm: FilterDropdownProps['confirm'], dataIndex: DataIndex,) => {
-        confirm();
-        setSearchText(selectedKeys[0]);
-        setSearchedColumn(dataIndex);
-    };
-
-    const handleReset = (clearFilters: () => void) => {
-        clearFilters();
-        setSearchText('');
-    };
-
-    const getColumnSearchProps = (dataIndex: DataIndex): TableColumnType<DataType> => ({
-        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
-            <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
-                <Input
-                    ref={searchInput}
-                    placeholder={`Recherche ${dataIndex}`}
-                    value={selectedKeys[0]}
-                    onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-                    onPressEnter={() => handleSearch(selectedKeys as string[], confirm, dataIndex)}
-                    style={{ marginBottom: 8, display: 'block' }}
-                />
-                <Space>
-                    <Button
-                        type="primary"
-                        onClick={() => handleSearch(selectedKeys as string[], confirm, dataIndex)}
-                        icon={<AiOutlineSearch />}
-                        size="small"
-                        style={{ width: 90 }}
-                    />
-                    <Button
-                        onClick={() => clearFilters && handleReset(clearFilters)}
-                        size="small"
-                        style={{ width: 90 }}
-                    >
-                        Réinitialiser
-                    </Button>
-                    <Button
-                        type="link"
-                        size="small"
-                        onClick={() => {
-                            confirm({ closeDropdown: false });
-                            setSearchText((selectedKeys as string[])[0]);
-                            setSearchedColumn(dataIndex);
-                        }}
-                    >
-                        Filtrer
-                    </Button>
-                    <Button type="link" size="small" onClick={() => { close() }}>Fermer</Button>
-                </Space>
-            </div>
-        ),
-        filterIcon: (filtered: boolean) => (
-            <AiOutlineSearch style={{ color: filtered ? '#1677ff' : undefined }} />
-        ),
-        onFilter: (value, record) =>
-            record[dataIndex]
-                .toString()
-                .toLowerCase()
-                .includes((value as string).toLowerCase()),
-        onFilterDropdownOpenChange: (visible) => {
-            if (visible) {
-                setTimeout(() => searchInput.current?.select(), 100);
-            }
-        },
-        render: (text) =>
-            searchedColumn === dataIndex ? (
-                <Highlighter
-                    highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
-                    searchWords={[searchText]}
-                    autoEscape
-                    textToHighlight={text ? text.toString() : ''}
-                />
-            ) : (
-                text
-            ),
-    });
-
-    const handleSorterChange = (pagination: TablePaginationConfig, filters: Record<string, FilterValue | null>, sorter:  SorterResult<DataType> | SorterResult<DataType>[]) => {
-        pagination.disabled
-        if (!Array.isArray(filters))
-            if (!Array.isArray(sorter)) {
-                setSortField(sorter.field as string)
-                setSortOrder(sorter.order as string)
-            }
-    }
-
-    const handleSizeChange = (current: number, pageSize: number) => {
-        setCurrentPage(current)
-        setSize(pageSize)
-        LocalStorageManager.update('pageSize', () => pageSize)
-        LocalStorageManager.update('page', () => current)
-    }
-
-    const handleNavChange = (page: number, pageSize: number) => {
-        setPageCount(page - 1)
-        setCurrentPage(page)
-        setSize(pageSize)
-        LocalStorageManager.update('pageSize', () => pageSize)
-        LocalStorageManager.update('page', () => page)
-        LocalStorageManager.update('pageCount', () => page - 1)
-    }
-
-    const handleSearchInput = (e: ChangeEvent<HTMLInputElement>) => {
-        setSearchQuery(e.target.value)
-    }
-
-    console.log(content)
 
     const columns: TableColumnsType<DataType> = [
         {
@@ -294,72 +116,24 @@ const StudentList = () => {
         }
     ];
 
-    const getItems = (url: string) => {
-        return [
-            {key: `details-${url}`, icon: <LuEye size={20} />, label: 'Voir l\'étudiant', onClick: () => throughDetails(url)},
-            {key: `delete-${url}`, label: 'Delete', danger: true}
-        ]
-    }
-
-    const selectableIcons = [
-        {
-            key: 1,
-            element: <TfiViewList size={19} />
-        },
-        {
-            key: 2,
-            element: <TfiLayoutGrid2Alt size={19} />
-        }
-    ]
-
     return(
         <>
-            <Flex align="center" justify='space-between'>
-                <PageHierarchy items={pageHierarchy as [{title: string | ReactNode, path?: string}]} />
-                <div className='add__btn__wrapper'>
-                    <Button onClick={throughEnroll} type='primary' icon={<AiOutlineUserAdd size={20} />} className='add__btn'>Ajouter Étudiant</Button>
-                </div>
-            </Flex>
-            <>
-                <div className='header__area'>
-                    <PageDescription count={studentCount} title={`Étudiant${studentCount > 1 ? 's' : ''}`} isCount={true}/>
-                    <div className='flex__end'>
-                        <Input size='middle' placeholder='Recherche...' style={{width: '300px'}} className='search__input' onChange={handleSearchInput} />
-                        {selectableIcons.map(icon => (
-                            <span key={icon.key} className={`list__icon ${activeIcon === icon.key ? 'active' : ''}`} onClick={() => selectedIcon(icon.key)}>
-                                {icon.element}
-                            </span>
-                        ))}
-                    </div>
-                </div>
-                <Responsive gutter={[16, 16]} className={`${activeIcon !== 2 ? 'student__list__datatable' : ''}`}>
-                    {
-                        activeIcon === 2 ? <CardList content={content} isActive={activeIcon === 2 } isLoading={isLoading} dropdownItems={getItems} throughDetails={throughDetails} />
-                        : <Table
-                            style={{width: '100%'}}
-                            rowKey="id"
-                            columns={columns}
-                            dataSource={content}
-                            loading={isLoading}
-                            onChange={handleSorterChange}
-                            pagination={false}
-                            scroll={{y: 550}}
-                        />
-                    }
-                </Responsive>
-                <div style={{textAlign: 'right', marginTop: '30px'}}>
-                    <Pagination
-                        current={currentPage}
-                        defaultCurrent={1}
-                        total={studentCount}
-                        pageSize={size}
-                        responsive={true}
-                        onShowSizeChange={handleSizeChange}
-                        onChange={handleNavChange}
-                        disabled={!!(isLoading || searchQuery)}
-                    />
-                </div>
-            </>
+            <ListPageHierarchy
+                items={pageHierarchy as [{title: string | ReactNode, path?: string}]}
+                hasButton={true}
+                onClick={() => redirectTo(enrollUrl.current)}
+                type='primary'
+                icon={<AiOutlineUserAdd />}
+                label={text.student.group.add.label}
+            />
+            <ListViewer
+                callback={fetchEnrolledStudents as () => Promise<AxiosResponse<DataType>>}
+                searchCallback={fetchSearchedEnrolledStudents as (input: unknown) => Promise<Response<DataType>>}
+                tableColumns={columns}
+                dropdownItems={getItems}
+                throughDetails={throughDetails}
+                cardType='student'
+            />
         </>
     )
 }

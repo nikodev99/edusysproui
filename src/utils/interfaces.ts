@@ -89,6 +89,8 @@ export type TypedInputType<T extends FieldValues> = Control<T> & FormType<T> & I
 export type InputType<T extends FieldValues> = TypedInputType<T> & {isCompact?: boolean}
 export type SelectType<T extends FieldValues> = TypedInputType<T> & {isCompact?: boolean}
 export type DatePickerType<T extends FieldValues> = TypedInputType<T> & {isCompact?: boolean}
+export type DataType<TData> = TData;
+export type DataIndex<TData> = keyof DataType<TData>
 
 export interface ZodControl<TFieldValues extends FieldValues> {
     name: Path<TFieldValues>
@@ -156,7 +158,7 @@ export interface AxiosConfig {
     headers?: Record<string, string>
 }
 
-export interface StudentList {
+export interface StudentListDataType {
     id: string
     academicYear: AcademicYear
     reference: string

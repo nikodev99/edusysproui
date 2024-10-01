@@ -1,0 +1,11 @@
+export { AcademicForm } from "./components/AcademicForm.tsx";
+export { AttachmentForm } from "./components/AttachmentForm.tsx";
+export { AttendanceAnalysis } from "./components/AttendanceAnalysis.tsx";
+export { GuardianDetails } from "./components/GuardianDetails.tsx";
+export { GuardianForm } from "./components/GuardianForm.tsx";
+export { StudentAttendance } from "./components/StudentAttendance.tsx";
+export { StudentClasse } from "./components/StudentClasse.tsx";
+export { StudentEditDrawer } from "./components/StudentEditDrawer.tsx";
+export { StudentExam } from "./components/StudentExam.tsx";
+export { StudentHistory } from "./components/StudentHistory.tsx";
+export { StudentInfo } from "./components/StudentInfo.tsx";

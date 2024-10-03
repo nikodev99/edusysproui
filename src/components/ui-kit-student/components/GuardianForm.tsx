@@ -4,7 +4,7 @@ import Grid from "../../ui/layout/Grid.tsx";
 import {Alert, Button, Checkbox, Collapse, Divider, Modal, SelectProps} from "antd";
 import {useRef, useState} from "react";
 import { GuardianDetails } from "./GuardianDetails.tsx";
-import {fetchEnrolledStudentsGuardians, fetchGuardian} from "../../../data";
+import {fetchGuardian, fetchSearchedEnrolledStudentsGuardian} from "../../../data";
 import {Guardian} from "../../../entity";
 import GuardianFormContent from '../../forms/GuardianForm.tsx'
 import {AddressOwner} from "../../../core/shared/sharedEnums.ts";
@@ -28,7 +28,7 @@ export const GuardianForm = ({control, errors, showField, checked, onChecked, va
 
         const getGuardians = () => {
             setFetching(true);
-            fetchEnrolledStudentsGuardians()
+            fetchSearchedEnrolledStudentsGuardian(value)
                 .then((response) => {
                     if (response && response.isSuccess) {
                         const guardians = response.data as Guardian[]
@@ -52,11 +52,11 @@ export const GuardianForm = ({control, errors, showField, checked, onChecked, va
 
     const handleSearch = (newValue: string) => {
         fetch(newValue, setData);
-    };
+    }
 
     const handleChange = (newValue: string) => {
         setValue(newValue);
-    };
+    }
 
     const onModalOpen = () => {
         setOPen(!open)

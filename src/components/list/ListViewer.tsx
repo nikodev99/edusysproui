@@ -16,10 +16,7 @@ import PageError from "../../pages/PageError.tsx";
 import {useFetch} from "../../hooks/useFetch.ts";
 import {AxiosResponse} from "axios";
 import {Response} from '../../data/action/response.ts'
-import {DataType, StudentListDataType} from "../../utils/interfaces.ts";
 import {ItemType} from "antd/es/menu/interface";
-import Tagger from "../ui/layout/Tagger.tsx";
-import {dateCompare, fDatetime} from "../../utils/utils.ts";
 
 interface ListViewerProps<TData extends object, TError> {
     callback: () => Promise<AxiosResponse<TData, TError | TData[]>>
@@ -28,6 +25,8 @@ interface ListViewerProps<TData extends object, TError> {
     dropdownItems?: (url: string) => ItemType[]
     throughDetails?: (id: string) => void
     cardType?: string
+    hasCount?: boolean,
+    countTitle?: string
 }
 
 const ListViewer = <TData extends object, TError>(
@@ -37,7 +36,9 @@ const ListViewer = <TData extends object, TError>(
         tableColumns,
         dropdownItems,
         throughDetails,
-        cardType
+        cardType,
+        hasCount,
+        countTitle
     }: ListViewerProps<TData, TError>
 ) => {
 
@@ -47,7 +48,7 @@ const ListViewer = <TData extends object, TError>(
     const count = LocalStorageManager.get<number>('pageCount') ?? 0;
 
     const [content, setContent] = useState<TData[] | undefined>(undefined)
-    const [studentCount, setStudentCount] = useState<number>(0)
+    const [dataCount, setDataCount] = useState<number>(0)
     const [activeIcon, setActiveIcon] = useState<number>(iconActive)
     const [sortOrder, setSortOrder] = useState<string | undefined>(undefined)
     const [sortField, setSortField] = useState<string | undefined>(undefined)
@@ -63,7 +64,7 @@ const ListViewer = <TData extends object, TError>(
             searchCallback(searchQuery)
                 .then((resp) => {
                     if (resp && resp.isSuccess) {
-                        setContent(resp.data as DataType<TData>[])
+                        setContent(resp.data as TData[])
                     }
                 })
 
@@ -75,7 +76,7 @@ const ListViewer = <TData extends object, TError>(
 
             if (!isLoading && data && 'content' in data && 'totalElements' in data) {
                 setContent(data.content as TData[])
-                setStudentCount(data.totalElements as number)
+                setDataCount(data.totalElements as number)
             }
         }
 
@@ -90,7 +91,7 @@ const ListViewer = <TData extends object, TError>(
         LocalStorageManager.update<number>('activeIcon', () => index)
     }
 
-    const handleSorterChange = (pagination: TablePaginationConfig, filters: Record<string, FilterValue | null>, sorter:  SorterResult<DataType<TData>> | SorterResult<DataType<TData>>[]) => {
+    const handleSorterChange = (pagination: TablePaginationConfig, filters: Record<string, FilterValue | null>, sorter:  SorterResult<TData> | SorterResult<TData>[]) => {
         pagination.disabled
         if (!Array.isArray(filters))
             if (!Array.isArray(sorter)) {
@@ -119,36 +120,6 @@ const ListViewer = <TData extends object, TError>(
         setSearchQuery(e.target.value)
     }
 
-    console.log('Content: ', content)
-
-    const getCardContent = (): TData[] => {
-        switch (cardType) {
-            case 'student': {
-                if (content) {
-                    const data: StudentListDataType[] = content as StudentListDataType[]
-                    return data.map(c => ({
-                        id: c.id,
-                        lastName: c.lastName,
-                        firstName: c.firstName,
-                        gender: c.gender,
-                        image: c.image,
-                        reference: c.reference,
-                        tag: <Tagger status={dateCompare(c.academicYear.endDate as Date)} successMessage='inscrit' warnMessage='fin-annee-scolaire'/>,
-                        description: [
-                            `${c.grade} - ${c.classe}`,
-                            `Inscrit le, ${fDatetime(c.lastEnrolledDate, true)}`
-                        ]
-                    })) as TData[]
-                }
-                return []
-            }
-            default:
-                return []
-        }
-    }
-
-    const cardContent: TData[] = getCardContent()
-
     const selectableIcons = [
         {
             key: 1,
@@ -165,7 +136,7 @@ const ListViewer = <TData extends object, TError>(
 
             <>
                 <div className='header__area'>
-                    <PageDescription count={studentCount} title={`Étudiant${studentCount > 1 ? 's' : ''}`} isCount={true}/>
+                    <PageDescription count={dataCount} title={`${countTitle}${dataCount > 1 ? 's' : ''}`} isCount={hasCount !== undefined ? hasCount : true}/>
                     <div className='flex__end'>
                         <Input size='middle' placeholder='Recherche...' style={{width: '300px'}} className='search__input' onChange={handleSearchInput} />
                         {selectableIcons.map(icon => (
@@ -178,17 +149,18 @@ const ListViewer = <TData extends object, TError>(
                 <Responsive gutter={[16, 16]} className={`${activeIcon !== 2 ? 'student__list__datatable' : ''}`}>
                     {
                         activeIcon === 2 ? <CardList
-                                content={cardContent}
+                                content={content as TData[]}
                                 isActive={activeIcon === 2 }
                                 isLoading={isLoading}
                                 dropdownItems={dropdownItems!}
                                 throughDetails={throughDetails!}
+                                cardType={cardType}
                             />
                             : <Table
                                 style={{width: '100%'}}
                                 rowKey="id"
                                 columns={tableColumns}
-                                dataSource={content as DataType<TData>[]}
+                                dataSource={content as TData[]}
                                 loading={isLoading}
                                 onChange={handleSorterChange}
                                 pagination={false}
@@ -200,7 +172,7 @@ const ListViewer = <TData extends object, TError>(
                     <Pagination
                         current={currentPage}
                         defaultCurrent={1}
-                        total={studentCount}
+                        total={dataCount}
                         pageSize={size}
                         responsive={true}
                         onShowSizeChange={handleSizeChange}

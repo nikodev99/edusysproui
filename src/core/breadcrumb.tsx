@@ -1,11 +1,17 @@
 import {FaHome} from "react-icons/fa";
-import {BreadcrumbItems} from "../utils/interfaces.ts";
+import {ReactNode} from "react";
+import {text} from "../utils/text_display.ts";
 
-export const setBreadcrumb = (items: BreadcrumbItems[]) => {
-    return [{
-        title: (
-            <FaHome size={20} />
-        ),
-        path: '/dashboard'
-    }, ...items]
+export type Breadcrumb = {title: string | ReactNode, path?: string}
+
+export const setBreadcrumb = (items: Breadcrumb[]): Breadcrumb[] => {
+    return [
+        {
+            title: (
+                <FaHome size={20} />
+            ),
+            path: text.home.href
+        },
+        ...items
+    ]
 }

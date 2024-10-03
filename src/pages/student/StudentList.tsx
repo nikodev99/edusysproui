@@ -2,9 +2,9 @@ import {StudentListDataType as DataType} from "../../utils/interfaces.ts";
 import ListViewer from "../../components/list/ListViewer.tsx";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {text} from "../../utils/text_display.ts";
-import {setBreadcrumb} from "../../core/breadcrumb.tsx";
+import {Breadcrumb, setBreadcrumb} from "../../core/breadcrumb.tsx";
 import {ListPageHierarchy} from "../../components/list/ListPageHierarchy.tsx";
-import {ReactNode, useRef} from "react";
+import {useRef} from "react";
 import {redirectTo} from "../../context/RedirectContext.ts";
 import {AiOutlineUserAdd} from "react-icons/ai";
 import {fetchEnrolledStudents, fetchSearchedEnrolledStudents} from "../../data";
@@ -24,6 +24,7 @@ const StudentList = () => {
     useDocumentTitle({
         title: `EduSysPro - ${text.student.label}`,
         description: "Student description",
+        hasEdu: false
     })
 
     const pageHierarchy = setBreadcrumb([
@@ -83,13 +84,15 @@ const StudentList = () => {
             dataIndex: 'academicYear',
             key: 'status',
             align: 'center',
-            render: (text) => (<Tagger status={dateCompare(text.endDate)} successMessage={'inscrit'} warnMessage={'fin-année-scolaire'} />)
+            render: (text) => (<Tagger status={dateCompare(text?.endDate)} successMessage={'inscrit'} warnMessage={'fin-année-scolaire'} />)
         },
         {
             title: "Date d'Inscription",
             dataIndex: 'lastEnrolledDate',
             key: 'lastEnrolledDate',
             align: 'center',
+            sorter: true,
+            showSorterTooltip: false,
             render: (text) => (<span>{fDatetime(text)}</span>),
             responsive: ['md'],
         },
@@ -97,7 +100,7 @@ const StudentList = () => {
             title: "Classe",
             dataIndex: 'classe',
             key: 'classe',
-            align: 'center'
+            align: 'center',
             //TODO getting all the grade distinct classes and filter by grade
         },
         {
@@ -119,7 +122,7 @@ const StudentList = () => {
     return(
         <>
             <ListPageHierarchy
-                items={pageHierarchy as [{title: string | ReactNode, path?: string}]}
+                items={pageHierarchy as [Breadcrumb]}
                 hasButton={true}
                 onClick={() => redirectTo(enrollUrl.current)}
                 type='primary'
@@ -132,6 +135,7 @@ const StudentList = () => {
                 tableColumns={columns}
                 dropdownItems={getItems}
                 throughDetails={throughDetails}
+                countTitle='Etudiant'
                 cardType='student'
             />
         </>

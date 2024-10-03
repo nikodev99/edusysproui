@@ -1,4 +1,6 @@
-const PageDescription = ({title, description, count, isCount}: {title: string, description?: string, count?: number, isCount?: boolean}) => {
+import {ReactNode} from "react";
+
+const PageDescription = ({title, description, count, isCount}: {title: ReactNode, description?: string, count?: number, isCount?: boolean}) => {
 
     return(
         <header className='page__header'>

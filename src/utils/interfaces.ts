@@ -21,8 +21,9 @@ import {addressSchema} from "../schema/models/addressSchema.ts";
 import {healthSchema} from "../schema/models/healthSchema.ts";
 
 export interface Metadata {
-    title: string;
-    description: string;
+    title: string
+    description: string
+    hasEdu?: boolean
 }
 
 export type GuardianSchema = z.infer<typeof guardianSchema>

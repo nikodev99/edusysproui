@@ -3,12 +3,12 @@ import {Metadata} from "../utils/interfaces.ts";
 import {connectToElement} from "../utils/utils.ts";
 
 export const useDocumentTitle = (metadata: Metadata) => {
-    const {title, description} = metadata;
+    const {title, description, hasEdu = true} = metadata;
 
     useEffect( () => {
-        document.title = title
+        document.title = hasEdu ? `EduSysPro - ${title}` : title
         connectToElement("meta[name='description']", {
             content: description
         })
-    }, [title, description]);
+    }, [title, description, hasEdu]);
 }

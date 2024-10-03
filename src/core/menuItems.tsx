@@ -8,7 +8,7 @@ import {
     LuContact,
     LuLayoutDashboard,
     LuLibrary,
-    LuUsers
+    LuUsers, LuUsers2
 } from "react-icons/lu";
 import {MenuProps} from "antd";
 import {PiNotebook, PiStudent} from "react-icons/pi";
@@ -27,9 +27,14 @@ export const menuItems: Required<MenuProps>['items'][number][] = [
         label: text.student.label,
     },
     {
-        key: '/teachers',
+        key: text.guardian.href,
+        icon: <LuUsers2 />,
+        label: text.guardian.label
+    },
+    {
+        key: text.teacher.href,
         icon: <LuUsers />,
-        label: "Enseignants"
+        label: text.teacher.label
     },
     {
         key: '/employees',

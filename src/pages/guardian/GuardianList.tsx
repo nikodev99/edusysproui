@@ -9,8 +9,6 @@ import {enumToObjectArrayForFiltering, setFirstName} from "../../utils/utils.ts"
 import {Gender} from "../../entity/enums/gender.ts";
 import {Guardian} from "../../entity";
 import {fetchEnrolledStudentsGuardians, fetchSearchedEnrolledStudentsGuardian} from "../../data";
-import Tag from "../../components/ui/layout/Tag.tsx";
-import {IoDiamondOutline} from "react-icons/io5";
 import ActionButton from "../../components/ui/layout/ActionButton.tsx";
 import {LuEye} from "react-icons/lu";
 import {redirectTo} from "../../context/RedirectContext.ts";
@@ -18,6 +16,7 @@ import {AxiosResponse} from "axios";
 import {Response} from "../../data/action/response.ts";
 import {AiOutlineUserDelete} from "react-icons/ai";
 import {BiSolidUserAccount} from "react-icons/bi";
+import {statusTags} from "../../utils/tsxUtils.tsx";
 
 const GuardianList = () => {
 
@@ -68,12 +67,12 @@ const GuardianList = () => {
             sorter: true,
             showSorterTooltip: false,
             className: 'col__name',
-            render: (text, {firstName, telephone}) => (
+            render: (text, {firstName, emailId}) => (
                 <div className='render__name'>
                     <Avatar firstText={firstName} lastText={text} />
                     <div>
                         <p>{`${text.toUpperCase()}, ${setFirstName(firstName)}`}</p>
-                        <p className='st__ref'>{telephone}</p>
+                        <p className='st__ref'>{emailId}</p>
                     </div>
                 </div>
             )
@@ -93,7 +92,7 @@ const GuardianList = () => {
             key: 'status',
             align: 'center',
             responsive: ['md'],
-            render: (text) => (<Tag color='success' icon={<IoDiamondOutline />}>{text}</Tag>)
+            render: (text, {gender}) => statusTags(text, gender === Gender.FEMME)
         },
         {
             title: "Numéro de téléphone",

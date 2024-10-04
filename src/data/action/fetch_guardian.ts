@@ -1,8 +1,12 @@
 import {ErrorCatch} from "./error_catch.ts";
-import {getEnrolledStudentsGuardians, getGuardianById} from "../request";
+import {
+    getEnrolledStudentsGuardians,
+    getGuardianById,
+    getGuardianWithStudentsById,
+    getSearchedEnrolledStudentGuardian
+} from "../request";
 import {Guardian} from "../../entity";
 import {getShortSortOrder} from "../../utils/utils.ts";
-import {getSearchedEnrolledStudentGuardian} from "../repository/guardianRepository.ts";
 
 export const fetchEnrolledStudentsGuardians = async (page: number, size: number, sortField?: string, sortOrder?: string) => {
     if (sortField && sortOrder) {
@@ -47,6 +51,10 @@ export const fetchGuardian = async (guardianId: string) => {
     }catch (e: unknown) {
         ErrorCatch(e)
     }
+}
+
+export const fetchGuardianWithStudents = async (guardianId: string) => {
+    return await getGuardianWithStudentsById(guardianId)
 }
 
 const sortedField = (sortField: string) => {

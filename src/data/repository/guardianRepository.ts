@@ -25,3 +25,7 @@ export const getSearchedEnrolledStudentGuardian = (searchInput: string) => {
 export const getGuardianById = (guardianId: string): Promise<AxiosResponse<Guardian>> => {
     return apiClient.get<Guardian>(`/guardian/${guardianId}`)
 }
+
+export const getGuardianWithStudentsById = (guardianId: string): Promise<AxiosResponse<Guardian>> => {
+    return apiClient.get<Guardian>(`/guardian/withStudent/${guardianId}`)
+}

@@ -37,7 +37,7 @@ export const text = {
         group: {
             view: {
                 label: 'Voir',
-                href: '/guardian/'
+                href: '/guardians/'
             }
         }
     },

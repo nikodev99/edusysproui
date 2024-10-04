@@ -10,6 +10,8 @@ import {Gender} from "../../../entity/enums/gender.ts";
 import {StudentListDataType} from "../../../utils/interfaces.ts";
 import Tagger from "./Tagger.tsx";
 import {Guardian} from "../../../entity";
+import {statusTags} from "../../../utils/tsxUtils.tsx";
+import {Status} from "../../../entity/enums/status.ts";
 
 interface CardListProps<TData> {
     content: TData,
@@ -63,8 +65,8 @@ const CardList = <TData extends object>({content, isActive, isLoading, dropdownI
                         lastName: c.lastName,
                         firstName: c.firstName,
                         gender: c.gender,
-                        reference: c.telephone,
-                        tag: '',
+                        reference: c.emailId,
+                        tag: statusTags(c.status as Status, c.gender === Gender.FEMME),
                         description: []
                     })) as DataProps[]
                 }

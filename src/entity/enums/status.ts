@@ -10,7 +10,6 @@ export enum Status {
 }
 
 export function getStatusKey(value: Status, female?: boolean): keyof typeof Status | undefined {
-    console.log('Female2: ' + female)
     for (let key in Status) {
         if (Status[key as keyof typeof Status] === value) {
             if (female) {

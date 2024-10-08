@@ -137,6 +137,12 @@ const StudentList = () => {
                 throughDetails={throughDetails}
                 countTitle='Etudiant'
                 cardType='student'
+                localStorage={{
+                    activeIcon: 'activeIcon',
+                    pageSize: 'pageSize',
+                    page: 'page',
+                    pageCount: 'pageCount'
+                }}
             />
         </>
     )

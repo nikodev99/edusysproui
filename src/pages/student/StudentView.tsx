@@ -18,6 +18,7 @@ import {
     StudentHistory,
     StudentInfo
 } from "../../components/ui-kit-student";
+import {LuTrash, LuUserCircle, LuUserPlus} from "react-icons/lu";
 
 const StudentView = () => {
 
@@ -75,7 +76,26 @@ const StudentView = () => {
     return(
         <>
             <PageHierarchy items={pageHierarchy as [{title: string | ReactNode, path?: string}]} mBottom={25} />
-            <ViewHeader enrollment={enrolledStudent} isLoading={isLoading} setEdit={handleOpenDrawer} closeState={openDrawer} />
+            <ViewHeader
+                isLoading={isLoading}
+                setEdit={handleOpenDrawer}
+                closeState={openDrawer}
+                avatarProps={{
+                    image: enrolledStudent?.student.image,
+                    firstName: enrolledStudent?.student.firstName,
+                    lastName: enrolledStudent?.student.lastName,
+                    reference: enrolledStudent?.student.reference
+                }}
+                blockProps={[
+                    {title: 'Tuteur Légal', mention: setFirstName(`${enrolledStudent?.student.guardian?.lastName} ${enrolledStudent?.student.guardian?.firstName}`)},
+                    {title: enrolledStudent?.classe.name, mention: enrolledStudent?.classe.grade.section}
+                ]}
+                items={[
+                    {key: 2, label: 'Tuteur légal', icon: <LuUserCircle />},
+                    {key: 3, label: 'Réinscrire', icon: <LuUserPlus />},
+                    {key: 4, label: 'Retirer l\'étudiant', danger: true, icon: <LuTrash />}
+                ]}
+            />
             <section className="sticky-wrapper" style={{ position: 'relative' }}>
                 <Tabs rootClassName={`tabs`}
                       items={[
@@ -95,7 +115,7 @@ const StudentView = () => {
                 <StudentEditDrawer
                     open={openDrawer}
                     close={handleCloseDrawer}
-                    isLoading={enrolledStudent === null}
+                    isLoading={isLoading}
                     data={enrolledStudent ? enrolledStudent.student : {} as Student}
                 />
             </section>

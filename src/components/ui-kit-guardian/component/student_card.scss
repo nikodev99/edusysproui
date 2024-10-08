@@ -1,0 +1,99 @@
+.card-container {
+  width: 300px;
+  background-color: #0b1d39;
+  border-radius: 10px;
+  color: white;
+  padding-top: 10px;
+  font-family: Arial, sans-serif;
+
+  .header {
+    display: flex;
+    align-items: center;
+    background-color: #0b1d39;
+    gap: 25px;
+    justify-items: center;
+    flex-direction: row;
+    margin-bottom: 20px;
+    padding: 0 20px;
+
+    .school-logo {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+    }
+
+    .school-name {
+      font-size: 14px;
+      font-weight: bold;
+      flex-grow: 1;
+      text-align: center;
+    }
+  }
+
+  .student-info {
+    display: flex;
+    justify-content: space-between;
+    background: darken(#0b1d39, 5%);
+    padding: 20px;
+
+    .left-section {
+      flex: 1;
+    }
+
+    .right-section {
+      flex-shrink: 0;
+    }
+
+    .label {
+      font-size: 10px;
+      color: #b0b0b0;
+      margin-bottom: 2px;
+    }
+
+    .value {
+      font-size: 14px;
+      font-weight: bold;
+      color: inherit;
+      margin-bottom: 10px;
+      transition: .3s;
+
+      &.link:hover {
+        color: #b0b0b0;
+      }
+    }
+
+    .student-photo {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+    }
+  }
+
+  .class-info {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+
+    .class-section, .blood-group-section {
+      flex: 1;
+    }
+  }
+
+  .qr-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 20px;
+
+    .qr-code {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 10px;
+    }
+
+    .qr-code-text {
+      font-size: 10px;
+      color: #b0b0b0;
+    }
+  }
+}

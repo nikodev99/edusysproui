@@ -31,7 +31,7 @@ const GuardianList = () => {
         }
     ])
 
-    const throughDetails = (link: string) => {
+    const throughDetails = (link: string): void => {
         redirectTo(`${text.guardian.group.view.href}${link}`)
     }
 
@@ -67,6 +67,9 @@ const GuardianList = () => {
             sorter: true,
             showSorterTooltip: false,
             className: 'col__name',
+            onCell: ({id}) => ({
+                onClick: (): void => throughDetails(id)
+            }),
             render: (text, {firstName, emailId}) => (
                 <div className='render__name'>
                     <Avatar firstText={firstName} lastText={text} />

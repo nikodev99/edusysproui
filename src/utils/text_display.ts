@@ -41,5 +41,6 @@ export const text = {
             }
         }
     },
-    schoolID: 'e4525e5a-2c64-44c4-b40b-82aeeebef2ce'
+    schoolID: 'e4525e5a-2c64-44c4-b40b-82aeeebef2ce',
+    http: 'http://localhost:5173'
 }

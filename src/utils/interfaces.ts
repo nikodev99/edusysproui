@@ -199,6 +199,13 @@ export interface PieProps {
     colors?: Color[];
 }
 
+export interface EditProps<TData extends object> {
+    open: boolean
+    close: () => void
+    isLoading: boolean
+    data: TData
+}
+
 export type RedirectFunction = (link: string) => void;
 export type Moment = Date | number[] | string
 export type Color = string

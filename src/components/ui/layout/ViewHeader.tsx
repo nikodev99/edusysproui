@@ -1,19 +1,22 @@
 import {Button, Dropdown, Flex, Skeleton} from "antd";
-import {Enrollment} from "../../../entity";
 import Avatar from "./Avatar.tsx";
-import {LuChevronDown, LuPencil, LuTrash, LuUserCircle, LuUserPlus} from "react-icons/lu";
+import {LuChevronDown, LuPencil} from "react-icons/lu";
 import {setFirstName} from "../../../utils/utils.ts";
 import {useToggle} from "../../../hooks/useToggle.ts";
-import {useEffect} from "react";
+import {ReactNode, useEffect} from "react";
+import {ItemType} from "antd/es/menu/interface";
 
 interface ViewProps {
-    enrollment: Enrollment | null,
     isLoading: boolean,
     setEdit: (toEdit: boolean) => void
     closeState: boolean
+    avatarProps:{image?: string, firstName?: string, lastName?: string, reference?: string},
+    blockProps:{title: ReactNode, mention: ReactNode}[]
+    items?: ItemType[]
+    btnLabel?: ReactNode
 }
 
-const ViewHeader = ({enrollment, isLoading, setEdit, closeState}: ViewProps) => {
+const ViewHeader = ({isLoading, setEdit, closeState, avatarProps, blockProps, items, btnLabel}: ViewProps) => {
 
     const [open, setOpen] = useToggle(false);
 
@@ -23,50 +26,44 @@ const ViewHeader = ({enrollment, isLoading, setEdit, closeState}: ViewProps) => 
         }
     }, [closeState, open, setOpen]);
 
-    if (enrollment == null) {
+    const {image, reference, lastName, firstName} = avatarProps
+
+    if (isLoading) {
         return (
             <Skeleton loading={isLoading} active={isLoading} avatar paragraph={{rows: 2}} />
         )
     }
-
-    const {student, student: {guardian}, isArchive, classe, classe: {grade} } = enrollment!
 
     const handleClick = () => {
         setOpen()
         setEdit(!open)
     }
 
+    const additionalItems = items ? items : []
+
     return(
         <Flex align='center' justify='space-between' component='header' className='view__block'>
             <Flex className="avatar-container" align='center' gap={10}>
-                <Avatar image={student?.image} firstText={student?.firstName} lastText={student?.lastName} size={60} />
+                <Avatar image={image} firstText={firstName} lastText={lastName} size={60} />
                 <Flex className="legal" vertical justify='center'>
-                    <span className='title'>{`${student?.lastName?.toUpperCase()}, ${setFirstName(student?.firstName)}`}</span>
-                    <span className='mention'>{student?.reference}</span>
+                    <span className='title'>{`${lastName?.toUpperCase()}, ${setFirstName(firstName)}`}</span>
+                    <span className='mention'>{reference}</span>
                 </Flex>
             </Flex>
-            <Flex className='block' align='flex-start' vertical gap={4}>
-                <p>Tuteur Légal</p>
-                <p>{setFirstName(`${guardian?.lastName} ${guardian?.firstName}`)}</p>
-            </Flex>
-            {
-                !isArchive ? (<Flex className='block' align='flex-start' vertical gap={4}>
-                    <p>{classe?.name}</p>
-                    <p>{grade?.section}</p>
-                </Flex>): (<Flex className='block' align='flex-start' vertical gap={4}>
-                    <p>Tuteur téléphone</p>
-                    <p>{guardian?.telephone}</p>
-                </Flex>)
-            }
+
+            {blockProps && blockProps.map(({title, mention}, index) => (
+                <Flex className='block' align='flex-start' vertical gap={4} key={index}>
+                    <p>{title}</p>
+                    <p>{mention}</p>
+                </Flex>
+            ))}
 
             <Flex className='block' align='flex-start' vertical gap={4}>
                 <Dropdown menu={{items: [
                         {key: 1, label: 'Editer', icon: <LuPencil />, onClick: handleClick},
-                        {key: 2, label: 'Tuteur légal', icon: <LuUserCircle />},
-                        {key: 3, label: 'Réinscrire', icon: <LuUserPlus />},
-                        {key: 4, label: 'Retirer l\'étudiant', danger: true, icon: <LuTrash />}
+                        ...additionalItems
                     ]}} trigger={['click']}>
-                    <Button type='primary' className='add__btn'>Gérer <LuChevronDown size={18} /></Button>
+                    <Button type='primary' className='add__btn'>{btnLabel ? btnLabel : 'Gérer'} <LuChevronDown size={18} /></Button>
                 </Dropdown>
             </Flex>
         </Flex>

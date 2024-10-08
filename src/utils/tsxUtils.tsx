@@ -3,7 +3,6 @@ import {ReactNode} from "react";
 import Tag from "../components/ui/layout/Tag.tsx";
 
 export const statusTags = (status: Status, female?: boolean): ReactNode => {
-    console.log('Female1: ' + female)
     const label = getStatusKey(status, female)
     switch (status) {
         case Status.CELIBATAIRE:

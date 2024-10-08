@@ -26,7 +26,8 @@ interface ListViewerProps<TData extends object, TError> {
     throughDetails?: (id: string) => void
     cardType?: string
     hasCount?: boolean,
-    countTitle?: string
+    countTitle?: string,
+    localStorage?: {activeIcon?: string, pageSize?: string, page?: string, pageCount?: string}
 }
 
 const ListViewer = <TData extends object, TError>(
@@ -38,23 +39,24 @@ const ListViewer = <TData extends object, TError>(
         throughDetails,
         cardType,
         hasCount,
-        countTitle
+        countTitle,
+        localStorage
     }: ListViewerProps<TData, TError>
 ) => {
 
-    const iconActive = LocalStorageManager.get<number>('activeIcon') ?? 1;
-    const pageSizeCount = LocalStorageManager.get<number>('pageSize') ?? 10;
-    const paginationPage = LocalStorageManager.get<number>('page') ?? 1;
-    const count = LocalStorageManager.get<number>('pageCount') ?? 0;
+    const iconActive = localStorage?.activeIcon ? LocalStorageManager.get<number>(localStorage?.activeIcon) : 1
+    const pageSizeCount = localStorage?.pageSize ? LocalStorageManager.get<number>(localStorage?.pageSize) : 10
+    const paginationPage = localStorage?.page ? LocalStorageManager.get<number>(localStorage?.page) : 1
+    const count = localStorage?.pageCount ? LocalStorageManager.get<number>(localStorage?.pageCount) : 0
 
     const [content, setContent] = useState<TData[] | undefined>(undefined)
     const [dataCount, setDataCount] = useState<number>(0)
-    const [activeIcon, setActiveIcon] = useState<number>(iconActive)
+    const [activeIcon, setActiveIcon] = useState<number>(iconActive!)
     const [sortOrder, setSortOrder] = useState<string | undefined>(undefined)
     const [sortField, setSortField] = useState<string | undefined>(undefined)
-    const [pageCount, setPageCount] = useState<number>(count)
-    const [currentPage, setCurrentPage] = useState<number>(paginationPage)
-    const [size, setSize] = useState<number>(pageSizeCount)
+    const [pageCount, setPageCount] = useState<number>(count!)
+    const [currentPage, setCurrentPage] = useState<number>(paginationPage!)
+    const [size, setSize] = useState<number>(pageSizeCount!)
     const [searchQuery, setSearchQuery] = useState<string>('')
 
     const { data, error, isLoading, refetch } = useFetch('students', callback, [pageCount, size, sortField, sortOrder])

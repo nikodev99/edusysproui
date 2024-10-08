@@ -1,6 +1,6 @@
 import RightSidePane from "../../ui/layout/RightSidePane.tsx";
 import {useForm} from "react-hook-form";
-import {AddressSchema, HealthSchema, StudentSchema} from "../../../utils/interfaces.ts";
+import {AddressSchema, EditProps, HealthSchema, StudentSchema} from "../../../utils/interfaces.ts";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {studentSchema} from "../../../schema";
 import {Address, HealthCondition, Student} from "../../../entity";
@@ -16,14 +16,7 @@ import {updateStudent} from "../../../data";
 import FormSuccess from "../../ui/form/FormSuccess.tsx";
 import FormError from "../../ui/form/FormError.tsx";
 
-interface EditProps {
-    open: boolean
-    close: () => void
-    isLoading: boolean
-    data: Student
-}
-
-export const StudentEditDrawer = ({open, close, isLoading, data}: EditProps) => {
+export const StudentEditDrawer = ({open, close, isLoading, data}: EditProps<Student>) => {
 
     const [addressDrawer, setAddressDrawer] = useState<boolean>(false)
     const [healthDrawer, setHealthDrawer] = useState<boolean>(false)

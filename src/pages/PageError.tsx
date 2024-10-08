@@ -4,13 +4,10 @@ const PageError = () => {
 
     const error = useRouteError()
 
+    console.error('Page error: ', error)
+
     return(
-        <div>
-            <h1>404 Error</h1>
-            <p>
-                {error?.error.toString() ?? error?.toString()}
-            </p>
-        </div>
+        <div>Error occurred</div>
     )
 }
 

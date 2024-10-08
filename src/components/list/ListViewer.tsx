@@ -44,10 +44,10 @@ const ListViewer = <TData extends object, TError>(
     }: ListViewerProps<TData, TError>
 ) => {
 
-    const iconActive = localStorage?.activeIcon ? LocalStorageManager.get<number>(localStorage?.activeIcon) : 1
-    const pageSizeCount = localStorage?.pageSize ? LocalStorageManager.get<number>(localStorage?.pageSize) : 10
-    const paginationPage = localStorage?.page ? LocalStorageManager.get<number>(localStorage?.page) : 1
-    const count = localStorage?.pageCount ? LocalStorageManager.get<number>(localStorage?.pageCount) : 0
+    const iconActive = localStorage?.activeIcon ? LocalStorageManager.get<number>(localStorage?.activeIcon) ?? 1 : 1
+    const pageSizeCount = localStorage?.pageSize ? LocalStorageManager.get<number>(localStorage?.pageSize) ?? 10 : 10
+    const paginationPage = localStorage?.page ? LocalStorageManager.get<number>(localStorage?.page) ?? 1 : 1
+    const count = localStorage?.pageCount ? LocalStorageManager.get<number>(localStorage?.pageCount) ?? 0 : 0
 
     const [content, setContent] = useState<TData[] | undefined>(undefined)
     const [dataCount, setDataCount] = useState<number>(0)
@@ -84,6 +84,7 @@ const ListViewer = <TData extends object, TError>(
 
     }, [data, isLoading, pageCount, refetch, searchCallback, searchQuery, size, sortField, sortOrder]);
 
+    console.error('Error occurred: ', error)
     if (error) {
         return <PageError />
     }

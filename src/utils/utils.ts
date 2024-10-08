@@ -210,6 +210,10 @@ export const setFirstName = (firstName?: string) => {
     return ''
 }
 
+export const joinWord = (word: string, joinCharacter?: string) => {
+    return word.toLowerCase().split(' ').join(joinCharacter)
+}
+
 export const startsWithVowel = (word?: string): boolean => {
     const vowels = ['a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'];
     return word ? vowels.includes(word.charAt(0)) : false;

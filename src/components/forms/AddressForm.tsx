@@ -55,8 +55,6 @@ const AddressForm = <T extends FieldValues>(addressProps: AddressFormProps<T>) =
         }
     }
 
-    console.log('Address: ',)
-
     const twoFirstField = [
         {
             type: InputTypeEnum.NUMBER,

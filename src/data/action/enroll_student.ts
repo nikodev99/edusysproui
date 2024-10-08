@@ -28,7 +28,7 @@ export const addStudent = async (values: EnrollmentSchema): Promise<CustomRespon
             }
         }
     } catch (err: unknown) {
-        ErrorCatch(err)
+        return ErrorCatch(err)
     }
     return {
         isSuccess: true,
@@ -68,9 +68,6 @@ export const updateStudent = async <T>(field: keyof T, value: unknown, studentId
         }
 
     }catch (err: unknown) {
-        ErrorCatch(err)
-    }
-    return {
-        isSuccess: false,
+        return ErrorCatch(err)
     }
 }

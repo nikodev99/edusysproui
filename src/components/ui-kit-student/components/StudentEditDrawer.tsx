@@ -82,7 +82,7 @@ export const StudentEditDrawer = ({open, close, isLoading, data}: EditProps<Stud
     }
 
     const handleAddressUpdate = async (field: keyof Address) => {
-        if (data.id) {
+        if (data?.address.id) {
             await updateStudent(field, addressData[field as keyof AddressSchema], data?.address.id, 0)
                 .then(({isSuccess, success, error}) => {
                     if (isSuccess) {
@@ -95,8 +95,6 @@ export const StudentEditDrawer = ({open, close, isLoading, data}: EditProps<Stud
     }
 
     const handleHealthUpdate = async (field: keyof HealthCondition) => {
-        console.log('value: ', field)
-        console.log('value: ', healthData[field as keyof HealthSchema])
         if (data.id) {
             await updateStudent(field, healthData[field as keyof HealthSchema], data.id, 1)
                 .then(({isSuccess, success, error}) => {

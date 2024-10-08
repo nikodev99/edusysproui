@@ -30,7 +30,7 @@ export const fetchSearchedEnrolledStudents = async (searchInput: string) => {
             }
         }
     }catch (err: unknown) {
-        ErrorCatch(err)
+        return ErrorCatch(err)
     }
 }
 
@@ -48,7 +48,7 @@ export const fetchStudentClassmatesRandomly = async (enrolledStudent: Enrollment
             }
         }
     }catch (err: unknown) {
-        ErrorCatch(err)
+        return ErrorCatch(err)
     }
 }
 

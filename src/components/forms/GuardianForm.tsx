@@ -12,9 +12,10 @@ import {Status} from "../../entity/enums/status.ts";
 
 type GuardianFormProps<T extends FieldValues> = FormContentProps<T, Guardian> & {
     showField?: boolean
+    handleUpdate?: (field: keyof Guardian, value: unknown) => void
 }
 
-const GuardianForm = <T extends FieldValues>({control, edit, errors, enroll, data, showField}: GuardianFormProps<T>) => {
+const GuardianForm = <T extends FieldValues>({control, edit, errors, enroll, data, showField, handleUpdate}: GuardianFormProps<T>) => {
 
     const genderOptions = useMemo(() => enumToObjectArray(Gender), [])
     const statusOptions = useMemo(() => enumToObjectArray(Status), [])
@@ -38,7 +39,8 @@ const GuardianForm = <T extends FieldValues>({control, edit, errors, enroll, dat
                     validateStatus: form.validate('lastName', 'student.guardian'),
                     help: form.error('lastName', 'student.guardian'),
                     hasForm: edit,
-                    defaultValue: (edit && data ? data.lastName : '') as PathValue<T, Path<T>>
+                    defaultValue: (edit && data ? data.lastName : '') as PathValue<T, Path<T>>,
+                    onFinish: edit && handleUpdate ? (value: unknown) => handleUpdate('lastName', value) : undefined
                 }
             },
             {
@@ -54,7 +56,8 @@ const GuardianForm = <T extends FieldValues>({control, edit, errors, enroll, dat
                     validateStatus: form.validate('firstName', parent),
                     help: form.error('firstName', parent),
                     hasForm: edit,
-                    defaultValue: (edit && data ? data.firstName : '') as PathValue<T, Path<T>>
+                    defaultValue: (edit && data ? data.firstName : '') as PathValue<T, Path<T>>,
+                    onFinish: edit && handleUpdate ? (value: unknown) => handleUpdate('firstName', value) : undefined
                 }
             },
             {
@@ -71,7 +74,8 @@ const GuardianForm = <T extends FieldValues>({control, edit, errors, enroll, dat
                     md: onlyField,
                     lg: onlyField,
                     hasForm: edit,
-                    selectedValue: (edit && data ? data.gender : '') as PathValue<T, Path<T>>
+                    selectedValue: (edit && data ? data.gender : '') as PathValue<T, Path<T>>,
+                    onFinish: edit && handleUpdate ? (value: unknown) => handleUpdate('gender', value) : undefined
                 }
             },
             {
@@ -88,7 +92,8 @@ const GuardianForm = <T extends FieldValues>({control, edit, errors, enroll, dat
                     md: onlyField,
                     lg: onlyField,
                     hasForm: edit,
-                    selectedValue: (edit && data ? data.status : '') as PathValue<T, Path<T>>
+                    selectedValue: (edit && data ? data.status : '') as PathValue<T, Path<T>>,
+                    onFinish: edit && handleUpdate ? (value: unknown) => handleUpdate('status', value) : undefined
                 }
             },
             ...(showField ? [
@@ -105,7 +110,8 @@ const GuardianForm = <T extends FieldValues>({control, edit, errors, enroll, dat
                         validateStatus: form.validate('maidenName', parent),
                         help: form.error('maidenName', parent),
                         hasForm: edit,
-                        defaultValue: (edit && data ? data.maidenName : '') as PathValue<T, Path<T>>
+                        defaultValue: (edit && data ? data.maidenName : '') as PathValue<T, Path<T>>,
+                        onFinish: edit && handleUpdate ? (value: unknown) => handleUpdate('maidenName', value) : undefined
                     }
                 }
             ] : []),
@@ -122,7 +128,8 @@ const GuardianForm = <T extends FieldValues>({control, edit, errors, enroll, dat
                     validateStatus: form.validate('emailId', parent),
                     help: form.error('emailId', parent),
                     hasForm: edit,
-                    defaultValue: (edit && data ? data.emailId : '') as PathValue<T, Path<T>>
+                    defaultValue: (edit && data ? data.emailId : '') as PathValue<T, Path<T>>,
+                    onFinish: edit && handleUpdate ? (value: unknown) => handleUpdate('emailId', value) : undefined
                 }
             },
             {
@@ -138,7 +145,8 @@ const GuardianForm = <T extends FieldValues>({control, edit, errors, enroll, dat
                     validateStatus: form.validate('company', parent),
                     help: form.error('company', parent),
                     hasForm: edit,
-                    defaultValue: (edit && data ? data.company : '') as PathValue<T, Path<T>>
+                    defaultValue: (edit && data ? data.company : '') as PathValue<T, Path<T>>,
+                    onFinish: edit && handleUpdate ? (value: unknown) => handleUpdate('company', value) : undefined
                 }
             },
             {
@@ -154,7 +162,8 @@ const GuardianForm = <T extends FieldValues>({control, edit, errors, enroll, dat
                     validateStatus: form.validate('jobTitle', parent),
                     help: form.error('jobTitle', parent),
                     hasForm: edit,
-                    defaultValue: (edit && data ? data.jobTitle : '') as PathValue<T, Path<T>>
+                    defaultValue: (edit && data ? data.jobTitle : '') as PathValue<T, Path<T>>,
+                    onFinish: edit && handleUpdate ? (value: unknown) => handleUpdate('jobTitle', value) : undefined
                 }
             },
             {
@@ -170,7 +179,8 @@ const GuardianForm = <T extends FieldValues>({control, edit, errors, enroll, dat
                     validateStatus: form.validate('telephone', parent),
                     help: form.error('telephone', parent),
                     hasForm: edit,
-                    defaultValue: (edit && data ? data.telephone : '') as PathValue<T, Path<T>>
+                    defaultValue: (edit && data ? data.telephone : '') as PathValue<T, Path<T>>,
+                    onFinish: edit && handleUpdate ? (value: unknown) => handleUpdate('telephone', value) : undefined
                 }
             },
             {
@@ -186,7 +196,8 @@ const GuardianForm = <T extends FieldValues>({control, edit, errors, enroll, dat
                     validateStatus: form.validate('mobile', parent),
                     help: form.error('mobile', parent),
                     hasForm: edit,
-                    defaultValue: (edit && data ? data.telephone : '') as PathValue<T, Path<T>>
+                    defaultValue: (edit && data ? data.telephone : '') as PathValue<T, Path<T>>,
+                    onFinish: edit && handleUpdate ? (value: unknown) => handleUpdate('mobile', value) : undefined
                 }
             }
         ]} />

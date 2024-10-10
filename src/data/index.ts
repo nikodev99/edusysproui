@@ -7,3 +7,4 @@ export {
     fetchGuardianWithStudents
 } from './action/fetch_guardian'
 export {fetchEnrolledStudents, fetchSearchedEnrolledStudents, fetchStudentById} from './action/fetch_student'
+export {fetchTeachers, fetchSearchedTeachers} from './action/fetch_teacher.ts'

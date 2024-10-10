@@ -112,6 +112,7 @@
     .desc {
       font-size: 14px;
       color: $text_color;
+      margin-bottom: 10px;
     }
   }
 }
@@ -432,4 +433,12 @@
 }
 
 .edit-drawer {
+}
+
+.matter {
+  font-size: 16px;
+  font-weight: 700;
+  &.card {
+    margin-top: 10px;
+  }
 }

@@ -9,7 +9,7 @@ import {ReactNode, useMemo} from "react";
 import {Gender} from "../../../entity/enums/gender.ts";
 import {StudentListDataType} from "../../../utils/interfaces.ts";
 import Tagger from "./Tagger.tsx";
-import {Guardian} from "../../../entity";
+import {Guardian, Teacher} from "../../../entity";
 import {statusTags} from "../../../utils/tsxUtils.tsx";
 import {Status} from "../../../entity/enums/status.ts";
 
@@ -72,6 +72,23 @@ const CardList = <TData extends object>({content, isActive, isLoading, dropdownI
                 }
                 return [] as DataProps[]
             }
+            case 'teacher': {
+                if (content) {
+                    const data: Teacher[] = content as Teacher[]
+                    return data.map(t => ({
+                        id: t.id,
+                        lastName: t.lastName,
+                        firstName: t.firstName,
+                        gender: t.gender,
+                        reference: t.emailId,
+                        tag: statusTags(t.status as Status, t.gender === Gender.FEMME),
+                        description: t.courses && t.courses.length > 0 ?
+                            t.courses.map((c, i) => (<p className='matter card' key={i}>{c.course}</p>)) :
+                            t.classes?.map((c, i) => (<p className='matter card' key={i}>{c.name}</p>))
+                    })) as DataProps[]
+                }
+                return [] as DataProps[]
+            }
             default:
                 return [] as DataProps[]
         }
@@ -97,7 +114,7 @@ const CardList = <TData extends object>({content, isActive, isLoading, dropdownI
                                         }
                                         description={
                                             <div className='card__desc'>
-                                                {c?.tag && <div className='desc'>{c?.tag}</div>}
+                                                {c?.tag && <div className='de className={} sc'>{c?.tag}</div>}
                                                 {c?.description && Array.isArray(c.description) ? c.description.map((d, i) => (
                                                     <div className='desc' key={i}>{d}</div>
                                                 )): (

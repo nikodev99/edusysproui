@@ -49,6 +49,11 @@ const ListViewer = <TData extends object, TError>(
     const paginationPage = localStorage?.page ? LocalStorageManager.get<number>(localStorage?.page) ?? 1 : 1
     const count = localStorage?.pageCount ? LocalStorageManager.get<number>(localStorage?.pageCount) ?? 0 : 0
 
+    console.log('activeIcon: ', iconActive)
+    console.log('pageSize: ', pageSizeCount)
+    console.log('page: ', paginationPage)
+    console.log('pageCount: ', count)
+
     const [content, setContent] = useState<TData[] | undefined>(undefined)
     const [dataCount, setDataCount] = useState<number>(0)
     const [activeIcon, setActiveIcon] = useState<number>(iconActive!)
@@ -84,14 +89,13 @@ const ListViewer = <TData extends object, TError>(
 
     }, [data, isLoading, pageCount, refetch, searchCallback, searchQuery, size, sortField, sortOrder]);
 
-    console.error('Error occurred: ', error)
     if (error) {
         return <PageError />
     }
 
     const selectedIcon = (index: number) => {
         setActiveIcon(index)
-        LocalStorageManager.update<number>('activeIcon', () => index)
+        localStorage?.activeIcon ? LocalStorageManager.update<number>(localStorage?.activeIcon, () => index) : null
     }
 
     const handleSorterChange = (pagination: TablePaginationConfig, filters: Record<string, FilterValue | null>, sorter:  SorterResult<TData> | SorterResult<TData>[]) => {
@@ -106,17 +110,17 @@ const ListViewer = <TData extends object, TError>(
     const handleSizeChange = (current: number, pageSize: number) => {
         setCurrentPage(current)
         setSize(pageSize)
-        LocalStorageManager.update('pageSize', () => pageSize)
-        LocalStorageManager.update('page', () => current)
+        localStorage?.pageSize ? LocalStorageManager.update(localStorage?.pageSize, () => pageSize) : null
+        localStorage?.page ? LocalStorageManager.update(localStorage?.page, () => current): null
     }
 
     const handleNavChange = (page: number, pageSize: number) => {
         setPageCount(page - 1)
         setCurrentPage(page)
         setSize(pageSize)
-        LocalStorageManager.update('pageSize', () => pageSize)
-        LocalStorageManager.update('page', () => page)
-        LocalStorageManager.update('pageCount', () => page - 1)
+        localStorage?.pageSize ? LocalStorageManager.update(localStorage?.pageSize, () => pageSize) : null
+        localStorage?.page ? LocalStorageManager.update(localStorage?.page, () => page) : null
+        localStorage?.pageCount ? LocalStorageManager.update(localStorage?.pageCount, () => page - 1) : null
     }
 
     const handleSearchInput = (e: ChangeEvent<HTMLInputElement>) => {

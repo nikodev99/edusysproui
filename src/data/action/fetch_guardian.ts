@@ -31,7 +31,7 @@ export const fetchSearchedEnrolledStudentsGuardian = async (searchInput: string)
             }
         }
     }catch (e: unknown) {
-        ErrorCatch(e)
+        return ErrorCatch(e)
     }
 }
 

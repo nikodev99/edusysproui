@@ -10,7 +10,7 @@ import {
     FieldPath,
 } from "react-hook-form";
 import {z} from "zod";
-import {enrollmentSchema, guardianSchema, studentSchema} from "../schema";
+import {enrollmentSchema, guardianSchema, studentSchema, teacherSchema} from "../schema";
 import {ValidateStatus} from "antd/es/form/FormItem";
 import React, {CSSProperties, ReactNode} from "react";
 import {AcademicYear, Guardian} from "../entity";
@@ -19,6 +19,7 @@ import {Gender} from "../entity/enums/gender.ts";
 import {AttendanceStatus} from "../entity/enums/attendanceStatus.ts";
 import {addressSchema} from "../schema/models/addressSchema.ts";
 import {healthSchema} from "../schema/models/healthSchema.ts";
+import {teacherClassCourseSchema} from "../schema/models/teacherClassCourseSchema.ts";
 
 export interface Metadata {
     title: string
@@ -31,6 +32,8 @@ export type EnrollmentSchema = z.infer<typeof enrollmentSchema>
 export type StudentSchema = z.infer<typeof studentSchema>
 export type AddressSchema = z.infer<typeof addressSchema>
 export type HealthSchema = z.infer<typeof healthSchema>
+export type TeacherSchema = z.infer<typeof teacherSchema>
+export type TeacherClassCourseSchema = z.infer<typeof teacherClassCourseSchema>;
 
 type NestedKeyOf<ObjectType extends object> = {
     [Key in keyof ObjectType & (string | number)]: ObjectType[Key] extends object
@@ -59,8 +62,8 @@ export interface ZodProps<T extends FieldValues> {
 
 export interface HealthProps<T extends FieldValues> extends ZodProps<T>{
     healthProps: [{
-        conditions: string[],
-        allergies: string[],
+        conditions: string[]
+        allergies: string[]
         medications: string[]
     }]
 }
@@ -114,8 +117,9 @@ export interface ZodSelect<T extends FieldValues> {
     defaultActiveFirstOption?: boolean
     suffixIcon?: ReactNode,
     onSearch?:  ((value: string) => void) | undefined
-    onChange?:  ((value: string, option?: ({label: string, value: string } | {label: string, value: string }[])) => void) | undefined
+    onChange?:  ((value: string, option?: ({label: string, value: string | number } | {label: string, value: string | number }[])) => void) | undefined
     notFoundContent?: ReactNode
+    mode?:  "tags" | "multiple"
 }
 
 export interface InputProps extends ZodFormItemProps {
@@ -130,6 +134,7 @@ export interface InputProps extends ZodFormItemProps {
     inputType?: string
     addonAfter?: ReactNode,
     min?: number
+    disabled?: boolean,
 }
 
 export interface ZodListControl<T extends FieldValues> extends ZodControl<T>{

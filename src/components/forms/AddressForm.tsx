@@ -33,9 +33,9 @@ const AddressForm = <T extends FieldValues>(addressProps: AddressFormProps<T>) =
                 }
             case AddressOwner.TEACHER:
                 return {
-                    name: form.name(fieldName),
-                    validate: form.validate(fieldName),
-                    error: form.error(fieldName),
+                    name: form.name(fieldName, 'teacher.address'),
+                    validate: form.validate(fieldName, 'teacher.address'),
+                    error: form.error(fieldName, 'teacher.address'),
                 }
             case AddressOwner.ADMIN:
                 return {

@@ -136,7 +136,11 @@
 //Inscription page
 .inscription-wrapper {
   .step-wrapper {
-    margin-bottom: 20px;
+    margin-bottom: 50px;
+  }
+
+  .step-content {
+    margin-bottom: 50px;
   }
 
   .guardian__address__check {
@@ -427,7 +431,7 @@
     transition: .3s;
     &:hover {
       transform: scale(2,1);
-      color: red;
+      color: #c05c5c;
     }
   }
 }
@@ -436,9 +440,11 @@
 }
 
 .matter {
-  font-size: 16px;
-  font-weight: 700;
+  font-size: 14px;
+  color: $primary_color!important;
+  font-style: italic;
   &.card {
     margin-top: 10px;
   }
 }
+

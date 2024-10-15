@@ -271,7 +271,7 @@ const SchoolColleagues = ({enrollment, seeMore}: StudentInfoProps) => {
     useEffect(() => {
         const fetchData = async () => {
             await fetchStudentClassmatesRandomly(enrollment).then(async (res) => {
-                if (res?.isSuccess) {
+                if (res?.isSuccess && 'data' in res) {
                     setClassmates(res?.data as Enrollment[])
                 }
             }).catch((error) => `Failed to fetch classmates ${error.errorCode}: ${error.message}`)

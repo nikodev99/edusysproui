@@ -1,9 +1,9 @@
 import {StudentListDataType as DataType} from "../../utils/interfaces.ts";
-import ListViewer from "../../components/list/ListViewer.tsx";
+import ListViewer from "../../components/custom/ListViewer.tsx";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {text} from "../../utils/text_display.ts";
 import {Breadcrumb, setBreadcrumb} from "../../core/breadcrumb.tsx";
-import {ListPageHierarchy} from "../../components/list/ListPageHierarchy.tsx";
+import {ListPageHierarchy} from "../../components/custom/ListPageHierarchy.tsx";
 import {useRef} from "react";
 import {redirectTo} from "../../context/RedirectContext.ts";
 import {AiOutlineUserAdd} from "react-icons/ai";

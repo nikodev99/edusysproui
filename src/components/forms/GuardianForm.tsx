@@ -36,8 +36,8 @@ const GuardianForm = <T extends FieldValues>({control, edit, errors, enroll, dat
                     name: form.name('lastName', parent),
                     required: true,
                     placeholder: 'Malonga',
-                    validateStatus: form.validate('lastName', 'student.guardian'),
-                    help: form.error('lastName', 'student.guardian'),
+                    validateStatus: form.validate('lastName', parent),
+                    help: form.error('lastName', parent),
                     hasForm: edit,
                     defaultValue: (edit && data ? data.lastName : '') as PathValue<T, Path<T>>,
                     onFinish: edit && handleUpdate ? (value: unknown) => handleUpdate('lastName', value) : undefined

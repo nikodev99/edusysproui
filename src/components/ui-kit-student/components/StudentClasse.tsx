@@ -24,7 +24,7 @@ export const StudentClasse = ({enrolledStudent, setActiveKey}: {enrolledStudent:
     const [classmates, setClassmates] = useState<Enrollment[]>([]);
     const pageCount = useRef<number>(0)
     
-    const {data, error, isLoading, isSuccess, refetch} = useFetch('student-classmates', getAllStudentClassmate, [
+    const {data, error, isLoading, isFetching, isSuccess, refetch} = useFetch('student-classmates', getAllStudentClassmate, [
         student.id, classeId, academicYearId, {page: pageCount.current, size: size}
     ])
 
@@ -132,7 +132,16 @@ export const StudentClasse = ({enrolledStudent, setActiveKey}: {enrolledStudent:
                             loadMore={loadMore}
                             dataSource={classmates}
                             renderItem={(item) => (
-                                <List.Item actions={[<Button type='link' key="list-loadmore-more" onClick={() => handleWatchClassmate(item.student.id)}>Voir</Button>]}>
+                                <List.Item actions={[
+                                    <Button
+                                        disabled={isFetching}
+                                        type='link'
+                                        key="list-loadmore-more"
+                                        onClick={() => handleWatchClassmate(item.student.id)}
+                                    >
+                                        Voir plus
+                                    </Button>
+                                ]}>
                                     <Skeleton avatar loading={isLoading} active={isLoading}>
                                         <List.Item.Meta
                                             avatar={<Avatar

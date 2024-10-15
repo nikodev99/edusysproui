@@ -7,7 +7,6 @@ import {Response as CustomResponse} from "./response.ts";
 import {ErrorCatch} from "./error_catch.ts";
 
 export const addStudent = async (values: EnrollmentSchema): Promise<CustomResponse<Enrollment>> => {
-    console.log('les valeurs: ', values);
 
     const validateFields = enrollmentSchema.safeParse(values)
     if (!validateFields.success) {

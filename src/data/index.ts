@@ -8,3 +8,5 @@ export {
 } from './action/fetch_guardian'
 export {fetchEnrolledStudents, fetchSearchedEnrolledStudents, fetchStudentById} from './action/fetch_student'
 export {fetchTeachers, fetchSearchedTeachers} from './action/fetch_teacher.ts'
+export {fetchAllCourses} from './action/fetch_course.ts'
+export {addTeacher} from './action/add_teacher.ts'

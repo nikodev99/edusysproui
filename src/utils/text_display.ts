@@ -18,16 +18,16 @@ export const text = {
         }
     },
     teacher: {
-        label: 'Enseignants',
+        label: 'Enseignant',
         href: '/teachers',
         group: {
             view: {
                 label: 'Voir',
-                href: '/teacher/'
+                href: '/teachers/'
             },
             add: {
-                label: 'Ajouter',
-                href: '/teacher/new'
+                label: 'Nouveau enseignant',
+                href: '/teachers/new'
             }
         }
     },

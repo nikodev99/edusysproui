@@ -9,5 +9,5 @@ export const addressSchema = z.object({
     borough: z.string().optional(),
     city: z.string().min(1, {message: "Ville est requise"}),
     zipCode: z.string().optional(),
-    country: z.string().min(1, {message: "Pays est requis"}),
+    country: z.string({required_error: "Pays est requis"}).min(1, {message: "Pays est requis"}),
 })

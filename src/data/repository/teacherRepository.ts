@@ -1,5 +1,11 @@
 import {apiClient, request} from "../axiosConfig.ts";
 import {Teacher} from "../../entity";
+import {TeacherSchema} from "../../utils/interfaces.ts";
+import {AxiosResponse} from "axios";
+
+export const insertTeacher = async (teacher: TeacherSchema): Promise<AxiosResponse<Teacher>> => {
+    return await apiClient.post<Teacher>('/teachers', teacher)
+}
 
 export const getAllTeachers = (page: number, size: number, sortCriteria?: string) => {
     return request({

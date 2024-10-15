@@ -15,7 +15,7 @@ export const AcademicForm = ({control, errors}: ZodProps<EnrollmentSchema>) => {
         const fetchData = async () => {
             await findClassesBasicValue()
                 .then((resp) => {
-                    if (resp && resp.isSuccess) {
+                    if (resp && resp.isSuccess && 'data' in resp) {
                         setClasses(resp.data as Classe[])
                     }
                 })

@@ -6,18 +6,19 @@ import {LuEye} from "react-icons/lu";
 import {BiSolidUserAccount} from "react-icons/bi";
 import {AiOutlineUserDelete, AiOutlineUsergroupAdd} from "react-icons/ai";
 import {TableColumnsType} from "antd";
-import {Classe, Course, Teacher} from "../../entity";
+import {Teacher} from "../../entity";
 import Avatar from "../../components/ui/layout/Avatar.tsx";
-import {enumToObjectArrayForFiltering, setFirstName} from "../../utils/utils.ts";
+import {enumToObjectArrayForFiltering, getAge, setFirstName} from "../../utils/utils.ts";
 import {Gender} from "../../entity/enums/gender.ts";
 import {statusTags} from "../../utils/tsxUtils.tsx";
 import ActionButton from "../../components/ui/layout/ActionButton.tsx";
-import {ListPageHierarchy} from "../../components/list/ListPageHierarchy.tsx";
-import ListViewer from "../../components/list/ListViewer.tsx";
+import {ListPageHierarchy} from "../../components/custom/ListPageHierarchy.tsx";
+import ListViewer from "../../components/custom/ListViewer.tsx";
 import {fetchSearchedTeachers, fetchTeachers} from "../../data";
 import {AxiosResponse} from "axios";
 import {Response} from "../../data/action/response.ts";
 import {useRef} from "react";
+import {TeacherClassCourse} from "../../entity/domain/TeacherClassCourse.ts";
 
 const TeacherList = () => {
 
@@ -94,6 +95,14 @@ const TeacherList = () => {
             onFilter: (value, record) => record?.gender ? record.gender.indexOf(value as string) === 0 : false
         },
         {
+            title: "Age",
+            dataIndex: 'birthDate',
+            key: 'birthDate',
+            align: 'center',
+            responsive: ['md'],
+            render: (text) => getAge(text) + 'ans'
+        },
+        {
             title: "Status",
             dataIndex: 'status',
             key: 'status',
@@ -103,24 +112,31 @@ const TeacherList = () => {
         },
         {
             title: "Matières",
-            dataIndex: 'courses',
+            dataIndex: 'teacherClassCourses',
             key: 'emailId',
             align: 'center',
-            render: (text: Course[], record) => {
+            width: "15%",
+            render: (text: TeacherClassCourse[]) => {
                 if (text && text?.length > 0) {
-                    return text?.map((course: Course, index: number) => (
-                        <span className='matter' key={index}>{course?.course as string}</span>
+                    return text?.map((t: TeacherClassCourse, index: number) => (
+                        <>
+                            <span className='matter' key={index}>{t.course?.course as string}</span>
+                            {index !== text.length - 1 && <>,&nbsp;</>}
+                        </>
                     ))
                 }else {
-                    return record?.classes?.map((classe: Classe, index: number) => (
-                        <span className='matter' key={index}>{classe?.name as string}</span>
+                    return text?.map((t: TeacherClassCourse, index: number) => (
+                        <>
+                            <span className='matter' key={index}>{t.classe?.name as string}</span>
+                            {index !== text.length - 1 && <>,&nbsp;</>}
+                        </>
                     ))
                 }
             }
             //TODO getting all the grade distinct classes and filter by grade
         },
         {
-            title: "Numéro de téléphone",
+            title: "Téléphone",
             dataIndex: 'telephone',
             key: 'telephone',
             align: 'center',
@@ -151,7 +167,7 @@ const TeacherList = () => {
                 tableColumns={columns as TableColumnsType<Teacher[]>}
                 dropdownItems={getItems}
                 throughDetails={throughDetails}
-                countTitle='Enseignants'
+                countTitle={text.teacher.label}
                 cardType='teacher'
                 localStorage={{
                     activeIcon: 'teacherActiveIcon',

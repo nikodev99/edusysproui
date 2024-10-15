@@ -25,7 +25,7 @@ class FormUtils {
             if (enroll) {
                 return FormUtils.getNestedError(fieldName, errors, parent) || ''
             }else {
-                FormUtils.setError(fieldName, errors, parent);
+                return FormUtils.setError(fieldName, errors, parent);
             }
         }
     }
@@ -35,9 +35,9 @@ class FormUtils {
             return fieldName
         }else {
             if (enroll) {
-                return `${parent}.${fieldName}`
+                return parent ? `${parent}.${fieldName}` : fieldName
             }
-            return `${FormUtils.getOnlyParent(parent)}.${fieldName}`
+            return parent ? `${FormUtils.getOnlyParent(parent)}.${fieldName}` : fieldName
         }
     }
 

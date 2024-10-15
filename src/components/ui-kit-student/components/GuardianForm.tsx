@@ -30,8 +30,8 @@ export const GuardianForm = ({control, errors, showField, checked, onChecked, va
             setFetching(true);
             fetchSearchedEnrolledStudentsGuardian(value)
                 .then((response) => {
-                    if (response && response.isSuccess) {
-                        const guardians = response.data as Guardian[]
+                    if (response && response.isSuccess && 'data' in response) {
+                        const guardians: Guardian[] = response.data as Guardian[]
                         if (currentValue.current === value) {
                             const data = guardians.map((g) => ({
                                 value: g.id,

@@ -25,6 +25,7 @@ export interface Student {
     healthCondition: HealthCondition
     marks: Score[]
     attendances: Attendance[]
+    attachments: string[]
     image: string
     createdAt: Date | number | string
     modifyAt: Date | number | string

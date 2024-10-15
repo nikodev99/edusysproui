@@ -8,14 +8,16 @@ export const findClassesBasicValue = async () => {
         if (resp && 'data' in resp) {
             return {
                 isSuccess: true,
-                data: resp.data as Classe[]
+                data: resp.data as Classe[],
+                isLoading: false
             }
         }else {
             return {
-                isSuccess: false
+                isSuccess: false,
+                isLoading: false
             }
         }
     }catch (err: unknown) {
-        ErrorCatch(err)
+        return ErrorCatch(err)
     }
 }

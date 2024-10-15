@@ -1,6 +1,7 @@
 import {getStatusKey, Status} from "../entity/enums/status.ts";
-import {ReactNode} from "react";
+import React, {ReactNode} from "react";
 import Tag from "../components/ui/layout/Tag.tsx";
+import {Popover, StepsProps} from "antd";
 
 export const statusTags = (status: Status, female?: boolean): ReactNode => {
     const label = getStatusKey(status, female)
@@ -24,3 +25,17 @@ export const statusTags = (status: Status, female?: boolean): ReactNode => {
             return <Tag color='danger'>Inconnu</Tag>
     }
 }
+
+export const requiredMark = (label: React.ReactNode, {required}: {required: boolean}) => (
+    <>
+        {required ? <Tag color='danger'>requis</Tag> : <Tag color='warning'>optionnel</Tag>}&nbsp;{label}
+    </>
+)
+
+export const customDot: StepsProps['progressDot'] = (dot: ReactNode, {status, index}) => (
+    <Popover content={<span>
+        étape: {index + 1} status: {status}
+    </span>}>
+        {dot}
+    </Popover>
+)

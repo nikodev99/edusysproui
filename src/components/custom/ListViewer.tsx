@@ -49,11 +49,6 @@ const ListViewer = <TData extends object, TError>(
     const paginationPage = localStorage?.page ? LocalStorageManager.get<number>(localStorage?.page) ?? 1 : 1
     const count = localStorage?.pageCount ? LocalStorageManager.get<number>(localStorage?.pageCount) ?? 0 : 0
 
-    console.log('activeIcon: ', iconActive)
-    console.log('pageSize: ', pageSizeCount)
-    console.log('page: ', paginationPage)
-    console.log('pageCount: ', count)
-
     const [content, setContent] = useState<TData[] | undefined>(undefined)
     const [dataCount, setDataCount] = useState<number>(0)
     const [activeIcon, setActiveIcon] = useState<number>(iconActive!)
@@ -137,6 +132,8 @@ const ListViewer = <TData extends object, TError>(
             element: <TfiLayoutGrid2Alt size={19} />
         }
     ]
+
+    console.log(content)
 
     return(
         <>

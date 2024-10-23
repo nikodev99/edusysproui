@@ -9,7 +9,7 @@ type dataEntryProps<T extends FieldValues> = InputType<T> & {inputType?: string}
 
 export const FormInput = <T extends FieldValues>(inputProps: dataEntryProps<T>) => {
 
-    const {placeholder, isCompact, buttonLabel, inputType, addonAfter, min, defaultValue, disabled} = inputProps
+    const {placeholder, isCompact, buttonLabel, inputType, addonAfter, min, defaultValue, disabled, clearErrors} = inputProps
 
     return(
         <FormItem {...inputProps} render={({field}) => (
@@ -24,6 +24,7 @@ export const FormInput = <T extends FieldValues>(inputProps: dataEntryProps<T>) 
                                 style={{width: '100%'}}
                             />}
                             {!inputType && <Input
+                                onFocus={() => clearErrors ? clearErrors(field.name) : null}
                                 placeholder={placeholder}
                                 {...field}
                             />}
@@ -36,11 +37,13 @@ export const FormInput = <T extends FieldValues>(inputProps: dataEntryProps<T>) 
                                 placeholder={placeholder}
                                 disabled={disabled}
                                 addonAfter={addonAfter}
+                                onFocus={() => clearErrors ? clearErrors(field.name) : null}
                                 min={min}
                                 {...field}
                                 style={{width: '100%'}}
                             />}
                             {!inputType && <Input
+                                onFocus={() => clearErrors ? clearErrors(field.name) : null}
                                 placeholder={placeholder}
                                 addonAfter={addonAfter}
                                 {...field}

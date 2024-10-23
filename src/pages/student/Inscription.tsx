@@ -66,7 +66,6 @@ const Inscription = () => {
         }else {
             setShowMaidenName(false)
         }
-        console.log('Error Occurred: ', errors)
     }, [errors, formData]);
 
     const validate = (validateFields: boolean, current: number) => {
@@ -236,6 +235,7 @@ const Inscription = () => {
             steps={steps}
             messages={{success: success, error: error}}
             isPending={isPending}
+            validationError={errors}
         />
     )
 }

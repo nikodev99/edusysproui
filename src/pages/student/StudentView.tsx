@@ -72,7 +72,7 @@ const StudentView = () => {
 
     const skeleton = <Skeleton loading={isLoading} active={isLoading} paragraph={{rows: 5}} />
 
-    console.log('Enrolled Student is null: ', enrolledStudent !== null)
+    error ? console.log('error occured: ', error) : ''
 
     return(
         <>

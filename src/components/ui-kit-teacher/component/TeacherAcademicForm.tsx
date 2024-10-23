@@ -2,45 +2,22 @@ import {useEffect, useMemo, useState} from "react";
 import {Classe, Course} from "../../../entity";
 import Responsive from "../../ui/layout/Responsive.tsx";
 import {fetchAllCourses, findClassesBasicValue} from "../../../data";
-import {Button, Flex, Form, List, Modal, Select} from "antd";
-import {AiOutlinePlus} from "react-icons/ai";
+import {Form, Select} from "antd";
 import Grid from "../../ui/layout/Grid.tsx";
-import {TeacherClassCourseSchema} from "../../../utils/interfaces.ts";
-import {TeacherClassCourse} from "../../../entity/domain/TeacherClassCourse.ts";
-import Tag from "../../ui/layout/Tag.tsx";
-import {LuTrash2} from "react-icons/lu";
-import LocalStorageManager from "../../../core/LocalStorageManager.ts";
 
-const TeacherAcademicForm = ({onClose, reset}: {onClose: (finalArray: TeacherClassCourseSchema[]) => void, reset: boolean}) => {
+const TeacherAcademicForm = ({onClose, defaultClasses, defaultCourses}: {
+    onClose: ({courses, classes}: {courses?: {id: number}[], classes?: {id: number}[]}) => void,
+    defaultClasses?: number[]
+    defaultCourses?: number[]
+}) => {
 
     const [courses, setCourses] = useState<Course[]>([])
     const [classes, setClasses] = useState<Classe[]>([])
+    const [selectedClasse, setSelectedClasse] = useState<number[]>()
+    const [selectedCourse, setSelectedCourse] = useState<number[] | undefined>(undefined)
     const [isPending, setIsPending] = useState(false)
-    const [open, setOpen] = useState<boolean>(false)
-    const [selectedClass, setSelectedClass] = useState<number | null>(null);
-    const [selectedCourse, setSelectedCourse] = useState<number | null>(null);
-    const [teacherClassCourses, setTeacherClassCourses] = useState<TeacherClassCourseSchema[]>((): TeacherClassCourseSchema[] => {
-        const savedData = LocalStorageManager.get<TeacherClassCourseSchema[]>('teacherClassCourse')
-        return savedData ? savedData : []
-    });
-    const [cours, setCours] = useState<Course>()
-    const [classe, setClasse] = useState<Classe>()
-    const [teacherUtils, setTeacherUtils] = useState<TeacherClassCourse[]>((): TeacherClassCourse[] => {
-        const savedData = LocalStorageManager.get<TeacherClassCourse[]>('utilsClassCourse')
-        return savedData ? savedData : []
-    })
 
     useEffect(() => {
-        if (teacherClassCourses) {
-            LocalStorageManager.update('teacherClassCourse', () => teacherClassCourses)
-        }
-        if (teacherUtils) {
-            LocalStorageManager.update('utilsClassCourse', () => teacherClassCourses)
-        }
-        if (reset) {
-            LocalStorageManager.remove('teacherClassCourse')
-            LocalStorageManager.remove('utilsClassCourse')
-        }
         const fetchedData = async () => {
             let loading: undefined | boolean
             await fetchAllCourses()
@@ -61,28 +38,23 @@ const TeacherAcademicForm = ({onClose, reset}: {onClose: (finalArray: TeacherCla
             setIsPending(loading ? loading : false)
         }
         fetchedData().catch(e => console.error(e.message))
-    }, [isPending, reset, teacherClassCourses, teacherUtils]);
+    }, [isPending]);
 
-    const handleCancel = () => {
-        setOpen(false);
+    const handleClassChange = (value: number[]) => {
+        setSelectedClasse(value)
+        onClose({
+            classes: value?.map(id => ({id})),
+            courses: selectedCourse ? selectedCourse?.map(id => ({id})) : undefined
+        })
     };
 
-    const handleClassChange = (value: number) => {
-        const classe = classes.find((c) => c.id === value);
-        setSelectedClass(classe ? classe.id : null);
-        setClasse(classe)
+    const handleCourseChange = (value: number[]) => {
+        setSelectedCourse(value ? value : undefined)
+        onClose({
+            classes: selectedClasse?.map(id => ({id})),
+            courses: value ? value.map(id => ({id})) : undefined,
+        })
     };
-
-    const handleCourseChange = (value: number) => {
-        const course = courses.find((c) => c.id === value);
-        setSelectedCourse(course ? course.id! : null);
-        setCours(course)
-    };
-
-    const showLoading = (): void => {
-        setOpen(true)
-        setIsPending(true)
-    }
 
     const courseOptions = useMemo(() => courses.map(c => ({
         value: c.id as number,
@@ -94,101 +66,36 @@ const TeacherAcademicForm = ({onClose, reset}: {onClose: (finalArray: TeacherCla
         label: c.name,
     })), [classes])
 
-    const addClassCourse = () => {
-        if(selectedClass) {
-            setTeacherClassCourses((prevState) => [
-                ...prevState,
-                {
-                    classe: {id: selectedClass},
-                    course: selectedCourse ? {id: selectedCourse}: undefined
-                }
-            ])
-            setSelectedClass(null)
-            setSelectedCourse(null)
-            setTeacherUtils(prevState => [
-                ...prevState,
-                {
-                    id: 0,
-                    course: cours!,
-                    classe: classe!
-                }
-            ])
-        }
-    }
-
-    const removeClassCourse = (index: number) => {
-        setTeacherUtils(prev => prev.filter((_, i) => i !== index));
-        setTeacherClassCourses(prev => prev.filter((_, i) => i !== index));
-    };
-
-    const handleOk = () => {
-        onClose(teacherClassCourses)
-        setOpen(false)
-    };
+    console.log('defaultClasses: ', defaultCourses)
 
     return(
         <>
-            <Flex justify='flex-end'>
-                <Button onClick={showLoading} className='add__btn' icon={<AiOutlinePlus size={15} />}>
-                    Ajouter classes et matières de l'enseignant
-                </Button>
-            </Flex>
-            <List
-                size="small"
-                header={<div>Classes & Matières</div>}
-                dataSource={teacherUtils}
-                renderItem={(item, index) => (
-                    <List.Item actions={[<Button type='link' onClick={() => removeClassCourse(index)}><LuTrash2 /></Button>]}>
-                        Classe: <Tag color='danger'>{item.classe.name}</Tag> Cours: <Tag color='warning'>{item.course?.course || "N/A"}</Tag>
-                    </List.Item>
-                )}
-            />
-            <Modal
-                open={open}
-                loading={isPending}
-                title='Ajouter Classes & Matières'
-                onCancel={handleCancel}
-                onOk={handleOk}
-                width={800}
-            >
-                <Responsive gutter={[16, 16]}>
-                    <Grid xs={24} md={12} lg={12} xxl={12}>
-                        <Form.Item label='Classes' required layout='vertical'>
-                            <Select
-                                placeholder='Selectionne les classes'
-                                options={classeOptions}
-                                onChange={handleClassChange}
-                            />
-                        </Form.Item>
-                    </Grid>
-                    <Grid xs={24} md={12} lg={12} xxl={12}>
-                        <Form.Item label='Matières' layout='vertical'>
-                            <Select
-                                placeholder='Selectionner les matières'
-                                options={courseOptions}
-                                onChange={handleCourseChange}
-                            />
-                        </Form.Item>
-                    </Grid>
-                </Responsive>
-                <Form.Item>
-                    <Button className='add__btn' onClick={addClassCourse} disabled={!selectedClass}>
-                        Ajouter
-                    </Button>
-                </Form.Item>
-                <Form.Item>
-                    <List
-                        size="small"
-                        header={<div>Classes & Matières</div>}
-                        dataSource={teacherUtils}
-                        renderItem={(item, index) => (
-                            <List.Item actions={[<Button type='link' onClick={() => removeClassCourse(index)}><LuTrash2 /></Button>]}>
-                                Classe: <Tag color='danger'>{item.classe.name}</Tag> Cours: <Tag color='warning'>{item.course?.course || "N/A"}</Tag>
-                            </List.Item>
-                        )}
-                    />
-                </Form.Item>
-            </Modal>
+            <Responsive gutter={[16, 16]}>
+                <Grid xs={24} md={12} lg={12} xxl={12}>
+                    <Form.Item label='Classes' required layout='vertical'>
+                        <Select
+                            placeholder='Selectionne les classes'
+                            options={classeOptions}
+                            onChange={handleClassChange}
+                            mode='multiple'
+                            loading={isPending}
+                            value={defaultClasses}
+                        />
+                    </Form.Item>
+                </Grid>
+                <Grid xs={24} md={12} lg={12} xxl={12}>
+                    <Form.Item label='Matières' layout='vertical'>
+                        <Select
+                            placeholder='Selectionner les matières'
+                            options={courseOptions}
+                            onChange={handleCourseChange}
+                            mode='multiple'
+                            loading={isPending}
+                            value={defaultCourses}
+                        />
+                    </Form.Item>
+                </Grid>
+            </Responsive>
         </>
     )
 }

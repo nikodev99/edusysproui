@@ -6,7 +6,7 @@ import {LuEye} from "react-icons/lu";
 import {BiSolidUserAccount} from "react-icons/bi";
 import {AiOutlineUserDelete, AiOutlineUsergroupAdd} from "react-icons/ai";
 import {TableColumnsType} from "antd";
-import {Teacher} from "../../entity";
+import {Classe, Course, Teacher} from "../../entity";
 import Avatar from "../../components/ui/layout/Avatar.tsx";
 import {enumToObjectArrayForFiltering, getAge, setFirstName} from "../../utils/utils.ts";
 import {Gender} from "../../entity/enums/gender.ts";
@@ -18,7 +18,6 @@ import {fetchSearchedTeachers, fetchTeachers} from "../../data";
 import {AxiosResponse} from "axios";
 import {Response} from "../../data/action/response.ts";
 import {useRef} from "react";
-import {TeacherClassCourse} from "../../entity/domain/TeacherClassCourse.ts";
 
 const TeacherList = () => {
 
@@ -112,23 +111,23 @@ const TeacherList = () => {
         },
         {
             title: "Matières",
-            dataIndex: 'teacherClassCourses',
+            dataIndex: 'courses',
             key: 'emailId',
             align: 'center',
             width: "15%",
-            render: (text: TeacherClassCourse[]) => {
+            render: (text: Course[], record: Teacher) => {
                 if (text && text?.length > 0) {
-                    return text?.map((t: TeacherClassCourse, index: number) => (
+                    return text?.map((c: Course, index: number) => (
                         <>
-                            <span className='matter' key={index}>{t.course?.course as string}</span>
+                            <span className='matter' key={index}>{c.course as string}</span>
                             {index !== text.length - 1 && <>,&nbsp;</>}
                         </>
                     ))
                 }else {
-                    return text?.map((t: TeacherClassCourse, index: number) => (
+                    return record?.classes?.map((c: Classe, index: number) => (
                         <>
-                            <span className='matter' key={index}>{t.classe?.name as string}</span>
-                            {index !== text.length - 1 && <>,&nbsp;</>}
+                            <span className='matter' key={index}>{c?.name as string}</span>
+                            {index !== record?.classes!.length - 1 && <>,&nbsp;</>}
                         </>
                     ))
                 }

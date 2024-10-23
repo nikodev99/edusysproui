@@ -1,12 +1,17 @@
 import {z} from "zod";
 import dayjs from "dayjs";
 import {addressSchema} from "./addressSchema.ts";
-import {teacherClassCourseSchema} from "./teacherClassCourseSchema.ts";
 import {schoolSchema} from "./schoolSchema.ts";
+import {courseSchema} from "./courseSchema.ts";
+import {classeSchema} from "./classeSchema.ts";
 
 export const teacherSchema = z.object({
-    firstName: z.string().min(1, {message: "Prénom est requis"}),
-    lastName: z.string().min(3, {message: "Nom de famille est requis"}),
+    firstName: z.string({required_error: 'Prénom(s) est réquis'})
+        .min(3, {message: "Prénom doit contenir au moins trois caractères"})
+        .regex(/^[a-zA-Z-\s]+$/, {message: 'Le prénom doit contenir uniquement des lettres, des tirets et des espaces'}),
+    lastName: z.string({required_error: 'Nom(s) est réquis'})
+        .min(3, {message: "Nom de famille doit contenir au moins trois caractères"})
+        .regex(/^[a-zA-Z-\s]+$/, {message: 'Le Nom de famille doit contenir uniquement des lettres, des tirets et des espaces'}),
     maidenName: z.string().nullable().optional(),
     status: z.union([z.string({required_error: "Le status est requis"}), z.number({required_error: "Le status est requis"})]),
     birthDate: z.preprocess(
@@ -41,7 +46,8 @@ export const teacherSchema = z.object({
             return undefined
         }, z.date().refine(date => !isNaN(date.getTime()), {message: 'Date invalide'})
     ).optional(),
-    teacherClassCourses: z.array(teacherClassCourseSchema),
+    courses: z.array(courseSchema).optional(),
+    classes: z.array(classeSchema, {required_error: "La(es) classe(s) de l'enseignants est (sont) requis"}),
     salaryByHour: z.number(),
     image: z.string().optional(),
     attachments: z.array(z.string()).optional(),

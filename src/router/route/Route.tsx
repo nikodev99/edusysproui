@@ -11,6 +11,7 @@ import TeacherList from "../../pages/teacher/TeacherList.tsx";
 import GuardianList from "../../pages/guardian/GuardianList.tsx";
 import GuardianView from "../../pages/guardian/GuardianView.tsx";
 import AddTeacher from "../../pages/teacher/AddTeacher.tsx";
+import TeacherView from "../../pages/teacher/TeacherView.tsx";
 
 export const Route = createBrowserRouter([
     {
@@ -36,7 +37,8 @@ export const Route = createBrowserRouter([
                 path: 'teachers',
                 children: [
                     { path: '', element: <TeacherList /> },
-                    { path: 'new', element: <AddTeacher /> }
+                    { path: 'new', element: <AddTeacher /> },
+                    { path: ':id', element: <TeacherView /> }
                 ]
             },
             {

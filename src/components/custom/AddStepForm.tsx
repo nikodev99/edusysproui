@@ -12,12 +12,13 @@ import FormSuccess from "../../components/ui/form/FormSuccess.tsx";
 import PageWrapper from "../../components/ui/layout/PageWrapper.tsx";
 import {redirectTo} from "../../context/RedirectContext.ts";
 import {requiredMark} from "../../utils/tsxUtils.tsx";
+import {ValidationAlert} from "../ui/form/ValidationAlert.tsx";
 
 interface AddStepsProps<TFieldValues extends FieldValues> {
     docTitle: Metadata,
     breadCrumb: Breadcrumb[]
     addLink: string
-    HandleForm: UseFormReturn<TFieldValues>
+    handleForm: UseFormReturn<TFieldValues>
     triggerNext: (current: number) => void
     onSubmit: (data: TFieldValues) => void
     steps: {title: ReactNode, content: ReactNode}[]
@@ -31,13 +32,13 @@ const AddStepForm = <TFieldValues extends FieldValues>(
         docTitle,
         breadCrumb,
         addLink,
-        HandleForm,
+        handleForm,
         triggerNext,
         onSubmit,
         steps,
         messages,
         isPending,
-        stepsDots
+        stepsDots,
     }: AddStepsProps<TFieldValues>
 ) => {
 
@@ -45,14 +46,24 @@ const AddStepForm = <TFieldValues extends FieldValues>(
     const items = setBreadcrumb(breadCrumb);
 
     const [btnLoading, setBtnLoading] = useState<boolean[]>([])
+    const [hasErrors, setHasErrors] = useState<boolean>(false);
 
     const location = useLocation()
     const queryParam = queryString.parse(location.search)
     const stepNumber = Number(queryParam.step) || 0
     const current = stepNumber > 5 ? 0 : stepNumber
     const {error, success} = messages
+    const {handleSubmit, formState: {errors}, clearErrors} = handleForm
 
-    const next = async () => triggerNext(current)
+    const next = async () => {
+        triggerNext(current)
+        if(errors && Object.keys(errors).length > 0) {
+            setHasErrors(true)
+        }else {
+            setHasErrors(false)
+            clearErrors()
+        }
+    }
 
     const prev = () => redirectTo(`${addLink}?step=${current - 1}`)
 
@@ -73,7 +84,7 @@ const AddStepForm = <TFieldValues extends FieldValues>(
                 content: 'Souhaitez vous vraiment poursuivre avec l\'inscription ?',
                 okText: 'Confirmer',
                 cancelText: 'Annuler',
-                onOk: () => HandleForm.handleSubmit(onSubmit)()
+                onOk: () => handleSubmit(onSubmit)()
             })
         }, 2000)
     }
@@ -84,12 +95,16 @@ const AddStepForm = <TFieldValues extends FieldValues>(
         <>
             <PageHierarchy items={items as [{title: string|ReactNode, path?: string}]}/>
             <PageWrapper>
+                {hasErrors && <ValidationAlert
+                    alertMessage='Une ou plusieurs erreurs de validation détectés'
+                    message={Object.values(errors).map(err => err?.message) as string[]}
+                />}
                 {error && (<FormError message={error}/>)}
                 {success && (<FormSuccess message={success} toRedirect={true}/>)}
                 <Flex className='inscription-wrapper' vertical>
                     <div className='form-wrapper'>
                         <Form layout="vertical" initialValues={{requiredMarkValue: 'customize'}}
-                              requiredMark={requiredMark} onFinish={HandleForm.handleSubmit(onSubmit)}>
+                              requiredMark={requiredMark} onFinish={handleForm.handleSubmit(onSubmit)}>
                             <div className="step-wrapper">
                                 <Steps current={current} progressDot={stepsDots as never} items={stepItems}/>
                             </div>

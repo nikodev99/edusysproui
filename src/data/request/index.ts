@@ -15,7 +15,7 @@ export {
 } from '../repository/guardianRepository'
 export {getAllStudentScores} from '../repository/scoreRepository'
 export {getStudentAttendances, getAllStudentAttendances} from '../repository/attendanceRepository.ts'
-export {getAllTeachers, getSearchedTeachers} from '../repository/teacherRepository'
+export {getAllTeachers, getSearchedTeachers, getTeacherById} from '../repository/teacherRepository'
 export {getAllCourses} from '../repository/courseRepository.ts'
 
 

@@ -2,7 +2,8 @@ import {Status} from "../enums/status.ts";
 import {Address} from "./address.ts";
 import {School} from "./school.ts";
 import {Gender} from "../enums/gender.ts";
-import {TeacherClassCourse} from "./TeacherClassCourse.ts";
+import {Classe} from "./classe.ts";
+import {Course} from "./course.ts";
 
 export interface Teacher {
     id?: string
@@ -19,7 +20,8 @@ export interface Teacher {
     image?: string
     telephone?: string
     hireDate?: Date
-    teacherClassCourses?: TeacherClassCourse[]
+    classes?: Classe[]
+    courses?: Course[]
     salaryByHour?: number
     attachments?: string[]
     schools?: School

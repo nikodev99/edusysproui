@@ -82,9 +82,13 @@ const CardList = <TData extends object>({content, isActive, isLoading, dropdownI
                         gender: t.gender,
                         reference: t.emailId,
                         tag: statusTags(t.status as Status, t.gender === Gender.FEMME),
-                        description: t.courses && t.courses.length > 0 ?
-                            t.courses.map((c, i) => (<p className='matter card' key={i}>{c.course}</p>)) :
-                            t.classes?.map((c, i) => (<p className='matter card' key={i}>{c.name}</p>))
+                        description: t.courses && t.courses.length > 0
+                            ? t.courses.map((tcc, i) => (
+                                <p className='matter card' key={i}>{tcc?.course}</p>
+                            ))
+                            : t.classes?.map((c, i) => (
+                                <p className='matter card' key={i}>{c?.name}</p>
+                            ))
                     })) as DataProps[]
                 }
                 return [] as DataProps[]

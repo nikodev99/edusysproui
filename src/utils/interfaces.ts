@@ -7,7 +7,7 @@ import {
     UseFormStateReturn,
     ControllerFieldState,
     ControllerRenderProps,
-    FieldPath,
+    FieldPath, UseFormClearErrors,
 } from "react-hook-form";
 import {z} from "zod";
 import {enrollmentSchema, guardianSchema, studentSchema, teacherSchema} from "../schema";
@@ -51,11 +51,13 @@ export interface BreadcrumbItems {
 
 export interface Control<T extends FieldValues> {
     control: HookControl<T>
+    clearErrors?: UseFormClearErrors<FieldValues>
 }
 
 export interface ZodProps<T extends FieldValues> {
     control: HookControl<T>
     errors: FieldErrors<T>
+    clearErrors?: UseFormClearErrors<T>
     validationTriggered?: boolean,
     showField?: boolean
 }

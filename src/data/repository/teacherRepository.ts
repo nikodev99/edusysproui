@@ -22,3 +22,7 @@ export const getAllTeachers = (page: number, size: number, sortCriteria?: string
 export const getSearchedTeachers = (input: string) => {
     return apiClient.get<Teacher[]>("/teachers/search/", {params: {q: input}})
 }
+
+export const getTeacherById = (teacherId: string): Promise<AxiosResponse<Teacher>> => {
+    return apiClient.get<Teacher>(`/teachers/${teacherId}`)
+}

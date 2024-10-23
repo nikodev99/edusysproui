@@ -1,5 +1,5 @@
 import {getShortSortOrder} from "../../utils/utils.ts";
-import {getAllTeachers, getSearchedTeachers} from "../repository/teacherRepository.ts";
+import {getAllTeachers, getSearchedTeachers, getTeacherById} from "../repository/teacherRepository.ts";
 import {Teacher} from "../../entity";
 import {ErrorCatch} from "./error_catch.ts";
 
@@ -10,6 +10,10 @@ export const fetchTeachers = async (page: number, size: number, sortField?: stri
         return await getAllTeachers(page, size, `${sortField}:${sortOrder}`);
     }
     return await getAllTeachers(page, size)
+}
+
+export const fetchTeacherById = async (teacherId: string) => {
+    return await getTeacherById(teacherId)
 }
 
 export const fetchSearchedTeachers = async (searchInput: string) => {

@@ -5,8 +5,8 @@ import {useForm} from "react-hook-form";
 import {AddressOwner} from "../../core/shared/sharedEnums.ts";
 import AddressForm from "../../components/forms/AddressForm.tsx";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {TeacherClassCourseSchema, TeacherSchema} from "../../utils/interfaces.ts";
-import {teacherSchema} from "../../schema";
+import {TeacherSchema} from "../../utils/interfaces.ts";
+import {ClasseSchema, CourseSchema, teacherSchema} from "../../schema";
 import {AddStepForm} from "../../components/custom/AddStepForm.tsx";
 import {customDot} from "../../utils/tsxUtils.tsx";
 import {redirectTo} from "../../context/RedirectContext.ts";
@@ -40,8 +40,10 @@ const AddTeacher = () => {
     const [validationTriggered, setValidationTriggered] = useState(false)
     const [showMaidenName, setShowMaidenName] = useState(false)
     const [image, setImage] = useState<string | undefined>(undefined)
-    const [isReset, setIsReset] = useState<boolean>(false)
-    const [teacherClassCourse, setTeacherClassCourse] = useState<TeacherClassCourseSchema[]>([])
+    const [classes, setClasses] = useState<ClasseSchema[]>([])
+    const [defaultClasses, setDefaultClasses] = useState<number[]>()
+    const [courses, setCourses] = useState<CourseSchema[]>([])
+    const [defaultCourses, setDefaultCourses] = useState<number[]>()
     const [isPending, startTransition] = useTransition()
 
     const addUrl = text.teacher.group.add.href
@@ -50,14 +52,15 @@ const AddTeacher = () => {
         resolver: zodResolver(teacherSchema)
     })
 
-    const {watch, control, formState: {errors, isLoading}, setValue, trigger, reset} = form
+    const {watch, control, formState: {errors, isLoading}, setValue, trigger, reset, clearErrors} = form
 
     const formData = watch()
-    console.log('Data entered: ', formData)
-    console.log('error encountered: ', errors)
 
-    const handleTeacherClassCourse = (classCourses: TeacherClassCourseSchema[]) => {
-        setValue('teacherClassCourses', classCourses, {
+    const handleTeacherClassCourse = ({ courses, classes }: { courses: CourseSchema[], classes: ClasseSchema[] }) => {
+        setValue('classes', classes, {
+            shouldValidate: true,
+        })
+        setValue('courses', courses, {
             shouldValidate: true,
         })
         setValue('school.id', text.schoolID, {
@@ -69,11 +72,12 @@ const AddTeacher = () => {
         if(formData) {
             setShowMaidenName(formData.gender === Gender.FEMME && formData.status === Status.MARIE)
         }
-    }, [formData, teacherClassCourse])
+    }, [formData, classes, courses, errors])
 
     const validate = (validateFields: boolean, current: number) => {
         if (validateFields) {
             setValidationTriggered(true);
+            clearErrors()
             redirectTo(`${addUrl}?step=${current + 1}`)
         }
     }
@@ -96,10 +100,15 @@ const AddTeacher = () => {
                     validate(validateFields, current)
                     break
                 case 2:
-                    if (teacherClassCourse.length != 0) {
-                        handleTeacherClassCourse(teacherClassCourse)
+                    if (classes.length != 0) {
+                        handleTeacherClassCourse({
+                            classes: classes,
+                            courses: courses
+                        })
+                        setDefaultCourses(courses ? courses.map(c => c.id) : [])
+                        setDefaultClasses(classes.map(c => c.id))
                     }
-                    validate(teacherClassCourse.length != 0, current)
+                    validate(classes.length != 0, current)
                     break
                 case 3:
                     validateFields = await trigger([
@@ -120,9 +129,12 @@ const AddTeacher = () => {
         }
     }
 
-    const handleClassesAndCourses = (finalArray: TeacherClassCourseSchema[]) => {
-        setTeacherClassCourse(finalArray)
+    const handleClassesAndCourses = ({ courses, classes }: { courses?: CourseSchema[], classes?: ClasseSchema[] }) => {
+        setClasses(classes!)
+        setCourses(courses ? courses : [])
     }
+
+    console.log("Errors: ", errors)
 
     const steps = [
         {
@@ -132,6 +144,7 @@ const AddTeacher = () => {
                 errors={errors}
                 edit={false}
                 showField={showMaidenName}
+                clearErrors={clearErrors}
             />
         },
         {
@@ -142,11 +155,16 @@ const AddTeacher = () => {
                 edit={false}
                 errors={errors}
                 validationTriggered={validationTriggered}
+                clearErrors={clearErrors}
             />
         },
         {
             title: "Matières & Classes",
-            content: <TeacherAcademicForm onClose={handleClassesAndCourses} reset={isReset} />
+            content: <TeacherAcademicForm
+                onClose={handleClassesAndCourses}
+                defaultClasses={defaultClasses}
+                defaultCourses={defaultCourses}
+            />
         },
         {
             title: "Embauche",
@@ -154,6 +172,7 @@ const AddTeacher = () => {
                 control={control}
                 errors={errors}
                 showField={false}
+                clearErrors={clearErrors}
             />
         },
         {
@@ -177,7 +196,6 @@ const AddTeacher = () => {
                     if (resp.isSuccess) {
                         setSuccessMessage(resp.success)
                         reset()
-                        setIsReset(true)
                     }else {
                         setErrorMessage(resp.error)
                     }
@@ -191,7 +209,7 @@ const AddTeacher = () => {
             docTitle={metadata}
             breadCrumb={items}
             addLink={addUrl}
-            HandleForm={form}
+            handleForm={form}
             triggerNext={triggerNext}
             onSubmit={onsubmit}
             steps={steps}

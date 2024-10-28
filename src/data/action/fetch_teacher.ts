@@ -38,6 +38,12 @@ const sortedField = (sortField: string) => {
     switch (sortField) {
         case 'lastName':
             return 't.lastName'
+        case 'gender':
+            return 't.gender'
+        case 'birthDate':
+            return 't.birthDate'
+        case 'status':
+            return 't.status'
         default:
             return undefined;
     }

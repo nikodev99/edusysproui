@@ -2,7 +2,7 @@ import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {text} from "../../utils/text_display.ts";
 import {Breadcrumb, setBreadcrumb} from "../../core/breadcrumb.tsx";
 import {redirectTo} from "../../context/RedirectContext.ts";
-import {LuEye} from "react-icons/lu";
+import {LuEye, LuMoreVertical} from "react-icons/lu";
 import {BiSolidUserAccount} from "react-icons/bi";
 import {AiOutlineUserDelete, AiOutlineUsergroupAdd} from "react-icons/ai";
 import {TableColumnsType} from "antd";
@@ -28,7 +28,7 @@ const TeacherList = () => {
 
     const pageHierarchy = setBreadcrumb([
         {
-            title: text.teacher.label
+            title: text.teacher.label + 's'
         }
     ])
 
@@ -91,6 +91,8 @@ const TeacherList = () => {
             align: 'center',
             //TODO the filter directly to the database
             filters: enumToObjectArrayForFiltering(Gender),
+            sorter: true,
+            showSorterTooltip: false,
             onFilter: (value, record) => record?.gender ? record.gender.indexOf(value as string) === 0 : false
         },
         {
@@ -99,6 +101,7 @@ const TeacherList = () => {
             key: 'birthDate',
             align: 'center',
             responsive: ['md'],
+            sorter: true,
             render: (text) => getAge(text) + 'ans'
         },
         {
@@ -107,6 +110,8 @@ const TeacherList = () => {
             key: 'status',
             align: 'center',
             responsive: ['md'],
+            sorter: true,
+            showSorterTooltip: false,
             render: (text, {gender}) => statusTags(text, gender === Gender.FEMME)
         },
         {
@@ -146,7 +151,13 @@ const TeacherList = () => {
             dataIndex: 'id',
             key: 'action',
             align: 'right',
-            render: (text) => (<ActionButton items={getItems(text)} />)
+            width: '6%',
+            render: (text) => (
+                <ActionButton
+                    icon={<LuMoreVertical size={30} style={{borderStyle: 'border'}} />}
+                    items={getItems(text)}
+                />
+            )
         }
     ]
 

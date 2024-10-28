@@ -1,12 +1,11 @@
 import {ChangeEvent, useEffect, useState} from "react";
 import {
     Input,
-    Pagination,
+    Pagination, Segmented,
     Table,
     TableColumnsType,
     TablePaginationConfig,
 } from "antd";
-import {TfiLayoutGrid2Alt, TfiViewList} from "react-icons/tfi";
 import { FilterValue, SorterResult } from "antd/es/table/interface";
 import LocalStorageManager from "../../core/LocalStorageManager.ts";
 import Responsive from "../../components/ui/layout/Responsive.tsx";
@@ -17,6 +16,7 @@ import {useFetch} from "../../hooks/useFetch.ts";
 import {AxiosResponse} from "axios";
 import {Response} from '../../data/action/response.ts'
 import {ItemType} from "antd/es/menu/interface";
+import {LuLayoutDashboard, LuList} from "react-icons/lu";
 
 interface ListViewerProps<TData extends object, TError> {
     callback: () => Promise<AxiosResponse<TData, TError | TData[]>>
@@ -124,12 +124,14 @@ const ListViewer = <TData extends object, TError>(
 
     const selectableIcons = [
         {
-            key: 1,
-            element: <TfiViewList size={19} />
+            label: '',
+            value: '1',
+            icon: <LuList />
         },
         {
-            key: 2,
-            element: <TfiLayoutGrid2Alt size={19} />
+            label: '',
+            value: '2',
+            icon: <LuLayoutDashboard />
         }
     ]
 
@@ -143,11 +145,11 @@ const ListViewer = <TData extends object, TError>(
                     <PageDescription count={dataCount} title={`${countTitle}${dataCount > 1 ? 's' : ''}`} isCount={hasCount !== undefined ? hasCount : true}/>
                     <div className='flex__end'>
                         <Input size='middle' placeholder='Recherche...' style={{width: '300px'}} className='search__input' onChange={handleSearchInput} />
-                        {selectableIcons.map(icon => (
-                            <span key={icon.key} className={`list__icon ${activeIcon === icon.key ? 'active' : ''}`} onClick={() => selectedIcon(icon.key)}>
-                                {icon.element}
-                            </span>
-                        ))}
+                        <Segmented
+                            options={selectableIcons}
+                            onChange={(value) => selectedIcon(Number.parseInt(value))}
+                            value={activeIcon.toString()}
+                        />
                     </div>
                 </div>
                 <Responsive gutter={[16, 16]} className={`${activeIcon !== 2 ? 'student__list__datatable' : ''}`}>
@@ -162,7 +164,7 @@ const ListViewer = <TData extends object, TError>(
                             />
                             : <Table
                                 style={{width: '100%'}}
-                                rowKey="id"
+                                rowKey={'id' as keyof TData}
                                 columns={tableColumns}
                                 dataSource={content as TData[]}
                                 loading={isLoading}

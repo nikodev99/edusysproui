@@ -216,3 +216,30 @@ export interface EditProps<TData extends object> {
 export type RedirectFunction = (link: string) => void;
 export type Moment = Date | number[] | string
 export type Color = string
+export type Counted = Record<string, number>
+
+export type WidgetItem = {
+    title: ReactNode
+    value: number | string
+    bottomValue?: ReactNode
+    precision?: number
+    valueStyle?: CSSProperties
+    prefix?: ReactNode
+    suffix?: ReactNode
+}
+
+export interface WidgetProps {
+    items: WidgetItem[]
+}
+
+export type TabItemType = {
+    closeIcon?: ReactNode
+    destroyInactiveTabPane?: boolean
+    disabled?: boolean
+    forceRender?: boolean
+    key?: string
+    label?: ReactNode
+    icon?: ReactNode
+    children?: ReactNode
+    closable?: boolean
+}

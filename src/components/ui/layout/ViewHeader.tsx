@@ -59,7 +59,7 @@ const ViewHeader = ({isLoading, setEdit, closeState, avatarProps, blockProps, it
             ))}
 
             <Flex className='block' align='flex-start' vertical gap={4}>
-                <Dropdown menu={{items: [
+                <Dropdown arrow menu={{items: [
                         {key: 1, label: 'Editer', icon: <LuPencil />, onClick: handleClick},
                         ...additionalItems
                     ]}} trigger={['click']}>

@@ -1,6 +1,7 @@
 import '../ui.scss'
 import BlockItem from "./BlockItem.tsx";
 import {isValidElement, ReactNode} from "react";
+import Masonry, {ResponsiveMasonry} from "react-responsive-masonry";
 
 interface BlockProps {
     items: ReactNode[]
@@ -9,8 +10,8 @@ interface BlockProps {
 const Block = ({items}: BlockProps) => {
 
     return(
-        <div className='block-wrapper'>
-            <div className='block-mansory'>
+        <ResponsiveMasonry columnsCountBreakPoints={{350: 1, 750: 2, 900: 3, 1680: 4}}>
+            <Masonry gutter='1em'>
                 {items.map((item, index) => {
                     if (isValidElement(item)) {
                         const { dataKey } = item.props;
@@ -18,8 +19,8 @@ const Block = ({items}: BlockProps) => {
                     }
                     return undefined
                 })}
-            </div>
-        </div>
+            </Masonry>
+        </ResponsiveMasonry>
     )
 }
 

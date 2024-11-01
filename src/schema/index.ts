@@ -9,6 +9,7 @@ export {schoolSchema} from './models/schoolSchema'
 export {guardianSchema} from './models/guardianSchema'
 export {studentSchema} from './models/studentSchema'
 export {teacherSchema} from './models/teacherSchema'
+export {addressSchema} from './models/addressSchema'
 
 export type CourseSchema = z.infer<typeof courseSchema>
 export type ClasseSchema = z.infer<typeof classeSchema>

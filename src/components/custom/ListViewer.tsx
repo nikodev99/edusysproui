@@ -174,7 +174,7 @@ const ListViewer = <TData extends object, TError>(
                             />
                     }
                 </Responsive>
-                <div style={{textAlign: 'right', marginTop: '30px'}}>
+                <div style={{textAlign: 'right', marginTop: '15px'}}>
                     <Pagination
                         current={currentPage}
                         defaultCurrent={1}

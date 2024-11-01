@@ -1,4 +1,10 @@
-import {getEnrolledStudents, getRandomStudentClassmate, getStudentById, searchEnrolledStudents} from "../request";
+import {
+    countStudent,
+    getEnrolledStudents,
+    getRandomStudentClassmate,
+    getStudentById,
+    searchEnrolledStudents
+} from "../request";
 import {getShortSortOrder} from "../../utils/utils.ts";
 import {ErrorCatch} from "./error_catch.ts";
 import {Enrollment} from "../../entity";
@@ -37,6 +43,24 @@ export const fetchSearchedEnrolledStudents = async (searchInput: string) => {
 export const fetchStudentClassmatesRandomly = async (enrolledStudent: Enrollment) => {
     try {
         const resp = await getRandomStudentClassmate(enrolledStudent.student.id, enrolledStudent.classe.id)
+        if (resp && 'data' in resp) {
+            return {
+                isSuccess: true,
+                data: resp.data
+            }
+        }else {
+            return {
+                isSuccess: false
+            }
+        }
+    }catch (err: unknown) {
+        return ErrorCatch(err)
+    }
+}
+
+export const countStudents = async () => {
+    try {
+        const resp = await countStudent()
         if (resp && 'data' in resp) {
             return {
                 isSuccess: true,

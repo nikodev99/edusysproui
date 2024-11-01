@@ -3,6 +3,7 @@ import countries from 'world-countries'
 import dayjs from "dayjs";
 import 'dayjs/locale/fr.js'
 import {BloodType} from "../entity/enums/bloodType.ts";
+import {ProgressProps} from "antd";
 
 export const createElement = (htmlElement: string, parentNode: Element|null, attributes?: {[key: string]: string}, content?: string) => {
 
@@ -189,6 +190,19 @@ export const chooseColor = (name: string): string | null | undefined => {
         }
 }
 
+export const createConicGradient = (colors: string[], hasStep?: boolean): string[] | ProgressProps['strokeColor'] => {
+    if(hasStep) {
+        const step = 100 / (colors.length - 1)
+        return colors.reduce((gradient: Record<string, string>, color, index) => {
+            const percentage = `${Math.round(step * index)}%`
+            gradient[percentage] = color
+            console.log('returned: ', gradient)
+            return gradient
+        }, {})
+    }
+    return colors;
+}
+
 export const bloodLabel = (blood: BloodType) => {
     switch (blood) {
         case BloodType.A: return 'A+'
@@ -207,6 +221,29 @@ export const setFirstName = (firstName?: string) => {
         return firstName.split(' ')
             .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
             .join(' ')
+    return ''
+}
+
+export const setName = (lastName?: string, firstName?: string, maidenName?: string, showMaiden?: boolean) => {
+    const fullRealName = setFirstName(`${lastName} ${firstName}`)
+    if (lastName && firstName) {
+        if (maidenName) {
+            return showMaiden ? setFirstName(`${lastName} née ${maidenName} ${firstName}`) : fullRealName
+        }else {
+            return fullRealName
+        }
+    }
+    return ''
+}
+
+export const setLastName = (lastName?: string, maidenName?: string) => {
+    if (lastName) {
+        if (maidenName) {
+            return `${lastName} née ${maidenName}`.toUpperCase()
+        }else {
+            return lastName.toUpperCase()
+        }
+    }
     return ''
 }
 

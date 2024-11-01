@@ -34,7 +34,7 @@ export const menuItems: Required<MenuProps>['items'][number][] = [
     {
         key: text.teacher.href,
         icon: <LuUsers />,
-        label: text.teacher.label
+        label: text.teacher.label + 's'
     },
     {
         key: '/employees',

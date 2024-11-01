@@ -215,13 +215,8 @@
   }
 }
 
-.tabs {
-  &.sticky {
-    position: -webkit-sticky; /* For Safari */
-    position: sticky;
-    top: 0;
-    z-index: 1000; /* Adjust as needed */
-  }
+.sticky-wrapper {
+  backdrop-filter: blur(8px);
 }
 
 .profile-card {
@@ -269,7 +264,7 @@
 
     .highlight-row {
       background-color: lighten(#006400, 70%);
-      color: inherit;
+      color: #006400;
 
       &.ant-table-row {
         &:hover > .ant-table-cell {

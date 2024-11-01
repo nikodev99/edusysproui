@@ -37,9 +37,10 @@ interface StudentInfoProps {
 }
 
 interface HistoryData {
-    academicYear: string;
-    classeName: string;
-    yearAmount: number;
+    dataId: string
+    academicYear: string
+    classeName: string
+    yearAmount: number
 }
 
 const IndividualInfo = ({enrollment}: StudentInfoProps) => {
@@ -193,6 +194,10 @@ const GraphSection = ({enrollment}: StudentInfoProps) => {
 const SchoolHistory = ({enrollment}: StudentInfoProps) => {
     const {student: {enrollments}} = enrollment
 
+    const format = (input: number) => {
+        return Intl.NumberFormat('fr-CG', {style: 'currency', currency: 'XAF'}).format(input)
+    }
+
     const columns: TableColumnsType<HistoryData> = [
         {
             title: "Année",
@@ -212,11 +217,13 @@ const SchoolHistory = ({enrollment}: StudentInfoProps) => {
             title: "Montant Annuel",
             dataIndex: 'yearAmount',
             key: 'yearAmount',
-            align: 'center'
+            align: 'center',
+            render: (text) => (<span>{text ? format(text) : ''}</span>),
         },
     ];
 
     const data: HistoryData[] = enrollments?.map((e) => ({
+        dataId: e.classe.id.toString(),
         academicYear: e.academicYear?.academicYear ?? '',
         classeName: e.classe?.name ?? '',
         yearAmount: (e.classe?.monthCost ?? 0) * (monthsBetween(e.academicYear?.startDate, e.academicYear?.endDate) ?? 0),
@@ -230,7 +237,7 @@ const SchoolHistory = ({enrollment}: StudentInfoProps) => {
                 columns={columns}
                 dataSource={data}
                 pagination={false}
-                rowKey={(record) => record.classeName}
+                rowKey={(record) => record.dataId}
             />
         </Section>
     )

@@ -20,6 +20,7 @@ import {
 } from "../../components/ui-kit-student";
 import {LuTrash, LuUserCircle, LuUserPlus} from "react-icons/lu";
 import {redirectTo} from "../../context/RedirectContext.ts";
+import {ViewRoot} from "../../components/custom/ViewRoot.tsx";
 
 const StudentView = () => {
 
@@ -38,6 +39,7 @@ const StudentView = () => {
     useDocumentTitle({
         title: `EduSysPro - ${studentName}`,
         description: "Student description",
+        hasEdu: false
     })
 
     const pageHierarchy = setBreadcrumb([
@@ -70,13 +72,11 @@ const StudentView = () => {
         refetch().then(r => r.data)
     }
 
-    const skeleton = <Skeleton loading={isLoading} active={isLoading} paragraph={{rows: 5}} />
-
     error ? console.log('error occured: ', error) : ''
 
     return(
         <>
-            <PageHierarchy items={pageHierarchy as [{title: string | ReactNode, path?: string}]} mBottom={25} />
+            <PageHierarchy items={pageHierarchy as [{ title: string | ReactNode, path?: string }]} mBottom={25}/>
             <ViewHeader
                 isLoading={isLoading}
                 setEdit={handleOpenDrawer}
@@ -88,30 +88,39 @@ const StudentView = () => {
                     reference: enrolledStudent?.student.reference
                 }}
                 blockProps={[
-                    {title: 'Tuteur Légal', mention: setFirstName(`${enrolledStudent?.student.guardian?.lastName} ${enrolledStudent?.student.guardian?.firstName}`)},
+                    {
+                        title: 'Tuteur Légal',
+                        mention: setFirstName(`${enrolledStudent?.student.guardian?.lastName} ${enrolledStudent?.student.guardian?.firstName}`)
+                    },
                     {title: enrolledStudent?.classe.name, mention: enrolledStudent?.classe.grade.section}
                 ]}
                 items={[
-                    {key: 2, label: 'Tuteur légal', icon: <LuUserCircle />, onClick: () => redirectTo(text.guardian.group.view.href + enrolledStudent?.student.guardian.id)},
-                    {key: 3, label: 'Réinscrire', icon: <LuUserPlus />},
-                    {key: 4, label: 'Retirer l\'étudiant', danger: true, icon: <LuTrash />}
+                    {
+                        key: 2,
+                        label: 'Tuteur légal',
+                        icon: <LuUserCircle/>,
+                        onClick: () => redirectTo(text.guardian.group.view.href + enrolledStudent?.student.guardian.id)
+                    },
+                    {key: 3, label: 'Réinscrire', icon: <LuUserPlus/>},
+                    {key: 4, label: 'Retirer l\'étudiant', danger: true, icon: <LuTrash/>}
                 ]}
             />
-            <section className="sticky-wrapper" style={{ position: 'relative' }}>
-                <Tabs rootClassName={`tabs`}
-                      items={[
-                          {key: '1', label: 'Info', children: (enrolledStudent ? <StudentInfo enrollment={enrolledStudent} seeMore={handleTabChange} /> : skeleton)},
-                          {key: '2', label: 'Examens', children: (enrolledStudent ? <StudentExam enrolledStudent={enrolledStudent} />: skeleton)},
-                          {key: '3', label: 'Présence', children: (enrolledStudent ? <StudentAttendance  enrolledStudent={enrolledStudent}/>: skeleton)},
-                          {key: '4', label: 'Condisciples', children: (enrolledStudent ? <StudentClasse setActiveKey={handleTabChange} enrolledStudent={enrolledStudent} />: skeleton)},
-                          {key: '5', label: 'Discipline', children: (enrolledStudent ? <StudentHistory /> : skeleton)},
-                      ]}
-                      onChange={handleTabChange}
-                      defaultActiveKey={tabKey}
-                      activeKey={tabKey}
-                      centered
-                />
-            </section>
+            <ViewRoot
+                exists={enrolledStudent != null}
+                items={[
+                    {label: 'Info', children: <StudentInfo enrollment={enrolledStudent!} seeMore={handleTabChange}/>},
+                    {label: 'Examens', children: <StudentExam enrolledStudent={enrolledStudent!}/>},
+                    {label: 'Présence', children: <StudentAttendance enrolledStudent={enrolledStudent!}/>},
+                    {label: 'Condisciples', children: <StudentClasse setActiveKey={handleTabChange} enrolledStudent={enrolledStudent!}/>},
+                    {label: 'Discipline', children: <StudentHistory/>},
+                ]}
+                tab={{
+                    onChange: handleTabChange,
+                    defaultActiveKey: tabKey,
+                    activeKey: tabKey,
+                    centered: true,
+                }}
+            />
             <section>
                 <StudentEditDrawer
                     open={openDrawer}

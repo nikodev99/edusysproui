@@ -1,6 +1,6 @@
 import {apiClient, request} from "../axiosConfig.ts";
 import {Teacher} from "../../entity";
-import {TeacherSchema} from "../../utils/interfaces.ts";
+import {Counted, TeacherSchema} from "../../utils/interfaces.ts";
 import {AxiosResponse} from "axios";
 
 export const insertTeacher = async (teacher: TeacherSchema): Promise<AxiosResponse<Teacher>> => {
@@ -25,4 +25,8 @@ export const getSearchedTeachers = (input: string) => {
 
 export const getTeacherById = (teacherId: string): Promise<AxiosResponse<Teacher>> => {
     return apiClient.get<Teacher>(`/teachers/${teacherId}`)
+}
+
+export const getNumberOfStudentTaughtByTeacher = (teacherId: string) => {
+    return apiClient.get<Counted>(`/teachers/${teacherId}/count_student`)
 }

@@ -182,7 +182,7 @@ export const chooseColor = (name: string): string | null | undefined => {
             case 'T': return '#D2691E'; // Dark Chocolate
             case 'U': return '#FF7F50'; // Dark Coral
             case 'V': return '#E9967A'; // Dark Salmon
-            case 'W': return '#BDB76B'; // Dark Khaki
+            case 'W': return '#8d8950'; // Dark Khaki
             case 'X': return '#1E90FF'; // Dark Dodger Blue
             case 'Y': return '#483D8B'; // Dark Medium Slate Blue
             case 'Z': return '#4682B4'; // Dark Steel Blue

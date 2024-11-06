@@ -17,6 +17,8 @@ import {Gender} from "../../entity/enums/gender.ts";
 import {LuClipboardEdit, LuListChecks, LuSubtitles, LuTrash2, LuUserMinus} from "react-icons/lu";
 import {TeacherEditDrawer} from "../../components/ui-kit-teacher";
 import {useToggle} from "../../hooks/useToggle.ts";
+import {FcLibrary} from "react-icons/fc";
+import {AiOutlineArrowUp} from "react-icons/ai";
 
 const TeacherView = () => {
 
@@ -62,6 +64,7 @@ const TeacherView = () => {
         {
             title: 'Classes',
             value: teacher?.classes ? teacher?.classes.length : 0,
+            prefix: <AiOutlineArrowUp />
         },
         {
             title: 'Etudiants enseignés',

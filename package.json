@@ -13,7 +13,6 @@
   "dependencies": {
     "@hookform/resolvers": "^3.4.2",
     "@tanstack/react-query": "^5.45.1",
-    "@types/react-responsive-masonry": "^2.1.3",
     "@uploadcare/blocks": "^0.42.1",
     "@uploadcare/react-uploader": "^0.5.4",
     "antd": "^5.20.6",
@@ -29,7 +28,8 @@
     "react-highlight-words": "^0.20.0",
     "react-hook-form": "^7.51.3",
     "react-icons": "^5.2.1",
-    "react-responsive-masonry": "^2.4.1",
+    "react-masonify": "^0.0.2",
+    "react-photo-album": "^3.0.2",
     "react-router-dom": "^6.22.3",
     "react-sticky-el": "^2.1.0",
     "recharts": "^2.12.7",

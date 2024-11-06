@@ -7,7 +7,6 @@ import {ReactNode, useEffect, useState} from "react";
 import {Enrollment, Student} from "../../entity";
 import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
 import ViewHeader from "../../components/ui/layout/ViewHeader.tsx";
-import {Skeleton, Tabs} from "antd";
 import LocalStorageManager from "../../core/LocalStorageManager.ts";
 import {setFirstName} from "../../utils/utils.ts";
 import {useFetch} from "../../hooks/useFetch.ts";
@@ -30,6 +29,7 @@ const StudentView = () => {
     const [enrolledStudent, setEnrolledStudent] = useState<Enrollment | null>(null);
     const [tabKey, setTabKey] = useState<string>(activeTabKey)
     const [openDrawer, setOpenDrawer] = useState(false)
+    const [color, setColor] = useState('')
 
     const {data, isLoading, isSuccess, error, refetch} = useFetch(['student-id', id as string], fetchStudentById, [id])
 
@@ -78,6 +78,7 @@ const StudentView = () => {
         <>
             <PageHierarchy items={pageHierarchy as [{ title: string | ReactNode, path?: string }]} mBottom={25}/>
             <ViewHeader
+                pColor={setColor}
                 isLoading={isLoading}
                 setEdit={handleOpenDrawer}
                 closeState={openDrawer}
@@ -108,7 +109,7 @@ const StudentView = () => {
             <ViewRoot
                 exists={enrolledStudent != null}
                 items={[
-                    {label: 'Info', children: <StudentInfo enrollment={enrolledStudent!} seeMore={handleTabChange}/>},
+                    {label: 'Info', children: <StudentInfo enrollment={enrolledStudent!} seeMore={handleTabChange} color={color}/>},
                     {label: 'Examens', children: <StudentExam enrolledStudent={enrolledStudent!}/>},
                     {label: 'Présence', children: <StudentAttendance enrolledStudent={enrolledStudent!}/>},
                     {label: 'Condisciples', children: <StudentClasse setActiveKey={handleTabChange} enrolledStudent={enrolledStudent!}/>},

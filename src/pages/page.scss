@@ -194,6 +194,12 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
+    .add__btn {
+      color: #fcfcf9;
+      &:hover {
+        color: #fcfcf9!important;
+      }
+    }
   }
 
   .avatar-container {
@@ -258,7 +264,7 @@
       border-start-end-radius: unset!important;
     }
     .ant-table-thead .ant-table-cell{
-      background-color: $primary_color!important;
+      background-color: $primary_color;
       color: $text-color_over_primary_color!important;
     }
 
@@ -312,6 +318,9 @@
 
       .view__button {
         padding: 5px 5px 0;
+        button {
+          color: #fcfcf9!important;
+        }
       }
     }
   }

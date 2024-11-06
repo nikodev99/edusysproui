@@ -3,7 +3,7 @@ import Avatar from "./Avatar.tsx";
 import {LuChevronDown, LuPencil} from "react-icons/lu";
 import {setFirstName} from "../../../utils/utils.ts";
 import {useToggle} from "../../../hooks/useToggle.ts";
-import {ReactNode, useEffect} from "react";
+import {ReactNode, useEffect, useState} from "react";
 import {ItemType} from "antd/es/menu/interface";
 
 interface ViewProps {
@@ -14,17 +14,22 @@ interface ViewProps {
     blockProps:{title: ReactNode, mention: ReactNode}[]
     items?: ItemType[]
     btnLabel?: ReactNode
+    pColor?: (color: string) => void
 }
 
-const ViewHeader = ({isLoading, setEdit, closeState, avatarProps, blockProps, items, btnLabel}: ViewProps) => {
+const ViewHeader = ({isLoading, setEdit, closeState, avatarProps, blockProps, items, btnLabel, pColor}: ViewProps) => {
 
+    const [color, setColor] = useState<string>('')
     const [open, setOpen] = useToggle(false);
 
     useEffect(() => {
+        if (pColor) {
+            pColor(color)
+        }
         if (closeState !== open) {
             setOpen()
         }
-    }, [closeState, open, setOpen]);
+    }, [closeState, color, open, pColor, setOpen]);
 
     const {image, reference, lastName, firstName} = avatarProps
 
@@ -44,7 +49,7 @@ const ViewHeader = ({isLoading, setEdit, closeState, avatarProps, blockProps, it
     return(
         <Flex align='center' justify='space-between' component='header' className='view__block'>
             <Flex className="avatar-container" align='center' gap={10}>
-                <Avatar image={image} firstText={firstName} lastText={lastName} size={60} />
+                <Avatar image={image} firstText={firstName} lastText={lastName} size={60} setColor={setColor} />
                 <Flex className="legal" vertical justify='center'>
                     <span className='title'>{`${lastName?.toUpperCase()}, ${setFirstName(firstName)}`}</span>
                     <span className='mention'>{reference}</span>
@@ -63,7 +68,9 @@ const ViewHeader = ({isLoading, setEdit, closeState, avatarProps, blockProps, it
                         {key: 1, label: 'Editer', icon: <LuPencil />, onClick: handleClick},
                         ...additionalItems
                     ]}} trigger={['click']}>
-                    <Button type='primary' className='add__btn'>{btnLabel ? btnLabel : 'Gérer'} <LuChevronDown size={18} /></Button>
+                    <Button className='add__btn' style={{background: color}} icon={<LuChevronDown size={18} />} iconPosition='end'>
+                        {btnLabel ? btnLabel : 'Gérer'}
+                    </Button>
                 </Dropdown>
             </Flex>
         </Flex>

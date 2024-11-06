@@ -3,15 +3,16 @@ import {ReactNode} from "react";
 import VoidData from "./VoidData.tsx";
 
 interface PanelTableProps {
-    title: string
+    title: ReactNode
+    panelColor?: string
     data?: {
         statement?: string
         response: string | number | ReactNode
-        link?: string
+        link?: string,
     }[]
 }
 
-const PanelTable = ({title, data}: PanelTableProps) => {
+const PanelTable = ({title, data, panelColor}: PanelTableProps) => {
 
     const navigate = useNavigate()
 
@@ -19,7 +20,7 @@ const PanelTable = ({title, data}: PanelTableProps) => {
 
     return (
         <>
-            <div className="table-head"><span>{title}</span></div>
+            <div className="table-head" style={panelColor ? {backgroundColor: panelColor}: {}}><span>{title}</span></div>
             <div className="table-body">
                 {data?.length === 0 ? <VoidData /> : data?.map((d, i) => (
                     <div className="table-row" key={`${d.statement}-${i}`}>

@@ -37,4 +37,8 @@ body {
   .gray--color {
     color: $gray_color!important;
   }
+
+  button, input, select, textarea {
+    outline: none!important;
+  }
 }

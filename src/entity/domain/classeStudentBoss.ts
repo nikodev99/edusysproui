@@ -1,4 +1,4 @@
-import {AcademicYear} from "./AcademicYear.ts";
+import {AcademicYear} from "./academicYear.ts";
 import {Student} from "./student.ts";
 
 export interface ClasseStudentBoss {

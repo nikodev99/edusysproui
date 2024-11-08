@@ -236,12 +236,13 @@ export const setName = (lastName?: string, firstName?: string, maidenName?: stri
     return ''
 }
 
-export const setLastName = (lastName?: string, maidenName?: string) => {
+export const setLastName = (lastName?: string, maidenName?: string, upper ?: boolean) => {
     if (lastName) {
         if (maidenName) {
-            return `${lastName} née ${maidenName}`.toUpperCase()
+            const fullName = `${lastName} née ${maidenName}`;
+            return upper ? fullName.toUpperCase() : fullName
         }else {
-            return lastName.toUpperCase()
+            return upper ? lastName.toUpperCase() : lastName
         }
     }
     return ''
@@ -280,6 +281,10 @@ export const convertToM = (cm?: number) => {
 
 export const isNull = (word: string | undefined) => {
     return word === null || word === undefined || word === '' || word.length === 0;
+}
+
+export const hasField = <T extends object>(obj: T, field: keyof T): boolean => {
+    return Object.keys(obj).includes(field as string)
 }
 
 export const getShortSortOrder = (order: string | undefined): 'asc' | 'desc' | undefined => {

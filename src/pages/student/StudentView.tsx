@@ -8,7 +8,7 @@ import {Enrollment, Student} from "../../entity";
 import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
 import ViewHeader from "../../components/ui/layout/ViewHeader.tsx";
 import LocalStorageManager from "../../core/LocalStorageManager.ts";
-import {setFirstName} from "../../utils/utils.ts";
+import {setName} from "../../utils/utils.ts";
 import {useFetch} from "../../hooks/useFetch.ts";
 import {
     StudentAttendance,
@@ -33,8 +33,7 @@ const StudentView = () => {
 
     const {data, isLoading, isSuccess, error, refetch} = useFetch(['student-id', id as string], fetchStudentById, [id])
 
-    const studentName = enrolledStudent ?
-        `${setFirstName(enrolledStudent?.student.lastName)} ${setFirstName(enrolledStudent?.student.firstName)}` : 'Étudiant'
+    const studentName = enrolledStudent ? setName(enrolledStudent?.student.personalInfo.lastName, enrolledStudent?.student.personalInfo.firstName) : 'Étudiant'
 
     useDocumentTitle({
         title: `EduSysPro - ${studentName}`,
@@ -83,15 +82,15 @@ const StudentView = () => {
                 setEdit={handleOpenDrawer}
                 closeState={openDrawer}
                 avatarProps={{
-                    image: enrolledStudent?.student.image,
-                    firstName: enrolledStudent?.student.firstName,
-                    lastName: enrolledStudent?.student.lastName,
+                    image: enrolledStudent?.student.personalInfo.image,
+                    firstName: enrolledStudent?.student.personalInfo.firstName,
+                    lastName: enrolledStudent?.student.personalInfo.lastName,
                     reference: enrolledStudent?.student.reference
                 }}
                 blockProps={[
                     {
                         title: 'Tuteur Légal',
-                        mention: setFirstName(`${enrolledStudent?.student.guardian?.lastName} ${enrolledStudent?.student.guardian?.firstName}`)
+                        mention: studentName
                     },
                     {title: enrolledStudent?.classe.name, mention: enrolledStudent?.classe.grade.section}
                 ]}

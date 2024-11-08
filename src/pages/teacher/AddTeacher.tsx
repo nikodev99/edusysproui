@@ -2,11 +2,10 @@ import {text} from "../../utils/text_display.ts";
 import {useEffect, useState, useTransition} from "react";
 import {TeacherAcademicForm} from "../../components/ui-kit-teacher";
 import {useForm} from "react-hook-form";
-import {AddressOwner} from "../../core/shared/sharedEnums.ts";
+import {AddressOwner, IndividualType} from "../../core/shared/sharedEnums.ts";
 import AddressForm from "../../components/forms/AddressForm.tsx";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {TeacherSchema} from "../../utils/interfaces.ts";
-import {ClasseSchema, CourseSchema, teacherSchema} from "../../schema";
+import {ClasseSchema, CourseSchema, TeacherSchema, teacherSchema} from "../../schema";
 import {AddStepForm} from "../../components/custom/AddStepForm.tsx";
 import {customDot} from "../../utils/tsxUtils.tsx";
 import {redirectTo} from "../../context/RedirectContext.ts";
@@ -15,8 +14,8 @@ import {Gender} from "../../entity/enums/gender.ts";
 import {Status} from "../../entity/enums/status.ts";
 import {UploadCareForm} from "../../components/forms/UploadCareForm.tsx";
 import {OutputFileEntry} from "@uploadcare/blocks";
-import {TeacherHiring} from "../../components/ui-kit-teacher/component/TeacherHiring.tsx";
 import {addTeacher} from "../../data";
+import {IndividualForm} from "../../components/forms/IndividualForm.tsx";
 
 const AddTeacher = () => {
 
@@ -70,7 +69,7 @@ const AddTeacher = () => {
 
     useEffect(() => {
         if(formData) {
-            setShowMaidenName(formData.gender === Gender.FEMME && formData.status === Status.MARIE)
+            setShowMaidenName(formData.personalInfo.gender === Gender.FEMME && formData.personalInfo.status === Status.MARIE)
         }
     }, [formData, classes, courses, errors])
 
@@ -88,14 +87,16 @@ const AddTeacher = () => {
             switch (current) {
                 case 0:
                     validateFields = await trigger([
-                        "lastName", "firstName", "gender", "status", "birthDate", "cityOfBirth", "nationality", "emailId",
-                        "telephone"
+                        "personalInfo.lastName", "personalInfo.firstName", "personalInfo.gender", "personalInfo.status",
+                        "personalInfo.birthDate", "personalInfo.birthCity", "personalInfo.nationality", "personalInfo.emailId",
+                        "personalInfo.telephone"
                     ])
                     validate(validateFields, current)
                     break
                 case 1:
                     validateFields = await trigger([
-                        'address.number', 'address.street', 'address.neighborhood', 'address.city', 'address.country'
+                        'personalInfo.address.number', 'personalInfo.address.street', 'personalInfo.address.neighborhood',
+                        'personalInfo.address.city', 'personalInfo.address.country'
                     ])
                     validate(validateFields, current)
                     break
@@ -134,17 +135,16 @@ const AddTeacher = () => {
         setCourses(courses ? courses : [])
     }
 
-    console.log("Errors: ", errors)
-
     const steps = [
         {
             title: 'Information Personnelles',
-            content: <TeacherForm
+            content: <IndividualForm
                 control={control}
                 errors={errors}
                 edit={false}
                 showField={showMaidenName}
                 clearErrors={clearErrors}
+                type={IndividualType.TEACHER}
             />
         },
         {
@@ -167,11 +167,11 @@ const AddTeacher = () => {
             />
         },
         {
-            title: "Embauche",
-            content: <TeacherHiring
+            title: 'Embauche',
+            content: <TeacherForm
                 control={control}
                 errors={errors}
-                showField={false}
+                edit={false}
                 clearErrors={clearErrors}
             />
         },
@@ -188,7 +188,7 @@ const AddTeacher = () => {
 
         startTransition(() => {
             if(image) {
-                data = {...data, image: image}
+                data = {...data, personalInfo: {...data.personalInfo, image: image}}
             }
 
             addTeacher(data)

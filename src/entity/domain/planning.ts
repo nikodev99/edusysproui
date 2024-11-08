@@ -1,13 +1,12 @@
 import {Grade} from "./grade.ts";
-import {AcademicYear} from "./AcademicYear.ts";
+import {Semester} from "./semester.ts";
 
 export interface Planning {
     id?: number
-    academicYear?: AcademicYear
+    semester?: Semester
     designation?: string
     termStartDate?: Date
     termEndDate?: Date
-    semester?: string
     grade?: Grade
     createdAt?: Date
     updatedAt?: Date

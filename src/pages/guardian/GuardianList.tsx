@@ -70,12 +70,12 @@ const GuardianList = () => {
             onCell: ({id}) => ({
                 onClick: (): void => throughDetails(id)
             }),
-            render: (text, {firstName, emailId}) => (
+            render: (text, {personalInfo}) => (
                 <div className='render__name'>
-                    <Avatar firstText={firstName} lastText={text} />
+                    <Avatar firstText={personalInfo.firstName} lastText={text} />
                     <div>
-                        <p>{`${text.toUpperCase()}, ${setFirstName(firstName)}`}</p>
-                        <p className='st__ref'>{emailId}</p>
+                        <p>{`${text.toUpperCase()}, ${setFirstName(personalInfo.firstName)}`}</p>
+                        <p className='st__ref'>{personalInfo.emailId}</p>
                     </div>
                 </div>
             )
@@ -87,7 +87,7 @@ const GuardianList = () => {
             align: 'center',
             //TODO the filter directly to the database
             filters: enumToObjectArrayForFiltering(Gender),
-            onFilter: (value, record) => record.gender.indexOf(value as string) === 0
+            onFilter: (value, record) => record.personalInfo.gender.indexOf(value as string) === 0
         },
         {
             title: "Status",
@@ -95,7 +95,7 @@ const GuardianList = () => {
             key: 'status',
             align: 'center',
             responsive: ['md'],
-            render: (text, {gender}) => statusTags(text, gender === Gender.FEMME)
+            render: (text, {personalInfo}) => statusTags(text, personalInfo.gender === Gender.FEMME)
         },
         {
             title: "Numéro de téléphone",

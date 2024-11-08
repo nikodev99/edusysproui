@@ -2,8 +2,8 @@ import {Grade} from "./grade.ts";
 import {Student} from "./student.ts";
 import {Schedule} from "./schedule.ts";
 import {Course} from "./course.ts";
-import {ClasseTeacherBoss} from "./ClasseTeacherBoss.ts";
-import {ClasseStudentBoss} from "./ClasseStudentBoss.ts";
+import {ClasseTeacherBoss} from "./classeTeacherBoss.ts";
+import {ClasseStudentBoss} from "./classeStudentBoss.ts";
 import {TeacherClassCourse} from "./TeacherClassCourse.ts";
 
 export interface Classe {

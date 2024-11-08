@@ -1,20 +1,20 @@
 import {Student} from "./student.ts";
-import {Exam} from "./exam.ts";
 import {fDate} from "../../utils/utils.ts";
+import {Assignment} from "./assignment.ts";
 
 export interface Score {
     id: bigint
-    exam: Exam
+    assignment: Assignment
     student: Student
     obtainedMark: number
 }
 
 export const initExamData = (scores: Score[]) => {
     return scores?.map((s) => ({
-        examId: s.exam.id,
-        examDate: fDate(s.exam?.examDate) ?? '',
-        examName: s.exam?.examName ?? '',
-        classe: s.exam?.classe?.name ?? '',
+        examId: s.assignment.id,
+        examDate: fDate(s.assignment?.examDate) ?? '',
+        examName: s.assignment?.examName ?? '',
+        classe: s.assignment?.classe?.name ?? '',
         obtainedMark: s.obtainedMark ?? 0
     })) ?? []
 }

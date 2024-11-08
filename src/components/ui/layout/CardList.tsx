@@ -62,11 +62,11 @@ const CardList = <TData extends object>({content, isActive, isLoading, dropdownI
                     const data: Guardian[] = content as Guardian[]
                     return data.map(c => ({
                         id: c.id,
-                        lastName: c.lastName,
-                        firstName: c.firstName,
-                        gender: c.gender,
-                        reference: c.emailId,
-                        tag: statusTags(c.status as Status, c.gender === Gender.FEMME),
+                        lastName: c.personalInfo.lastName,
+                        firstName: c.personalInfo.firstName,
+                        gender: c.personalInfo.gender,
+                        reference: c.personalInfo.emailId,
+                        tag: statusTags(c.personalInfo.status as Status, c.personalInfo.gender === Gender.FEMME),
                         description: []
                     })) as DataProps[]
                 }
@@ -77,11 +77,11 @@ const CardList = <TData extends object>({content, isActive, isLoading, dropdownI
                     const data: Teacher[] = content as Teacher[]
                     return data.map(t => ({
                         id: t.id,
-                        lastName: t.lastName,
-                        firstName: t.firstName,
-                        gender: t.gender,
-                        reference: t.emailId,
-                        tag: statusTags(t.status as Status, t.gender === Gender.FEMME),
+                        lastName: t.personalInfo.lastName,
+                        firstName: t.personalInfo.firstName,
+                        gender: t.personalInfo.gender,
+                        reference: t.personalInfo.emailId,
+                        tag: statusTags(t.personalInfo.status as Status, t.personalInfo.gender === Gender.FEMME),
                         description: t.courses && t.courses.length > 0
                             ? t.courses.map((tcc, i) => (
                                 <p className='matter card' key={i}>{tcc?.course}</p>

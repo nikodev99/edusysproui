@@ -1,49 +1,47 @@
-import {Status} from "../enums/status.ts";
-import {Gender} from "../enums/gender.ts";
-import {Address} from "./address.ts";
 import {Student} from "./student.ts";
+import {Individual} from "./individual.ts";
 
 export interface Guardian {
     id: string
-    firstName: string
-    lastName: string
-    maidenName: string
-    status: Status | string
-    gender: Gender | string
-    emailId: string
+    personalInfo: Individual
     jobTitle: string
     company: string
-    telephone: string
-    mobile: string
-    address: Address | undefined
     students: Student[] | undefined
     createdAt: Date | undefined
     modifyAt: Date | undefined
 }
 
 export const toGuardianSchema = (guardian: Guardian) => {
+    const p = guardian.personalInfo
     return {
         id: guardian.id,
-        lastName: guardian.lastName,
-        firstName: guardian.firstName,
-        gender: guardian.gender,
-        status: guardian.status,
-        maidenName: guardian.maidenName,
-        emailId: guardian.emailId,
+        personalInfo: {
+            firstName: p.firstName,
+            lastName: p.lastName,
+            maidenName: p.maidenName,
+            gender: p.gender,
+            status: p.status,
+            emailId: p.emailId,
+            birthDate: p.birthDate,
+            birthCity: p.birthCity,
+            nationality: p.nationality,
+            telephone: p.telephone,
+            mobile: p.mobile,
+            address: {
+                id: p.address.id,
+                number: p.address.number,
+                street: p.address.street,
+                secondStreet: p.address.secondStreet,
+                neighborhood: p.address.neighborhood,
+                borough: p.address.borough,
+                city: p.address.city,
+                zipCode: p.address.zipCode,
+                country: p.address.country
+            },
+            image: p.image,
+            attachments: p.attachments
+        },
         company: guardian.company,
         jobTitle: guardian.jobTitle,
-        telephone: guardian.telephone,
-        mobile: guardian.mobile,
-        address: {
-            id: guardian.address?.id,
-            number: guardian.address?.number as number,
-            street: guardian.address?.street as string,
-            secondStreet: guardian.address?.secondStreet,
-            neighborhood: guardian.address?.neighborhood as string,
-            borough: guardian.address?.borough,
-            city: guardian.address?.city as string,
-            zipCode: guardian.address?.zipCode,
-            country: guardian.address?.country as string,
-        }
     }
 }

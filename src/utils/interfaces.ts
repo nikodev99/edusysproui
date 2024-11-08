@@ -9,31 +9,18 @@ import {
     ControllerRenderProps,
     FieldPath, UseFormClearErrors,
 } from "react-hook-form";
-import {z} from "zod";
-import {enrollmentSchema, guardianSchema, studentSchema, teacherSchema} from "../schema";
 import {ValidateStatus} from "antd/es/form/FormItem";
 import React, {CSSProperties, ReactNode} from "react";
 import {AcademicYear, Guardian} from "../entity";
 import {SectionType} from "../entity/enums/section.ts";
 import {Gender} from "../entity/enums/gender.ts";
 import {AttendanceStatus} from "../entity/enums/attendanceStatus.ts";
-import {addressSchema} from "../schema/models/addressSchema.ts";
-import {healthSchema} from "../schema/models/healthSchema.ts";
-import {teacherClassCourseSchema} from "../schema/models/teacherClassCourseSchema.ts";
 
 export interface Metadata {
     title: string
     description: string
     hasEdu?: boolean
 }
-
-export type GuardianSchema = z.infer<typeof guardianSchema>
-export type EnrollmentSchema = z.infer<typeof enrollmentSchema>
-export type StudentSchema = z.infer<typeof studentSchema>
-export type AddressSchema = z.infer<typeof addressSchema>
-export type HealthSchema = z.infer<typeof healthSchema>
-export type TeacherSchema = z.infer<typeof teacherSchema>
-export type TeacherClassCourseSchema = z.infer<typeof teacherClassCourseSchema>;
 
 type NestedKeyOf<ObjectType extends object> = {
     [Key in keyof ObjectType & (string | number)]: ObjectType[Key] extends object

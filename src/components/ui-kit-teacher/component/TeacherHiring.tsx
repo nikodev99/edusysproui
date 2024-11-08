@@ -1,7 +1,8 @@
-import {TeacherSchema, ZodProps} from "../../../utils/interfaces.ts";
+import {ZodProps} from "../../../utils/interfaces.ts";
 import DateInput from "../../ui/form/DateInput.tsx";
 import TextInput from "../../ui/form/TextInput.tsx";
 import Responsive from "../../ui/layout/Responsive.tsx";
+import {TeacherSchema} from "../../../schema";
 
 const TeacherHiring = ({control, errors, showField}: ZodProps<TeacherSchema>) => {
     return(

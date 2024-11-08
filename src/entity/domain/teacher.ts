@@ -1,29 +1,17 @@
-import {Status} from "../enums/status.ts";
-import {Address} from "./address.ts";
 import {School} from "./school.ts";
-import {Gender} from "../enums/gender.ts";
 import {Classe} from "./classe.ts";
 import {Course} from "./course.ts";
+import {Individual} from "./individual.ts";
+import {CourseProgram} from "./courseProgram.ts";
 
 export interface Teacher {
     id?: string
-    firstName?: string
-    lastName?: string
-    maidenName?: string
-    status?: Status | string
-    birthDate?: Date
-    cityOfBirth?: string
-    nationality?: string
-    gender?: Gender | string
-    address?: Address
-    emailId?: string
-    image?: string
-    telephone?: string
+    personalInfo: Individual
     hireDate?: Date
     classes?: Classe[]
     courses?: Course[]
     salaryByHour?: number
-    attachments?: string[]
+    courseProgram: CourseProgram[]
     schools?: School
     createdAt?: Date
     modifyAt?: Date

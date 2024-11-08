@@ -1,7 +1,7 @@
 import {Student} from "./student.ts";
 import {Classe} from "./classe.ts";
 import {AttendanceStatus} from "../enums/attendanceStatus.ts";
-import {AcademicYear} from "./AcademicYear.ts";
+import {AcademicYear} from "./academicYear.ts";
 
 export interface Attendance {
     id: number

@@ -1,5 +1,5 @@
 import {School} from "./school.ts";
-import {ClasseTeacherBoss} from "./ClasseTeacherBoss.ts";
+import {ClasseTeacherBoss} from "./classeTeacherBoss.ts";
 
 export interface Department {
     id?: number

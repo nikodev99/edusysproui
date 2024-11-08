@@ -8,6 +8,4 @@ export interface Address {
     city: string
     zipCode: string
     country: string
-    createdAt: string
-    updatedAt: string
 }

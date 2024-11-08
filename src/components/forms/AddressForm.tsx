@@ -27,15 +27,15 @@ const AddressForm = <T extends FieldValues>(addressProps: AddressFormProps<T>) =
         switch (type) {
             case AddressOwner.STUDENT:
                 return {
-                    name: form.name(fieldName, 'student.address'),
-                    validate: form.validate(fieldName, 'student.address'),
-                    error: form.error(fieldName, 'student.address'),
+                    name: form.name(fieldName, 'student.personalInfo.address'),
+                    validate: form.validate(fieldName, 'student.personalInfo.address'),
+                    error: form.error(fieldName, 'student.personalInfo.address'),
                 }
             case AddressOwner.TEACHER:
                 return {
-                    name: form.name(fieldName, 'teacher.address'),
-                    validate: form.validate(fieldName, 'teacher.address'),
-                    error: form.error(fieldName, 'teacher.address'),
+                    name: form.name(fieldName, 'teacher.personalInfo.address'),
+                    validate: form.validate(fieldName, 'teacher.personalInfo.address'),
+                    error: form.error(fieldName, 'teacher.personalInfo.address'),
                 }
             case AddressOwner.ADMIN:
                 return {
@@ -45,9 +45,9 @@ const AddressForm = <T extends FieldValues>(addressProps: AddressFormProps<T>) =
                 }
             case AddressOwner.GUARDIAN:
                 return {
-                    name: form.name(fieldName, 'student.guardian.address'),
-                    validate: form.validate(fieldName, 'student.guardian.address'),
-                    error: form.error(fieldName, 'student.guardian.address'),
+                    name: form.name(fieldName, 'student.guardian.personalInfo.address'),
+                    validate: form.validate(fieldName, 'student.guardian.personalInfo.address'),
+                    error: form.error(fieldName, 'student.guardian.personalInfo.address'),
                 }
             default:
                 return null

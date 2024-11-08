@@ -1,9 +1,9 @@
 import {AddStepForm} from "../../components/custom/AddStepForm.tsx";
-import {EnrollmentSchema, GuardianSchema, Metadata} from "../../utils/interfaces.ts";
+import {Metadata} from "../../utils/interfaces.ts";
 import {text} from "../../utils/text_display.ts";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {enrollmentSchema} from "../../schema";
+import {EnrollmentSchema, enrollmentSchema, GuardianSchema} from "../../schema";
 import {useEffect, useState, useTransition} from "react";
 import {Gender} from "../../entity/enums/gender.ts";
 import {Status} from "../../entity/enums/status.ts";
@@ -12,11 +12,12 @@ import {redirectTo} from "../../context/RedirectContext.ts";
 import {addStudent} from "../../data";
 import StudentForm from "../../components/forms/StudentForm.tsx";
 import AddressForm from "../../components/forms/AddressForm.tsx";
-import {AddressOwner} from "../../core/shared/sharedEnums.ts";
+import {AddressOwner, IndividualType} from "../../core/shared/sharedEnums.ts";
 import {AcademicForm, AttachmentForm, GuardianForm} from "../../components/ui-kit-student";
 import HealthConditionForm from "../../components/forms/HealthConditionForm.tsx";
 import {useToggle} from "../../hooks/useToggle.ts";
 import {OutputFileEntry} from "@uploadcare/blocks";
+import {IndividualForm} from "../../components/forms/IndividualForm.tsx";
 
 const Inscription = () => {
 
@@ -57,7 +58,7 @@ const Inscription = () => {
     const formData = watch()
 
     useEffect(() => {
-        const guardian = formData?.student?.guardian
+        const guardian = formData?.student?.guardian.personalInfo
         if (
             guardian && 'gender' in guardian && 'status' in guardian &&
             guardian?.gender === Gender.FEMME && guardian?.status === Status.MARIE
@@ -76,8 +77,8 @@ const Inscription = () => {
     }
 
     const setGuardianValues = (guardian: Guardian) => {
-        const newGuardian: GuardianSchema = toGuardianSchema(guardian)
-        setValue('student.guardian', newGuardian, {
+        const newGuardian = toGuardianSchema(guardian)
+        setValue('student.guardian', newGuardian as GuardianSchema, {
             shouldValidate: true
         })
     }
@@ -91,7 +92,11 @@ const Inscription = () => {
 
     const steps = [
         {
-            title: 'Individuelle',
+          title: 'Information Personnelle',
+          content: <IndividualForm control={control} errors={errors} edit={false} enroll={true} type={IndividualType.STUDENT} />
+        },
+        {
+            title: 'Parents',
             content: <StudentForm control={control} errors={errors} edit={false} enroll={true} />
         },
         {
@@ -142,37 +147,41 @@ const Inscription = () => {
             switch (current) {
                 case 0:
                     validateFields = await trigger([
-                        'student.lastName', 'student.firstName', 'student.gender', 'student.dadName', 'student.momName',
-                        'student.birthCity', 'student.birthDate', 'student.nationality'
+                        'student.personalInfo.lastName', 'student.personalInfo.firstName', 'student.personalInfo.gender',
+                        'student.personalInfo.birthCity', 'student.personalInfo.birthDate', 'student.personalInfo.nationality'
                     ])
                     validate(validateFields, current)
                     break
                 case 1:
-                    validateFields = await trigger([
-                        'student.address.number', 'student.address.street', 'student.address.neighborhood', 'student.address.city',
-                        'student.address.country'
-                    ])
+                    validateFields = await trigger(['student.dadName', 'student.momName', ])
                     validate(validateFields, current)
                     break
                 case 2:
+                    validateFields = await trigger([
+                        'student.personalInfo.address.number', 'student.personalInfo.address.street', 'student.personalInfo.address.neighborhood',
+                        'student.personalInfo.address.city', 'student.personalInfo.address.country'
+                    ])
+                    validate(validateFields, current)
+                    break
+                case 3:
                     validateFields = await trigger([
                         'academicYear.id', 'classe.id'
                     ])
                     validate(validateFields, current)
                     break
-                case 3:
+                case 4:
                     if (guardianId && isExists) {
                         setGuardianValues(guardian as Guardian)
                         validate(true, current)
                     }else {
                         validateFields = await trigger([
-                            "student.guardian.firstName", 'student.guardian.lastName', 'student.guardian.gender', 'student.guardian.status',
-                            'student.guardian.telephone'
+                            "student.guardian.personalInfo.firstName", 'student.guardian.personalInfo.lastName', 'student.guardian.personalInfo.gender',
+                            'student.guardian.personalInfo.status', 'student.guardian.personalInfo.telephone'
                         ])
                         validate(validateFields, current)
                     }
                     break
-                case 4:
+                case 5:
                     validateFields = await trigger([
                         'student.healthCondition.bloodType', 'student.healthCondition.weight', 'student.healthCondition.height'
                     ])
@@ -197,13 +206,26 @@ const Inscription = () => {
                         ...data.student,
                         guardian: {
                             ...data.student.guardian,
-                            address: data.student.address
+                            personalInfo: {
+                                ...data.student.guardian.personalInfo,
+                                address: data.student.personalInfo.address,
+                            }
                         }
                     }
                 }
             }
 
-            if (image) data = {...data, student: {...data.student, image: image}}
+            if (image)
+                data = {
+                    ...data,
+                    student: {
+                        ...data.student,
+                        personalInfo: {
+                            ...data.student.personalInfo,
+                            image: image
+                    }
+                }
+            }
 
             data = {
                 ...data,
@@ -229,13 +251,12 @@ const Inscription = () => {
             docTitle={documentTitle}
             breadCrumb={breadCrumb}
             addLink={addLink}
-            HandleForm={form}
             triggerNext={triggerNext}
             onSubmit={onSubmit}
             steps={steps}
             messages={{success: success, error: error}}
             isPending={isPending}
-            validationError={errors}
+            handleForm={form}
         />
     )
 }

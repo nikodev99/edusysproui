@@ -79,7 +79,7 @@ export const countStudents = async () => {
 const sortedField = (sortField: string) => {
     switch (sortField) {
         case 'lastName':
-            return 'e.student.lastName'
+            return 'e.student.personalInfo.lastName'
         default:
             return undefined;
     }

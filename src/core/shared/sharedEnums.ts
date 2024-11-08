@@ -5,3 +5,7 @@ export enum InputTypeEnum {
 export enum AddressOwner {
     STUDENT, TEACHER, ADMIN, GUARDIAN, ENROLLMENT
 }
+
+export enum IndividualType {
+    STUDENT, TEACHER, EMPLOYEE, GUARDIAN, ENROLLMENT
+}

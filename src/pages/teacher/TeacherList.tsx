@@ -74,12 +74,12 @@ const TeacherList = () => {
             onCell: (data) => ({
                 onClick: (): void => throughDetails(data?.id ? data.id : '')
             }),
-            render: (text, {firstName, emailId}) => (
+            render: (text, {personalInfo}) => (
                 <div className='render__name'>
-                    <Avatar firstText={firstName} lastText={text}/>
+                    <Avatar firstText={personalInfo.firstName} lastText={text}/>
                     <div>
-                        <p>{`${text.toUpperCase()}, ${setFirstName(firstName)}`}</p>
-                        <p className='st__ref'>{emailId}</p>
+                        <p>{`${text.toUpperCase()}, ${setFirstName(personalInfo.firstName)}`}</p>
+                        <p className='st__ref'>{personalInfo.emailId}</p>
                     </div>
                 </div>
             )
@@ -93,7 +93,7 @@ const TeacherList = () => {
             filters: enumToObjectArrayForFiltering(Gender),
             sorter: true,
             showSorterTooltip: false,
-            onFilter: (value, record) => record?.gender ? record.gender.indexOf(value as string) === 0 : false
+            onFilter: (value, record) => record?.personalInfo.gender ? record.personalInfo.gender.indexOf(value as string) === 0 : false
         },
         {
             title: "Age",
@@ -112,7 +112,7 @@ const TeacherList = () => {
             responsive: ['md'],
             sorter: true,
             showSorterTooltip: false,
-            render: (text, {gender}) => statusTags(text, gender === Gender.FEMME)
+            render: (text, {personalInfo}) => statusTags(text, personalInfo.gender === Gender.FEMME)
         },
         {
             title: "Matières",

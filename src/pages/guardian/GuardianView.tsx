@@ -4,7 +4,7 @@ import {useParams} from "react-router-dom";
 import {fetchGuardianWithStudents} from "../../data";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {Guardian} from "../../entity";
-import {setFirstName} from "../../utils/utils.ts";
+import {setLastName, setName} from "../../utils/utils.ts";
 import {setBreadcrumb} from "../../core/breadcrumb.tsx";
 import {text} from "../../utils/text_display.ts";
 import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
@@ -20,10 +20,11 @@ const GuardianView: React.FC = () => {
 
     const [guardian, setGuardian] = useState<Guardian | null>(null);
     const [openDrawer, setOpenDrawer] = useState<boolean>(false)
+    const [color, setColor] = useState('')
 
     const {data, isLoading, isSuccess, refetch} = useFetch(['guardian-id'], fetchGuardianWithStudents, [id])
 
-    const guardianName = guardian ? setFirstName(`${guardian.lastName} ${guardian.firstName}`) : 'Tuteur'
+    const guardianName = guardian ? setName(guardian.personalInfo.lastName, guardian.personalInfo.firstName) : 'Tuteur'
 
     useDocumentTitle({
         title: guardianName,
@@ -63,24 +64,25 @@ const GuardianView: React.FC = () => {
                 setEdit={handleOpenDrawer}
                 closeState={openDrawer}
                 avatarProps={{
-                    firstName: guardian?.firstName,
-                    lastName: guardian?.maidenName ? `${guardian?.lastName} née ${guardian?.maidenName}` : guardian?.lastName,
-                    reference: guardian?.emailId
+                    firstName: guardian?.personalInfo.firstName,
+                    lastName: setLastName(guardian?.personalInfo.lastName, guardian?.personalInfo.maidenName, true),
+                    reference: guardian?.personalInfo.emailId
                 }}
                 blockProps={[
                     {
                         title: 'Etat Civil',
-                        mention: <Tag color='cyan-inverse'>{
-                            getStatusKey(guardian?.status as Status, guardian?.gender === Gender.FEMME)
+                        mention: <Tag color={color}>{
+                            getStatusKey(guardian?.personalInfo.status as Status, guardian?.personalInfo.gender === Gender.FEMME)
                         }</Tag>
                     },
-                    {title: 'Télephone', mention: guardian?.telephone},
+                    {title: 'Télephone', mention: guardian?.personalInfo.telephone},
                     {
                         title: guardian?.jobTitle ? guardian.jobTitle : '',
                         mention: guardian?.company ? guardian?.company : ''
                     }
                 ]}
                 items={[/*TODO Ajouter certain items concernant le tuteur*/]}
+                pColor={setColor}
             />
             <section>
                 <Tabs

@@ -157,7 +157,7 @@ const ListViewer = <TData extends object, TError>(
                         activeIcon === 2 ? <CardList
                                 content={content as TData[]}
                                 isActive={activeIcon === 2 }
-                                isLoading={isLoading}
+                                isLoading={isLoading && content !== undefined}
                                 dropdownItems={dropdownItems!}
                                 throughDetails={throughDetails!}
                                 cardType={cardType}
@@ -167,7 +167,7 @@ const ListViewer = <TData extends object, TError>(
                                 rowKey={'id' as keyof TData}
                                 columns={tableColumns}
                                 dataSource={content as TData[]}
-                                loading={isLoading}
+                                loading={isLoading && content !== undefined}
                                 onChange={handleSorterChange}
                                 pagination={false}
                                 scroll={{y: 550}}

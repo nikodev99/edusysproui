@@ -22,6 +22,8 @@ export interface Metadata {
     hasEdu?: boolean
 }
 
+export type ID = string | bigint | number
+
 type NestedKeyOf<ObjectType extends object> = {
     [Key in keyof ObjectType & (string | number)]: ObjectType[Key] extends object
         ? `${Key}` | `${Key}.${NestedKeyOf<ObjectType[Key]>}`

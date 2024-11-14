@@ -61,7 +61,7 @@ const GuardianList = () => {
     const columns: TableColumnsType<Guardian> = [
         {
             title: 'Nom(s) et Prénons',
-            dataIndex: 'lastName',
+            dataIndex: ['personalInfo', 'lastName'],
             key: 'lastName',
             width: '20%',
             sorter: true,
@@ -72,41 +72,41 @@ const GuardianList = () => {
             }),
             render: (text, {personalInfo}) => (
                 <div className='render__name'>
-                    <Avatar firstText={personalInfo.firstName} lastText={text} />
+                    <Avatar firstText={personalInfo?.firstName} lastText={text} />
                     <div>
-                        <p>{`${text.toUpperCase()}, ${setFirstName(personalInfo.firstName)}`}</p>
-                        <p className='st__ref'>{personalInfo.emailId}</p>
+                        <p>{`${text?.toUpperCase()}, ${setFirstName(personalInfo?.firstName)}`}</p>
+                        <p className='st__ref'>{personalInfo?.emailId}</p>
                     </div>
                 </div>
             )
         },
         {
             title: 'Genre',
-            dataIndex: 'gender',
+            dataIndex: ['personalInfo', 'gender'],
             key: 'gender',
             align: 'center',
             //TODO the filter directly to the database
             filters: enumToObjectArrayForFiltering(Gender),
-            onFilter: (value, record) => record.personalInfo.gender.indexOf(value as string) === 0
+            onFilter: (value, record) => record?.personalInfo?.gender.indexOf(value as string) === 0
         },
         {
             title: "Status",
-            dataIndex: 'status',
+            dataIndex: ['personalInfo', 'status'],
             key: 'status',
             align: 'center',
             responsive: ['md'],
-            render: (text, {personalInfo}) => statusTags(text, personalInfo.gender === Gender.FEMME)
+            render: (text, {personalInfo}) => statusTags(text, personalInfo?.gender === Gender.FEMME)
         },
         {
             title: "Numéro de téléphone",
-            dataIndex: 'telephone',
+            dataIndex: ['personalInfo', 'telephone'],
             key: 'telephone',
             align: 'center',
             responsive: ['md'],
         },
         {
             title: "Email",
-            dataIndex: 'emailId',
+            dataIndex: ['personalInfo', 'emailId'],
             key: 'emailId',
             align: 'center',
             //TODO getting all the grade distinct classes and filter by grade

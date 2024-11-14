@@ -37,10 +37,12 @@ const StudentList = () => {
     const {getColumnSearchProps} = useColumnSearch<DataType>()
 
     const getItems = (url: string) => {
-        return [
-            {key: `details-${url}`, icon: <LuEye size={20} />, label: 'Voir l\'étudiant', onClick: () => throughDetails(url)},
-            {key: `delete-${url}`, label: 'Delete', danger: true}
-        ]
+        if (url)
+            return [
+                {key: `details-${url}`, icon: <LuEye size={20} />, label: 'Voir l\'étudiant', onClick: () => throughDetails(url)},
+                {key: `delete-${url}`, label: 'Delete', danger: true}
+            ]
+        return []
     }
 
     const throughDetails = (link: string) => {
@@ -64,7 +66,7 @@ const StudentList = () => {
                 <div className='render__name'>
                     <Avatar image={image} firstText={firstName} lastText={text} />
                     <div>
-                        <p>{`${text.toUpperCase()}, ${setFirstName(firstName)}`}</p>
+                        <p>{`${text?.toUpperCase()}, ${setFirstName(firstName)}`}</p>
                         <p className='st__ref'>{reference}</p>
                     </div>
                 </div>

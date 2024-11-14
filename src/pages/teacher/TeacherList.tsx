@@ -65,7 +65,7 @@ const TeacherList = () => {
     const columns: TableColumnsType<Teacher> = [
         {
             title: 'Nom(s) et Prénons',
-            dataIndex: 'lastName',
+            dataIndex: ['personalInfo', 'lastName'],
             key: 'lastName',
             width: '20%',
             sorter: true,
@@ -76,17 +76,17 @@ const TeacherList = () => {
             }),
             render: (text, {personalInfo}) => (
                 <div className='render__name'>
-                    <Avatar firstText={personalInfo.firstName} lastText={text}/>
+                    <Avatar firstText={personalInfo?.firstName} lastText={text}/>
                     <div>
-                        <p>{`${text.toUpperCase()}, ${setFirstName(personalInfo.firstName)}`}</p>
-                        <p className='st__ref'>{personalInfo.emailId}</p>
+                        <p>{`${text?.toUpperCase()}, ${setFirstName(personalInfo?.firstName)}`}</p>
+                        <p className='st__ref'>{personalInfo?.emailId}</p>
                     </div>
                 </div>
             )
         },
         {
             title: 'Genre',
-            dataIndex: 'gender',
+            dataIndex: ['personalInfo', 'gender'],
             key: 'gender',
             align: 'center',
             //TODO the filter directly to the database
@@ -97,7 +97,7 @@ const TeacherList = () => {
         },
         {
             title: "Age",
-            dataIndex: 'birthDate',
+            dataIndex: ['personalInfo', 'birthDate'],
             key: 'birthDate',
             align: 'center',
             responsive: ['md'],
@@ -106,7 +106,7 @@ const TeacherList = () => {
         },
         {
             title: "Status",
-            dataIndex: 'status',
+            dataIndex: ['personalInfo', 'status'],
             key: 'status',
             align: 'center',
             responsive: ['md'],
@@ -141,7 +141,7 @@ const TeacherList = () => {
         },
         {
             title: "Téléphone",
-            dataIndex: 'telephone',
+            dataIndex: ['personalInfo', 'telephone'],
             key: 'telephone',
             align: 'center',
             responsive: ['md'],

@@ -9,3 +9,7 @@ export enum AddressOwner {
 export enum IndividualType {
     STUDENT, TEACHER, EMPLOYEE, GUARDIAN, ENROLLMENT
 }
+
+export enum UpdateType {
+    ADDRESS, HEALTH, GUARDIAN, INFO,
+}

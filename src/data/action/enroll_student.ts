@@ -1,10 +1,11 @@
-import {EnrollmentSchema} from "../../utils/interfaces.ts";
-import {enrollmentSchema, studentSchema} from "../../schema";
+import {EnrollmentSchema, enrollmentSchema, studentSchema} from "../../schema";
 import {enrollStudent, updateStudentByField} from "../post";
 import {AxiosResponse} from "axios";
 import {Enrollment} from "../../entity";
 import {Response as CustomResponse} from "./response.ts";
 import {ErrorCatch} from "./error_catch.ts";
+import {UpdateType} from "../../core/shared/sharedEnums.ts";
+import {ID} from "../../utils/interfaces.ts";
 
 export const addStudent = async (values: EnrollmentSchema): Promise<CustomResponse<Enrollment>> => {
 
@@ -35,7 +36,12 @@ export const addStudent = async (values: EnrollmentSchema): Promise<CustomRespon
     }
 }
 
-export const updateStudent = async <T>(field: keyof T, value: unknown, studentId: string | number, type?: number): Promise<CustomResponse<string>> => {
+export const updateStudent = async <T>(
+    field: keyof T,
+    value: unknown,
+    studentId: ID,
+    type?: UpdateType
+): Promise<CustomResponse<string>> => {
     const dynamicSchema = studentSchema.pick({[field]: true});
     const validation = dynamicSchema.safeParse({[field]: value});
 

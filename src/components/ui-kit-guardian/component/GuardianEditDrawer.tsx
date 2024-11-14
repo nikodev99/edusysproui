@@ -1,23 +1,34 @@
 import RightSidePane from "../../ui/layout/RightSidePane.tsx";
-import {AddressSchema, EditProps, GuardianSchema} from "../../../utils/interfaces.ts";
+import {EditProps} from "../../../utils/interfaces.ts";
 import {Address, Guardian} from "../../../entity";
 import GuardianForm from "../../forms/GuardianForm.tsx";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {guardianSchema} from "../../../schema";
+import {
+    guardianSchema,
+    addressSchema,
+    GuardianSchema,
+    AddressSchema,
+    IndividualSchema,
+    individualSchema
+} from "../../../schema";
 import AddressForm from "../../forms/AddressForm.tsx";
-import {AddressOwner} from "../../../core/shared/sharedEnums.ts";
+import {AddressOwner, IndividualType} from "../../../core/shared/sharedEnums.ts";
 import {Button} from "antd";
 import {useEffect, useState} from "react";
 import FormSuccess from "../../ui/form/FormSuccess.tsx";
 import FormError from "../../ui/form/FormError.tsx";
-import {addressSchema} from "../../../schema/models/addressSchema.ts";
 import {updateStudent} from "../../../data";
 import {Gender} from "../../../entity/enums/gender.ts";
+import {IndividualForm} from "../../forms/IndividualForm.tsx";
+import {Individual} from "../../../entity/domain/individual.ts";
+import {hasField} from "../../../utils/utils.ts";
+import {PatchUpdate} from "../../../core/PatchUpdate.ts";
 
 export const GuardianEditDrawer = ({isLoading, open, close, data}: EditProps<Guardian>) => {
 
     const [addressDrawer, setAddressDrawer] = useState<boolean>(false)
+    const [jobDrawer, setJobDrawer] = useState<boolean>(false)
     const [successMessage, setSuccessMessage] = useState<string | undefined>(undefined)
     const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined)
 
@@ -29,8 +40,13 @@ export const GuardianEditDrawer = ({isLoading, open, close, data}: EditProps<Gua
         resolver: zodResolver(addressSchema)
     })
 
+    const zodInfo = useForm<IndividualSchema>({
+        resolver: zodResolver(individualSchema)
+    })
+
     const guardianData = watch()
     const addressData = zodAddress.watch()
+    const infoData = zodInfo.watch()
 
     useEffect(() => {
         if(!open) {
@@ -43,29 +59,43 @@ export const GuardianEditDrawer = ({isLoading, open, close, data}: EditProps<Gua
         setAddressDrawer(true)
     }
 
+    const showJobDrawer = () => {
+        setJobDrawer(true)
+    }
+
     const closeAddressDrawer = () => {
         setErrorMessage(undefined)
         setSuccessMessage(undefined)
         setAddressDrawer(false)
     }
 
-    const handleGuardianUpdate = async (field: keyof Guardian) => {
+    const closeJobDrawer = () => {
+        setErrorMessage(undefined)
+        setSuccessMessage(undefined)
+        setJobDrawer(false)
+    }
+
+    const handleGuardianUpdate = async (field: keyof Guardian | keyof Individual) => {
         if (data.id) {
-            await updateStudent(field, guardianData[field as keyof GuardianSchema], data.id, 2)
-                .then(({isSuccess, success, error}) => {
-                    if(isSuccess) {
-                        setSuccessMessage(success)
-                    }else {
-                        setErrorMessage(error)
-                    }
-                })
-                .catch(err => setErrorMessage(`An unexpected error occurred: ${err.error.message}`))
+            if (hasField(data, field as keyof Guardian)) {
+                await updateStudent(field, guardianData[field as keyof GuardianSchema], data.id, 2)
+                    .then(({isSuccess, success, error}) => {
+                        if (isSuccess) {
+                            setSuccessMessage(success)
+                        } else {
+                            setErrorMessage(error)
+                        }
+                    })
+                    .catch(err => setErrorMessage(`An unexpected error occurred: ${err.error.message}`))
+            }else {
+                await PatchUpdate.set(field, infoData, data?.personalInfo?.id, setSuccessMessage, setErrorMessage)
+            }
         }
     }
 
     const handleAddressUpdate = async (field: keyof Address) => {
-        if (data?.address?.id) {
-            await updateStudent(field, addressData[field as keyof AddressSchema], data?.address?.id as number, 0)
+        if (data?.personalInfo.address?.id) {
+            await updateStudent(field, addressData[field as keyof AddressSchema], data?.personalInfo.address?.id as number, 0)
                 .then(({isSuccess, success, error}) => {
                     if (isSuccess) {
                         setSuccessMessage(success)
@@ -76,34 +106,46 @@ export const GuardianEditDrawer = ({isLoading, open, close, data}: EditProps<Gua
         }
     }
 
-    console.log('Watcher: ', guardianData);
-
     return(
         <RightSidePane loading={isLoading} open={open} onClose={close} className='edit-drawer' destroyOnClose>
             {successMessage && (<FormSuccess message={successMessage} />)}
             {errorMessage && (<FormError message={errorMessage} />)}
-            <GuardianForm
+            <IndividualForm
+                control={zodInfo.control}
                 edit
-                control={control}
-                errors={errors}
-                data={data}
-                showField={data.gender === Gender.FEMME}
+                errors={zodInfo.formState.errors}
+                type={IndividualType.GUARDIAN}
+                showField={data?.personalInfo?.gender === Gender.FEMME}
+                data={data?.personalInfo}
                 handleUpdate={handleGuardianUpdate}
             />
             <section>
                 <div style={{marginBottom: 10}}>
-                    <Button type='dashed' onClick={showAddressDrawer}>Modifier l'adresse </Button>
+                    <Button type='dashed' onClick={showAddressDrawer}>Modifier Adresse </Button>
+                </div>
+                <div>
+                    <Button type='dashed' onClick={showJobDrawer}>Modifier Emploie </Button>
                 </div>
             </section>
-            <RightSidePane loading={data.address === null} open={addressDrawer} onClose={closeAddressDrawer}
+            <RightSidePane loading={data?.personalInfo?.address === null} open={addressDrawer}
+                           onClose={closeAddressDrawer}
                            className='address__drawer'>
                 <AddressForm
                     control={zodAddress.control}
                     errors={zodAddress.formState.errors}
                     type={AddressOwner.GUARDIAN}
                     edit={true}
-                    data={data.address}
+                    data={data?.personalInfo?.address}
                     handleUpdate={handleAddressUpdate}
+                />
+            </RightSidePane>
+            <RightSidePane loading={isLoading} open={jobDrawer} onClose={closeJobDrawer}>
+                <GuardianForm
+                    edit
+                    control={control}
+                    errors={errors}
+                    data={data}
+                    handleUpdate={handleGuardianUpdate}
                 />
             </RightSidePane>
         </RightSidePane>

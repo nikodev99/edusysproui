@@ -7,7 +7,7 @@ import {Individual} from "./individual.ts";
 
 export interface Student {
     id: string
-    personalInfo: Individual
+    personalInfo?: Individual
     enrollments: Enrollment[]
     dadName: string
     momName: string

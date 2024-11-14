@@ -1,10 +1,11 @@
-import {EnrollmentSchema, ZodProps} from "../../../utils/interfaces.ts";
+import {ZodProps} from "../../../utils/interfaces.ts";
 import Responsive from "../../ui/layout/Responsive.tsx";
 import {useEffect, useMemo, useState} from "react";
 import {AcademicYear, Classe} from "../../../entity";
 import {findClassesBasicValue} from "../../../data";
 import {findCurrentAcademicYear} from "../../../data/action/fetch_academic_year.ts";
 import SelectInput from "../../ui/form/SelectInput.tsx";
+import {EnrollmentSchema} from "../../../schema";
 
 export const AcademicForm = ({control, errors}: ZodProps<EnrollmentSchema>) => {
 

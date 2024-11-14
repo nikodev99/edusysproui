@@ -23,7 +23,7 @@ const FormError = ({message}: {message?: string[] | string}) => {
                     key,
                     type: 'error',
                     content: message,
-                    duration: 2,
+                    duration: 10,
                 }).then()
             }, 2000)
         }

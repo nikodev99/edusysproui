@@ -1,7 +1,9 @@
-import {Counted, EnrollmentSchema, Pageable} from "../../utils/interfaces.ts";
+import {Counted, Pageable} from "../../utils/interfaces.ts";
 import {AxiosResponse} from "axios";
 import {Enrollment} from "../../entity";
 import {apiClient, request} from "../axiosConfig.ts";
+import {EnrollmentSchema} from "../../schema";
+import {UpdateType} from "../../core/shared/sharedEnums.ts";
 
 export const enrollStudent = (data: EnrollmentSchema): Promise<AxiosResponse<Enrollment>> => {
     return request({
@@ -54,17 +56,20 @@ export const getAllStudentClassmate = (studentId: string, classeId: number, acad
     })
 }
 
-export const updateStudentByField = <T>(field: keyof T, value: unknown, studentId: string | number, type?: number) => {
+export const updateStudentByField = <T>(field: keyof T, value: unknown, studentId: string | number | bigint, type?: UpdateType) => {
     let url: string
     switch (type) {
-        case 0:
+        case UpdateType.ADDRESS:
             url = '/student/address'
             break
-        case 1:
+        case UpdateType.HEALTH:
             url = '/student/health'
             break
-        case 2:
+        case UpdateType.GUARDIAN:
             url = '/student/guardian'
+            break
+        case UpdateType.INFO:
+            url = '/student/info'
             break
         default:
             url = '/student'

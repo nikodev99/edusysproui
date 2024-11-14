@@ -29,21 +29,21 @@ export const GuardianStudentList = ({students}: {students?: Student[]}) => {
                             <div className="left-section">
                                 <p className="label">NOM & PRENOM</p>
                                 <Link to={text.student.group.view.href + student.id} className="value link">
-                                    <p>{student.lastName} {student.firstName}</p>
+                                    <p>{student.personalInfo.lastName} {student.personalInfo.firstName}</p>
                                 </Link>
 
                                 <p className="label">ID</p>
                                 <p className="value">{student.reference}</p>
 
                                 <p className="label">DATE DE NAISSANCE</p>
-                                <p className="value">{fDate(student.birthDate)}</p>
+                                <p className="value">{fDate(student.personalInfo.birthDate)}</p>
                             </div>
                             <div className="right-section">
                                 <Link to={text.student.group.view.href + student.id}>
                                     <Avatar
-                                        image={student.image}
-                                        firstText={student.firstName}
-                                        lastText={student.lastName}
+                                        image={student.personalInfo.image}
+                                        firstText={student.personalInfo.firstName}
+                                        lastText={student.personalInfo.lastName}
                                         size={70}
                                     />
                                 </Link>

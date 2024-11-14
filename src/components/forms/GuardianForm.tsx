@@ -18,7 +18,8 @@ const GuardianForm = <T extends FieldValues>({control, edit, errors, enroll, dat
     const form = new FormConfig(errors, edit, enroll)
 
     return(
-        <FormContent formItems={[
+        <>
+            <FormContent formItems={[
             {
                 type: InputTypeEnum.TEXT,
                 inputProps: {
@@ -54,6 +55,7 @@ const GuardianForm = <T extends FieldValues>({control, edit, errors, enroll, dat
                 }
             },
         ]} />
+        </>
     )
 }
 

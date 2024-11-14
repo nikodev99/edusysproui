@@ -90,7 +90,11 @@ const StudentView = () => {
                 blockProps={[
                     {
                         title: 'Tuteur Légal',
-                        mention: studentName
+                        mention: setName(
+                            enrolledStudent?.student?.guardian?.personalInfo?.lastName,
+                            enrolledStudent?.student?.guardian?.personalInfo?.firstName,
+                            enrolledStudent?.student?.guardian?.personalInfo?.maidenName
+                        ),
                     },
                     {title: enrolledStudent?.classe.name, mention: enrolledStudent?.classe.grade.section}
                 ]}

@@ -1,4 +1,4 @@
-import {EnrollmentSchema, GuardianProps} from "../../../utils/interfaces.ts";
+import {GuardianProps} from "../../../utils/interfaces.ts";
 import Responsive from "../../ui/layout/Responsive.tsx";
 import Grid from "../../ui/layout/Grid.tsx";
 import {Alert, Button, Checkbox, Collapse, Divider, Modal, SelectProps} from "antd";
@@ -7,8 +7,11 @@ import { GuardianDetails } from "./GuardianDetails.tsx";
 import {fetchGuardian, fetchSearchedEnrolledStudentsGuardian} from "../../../data";
 import {Guardian} from "../../../entity";
 import GuardianFormContent from '../../forms/GuardianForm.tsx'
-import {AddressOwner} from "../../../core/shared/sharedEnums.ts";
+import {AddressOwner, IndividualType} from "../../../core/shared/sharedEnums.ts";
 import AddressForm from "../../forms/AddressForm.tsx";
+import {EnrollmentSchema} from "../../../schema";
+import {setName} from "../../../utils/utils.ts";
+import {IndividualForm} from "../../forms/IndividualForm.tsx";
 
 export const GuardianForm = ({control, errors, showField, checked, onChecked, value, setValue, isExists, setIsExists, guardian, setGuardian}: GuardianProps<EnrollmentSchema, Guardian>) => {
 
@@ -35,7 +38,7 @@ export const GuardianForm = ({control, errors, showField, checked, onChecked, va
                         if (currentValue.current === value) {
                             const data = guardians.map((g) => ({
                                 value: g.id,
-                                text: `[${g.telephone}] ${g.lastName} ${g.firstName}`
+                                text: `[${g.personalInfo.telephone}] ${g.personalInfo.lastName} ${g.personalInfo.firstName}`
                             }))
                             callback(data)
                             setFetching(false);
@@ -63,10 +66,11 @@ export const GuardianForm = ({control, errors, showField, checked, onChecked, va
     }
 
     const onConfirm = () => {
-        console.log(value)
+        console.log("Existing guardian: ", value)
         if (value) {
             fetchGuardian(value)
                 .then(response => {
+                    console.log("Fetch existing guardian: ", response)
                     if (response && response.isSuccess) {
                         setGuardian(response.data as Guardian)
                     }
@@ -93,18 +97,25 @@ export const GuardianForm = ({control, errors, showField, checked, onChecked, va
                         <GuardianDetails data={data} value={value} fetching={fetching} onSearch={handleSearch} onChange={handleChange}/>
                     </Modal>
                     {isExists && <>
-                            <Alert type='success' message={`${guardian.lastName} ${guardian.firstName}`} showIcon />
+                            <Alert type='success' message={setName(guardian?.personalInfo?.lastName, guardian?.personalInfo?.firstName, guardian?.personalInfo?.maidenName)} showIcon />
                             <Divider />
                         </>
                     }
                 </Grid>
             </Responsive>
+            <IndividualForm
+                control={control}
+                edit={false}
+                enroll={true}
+                errors={errors}
+                type={IndividualType.GUARDIAN}
+                showField={showField}
+            />
             <GuardianFormContent
                 control={control}
                 errors={errors}
                 edit={false}
                 enroll={true}
-                showField={showField}
             />
             <Responsive>
                 <Grid xs={24} md={24} lg={24} className='guardian__address__check'>

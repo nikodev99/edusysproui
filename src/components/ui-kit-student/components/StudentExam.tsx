@@ -11,6 +11,7 @@ import {LuEye} from "react-icons/lu";
 import {Link} from "react-router-dom";
 import TabItem from "../../view/TabItem.tsx";
 import {useFetch} from "../../../hooks/useFetch.ts";
+import {ColumnGroupType} from "antd/es/table";
 
 interface StudentExamProps {
     enrolledStudent: Enrollment
@@ -20,13 +21,13 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
 
     const examCount = LocalStorageManager.get<number>('examCount') ?? 0;
 
-    const {academicYear: {id, academicYear}, student, student: {firstName, lastName, enrollments}} = enrolledStudent
+    const {academicYear: {id, academicYear}, student, student: {personalInfo, enrollments}} = enrolledStudent
 
     const [scores, setScores] = useState<Score[]>([])
     const [subjectValue, setSubjectValue] = useState<number>(0)
     const [academicYearId, setAcademicYearId] = useState<string>(id)
 
-    const studentName = `${setFirstName(lastName)} ${setFirstName(firstName)}`
+    const studentName = `${setFirstName(personalInfo.lastName)} ${setFirstName(personalInfo.firstName)}`
 
     const {data, error, isLoading, refetch} = useFetch('student-scores', fetchAllStudentScores, [examCount, 10, student.id, academicYearId])
 
@@ -34,8 +35,8 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
         return [
             {value: 0, label: 'Tous'},
             ...scores.map(s => ({
-                value: s.exam.subject?.id,
-                label: s.exam.subject?.course,
+                value: s.assignment.subject?.id,
+                label: s.assignment.subject?.course,
             }))]
     }, [scores])
 
@@ -121,7 +122,7 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
 
     return(
         <TabItem
-            title={`Les notes d${startsWithVowel(lastName) ? "'" : 'e '}${studentName}`}
+            title={`Les notes d${startsWithVowel(personalInfo.lastName) ? "'" : 'e '}${studentName}`}
             selects={[
                 <Select
                     className='select-control'
@@ -143,7 +144,7 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
                     key: 'score-table',
                     label: 'Performance aux examens',
                     children: <Table
-                        columns={columns}
+                        columns={columns as ColumnGroupType[]}
                         dataSource={initExamData(scores)}
                         size='small'
                         pagination={false}

@@ -66,8 +66,6 @@ const TeacherAcademicForm = ({onClose, defaultClasses, defaultCourses}: {
         label: c.name,
     })), [classes])
 
-    console.log('defaultClasses: ', defaultCourses)
-
     return(
         <>
             <Responsive gutter={[16, 16]}>

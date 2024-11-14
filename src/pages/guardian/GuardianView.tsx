@@ -24,7 +24,7 @@ const GuardianView: React.FC = () => {
 
     const {data, isLoading, isSuccess, refetch} = useFetch(['guardian-id'], fetchGuardianWithStudents, [id])
 
-    const guardianName = guardian ? setName(guardian.personalInfo.lastName, guardian.personalInfo.firstName) : 'Tuteur'
+    const guardianName = guardian ? setName(guardian?.personalInfo?.lastName, guardian?.personalInfo?.firstName) : 'Tuteur'
 
     useDocumentTitle({
         title: guardianName,
@@ -64,18 +64,18 @@ const GuardianView: React.FC = () => {
                 setEdit={handleOpenDrawer}
                 closeState={openDrawer}
                 avatarProps={{
-                    firstName: guardian?.personalInfo.firstName,
-                    lastName: setLastName(guardian?.personalInfo.lastName, guardian?.personalInfo.maidenName, true),
-                    reference: guardian?.personalInfo.emailId
+                    firstName: guardian?.personalInfo?.firstName,
+                    lastName: setLastName(guardian?.personalInfo?.lastName, guardian?.personalInfo?.maidenName, true),
+                    reference: guardian?.personalInfo?.emailId
                 }}
                 blockProps={[
                     {
                         title: 'Etat Civil',
                         mention: <Tag color={color}>{
-                            getStatusKey(guardian?.personalInfo.status as Status, guardian?.personalInfo.gender === Gender.FEMME)
+                            getStatusKey(guardian?.personalInfo?.status as Status, guardian?.personalInfo?.gender === Gender.FEMME)
                         }</Tag>
                     },
-                    {title: 'Télephone', mention: guardian?.personalInfo.telephone},
+                    {title: 'Télephone', mention: guardian?.personalInfo?.telephone},
                     {
                         title: guardian?.jobTitle ? guardian.jobTitle : '',
                         mention: guardian?.company ? guardian?.company : ''

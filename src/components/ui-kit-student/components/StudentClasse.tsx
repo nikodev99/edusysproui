@@ -15,7 +15,7 @@ const count = 3;
 
 export const StudentClasse = ({enrolledStudent, setActiveKey}: {enrolledStudent: Enrollment, setActiveKey: (key: string) => void }) => {
 
-    const {academicYear, student, classe} = enrolledStudent
+    const {academicYear, student, student: {personalInfo}, classe} = enrolledStudent
 
     const [academicYearId, setAcademicYearId] = useState<string>(academicYear.id)
     const [size, setSize] = useState<number>(5)
@@ -62,7 +62,7 @@ export const StudentClasse = ({enrolledStudent, setActiveKey}: {enrolledStudent:
         console.error(error)
     }
 
-    const studentName = `${setFirstName(student.lastName)} ${setFirstName(student.firstName)}`
+    const studentName = `${setFirstName(personalInfo.lastName)} ${setFirstName(personalInfo.firstName)}`
 
     const onLoadMore = () => {
         setSize((prevState) => prevState + count)
@@ -145,13 +145,13 @@ export const StudentClasse = ({enrolledStudent, setActiveKey}: {enrolledStudent:
                                     <Skeleton avatar loading={isLoading} active={isLoading}>
                                         <List.Item.Meta
                                             avatar={<Avatar
-                                                image={item.student.image}
-                                                firstText={item.student.firstName}
-                                                lastText={item.student.lastName}
+                                                image={item.student.personalInfo.image}
+                                                firstText={item.student.personalInfo.firstName}
+                                                lastText={item.student.personalInfo.lastName}
                                             />}
                                             title={
                                                 <span className='name' onClick={() => handleWatchClassmate(item.student.id)}>
-                                                    {item.student.lastName} {setFirstName(`${item.student.firstName}`)}
+                                                    {item.student.personalInfo.lastName} {setFirstName(`${item.student.personalInfo.firstName}`)}
                                                 </span>
                                             }
                                             description={item.student.reference}

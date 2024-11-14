@@ -24,6 +24,7 @@ interface AddStepsProps<TFieldValues extends FieldValues> {
     steps: {title: ReactNode, content: ReactNode}[]
     messages: {success?: string, error?: string}
     isPending: boolean
+    currentNumber: number
     stepsDots?: boolean | ((iconDot: ReactNode, {index, status, title, description}: never) => ReactNode)
 }
 
@@ -39,6 +40,7 @@ const AddStepForm = <TFieldValues extends FieldValues>(
         messages,
         isPending,
         stepsDots,
+        currentNumber
     }: AddStepsProps<TFieldValues>
 ) => {
 
@@ -51,7 +53,7 @@ const AddStepForm = <TFieldValues extends FieldValues>(
     const location = useLocation()
     const queryParam = queryString.parse(location.search)
     const stepNumber = Number(queryParam.step) || 0
-    const current = stepNumber > 5 ? 0 : stepNumber
+    const current = stepNumber > currentNumber ? 0 : stepNumber
     const {error, success} = messages
     const {handleSubmit, formState: {errors}, clearErrors} = handleForm
 

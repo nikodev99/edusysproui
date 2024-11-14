@@ -58,7 +58,7 @@ const Inscription = () => {
     const formData = watch()
 
     useEffect(() => {
-        const guardian = formData?.student?.guardian.personalInfo
+        const guardian = formData?.student?.guardian?.personalInfo
         if (
             guardian && 'gender' in guardian && 'status' in guardian &&
             guardian?.gender === Gender.FEMME && guardian?.status === Status.MARIE
@@ -67,6 +67,7 @@ const Inscription = () => {
         }else {
             setShowMaidenName(false)
         }
+        console.log("Data: ", formData)
     }, [errors, formData]);
 
     const validate = (validateFields: boolean, current: number) => {
@@ -77,6 +78,7 @@ const Inscription = () => {
     }
 
     const setGuardianValues = (guardian: Guardian) => {
+        console.log("Existing guardian at setting value: ", guardian)
         const newGuardian = toGuardianSchema(guardian)
         setValue('student.guardian', newGuardian as GuardianSchema, {
             shouldValidate: true
@@ -92,7 +94,7 @@ const Inscription = () => {
 
     const steps = [
         {
-          title: 'Information Personnelle',
+          title: 'Personnelle',
           content: <IndividualForm control={control} errors={errors} edit={false} enroll={true} type={IndividualType.STUDENT} />
         },
         {
@@ -178,6 +180,16 @@ const Inscription = () => {
                             "student.guardian.personalInfo.firstName", 'student.guardian.personalInfo.lastName', 'student.guardian.personalInfo.gender',
                             'student.guardian.personalInfo.status', 'student.guardian.personalInfo.telephone'
                         ])
+                        if (checked && !guardianId && !isExists) {
+                            setValue('student.guardian.personalInfo.address', formData.student.personalInfo.address)
+                        }else {
+                            const guardianAddressFields = await trigger([
+                                'student.guardian.personalInfo.address.number', 'student.guardian.personalInfo.address.street',
+                                'student.guardian.personalInfo.address.neighborhood', 'student.guardian.personalInfo.address.city',
+                                'student.guardian.personalInfo.address.country'
+                            ])
+                            validate(guardianAddressFields, current)
+                        }
                         validate(validateFields, current)
                     }
                     break
@@ -198,22 +210,6 @@ const Inscription = () => {
         setSuccess("")
 
         startTransition(() => {
-
-            if (checked && !guardianId && !isExists) {
-                data = {
-                    ...data,
-                    student: {
-                        ...data.student,
-                        guardian: {
-                            ...data.student.guardian,
-                            personalInfo: {
-                                ...data.student.guardian.personalInfo,
-                                address: data.student.personalInfo.address,
-                            }
-                        }
-                    }
-                }
-            }
 
             if (image)
                 data = {
@@ -246,6 +242,8 @@ const Inscription = () => {
         })
     }
 
+    console.log('Error occurred: ', errors)
+
     return(
         <AddStepForm
             docTitle={documentTitle}
@@ -257,6 +255,7 @@ const Inscription = () => {
             messages={{success: success, error: error}}
             isPending={isPending}
             handleForm={form}
+            currentNumber={6}
         />
     )
 }

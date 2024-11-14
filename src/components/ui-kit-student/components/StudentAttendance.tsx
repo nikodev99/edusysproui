@@ -18,7 +18,7 @@ export const StudentAttendance = ({enrolledStudent}: {enrolledStudent: Enrollmen
     const {
         academicYear: {id, academicYear},
         student,
-        student: {firstName, lastName, enrollments}
+        student: {personalInfo, enrollments}
     } = enrolledStudent
 
     const [academicYearId, setAcademicYearId] = useState<string>(id)
@@ -63,7 +63,7 @@ export const StudentAttendance = ({enrolledStudent}: {enrolledStudent: Enrollmen
 
     if(error) return <PageError />
 
-    const studentName = `${setFirstName(lastName)} ${setFirstName(firstName)}`
+    const studentName = `${setFirstName(personalInfo.lastName)} ${setFirstName(personalInfo.firstName)}`
 
     const handleAcademicYearIdValue = (value: string) => {
         setAcademicYearId(value)
@@ -111,7 +111,7 @@ export const StudentAttendance = ({enrolledStudent}: {enrolledStudent: Enrollmen
 
     return(
         <TabItem
-            title={`Suivis de présence d${startsWithVowel(lastName) ? "'" : 'e '}${studentName}`}
+            title={`Suivis de présence d${startsWithVowel(personalInfo.lastName) ? "'" : 'e '}${studentName}`}
             selects={[
                 (
                     <Select

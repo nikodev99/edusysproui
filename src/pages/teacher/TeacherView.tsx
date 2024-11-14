@@ -17,7 +17,6 @@ import {Gender} from "../../entity/enums/gender.ts";
 import {LuClipboardEdit, LuListChecks, LuSubtitles, LuTrash2, LuUserMinus} from "react-icons/lu";
 import {TeacherEditDrawer} from "../../components/ui-kit-teacher";
 import {useToggle} from "../../hooks/useToggle.ts";
-import {FcLibrary} from "react-icons/fc";
 import {AiOutlineArrowUp} from "react-icons/ai";
 
 const TeacherView = () => {
@@ -31,8 +30,8 @@ const TeacherView = () => {
 
     const {data, isLoading, isSuccess, refetch} = useFetch(['student-id', id!], fetchTeacherById, [id])
 
-    const teacherName = setName(teacher?.lastName, teacher?.firstName)
-    const color: string = teacher?.firstName ? chooseColor(teacher.firstName) as string  : '#7615c4'
+    const teacherName = setName(teacher?.personalInfo?.lastName, teacher?.personalInfo?.firstName)
+    const color: string = teacher?.personalInfo?.firstName ? chooseColor(teacher.personalInfo?.firstName) as string  : '#7615c4'
 
     useDocumentTitle({
         title: teacherName,
@@ -104,18 +103,21 @@ const TeacherView = () => {
                 setEdit={setOpenDrawer}
                 closeState={openDrawer}
                 avatarProps={{
-                    image: teacher?.image,
-                    firstName: teacher?.firstName,
-                    lastName: setLastName(teacher?.lastName, teacher?.maidenName),
-                    reference: teacher?.emailId
+                    image: teacher?.personalInfo?.image,
+                    firstName: teacher?.personalInfo?.firstName,
+                    lastName: setLastName(teacher?.personalInfo?.lastName, teacher?.personalInfo?.maidenName),
+                    reference: teacher?.personalInfo?.emailId
                 }}
                 blockProps={[
                     {
                         title: 'Etat Civil',
-                        mention: <Tag
-                            color={color}>{getStatusKey(teacher?.status as Status, teacher?.gender === Gender.FEMME)}</Tag>
+                        mention: <Tag color={color}>{
+                            getStatusKey(
+                                teacher?.personalInfo?.status as Status,
+                                teacher?.personalInfo?.gender === Gender.FEMME
+                            )}</Tag>
                     },
-                    {title: 'Télephone', mention: teacher?.telephone},
+                    {title: 'Télephone', mention: teacher?.personalInfo?.telephone},
                 ]}
                 items={[
                     {key: 2, label: 'Ajouter programme', icon: <LuListChecks/>},

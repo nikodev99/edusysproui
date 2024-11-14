@@ -266,9 +266,10 @@ export const firstWord = (word?: string): string => {
     return setFirstName(word).split(' ')[0]
 }
 
-export const lowerName = (first?: string, last?: string) => {
+export const lowerName = (first?: string, last?: string, length?: number) => {
     const name = `${firstWord(first)} ${firstWord(last)}`
-    if (name.length >= 17) {
+    const nameLength = length ? length : 17
+    if (name.length >= nameLength) {
         first = first?.charAt(0).toUpperCase() + '.'
     }
     return `${firstWord(first)} ${firstWord(last)}`

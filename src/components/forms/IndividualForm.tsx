@@ -15,7 +15,7 @@ type IndividualProps<T extends FieldValues, Q extends object> = FormContentProps
     handleUpdate?: (field: keyof Q | keyof PersonalInfo, value: unknown) => Promise<void>
 }
 
-const IndividualForm = <T extends FieldValues>(individualProps: IndividualProps<T>) => {
+const IndividualForm = <T extends FieldValues, Q extends object>(individualProps: IndividualProps<T, Q>) => {
 
     const genderOptions = useMemo(() => enumToObjectArray(Gender), [])
     const statusOptions = useMemo(() => enumToObjectArray(Status), [])

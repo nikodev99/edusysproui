@@ -6,7 +6,7 @@ export enum Status {
     DIVORCE = 'DIVORCED',
     SEPARE = 'SEPARATED',
     PACSE = 'PARTNERSHIP',
-    CONCUBIN = 'DOMESTIC'
+    CONCUBIN = 'CONCUBIN'
 }
 
 export function getStatusKey(value: Status, female?: boolean): keyof typeof Status | undefined {

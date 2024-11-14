@@ -3,7 +3,7 @@ import {Address} from "./address.ts";
 import {Status} from "../enums/status.ts";
 
 export interface Individual {
-    id: number;
+    id: bigint;
     firstName: string
     lastName: string
     maidenName: string

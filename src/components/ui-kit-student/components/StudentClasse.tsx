@@ -13,7 +13,7 @@ import {text} from "../../../utils/text_display.ts";
 
 const count = 3;
 
-export const StudentClasse = ({enrolledStudent, setActiveKey}: {enrolledStudent: Enrollment, setActiveKey: (key: string) => void }) => {
+export const StudentClasse = ({enrolledStudent, setActiveKey}: {enrolledStudent: Enrollment, setActiveKey?: (key: string) => void }) => {
 
     const {academicYear, student, student: {personalInfo}, classe} = enrolledStudent
 
@@ -62,14 +62,14 @@ export const StudentClasse = ({enrolledStudent, setActiveKey}: {enrolledStudent:
         console.error(error)
     }
 
-    const studentName = `${setFirstName(personalInfo.lastName)} ${setFirstName(personalInfo.firstName)}`
+    const studentName = `${setFirstName(personalInfo?.lastName)} ${setFirstName(personalInfo?.firstName)}`
 
     const onLoadMore = () => {
         setSize((prevState) => prevState + count)
     }
 
     const handleWatchClassmate = (id: string) => {
-        setActiveKey('1')
+        setActiveKey ? setActiveKey('0') : undefined
         redirectTo(`${text.student.group.view.href}${id}`)
     }
 
@@ -96,8 +96,6 @@ export const StudentClasse = ({enrolledStudent, setActiveKey}: {enrolledStudent:
         setClasseId(value)
         setAcademicYearId(enrollment ? enrollment.academicYear.id : academicYear.id)
     }
-
-    console.log("classmates: ", classmates)
 
     return(
         <PageWrapper>
@@ -145,13 +143,13 @@ export const StudentClasse = ({enrolledStudent, setActiveKey}: {enrolledStudent:
                                     <Skeleton avatar loading={isLoading} active={isLoading}>
                                         <List.Item.Meta
                                             avatar={<Avatar
-                                                image={item.student.personalInfo.image}
-                                                firstText={item.student.personalInfo.firstName}
-                                                lastText={item.student.personalInfo.lastName}
+                                                image={item?.student?.personalInfo?.image}
+                                                firstText={item?.student?.personalInfo?.firstName}
+                                                lastText={item?.student?.personalInfo?.lastName}
                                             />}
                                             title={
-                                                <span className='name' onClick={() => handleWatchClassmate(item.student.id)}>
-                                                    {item.student.personalInfo.lastName} {setFirstName(`${item.student.personalInfo.firstName}`)}
+                                                <span className='name' onClick={() => handleWatchClassmate(item?.student?.id)}>
+                                                    {item?.student?.personalInfo?.lastName} {setFirstName(`${item?.student?.personalInfo?.firstName}`)}
                                                 </span>
                                             }
                                             description={item.student.reference}

@@ -27,7 +27,7 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
     const [subjectValue, setSubjectValue] = useState<number>(0)
     const [academicYearId, setAcademicYearId] = useState<string>(id)
 
-    const studentName = `${setFirstName(personalInfo.lastName)} ${setFirstName(personalInfo.firstName)}`
+    const studentName = `${setFirstName(personalInfo?.lastName)} ${setFirstName(personalInfo?.firstName)}`
 
     const {data, error, isLoading, refetch} = useFetch('student-scores', fetchAllStudentScores, [examCount, 10, student.id, academicYearId])
 
@@ -122,7 +122,7 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
 
     return(
         <TabItem
-            title={`Les notes d${startsWithVowel(personalInfo.lastName) ? "'" : 'e '}${studentName}`}
+            title={`Les notes d${startsWithVowel(personalInfo?.lastName) ? "'" : 'e '}${studentName}`}
             selects={[
                 <Select
                     className='select-control'

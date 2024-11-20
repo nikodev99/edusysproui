@@ -69,7 +69,7 @@ const AddTeacher = () => {
 
     useEffect(() => {
         if(formData) {
-            setShowMaidenName(formData.personalInfo.gender === Gender.FEMME && formData.personalInfo.status === Status.MARIE)
+            setShowMaidenName(formData?.personalInfo?.gender === Gender.FEMME && formData?.personalInfo?.status === Status.MARIE)
         }
     }, [formData, classes, courses, errors])
 
@@ -216,6 +216,7 @@ const AddTeacher = () => {
             messages={{success: successMessage, error: errorMessage}}
             isPending={isLoading || isPending}
             stepsDots={customDot}
+            currentNumber={5}
         />
     )
 }

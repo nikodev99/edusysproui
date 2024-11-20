@@ -202,6 +202,7 @@ const IndividualForm = <T extends FieldValues, Q extends object>(individualProps
                     lg: onlyField,
                     label: 'E-mail',
                     control: control,
+                    required: type === IndividualType.TEACHER,
                     name: get(type, 'emailId')?.name as Path<T>,
                     defaultValue: (edit && data ? data.emailId : '') as PathValue<T, Path<T>>,
                     placeholder: 'p.malonga@gmail.com',

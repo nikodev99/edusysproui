@@ -95,7 +95,12 @@ const AddStepForm = <TFieldValues extends FieldValues>(
 
     return(
         <>
-            <PageHierarchy items={items as [{title: string|ReactNode, path?: string}]}/>
+            <PageHierarchy items={items as [{ title: string | ReactNode, path?: string }]}/>
+
+            <div className="step-wrapper">
+                <Steps current={current} progressDot={stepsDots as never} items={stepItems} size='small' />
+            </div>
+
             <PageWrapper>
                 {hasErrors && <ValidationAlert
                     alertMessage='Une ou plusieurs erreurs de validation détectés'
@@ -107,9 +112,6 @@ const AddStepForm = <TFieldValues extends FieldValues>(
                     <div className='form-wrapper'>
                         <Form layout="vertical" initialValues={{requiredMarkValue: 'customize'}}
                               requiredMark={requiredMark} onFinish={handleForm.handleSubmit(onSubmit)}>
-                            <div className="step-wrapper">
-                                <Steps current={current} progressDot={stepsDots as never} items={stepItems}/>
-                            </div>
                             <div className='step-content'>
                                 {steps[current].content}
                             </div>
@@ -135,4 +137,4 @@ const AddStepForm = <TFieldValues extends FieldValues>(
     )
 }
 
-export {AddStepForm }
+export {AddStepForm}

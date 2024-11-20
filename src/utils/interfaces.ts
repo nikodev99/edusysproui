@@ -11,10 +11,12 @@ import {
 } from "react-hook-form";
 import {ValidateStatus} from "antd/es/form/FormItem";
 import React, {CSSProperties, ReactNode} from "react";
-import {AcademicYear, Guardian} from "../entity";
+import {AcademicYear, Guardian, Student, Teacher} from "../entity";
 import {SectionType} from "../entity/enums/section.ts";
 import {Gender} from "../entity/enums/gender.ts";
 import {AttendanceStatus} from "../entity/enums/attendanceStatus.ts";
+import {Employee} from "../entity/domain/employee.ts";
+import {AddressOwner, IndividualType} from "../core/shared/sharedEnums.ts";
 
 export interface Metadata {
     title: string
@@ -231,4 +233,12 @@ export type TabItemType = {
     icon?: ReactNode
     children?: ReactNode
     closable?: boolean
+}
+
+export type CustomUpdateProps = {
+    data: Student | Teacher | Employee | Guardian,
+    open?: boolean, close?: () => void,
+    personal: AddressOwner | IndividualType,
+    setSuccessMessage: (msg: string | undefined) => void,
+    setErrorMessage: (msg: string | undefined) => void
 }

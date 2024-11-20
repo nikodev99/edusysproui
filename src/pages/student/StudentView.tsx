@@ -7,7 +7,6 @@ import {ReactNode, useEffect, useState} from "react";
 import {Enrollment, Student} from "../../entity";
 import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
 import ViewHeader from "../../components/ui/layout/ViewHeader.tsx";
-import LocalStorageManager from "../../core/LocalStorageManager.ts";
 import {setName} from "../../utils/utils.ts";
 import {useFetch} from "../../hooks/useFetch.ts";
 import {
@@ -25,15 +24,16 @@ const StudentView = () => {
 
     const { id } = useParams()
 
-    const activeTabKey = LocalStorageManager.get("tabKey") as string || "1"
     const [enrolledStudent, setEnrolledStudent] = useState<Enrollment | null>(null);
-    const [tabKey, setTabKey] = useState<string>(activeTabKey)
     const [openDrawer, setOpenDrawer] = useState(false)
     const [color, setColor] = useState('')
 
     const {data, isLoading, isSuccess, error, refetch} = useFetch(['student-id', id as string], fetchStudentById, [id])
 
-    const studentName = enrolledStudent ? setName(enrolledStudent?.student.personalInfo.lastName, enrolledStudent?.student.personalInfo.firstName) : 'Étudiant'
+    const studentName = enrolledStudent ? setName(
+        enrolledStudent?.student.personalInfo?.lastName,
+        enrolledStudent?.student.personalInfo?.firstName
+    ) : 'Étudiant'
 
     useDocumentTitle({
         title: `EduSysPro - ${studentName}`,
@@ -56,11 +56,6 @@ const StudentView = () => {
             setEnrolledStudent(data)
         }
     }, [data, isSuccess]);
-    
-    const handleTabChange = (activeKey: string) => {
-        setTabKey(activeKey)
-        LocalStorageManager.update('tabKey', () => activeKey)
-    }
 
     const handleOpenDrawer = (state: boolean) => {
         setOpenDrawer(state)
@@ -82,10 +77,10 @@ const StudentView = () => {
                 setEdit={handleOpenDrawer}
                 closeState={openDrawer}
                 avatarProps={{
-                    image: enrolledStudent?.student.personalInfo.image,
-                    firstName: enrolledStudent?.student.personalInfo.firstName,
-                    lastName: enrolledStudent?.student.personalInfo.lastName,
-                    reference: enrolledStudent?.student.reference
+                    image: enrolledStudent?.student.personalInfo?.image,
+                    firstName: enrolledStudent?.student.personalInfo?.firstName,
+                    lastName: enrolledStudent?.student.personalInfo?.lastName,
+                    reference: enrolledStudent?.student?.reference
                 }}
                 blockProps={[
                     {
@@ -109,21 +104,17 @@ const StudentView = () => {
                     {key: 4, label: 'Retirer l\'étudiant', danger: true, icon: <LuTrash/>}
                 ]}
             />
+
             <ViewRoot
-                exists={enrolledStudent != null}
+                exists={enrolledStudent !== null}
                 items={[
-                    {label: 'Info', children: <StudentInfo enrollment={enrolledStudent!} seeMore={handleTabChange} color={color}/>},
+                    {label: 'Info', children: <StudentInfo enrollment={enrolledStudent!} color={color}/>},
                     {label: 'Examens', children: <StudentExam enrolledStudent={enrolledStudent!}/>},
                     {label: 'Présence', children: <StudentAttendance enrolledStudent={enrolledStudent!}/>},
-                    {label: 'Condisciples', children: <StudentClasse setActiveKey={handleTabChange} enrolledStudent={enrolledStudent!}/>},
+                    {label: 'Condisciples', children: <StudentClasse enrolledStudent={enrolledStudent!}/>},
                     {label: 'Discipline', children: <StudentHistory/>},
                 ]}
-                tab={{
-                    onChange: handleTabChange,
-                    defaultActiveKey: tabKey,
-                    activeKey: tabKey,
-                    centered: true,
-                }}
+                tab={{centered: true}}
             />
             <section>
                 <StudentEditDrawer

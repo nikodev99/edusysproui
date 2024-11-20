@@ -25,4 +25,14 @@ export class PatchUpdate {
                 setErrorMessage(`An unexpected error occurred: ${err.error.message}`);
             })
     }
+
+    static async address<T> (
+        field: keyof T,
+        value: T,
+        addressId: ID,
+        setSuccessMessage: (msg?: string) => void,
+        setErrorMessage: (msg?: string) => void
+    ) {
+        await PatchUpdate.set(field, value, addressId, setSuccessMessage, setErrorMessage, UpdateType.ADDRESS)
+    }
 }

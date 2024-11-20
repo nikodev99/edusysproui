@@ -2,30 +2,20 @@ import RightSidePane from "../../ui/layout/RightSidePane.tsx";
 import {useForm} from "react-hook-form";
 import {EditProps} from "../../../utils/interfaces.ts";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {
-    addressSchema,
-    AddressSchema,
-    healthSchema,
-    HealthSchema,
-    individualSchema,
-    IndividualSchema,
-    studentSchema,
-    StudentSchema
-} from "../../../schema";
-import {Address, HealthCondition, Student} from "../../../entity";
+import {healthSchema, HealthSchema, studentSchema, StudentSchema} from "../../../schema";
+import {HealthCondition, Student} from "../../../entity";
 import StudentForm from "../../forms/StudentForm.tsx";
 import {Button} from "antd";
 import {useEffect, useState} from "react";
-import AddressForm from "../../forms/AddressForm.tsx";
 import {AddressOwner, IndividualType, UpdateType} from "../../../core/shared/sharedEnums.ts";
 import HealthConditionForm from "../../forms/HealthConditionForm.tsx";
 import FormSuccess from "../../ui/form/FormSuccess.tsx";
 import FormError from "../../ui/form/FormError.tsx";
-import {Individual} from "../../../entity/domain/individual.ts";
 import {hasField} from "../../../utils/utils.ts";
-import {IndividualForm} from "../../forms/IndividualForm.tsx";
 import {PatchUpdate} from "../../../core/PatchUpdate.ts";
 import {useToggle} from "../../../hooks/useToggle.ts";
+import {UpdateAddress} from "../../custom/UpdateAddress.tsx";
+import {UpdatePersonalData} from "../../custom/UpdatePersonalData.tsx";
 
 export const StudentEditDrawer = ({open, close, isLoading, data}: EditProps<Student>) => {
 
@@ -38,25 +28,14 @@ export const StudentEditDrawer = ({open, close, isLoading, data}: EditProps<Stud
     const {watch, control, formState: {errors}} = useForm<StudentSchema>({
         resolver: zodResolver(studentSchema)
     })
-    const zodAddress = useForm<AddressSchema>({
-        resolver: zodResolver(addressSchema)
-    })
     const zodHealth = useForm<HealthSchema>({
         resolver: zodResolver(healthSchema)
     })
 
-    const zodInfo = useForm<IndividualSchema>({
-        resolver: zodResolver(individualSchema)
-    })
-
     const studentData = watch()
-    const addressData = zodAddress.watch()
     const healthData = zodHealth.watch()
-    const infoData = zodInfo.watch()
 
     useEffect(() => {
-        console.log("Info Data: ", zodInfo)
-        console.log("Address Data: ", zodAddress)
         if(successMessage || errorMessage) {
             const timer = setTimeout(() => {
                 setErrorMessage(undefined)
@@ -64,7 +43,7 @@ export const StudentEditDrawer = ({open, close, isLoading, data}: EditProps<Stud
             }, 3000)
             return () => clearTimeout(timer)
         }
-    }, [errorMessage, successMessage, zodAddress, zodInfo]);
+    }, [errorMessage, successMessage]);
 
     const closeDrawer = () => {
         setErrorMessage(undefined)
@@ -84,7 +63,7 @@ export const StudentEditDrawer = ({open, close, isLoading, data}: EditProps<Stud
         showHealthDrawer()
     }
 
-    const handleStudentUpdate = async (field: keyof Student | keyof Individual) => {
+    const handleStudentUpdate = async (field: keyof Student) => {
         if (data.id) {
             if (hasField(data, field as keyof Student)) {
                 await PatchUpdate.set(
@@ -94,32 +73,7 @@ export const StudentEditDrawer = ({open, close, isLoading, data}: EditProps<Stud
                     setSuccessMessage,
                     setErrorMessage,
                 )
-
-            }else {
-                if(data?.personalInfo?.id) {
-                    await PatchUpdate.set(
-                        field,
-                        infoData,
-                        data?.personalInfo?.id,
-                        setSuccessMessage,
-                        setErrorMessage,
-                        UpdateType.INFO
-                    )
-                }
             }
-        }
-    }
-
-    const handleAddressUpdate = async (field: keyof Address) => {
-        if (data?.personalInfo?.address.id) {
-            await PatchUpdate.set(
-                field,
-                addressData,
-                data?.personalInfo?.address.id,
-                setSuccessMessage,
-                setErrorMessage,
-                UpdateType.ADDRESS
-            )
         }
     }
 
@@ -138,13 +92,11 @@ export const StudentEditDrawer = ({open, close, isLoading, data}: EditProps<Stud
 
     return (
         <RightSidePane loading={isLoading} open={open} onClose={close} className='edit-drawer' destroyOnClose>
-            <IndividualForm
-                control={zodInfo.control}
-                errors={zodInfo.formState.errors}
-                edit={true}
-                data={data?.personalInfo}
-                handleUpdate={handleStudentUpdate}
-                type={IndividualType.STUDENT}
+            <UpdatePersonalData
+                data={data}
+                personal={IndividualType.STUDENT}
+                setSuccessMessage={setSuccessMessage}
+                setErrorMessage={setErrorMessage}
             />
             {successMessage && (<FormSuccess message={successMessage} />)}
             {errorMessage && (<FormError message={errorMessage} />)}
@@ -160,18 +112,22 @@ export const StudentEditDrawer = ({open, close, isLoading, data}: EditProps<Stud
                 </div>
             </section>
             <RightSidePane loading={isLoading} open={parentDrawer} onClose={closeDrawer}>
-                <StudentForm control={control} errors={errors} edit={true} data={data} handleUpdate={handleStudentUpdate} />
-            </RightSidePane>
-            <RightSidePane loading={data?.personalInfo?.address === undefined} open={addressDrawer} onClose={closeAddressDrawer} className='address__drawer'>
-                <AddressForm
-                    control={zodAddress.control}
-                    errors={zodAddress.formState.errors}
-                    type={AddressOwner.STUDENT}
+                <StudentForm
+                    control={control}
+                    errors={errors}
                     edit={true}
-                    data={data.personalInfo?.address}
-                    handleUpdate={handleAddressUpdate}
+                    data={data}
+                    handleUpdate={handleStudentUpdate}
                 />
             </RightSidePane>
+            <UpdateAddress
+                data={data}
+                open={addressDrawer}
+                close={closeAddressDrawer}
+                personal={AddressOwner.STUDENT}
+                setSuccessMessage={setSuccessMessage}
+                setErrorMessage={setErrorMessage}
+            />
             <RightSidePane loading={data?.healthCondition === undefined} open={healthDrawer} onClose={closeHealthDrawer} className='health__drawer'>
                 <HealthConditionForm
                     control={zodHealth.control}

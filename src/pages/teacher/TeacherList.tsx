@@ -93,7 +93,8 @@ const TeacherList = () => {
             filters: enumToObjectArrayForFiltering(Gender),
             sorter: true,
             showSorterTooltip: false,
-            onFilter: (value, record) => record?.personalInfo.gender ? record.personalInfo.gender.indexOf(value as string) === 0 : false
+            onFilter: (value, record) => record?.personalInfo?.gender ?
+                record?.personalInfo?.gender.indexOf(value as string) === 0 : false
         },
         {
             title: "Age",
@@ -112,7 +113,7 @@ const TeacherList = () => {
             responsive: ['md'],
             sorter: true,
             showSorterTooltip: false,
-            render: (text, {personalInfo}) => statusTags(text, personalInfo.gender === Gender.FEMME)
+            render: (text, {personalInfo}) => statusTags(text, personalInfo?.gender === Gender.FEMME)
         },
         {
             title: "Matières",

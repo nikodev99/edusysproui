@@ -157,7 +157,7 @@ export const isCurrentTimeBetween = (startTime: number[], endTime: number[]): bo
     return now.isAfter(start) && now.isBefore(end);
 };
 
-export const chooseColor = (name: string): string | null | undefined => {
+export const chooseColor = (name: string): string | undefined  => {
     if (name)
         switch (name.toUpperCase().charAt(0)) {
             case 'A': return '#8B0000'; // Dark Red
@@ -186,7 +186,7 @@ export const chooseColor = (name: string): string | null | undefined => {
             case 'X': return '#1E90FF'; // Dark Dodger Blue
             case 'Y': return '#483D8B'; // Dark Medium Slate Blue
             case 'Z': return '#4682B4'; // Dark Steel Blue
-            default: return null;
+            default: return undefined;
         }
 }
 

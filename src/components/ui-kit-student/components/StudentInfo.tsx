@@ -3,10 +3,8 @@ import {Button, Carousel, Divider, Table, TableColumnsType, Avatar as AntAvatar}
 import {HTMLProps, ReactNode, useEffect, useState} from "react";
 import {Enrollment, HealthCondition, Schedule} from "../../../entity";
 import {
-    bloodLabel,
-    chooseColor,
-    convertToM, fDate, fDatetime, firstLetter, fullDay, getAge, getCountry, isCurrentTimeBetween,
-    isNull, lowerName, monthsBetween, setFirstName, timeConcat
+    bloodLabel,convertToM, fDate, fDatetime, firstLetter, fullDay, getAge, getCountry, isCurrentTimeBetween,
+    chooseColor,isNull, lowerName, monthsBetween, setFirstName, timeConcat
 } from "../../../utils/utils.ts";
 import PanelStat from "../../ui/layout/PanelStat.tsx";
 import {Gender} from "../../../entity/enums/gender.ts";
@@ -49,44 +47,44 @@ const IndividualInfo = ({enrollment, color}: StudentInfoProps) => {
     const {student, student: {personalInfo, healthCondition}} = enrollment
 
     const [nationality, setNationality] = useState<string>()
-    const country = getCountry(personalInfo.nationality as string)
-    const studentAge = getAge(personalInfo.birthDate as [number, number, number])
-    const birthDay = fDate(personalInfo.birthDate)
+    const country = getCountry(personalInfo?.nationality as string)
+    const studentAge = getAge(personalInfo?.birthDate as [number, number, number])
+    const birthDay = fDate(personalInfo?.birthDate)
     const individualData = [
-        {statement: 'Genre', response: firstLetter(personalInfo.gender)},
+        {statement: 'Genre', response: firstLetter(personalInfo?.gender)},
         {statement: 'Nom(s) et prénom(s) du père', response: setFirstName(student.dadName)},
         {statement: 'Nom(s) et prénom(s) de la mère', response: setFirstName(student.momName)},
-        ...(isNull(personalInfo.telephone) ? [] : [{statement: 'Téléphone', response: personalInfo.telephone}]),
-        ...(isNull(personalInfo.emailId) ? [] : [{statement: '@', response: personalInfo.emailId}]),
+        ...(isNull(personalInfo?.telephone) ? [] : [{statement: 'Téléphone', response: personalInfo?.telephone}]),
+        ...(isNull(personalInfo?.emailId) ? [] : [{statement: '@', response: personalInfo?.emailId}]),
     ]
     const addressData = [
-        {statement: 'Numéro', response: personalInfo.address?.number},
-        {statement: 'Rue', response: personalInfo.address?.street},
-        {statement: 'Quartier', response: personalInfo.address?.neighborhood},
-        ...(!isNull(personalInfo.address?.borough) ? [{
+        {statement: 'Numéro', response: personalInfo?.address?.number},
+        {statement: 'Rue', response: personalInfo?.address?.street},
+        {statement: 'Quartier', response: personalInfo?.address?.neighborhood},
+        ...(!isNull(personalInfo?.address?.borough) ? [{
             statement: 'Arrondissement',
-            response: personalInfo.address?.borough
+            response: personalInfo?.address?.borough
         }] : []),
-        {statement: 'Ville', response: personalInfo.address?.city}
+        {statement: 'Ville', response: personalInfo?.address?.city}
     ]
 
     useEffect(() => {
-        if (student && country && personalInfo.gender === Gender.FEMME) {
+        if (student && country && personalInfo?.gender === Gender.FEMME) {
             setNationality(country?.demonyms.fra.f)
         } else {
             setNationality(country?.demonyms.fra.m)
         }
-    }, [country, personalInfo.gender, student]);
+    }, [country, personalInfo?.gender, student]);
 
     return (
-        <Section title={`Profile de ${setFirstName(personalInfo.firstName + ' ' + personalInfo.lastName)}`}>
+        <Section title={`Profile de ${setFirstName(personalInfo?.firstName + ' ' + personalInfo?.lastName)}`}>
             <div className='panel'>
                 <PanelStat title={studentAge} subTitle='ans' src={true} media={country?.cca2} desc={nationality}/>
                 <PanelStat title={healthCondition?.weight} subTitle='kgs' src={false} media={''} desc='Poids'/>
                 <PanelStat title={healthCondition?.height} subTitle='m' src={false}
                            media={convertToM(healthCondition?.height as number)} desc='Taille'/>
             </div>
-            <div className='birth-Body'><p>Née le {birthDay} à {personalInfo.birthCity}</p></div>
+            <div className='birth-Body'><p>Née le {birthDay} à {personalInfo?.birthCity}</p></div>
             <Divider/>
             <div className="panel-table">
                 <PanelTable title='Données Personnelles' data={individualData} panelColor={color}/>
@@ -200,7 +198,7 @@ const GraphSection = ({enrollment}: StudentInfoProps) => {
 
     return (
         <Section title='Progression aux examens'>
-            <RadarChart data={data}  xField='subject' yField='score' color={chooseColor(personalInfo.firstName)as string}/>
+            <RadarChart data={data}  xField='subject' yField='score' color={chooseColor(personalInfo?.firstName as string)} />
         </Section>
     )
 }
@@ -320,13 +318,13 @@ const SchoolColleagues = ({enrollment, seeMore, color}: StudentInfoProps) => {
                         <a onClick={() => handleSeeDetails(c.student.id)}>
                             <div className='avatar'>
                                 <Avatar
-                                    image={c.student.personalInfo.image}
+                                    image={c.student?.personalInfo?.image}
                                     size={{xs: 24, sm: 32, md: 40, lg: 64, xl: 80, xxl: 100}}
-                                    firstText={c.student.personalInfo.firstName} lastText={c.student.personalInfo.lastName}
+                                    firstText={c.student?.personalInfo?.firstName} lastText={c.student?.personalInfo?.lastName}
                                 />
                             </div>
                             <div className='name'>
-                                <span>{lowerName(c.student.personalInfo.firstName, c.student.personalInfo.lastName)}</span>
+                                <span>{lowerName(c.student?.personalInfo?.firstName, c.student?.personalInfo?.lastName)}</span>
                             </div>
                         </a>
                         <div className='view__button'>
@@ -442,7 +440,7 @@ const DisciplinaryRecords = ({enrollment, seeMore, color}: StudentInfoProps) => 
     }
 
     return (
-        <Section title={`Dossiers disciplinaires de ${setFirstName(personalInfo.firstName)}`} more={true} seeMore={handClick}>
+        <Section title={`Dossiers disciplinaires de ${setFirstName(personalInfo?.firstName)}`} more={true} seeMore={handClick}>
             {reprimands.length !== 0 ? (<PieChart data={data} />) : (
                 <div className='panel-table'>
                     <PanelTable title='Dossiers disciplinaires' data={[{
@@ -461,7 +459,7 @@ const DisciplinaryRecords = ({enrollment, seeMore, color}: StudentInfoProps) => 
 
 //TODO add the bar graph for the 5 last exams
 
-export const StudentInfo = ({enrollment, seeMore, color}: { enrollment: Enrollment, color?: string, seeMore: (key: string) => void }) => {
+export const StudentInfo = ({enrollment, seeMore, color}: { enrollment: Enrollment, color?: string, seeMore?: (key: string) => void }) => {
 
     const {classe: {grade}} = enrollment
 

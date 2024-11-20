@@ -71,6 +71,9 @@ export const updateStudentByField = <T>(field: keyof T, value: unknown, studentI
         case UpdateType.INFO:
             url = '/student/info'
             break
+        case UpdateType.TEACHER:
+            url = '/teachers'
+            break
         default:
             url = '/student'
             break

@@ -14,10 +14,16 @@ import {Progress, Tag} from "antd";
 import ViewHeader from "../../components/ui/layout/ViewHeader.tsx";
 import {getStatusKey, Status} from "../../entity/enums/status.ts";
 import {Gender} from "../../entity/enums/gender.ts";
-import {LuClipboardEdit, LuListChecks, LuSubtitles, LuTrash2, LuUserMinus} from "react-icons/lu";
+import {
+    LuClipboardEdit,
+    LuListChecks,
+    LuSubtitles,
+    LuTrash2,
+    LuUserMinus,
+} from "react-icons/lu";
 import {TeacherEditDrawer} from "../../components/ui-kit-teacher";
 import {useToggle} from "../../hooks/useToggle.ts";
-import {AiOutlineArrowUp} from "react-icons/ai";
+import {ViewRoot} from "../../components/custom/ViewRoot.tsx";
 
 const TeacherView = () => {
 
@@ -63,14 +69,13 @@ const TeacherView = () => {
         {
             title: 'Classes',
             value: teacher?.classes ? teacher?.classes.length : 0,
-            prefix: <AiOutlineArrowUp />
         },
         {
-            title: 'Etudiants enseignés',
+            title: 'Étudiants enseignés',
             value: studentTaughtCount,
             bottomValue: <Progress
                 percent={Math.round((studentTaughtCount * 100) / studentCount)}
-                size={[288, 20]}
+                size={{height: 20}}
                 percentPosition={{align: 'center', type: 'inner'}}
                 strokeColor={color}
             />
@@ -80,7 +85,7 @@ const TeacherView = () => {
             value: '',
         },
         {
-            title: 'Etudiants blamés',
+            title: 'Étudiants blamés',
             value: '',
         }
     ]
@@ -89,8 +94,6 @@ const TeacherView = () => {
         setOpenDrawer()
         refetch().then(r => r.data)
     }
-
-    console.log(teacher)
 
     return(
         <>
@@ -122,12 +125,16 @@ const TeacherView = () => {
                 items={[
                     {key: 2, label: 'Ajouter programme', icon: <LuListChecks/>},
                     {key: 3, label: 'Créer examen', icon: <LuClipboardEdit/>},
-                    {key: 4, label: 'Créer punition', icon: <LuUserMinus/>},
-                    {key: 5, label: 'Créer commentaire', icon: <LuSubtitles/>},
+                    {key: 4, label: 'Réprimander', icon: <LuUserMinus/>},
+                    {key: 5, label: 'Compte rendu', icon: <LuSubtitles/>},
                     {key: 6, label: 'Retirer l\'enseignant', danger: true, icon: <LuTrash2/>}
                 ]}
             />
             <Widgets items={widgetItems}/>
+            <ViewRoot
+                items={[]}
+                exists={teacher !== null}
+            />
             <section>
                 <TeacherEditDrawer
                     open={openDrawer}

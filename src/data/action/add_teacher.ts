@@ -1,5 +1,4 @@
-import {teacherSchema} from "../../schema";
-import {TeacherSchema} from "../../utils/interfaces.ts";
+import {TeacherSchema, teacherSchema} from "../../schema";
 import {ErrorCatch} from "./error_catch.ts";
 import {AxiosResponse} from "axios";
 import {Teacher} from "../../entity";

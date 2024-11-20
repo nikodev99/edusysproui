@@ -63,7 +63,7 @@ export const StudentAttendance = ({enrolledStudent}: {enrolledStudent: Enrollmen
 
     if(error) return <PageError />
 
-    const studentName = `${setFirstName(personalInfo.lastName)} ${setFirstName(personalInfo.firstName)}`
+    const studentName = `${setFirstName(personalInfo?.lastName)} ${setFirstName(personalInfo?.firstName)}`
 
     const handleAcademicYearIdValue = (value: string) => {
         setAcademicYearId(value)
@@ -111,7 +111,7 @@ export const StudentAttendance = ({enrolledStudent}: {enrolledStudent: Enrollmen
 
     return(
         <TabItem
-            title={`Suivis de présence d${startsWithVowel(personalInfo.lastName) ? "'" : 'e '}${studentName}`}
+            title={`Suivis de présence d${startsWithVowel(personalInfo?.lastName) ? "'" : 'e '}${studentName}`}
             selects={[
                 (
                     <Select

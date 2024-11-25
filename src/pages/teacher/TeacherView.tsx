@@ -21,7 +21,7 @@ import {
     LuTrash2,
     LuUserMinus,
 } from "react-icons/lu";
-import {TeacherEditDrawer} from "../../components/ui-kit-teacher";
+import {TeacherEditDrawer, TeacherInfo} from "../../components/ui-kit-teacher";
 import {useToggle} from "../../hooks/useToggle.ts";
 import {ViewRoot} from "../../components/custom/ViewRoot.tsx";
 
@@ -132,8 +132,14 @@ const TeacherView = () => {
             />
             <Widgets items={widgetItems}/>
             <ViewRoot
-                items={[]}
+                items={[
+                    {label: "Info", children: <TeacherInfo data={teacher as Teacher} color={color} dataKey='info' />}
+                ]}
                 exists={teacher !== null}
+                addMargin={{
+                    position: "top",
+                    size: 30
+                }}
             />
             <section>
                 <TeacherEditDrawer

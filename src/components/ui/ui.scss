@@ -149,6 +149,22 @@
   }
 }
 
+.name__title {
+  position: relative;
+  text-align: center;
+  padding: 15px 10px;
+  background-color: #f9f9f9;
+
+  .name {
+    font-size: 30px;
+    margin-bottom: 5px;
+  }
+
+  .subtitle {
+    font-size: 16px;
+  }
+}
+
 .void__wrapper {
   box-sizing: border-box;
   background: #fff;

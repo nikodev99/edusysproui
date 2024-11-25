@@ -1,4 +1,5 @@
 import '../ui.scss'
+import {Flag} from "./Flag.tsx";
 
 const PanelStat = ({title, subTitle, media, desc, src}: {title?: string | number, subTitle: string, media?: string, desc?: string, src?: boolean}) => {
     return (
@@ -6,11 +7,8 @@ const PanelStat = ({title, subTitle, media, desc, src}: {title?: string | number
             <div className="stat">
                 <div className='big-row'>{title}</div>
                 <div className='small-row'>{subTitle}</div>
-                <div className='round-row'>
-                    {src ? <img
-                            alt={`Drapeau ${desc}`}
-                            src={`http://purecatamphetamine.github.io/country-flag-icons/3x2/${media?.toUpperCase()}.svg`} /> :
-                        <span>{media}</span>}
+                <div className={!src ? 'round-row' : ''}>
+                    {src ? <Flag  media={media} desc={desc} size={35} /> : <span>{media}</span>}
                 </div>
                 <div className='small-row'>{desc}</div>
             </div>

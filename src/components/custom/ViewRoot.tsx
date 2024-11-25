@@ -2,6 +2,7 @@ import {Skeleton, Tabs, TabsProps} from "antd";
 import {TabItemType} from "../../utils/interfaces.ts";
 import {cloneElement, ReactElement, ReactNode, useState} from "react";
 import LocalStorageManager from "../../core/LocalStorageManager.ts";
+import {firstLetter} from "../../utils/utils.ts";
 
 interface ViewProps {
     items: TabItemType[]
@@ -9,9 +10,13 @@ interface ViewProps {
     tab?: TabsProps
     skeleton?: ReactNode
     isLoading?: boolean
+    addMargin?: {
+        position?: "top" | "bottom" | "left" | "right",
+        size?: number
+    }
 }
 
-const ViewRoot = ({items, tab, exists, isLoading, skeleton}: ViewProps) => {
+const ViewRoot = ({items, tab, exists, isLoading, skeleton, addMargin}: ViewProps) => {
 
     const activeTabKey = LocalStorageManager.get("tabKey") as string || "0"
     const [tabKey, setTabKey] = useState<string>(activeTabKey)
@@ -39,12 +44,15 @@ const ViewRoot = ({items, tab, exists, isLoading, skeleton}: ViewProps) => {
     }))
 
     return(
-        <section className='sticky-wrapper'>
+        <section className='sticky-wrapper' style={addMargin ? {
+            [`margin${firstLetter(addMargin.position)}`]: addMargin.size
+        } : undefined}>
             <Tabs
                 items={tabItem}
                 onChange={handleTabChange}
                 activeKey={tabKey}
                 defaultActiveKey={tabKey}
+                centered={true}
                 {...tab}
             />
         </section>

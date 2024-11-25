@@ -7,6 +7,7 @@ import {
     chooseColor,isNull, lowerName, monthsBetween, setFirstName, timeConcat
 } from "../../../utils/utils.ts";
 import PanelStat from "../../ui/layout/PanelStat.tsx";
+import { Table as CustomTable } from "../../ui/layout/Table.tsx";
 import {Gender} from "../../../entity/enums/gender.ts";
 import PanelTable from "../../ui/layout/PanelTable.tsx";
 import {SectionType} from "../../../entity/enums/section.ts";
@@ -22,18 +23,13 @@ import PieChart from "../../graph/PieChart.tsx";
 import {Reprimand} from "../../../entity/domain/reprimand.ts";
 import Section from "../../ui/layout/Section.tsx";
 import PanelSection from "../../ui/layout/PanelSection.tsx";
-import {ExamData} from "../../../utils/interfaces.ts";
+import {ExamData, InfoPageProps} from "../../../utils/interfaces.ts";
 import {initExamData} from "../../../entity/domain/score.ts";
 import {attendanceTag} from "../../../entity/enums/attendanceStatus.ts";
 import Tag from "../../ui/layout/Tag.tsx";
 import {LuBan} from "react-icons/lu";
 
-interface StudentInfoProps {
-    enrollment: Enrollment
-    dataKey: string
-    seeMore?: (key: string) => void
-    color?: string
-}
+type StudentInfoProps = InfoPageProps<Enrollment>
 
 interface HistoryData {
     dataId: string
@@ -42,9 +38,9 @@ interface HistoryData {
     yearAmount: number
 }
 
-const IndividualInfo = ({enrollment, color}: StudentInfoProps) => {
+const IndividualInfo = ({data, color}: StudentInfoProps) => {
 
-    const {student, student: {personalInfo, healthCondition}} = enrollment
+    const {student, student: {personalInfo, healthCondition}} = data
 
     const [nationality, setNationality] = useState<string>()
     const country = getCountry(personalInfo?.nationality as string)
@@ -80,22 +76,21 @@ const IndividualInfo = ({enrollment, color}: StudentInfoProps) => {
         <Section title={`Profile de ${setFirstName(personalInfo?.firstName + ' ' + personalInfo?.lastName)}`}>
             <div className='panel'>
                 <PanelStat title={studentAge} subTitle='ans' src={true} media={country?.cca2} desc={nationality}/>
-                <PanelStat title={healthCondition?.weight} subTitle='kgs' src={false} media={''} desc='Poids'/>
-                <PanelStat title={healthCondition?.height} subTitle='m' src={false}
-                           media={convertToM(healthCondition?.height as number)} desc='Taille'/>
+                <PanelStat title={healthCondition?.weight} subTitle='kgs' desc='Poids'/>
+                <PanelStat title={healthCondition?.height} subTitle='m' media={convertToM(healthCondition?.height as number)} desc='Taille'/>
             </div>
             <div className='birth-Body'><p>Née le {birthDay} à {personalInfo?.birthCity}</p></div>
             <Divider/>
             <div className="panel-table">
                 <PanelTable title='Données Personnelles' data={individualData} panelColor={color}/>
-                <PanelTable title='Addresse' data={addressData} panelColor={color}/>
+                <PanelTable title='Adresse' data={addressData} panelColor={color}/>
             </div>
         </Section>
     )
 }
 
-const GuardianBlock = ({enrollment, color}: StudentInfoProps) => {
-    const {student: {guardian: {personalInfo}}} = enrollment
+const GuardianBlock = ({data, color}: StudentInfoProps) => {
+    const {student: {guardian: {personalInfo}}} = data
 
     const guardianData = [
         {statement: 'Nom(s)', response: personalInfo?.lastName},
@@ -123,9 +118,9 @@ const GuardianBlock = ({enrollment, color}: StudentInfoProps) => {
     )
 }
 
-const ExamList = ({enrollment, seeMore, color}: StudentInfoProps) => {
+const ExamList = ({data, seeMore, color}: StudentInfoProps) => {
 
-    const {student: {marks}} = enrollment
+    const {student: {marks}} = data
 
     const handleClick = () => {
         seeMore && seeMore('1')
@@ -162,49 +157,45 @@ const ExamList = ({enrollment, seeMore, color}: StudentInfoProps) => {
 
     return (
         <Section title='Performance aux devoirs' more={true} seeMore={handleClick}>
-            <Table
-                className='score-table'
-                size='small'
-                columns={columns as []}
-                dataSource={initExamData(marks)}
-                pagination={false}
-                components={{
-                    header: {
-                        cell: (props: HTMLProps<HTMLTableCellElement>) => (
-                            <th {...props} style={{...props.style, backgroundColor: color}} />
-                        )
-                    }
+            <CustomTable
+                tableProps={{
+                    className:'score-table',
+                    size:'small',
+                    columns: columns as [],
+                    dataSource: initExamData(marks),
+                    pagination: false
                 }}
+                color={color}
             />
         </Section>
     )
 }
 
-const GraphSection = ({enrollment}: StudentInfoProps) => {
+const GraphSection = ({data}: StudentInfoProps) => {
 
-    const {student: {personalInfo, marks}} = enrollment
+    const {student: {personalInfo, marks}} = data
 
-    const data = marks.map((s) => ({
+    const graphData = marks.map((s) => ({
         subject: s.assignment?.subject?.course,
         score: s.obtainedMark
     }))
 
     //TODO this should be average score
-    data.push({subject: 'Physique chimie', score: 16})
-    data.push({subject: 'French', score: 12})
-    data.push({subject: 'Anglais', score: 18})
-    data.push({subject: 'Music', score: 15})
-    data.push({subject: 'Math', score: 13})
+    graphData.push({subject: 'Physique chimie', score: 16})
+    graphData.push({subject: 'French', score: 12})
+    graphData.push({subject: 'Anglais', score: 18})
+    graphData.push({subject: 'Music', score: 15})
+    graphData.push({subject: 'Math', score: 13})
 
     return (
         <Section title='Progression aux examens'>
-            <RadarChart data={data}  xField='subject' yField='score' color={chooseColor(personalInfo?.firstName as string)} />
+            <RadarChart data={graphData}  xField='subject' yField='score' color={chooseColor(personalInfo?.firstName as string)} />
         </Section>
     )
 }
 
-const SchoolHistory = ({enrollment, color}: StudentInfoProps) => {
-    const {student: {enrollments}} = enrollment
+const SchoolHistory = ({data, color}: StudentInfoProps) => {
+    const {student: {enrollments}} = data
 
     const format = (input: number) => {
         return Intl.NumberFormat('fr-CG', {style: 'currency', currency: 'XAF'}).format(input)
@@ -234,7 +225,7 @@ const SchoolHistory = ({enrollment, color}: StudentInfoProps) => {
         },
     ];
 
-    const data: HistoryData[] = enrollments?.map((e) => ({
+    const historyData: HistoryData[] = enrollments?.map((e) => ({
         dataId: e.classe.id.toString(),
         academicYear: e.academicYear?.academicYear ?? '',
         classeName: e.classe?.name ?? '',
@@ -247,7 +238,7 @@ const SchoolHistory = ({enrollment, color}: StudentInfoProps) => {
                 className='score-table'
                 size='small'
                 columns={columns}
-                dataSource={data}
+                dataSource={historyData}
                 pagination={false}
                 rowKey={(record) => record.dataId}
                 components={{
@@ -262,9 +253,9 @@ const SchoolHistory = ({enrollment, color}: StudentInfoProps) => {
     )
 }
 
-const AttendanceSection = ({enrollment, seeMore, color}: StudentInfoProps) => {
+const AttendanceSection = ({data, seeMore, color}: StudentInfoProps) => {
 
-    const { student: { attendances } } = enrollment
+    const { student: { attendances } } = data
 
     const handleClick = () => {
         seeMore && seeMore('2')
@@ -286,7 +277,7 @@ const AttendanceSection = ({enrollment, seeMore, color}: StudentInfoProps) => {
     )
 }
 
-const SchoolColleagues = ({enrollment, seeMore, color}: StudentInfoProps) => {
+const SchoolColleagues = ({data, seeMore, color}: StudentInfoProps) => {
     
     const [classmates, setClassmates] = useState<Enrollment[]>([])
 
@@ -296,7 +287,7 @@ const SchoolColleagues = ({enrollment, seeMore, color}: StudentInfoProps) => {
 
     useEffect(() => {
         const fetchData = async () => {
-            await fetchStudentClassmatesRandomly(enrollment).then(async (res) => {
+            await fetchStudentClassmatesRandomly(data).then(async (res) => {
                 if (res?.isSuccess && 'data' in res) {
                     setClassmates(res?.data as Enrollment[])
                 }
@@ -304,7 +295,7 @@ const SchoolColleagues = ({enrollment, seeMore, color}: StudentInfoProps) => {
         }
 
         fetchData().then()
-    }, [enrollment]);
+    }, [data]);
 
     const handleSeeDetails = (id: string) => {
         redirectTo(`${text.student.group.view.href}${id}`)
@@ -338,9 +329,9 @@ const SchoolColleagues = ({enrollment, seeMore, color}: StudentInfoProps) => {
     )
 }
 
-const HealthData = ({enrollment, color}: StudentInfoProps) => {
+const HealthData = ({data, color}: StudentInfoProps) => {
 
-    const {student} = enrollment
+    const {student} = data
     const healthCondition: HealthCondition = student.healthCondition !== null ? student.healthCondition : {} as HealthCondition
 
     const conditions = healthCondition.medicalConditions?.map((condition) => ({
@@ -377,8 +368,8 @@ const HealthData = ({enrollment, color}: StudentInfoProps) => {
     )
 }
 
-const CourseSchedule = ({enrollment, color}: StudentInfoProps) => {
-    const {classe} = enrollment
+const CourseSchedule = ({data, color}: StudentInfoProps) => {
+    const {classe} = data
     const schedules: Schedule[] = classe.schedule !== null ? classe.schedule : []
 
     const columns: TableColumnsType<Schedule> = [
@@ -401,31 +392,27 @@ const CourseSchedule = ({enrollment, color}: StudentInfoProps) => {
 
     return(
         <Section title={`Emploi du temps: ${setFirstName(fullDay(new Date()))}`}>
-            <Table
-                className='score-table'
-                columns={columns}
-                dataSource={schedules}
-                pagination={false}
-                size='small'
-                rowKey={(record) => `row-${record.id}`}
-                rowClassName={(record) => isCurrentTimeBetween(record.startTime as number[], record.endTime as number[]) ? 'highlight-row' : ''}
-                components={{
-                    header: {
-                        cell: (props: HTMLProps<HTMLTableCellElement>) => (
-                            <th {...props} style={{...props.style, backgroundColor: color}} />
-                        )
-                    }
+            <CustomTable
+                color={color}
+                tableProps={{
+                    className: 'score-table',
+                    columns: columns as [],
+                    dataSource: schedules,
+                    pagination: false,
+                    size: 'small',
+                    rowKey: (record) => `row-${record.id}`,
+                    rowClassName: (record) => isCurrentTimeBetween(record.startTime as number[], record.endTime as number[]) ? 'highlight-row' : ''
                 }}
             />
         </Section>
     )
 }
 
-const DisciplinaryRecords = ({enrollment, seeMore, color}: StudentInfoProps) => {
+const DisciplinaryRecords = ({data, seeMore, color}: StudentInfoProps) => {
 
-    const {student: {personalInfo}} = enrollment
+    const {student: {personalInfo}} = data
     const reprimands = [] as Reprimand[]
-    const data = Object.values(
+    const values = Object.values(
         reprimands.reduce((acc, curr) => {
             if (!acc[curr.type]) {
                 acc[curr.type] = {type: curr.type, value: 0}
@@ -441,7 +428,7 @@ const DisciplinaryRecords = ({enrollment, seeMore, color}: StudentInfoProps) => 
 
     return (
         <Section title={`Dossiers disciplinaires de ${setFirstName(personalInfo?.firstName)}`} more={true} seeMore={handClick}>
-            {reprimands.length !== 0 ? (<PieChart data={data} />) : (
+            {reprimands.length !== 0 ? (<PieChart data={values} />) : (
                 <div className='panel-table'>
                     <PanelTable title='Dossiers disciplinaires' data={[{
                         response: (
@@ -464,20 +451,20 @@ export const StudentInfo = ({enrollment, seeMore, color}: { enrollment: Enrollme
     const {classe: {grade}} = enrollment
 
     const items: ReactNode[] = [
-        <IndividualInfo enrollment={enrollment} dataKey='individual-block' color={color}/>,
+        <IndividualInfo data={enrollment} dataKey='individual-block' color={color}/>,
         ...(grade?.section != SectionType.MATERNELLE && grade?.section != SectionType.PRIMAIRE ? [
-            <GraphSection enrollment={enrollment}  dataKey='graph-block' color={color}/>
+            <GraphSection data={enrollment}  dataKey='graph-block' color={color}/>
         ] : []),
-        <GuardianBlock enrollment={enrollment} dataKey='guardian-section' color={color} />,
+        <GuardianBlock data={enrollment} dataKey='guardian-section' color={color} />,
         ...(grade?.section != SectionType.MATERNELLE && grade?.section != SectionType.PRIMAIRE ? [
-            <ExamList enrollment={enrollment}  seeMore={seeMore} dataKey='exam-block' color={color}/>
+            <ExamList data={enrollment}  seeMore={seeMore} dataKey='exam-block' color={color}/>
         ] : []),
-        <SchoolHistory enrollment={enrollment} seeMore={seeMore}  dataKey='school-history-block' color={color}/>,
-        <AttendanceSection enrollment={enrollment} seeMore={seeMore} dataKey='attendance-block' color={color}/>,
-        <HealthData enrollment={enrollment} dataKey='health-section' color={color} />,
-        <SchoolColleagues enrollment={enrollment} seeMore={seeMore} dataKey='classmates-block' color={color}/>,
-        <CourseSchedule enrollment={enrollment} dataKey='schedule-section' color={color} />,
-        <DisciplinaryRecords enrollment={enrollment} dataKey='disciplinary-section' color={color} />
+        <SchoolHistory data={enrollment} seeMore={seeMore}  dataKey='school-history-block' color={color}/>,
+        <AttendanceSection data={enrollment} seeMore={seeMore} dataKey='attendance-block' color={color}/>,
+        <HealthData data={enrollment} dataKey='health-section' color={color} />,
+        <SchoolColleagues data={enrollment} seeMore={seeMore} dataKey='classmates-block' color={color}/>,
+        <CourseSchedule data={enrollment} dataKey='schedule-section' color={color} />,
+        <DisciplinaryRecords data={enrollment} dataKey='disciplinary-section' color={color} />
     ]
 
     return (

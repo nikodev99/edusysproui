@@ -197,6 +197,13 @@ export interface PieProps {
     colors?: Color[];
 }
 
+export interface InfoPageProps<T extends object> {
+    data: T
+    dataKey: string
+    seeMore?: (key: string) => void
+    color?: string
+}
+
 export interface EditProps<TData extends object> {
     open: boolean
     close: () => void

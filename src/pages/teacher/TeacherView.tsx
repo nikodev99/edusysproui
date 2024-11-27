@@ -13,7 +13,7 @@ import {WidgetItem} from "../../utils/interfaces.ts";
 import {Progress, Tag} from "antd";
 import ViewHeader from "../../components/ui/layout/ViewHeader.tsx";
 import {getStatusKey, Status} from "../../entity/enums/status.ts";
-import {Gender} from "../../entity/enums/gender.ts";
+import {Gender} from "../../entity/enums/gender.tsx";
 import {
     LuClipboardEdit,
     LuListChecks,

@@ -5,7 +5,7 @@ import {IndividualType, InputTypeEnum} from "../../core/shared/sharedEnums.ts";
 import {FormUtils} from "../../utils/formUtils.ts";
 import {useMemo} from "react";
 import {enumToObjectArray} from "../../utils/utils.ts";
-import {Gender} from "../../entity/enums/gender.ts";
+import {Gender} from "../../entity/enums/gender.tsx";
 import FormContent from "../ui/form/FormContent.tsx";
 import {FormConfig} from "../../config/FormConfig.ts";
 import {Status} from "../../entity/enums/status.ts";

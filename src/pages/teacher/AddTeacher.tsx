@@ -10,7 +10,7 @@ import {AddStepForm} from "../../components/custom/AddStepForm.tsx";
 import {customDot} from "../../utils/tsxUtils.tsx";
 import {redirectTo} from "../../context/RedirectContext.ts";
 import {TeacherForm} from "../../components/forms/TeacherForm.tsx";
-import {Gender} from "../../entity/enums/gender.ts";
+import {Gender} from "../../entity/enums/gender.tsx";
 import {Status} from "../../entity/enums/status.ts";
 import {UploadCareForm} from "../../components/forms/UploadCareForm.tsx";
 import {OutputFileEntry} from "@uploadcare/blocks";
@@ -184,7 +184,6 @@ const AddTeacher = () => {
     const onsubmit = (data: TeacherSchema) => {
         setErrorMessage("")
         setSuccessMessage("")
-        console.log('Valeur à insérer: ', data);
 
         startTransition(() => {
             if(image) {

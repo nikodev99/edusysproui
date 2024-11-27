@@ -58,16 +58,25 @@ export const count = async (teacherId: string) => {
     }
 }
 
-const sortedField = (sortField: string) => {
+const sortedField = (sortField: string[] | string) => {
+    if (Array.isArray(sortField)) {
+        const fieldName = sortField[1]
+        return getSorted(fieldName)
+    }
+    return getSorted(sortField)
+}
+
+
+const getSorted = (sortField: string) => {
     switch (sortField) {
         case 'lastName':
-            return 't.lastName'
+            return 't.personalInfo.lastName'
         case 'gender':
-            return 't.gender'
+            return 't.personalInfo.gender'
         case 'birthDate':
-            return 't.birthDate'
+            return 't.personalInfo.birthDate'
         case 'status':
-            return 't.status'
+            return 't.personalInfo.status'
         default:
             return undefined;
     }

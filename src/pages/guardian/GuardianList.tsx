@@ -6,7 +6,7 @@ import ListViewer from "../../components/custom/ListViewer.tsx";
 import {TableColumnsType} from "antd";
 import Avatar from "../../components/ui/layout/Avatar.tsx";
 import {enumToObjectArrayForFiltering, setFirstName} from "../../utils/utils.ts";
-import {Gender} from "../../entity/enums/gender.ts";
+import {Gender} from "../../entity/enums/gender.tsx";
 import {Guardian} from "../../entity";
 import {fetchEnrolledStudentsGuardians, fetchSearchedEnrolledStudentsGuardian} from "../../data";
 import ActionButton from "../../components/ui/layout/ActionButton.tsx";

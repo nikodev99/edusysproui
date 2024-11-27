@@ -7,10 +7,11 @@ interface AvatarProps {
     firstText?: string
     lastText?: string
     size?: number | object
-    setColor?: (color: string) => void
+    setColor?: (color: string) => void,
+    onClick?: () => void
 }
 
-const Avatar = ({image, firstText, lastText, size, setColor}: AvatarProps) => {
+const Avatar = ({image, firstText, lastText, size, setColor, onClick}: AvatarProps) => {
     
     const color: string = chooseColor(firstText as string) as string
 
@@ -23,8 +24,8 @@ const Avatar = ({image, firstText, lastText, size, setColor}: AvatarProps) => {
     return(
         <>
         {
-            image ? <AntAvatar src={image} size={size} />
-                : <AntAvatar style={{background: color}} size={size}>
+            image ? <AntAvatar src={image} size={size} onClick={onClick} />
+                : <AntAvatar style={{background: color}} size={size} onClick={onClick}>
                     {`${lastText?.charAt(0)}${firstText?.charAt(0)}`}
                 </AntAvatar>
         }

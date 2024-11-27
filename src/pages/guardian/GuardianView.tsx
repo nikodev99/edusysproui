@@ -10,7 +10,7 @@ import {text} from "../../utils/text_display.ts";
 import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
 import ViewHeader from "../../components/ui/layout/ViewHeader.tsx";
 import {GuardianEditDrawer, GuardianStudentList} from "../../components/ui-kit-guardian";
-import {Gender} from "../../entity/enums/gender.ts";
+import {Gender} from "../../entity/enums/gender.tsx";
 import {getStatusKey, Status} from "../../entity/enums/status.ts";
 import {Tabs, Tag} from "antd";
 

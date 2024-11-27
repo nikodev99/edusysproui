@@ -5,11 +5,11 @@ import {redirectTo} from "../../context/RedirectContext.ts";
 import {LuEye, LuMoreVertical} from "react-icons/lu";
 import {BiSolidUserAccount} from "react-icons/bi";
 import {AiOutlineUserDelete, AiOutlineUsergroupAdd} from "react-icons/ai";
-import {TableColumnsType} from "antd";
+import {Flex, TableColumnsType, Tag} from "antd";
 import {Classe, Course, Teacher} from "../../entity";
 import Avatar from "../../components/ui/layout/Avatar.tsx";
 import {enumToObjectArrayForFiltering, getAge, setFirstName} from "../../utils/utils.ts";
-import {Gender} from "../../entity/enums/gender.ts";
+import {Gender} from "../../entity/enums/gender.tsx";
 import {statusTags} from "../../utils/tsxUtils.tsx";
 import ActionButton from "../../components/ui/layout/ActionButton.tsx";
 import {ListPageHierarchy} from "../../components/custom/ListPageHierarchy.tsx";
@@ -123,19 +123,17 @@ const TeacherList = () => {
             width: "15%",
             render: (text: Course[], record: Teacher) => {
                 if (text && text?.length > 0) {
-                    return text?.map((c: Course, index: number) => (
-                        <>
-                            <span className='matter' key={index}>{c.course as string}</span>
-                            {index !== text.length - 1 && <>,&nbsp;</>}
-                        </>
-                    ))
+                    return<Flex justify='center' gap={2} wrap>
+                        {text?.map((c: Course, index: number) => (
+                            <Tag key={index}>{c.course}</Tag>
+                        ))}
+                    </Flex>
                 }else {
-                    return record?.classes?.map((c: Classe, index: number) => (
-                        <>
-                            <span className='matter' key={index}>{c?.name as string}</span>
-                            {index !== record?.classes!.length - 1 && <>,&nbsp;</>}
-                        </>
-                    ))
+                    return <Flex justify='center' gap={2} wrap>
+                        {record?.classes?.map((c: Classe, index: number) => (
+                            <Tag key={index}>{c?.name}</Tag>
+                        ))}
+                    </Flex>
                 }
             }
             //TODO getting all the grade distinct classes and filter by grade

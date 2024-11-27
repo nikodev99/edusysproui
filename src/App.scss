@@ -13,3 +13,13 @@
   bottom: 10px;
   color: #b4b1b1;
 }
+
+.ant-input:focus,
+.ant-btn:focus,
+.ant-select-focused .ant-select-selector,
+.ant-picker-focused,
+.ant-picker-input:focus,
+.ant-picker-dropdown:focus {
+  outline: none!important;
+  box-shadow: none!important;
+}

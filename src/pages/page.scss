@@ -81,12 +81,15 @@
 }
 
 .col__name {
-  cursor: pointer;
-  transition: 1s;
+  transition: all .3s;
+  text-align: center;
 
-  &:hover p:first-child {
-    font-weight: bold;
-    color: $primary_color;
+  h4 {
+    cursor: pointer;
+    margin-bottom: 0;
+    &:hover {
+      color: $primary_color;
+    }
   }
 
   .render__name {
@@ -103,17 +106,35 @@
 
 .card__list {
   transition: .3s ease-in-out;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 4px rgba(0,0,0,.1);
+
+  .card__avatar {
+    text-align: center;
+    margin-bottom: 20px;
+  }
 
   &:hover {
     box-shadow: $box_shadow_message;
   }
 
   .card__desc {
+    .card__tag {
+      margin-bottom: 10px;
+    }
     .desc {
       font-size: 14px;
       color: $text_color;
-      margin-bottom: 10px;
+      margin-bottom: 3px;
     }
+  }
+
+  .cardIcon {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    font-weight: bolder;
   }
 }
 

@@ -8,7 +8,7 @@ import {
 } from "../../../utils/utils.ts";
 import PanelStat from "../../ui/layout/PanelStat.tsx";
 import { Table as CustomTable } from "../../ui/layout/Table.tsx";
-import {Gender} from "../../../entity/enums/gender.ts";
+import {Gender} from "../../../entity/enums/gender.tsx";
 import PanelTable from "../../ui/layout/PanelTable.tsx";
 import {SectionType} from "../../../entity/enums/section.ts";
 import {fetchStudentClassmatesRandomly} from "../../../data/action/fetch_student.ts";

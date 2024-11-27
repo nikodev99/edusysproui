@@ -6,7 +6,7 @@ import {InfoPageProps} from "../../../utils/interfaces.ts";
 import {Teacher} from "../../../entity";
 import {fDate, firstLetter, getAge, getCountry, isNull, setName} from "../../../utils/utils.ts";
 import {useEffect, useState} from "react";
-import {Gender} from "../../../entity/enums/gender.ts";
+import {Gender} from "../../../entity/enums/gender.tsx";
 import {Flag} from "../../ui/layout/Flag.tsx";
 
 type TeacherInfo = InfoPageProps<Teacher>
@@ -75,8 +75,18 @@ const IndividualInfo = ({data, color}: TeacherInfo) => {
 }
 
 const ProsInfo = ({data, color}: TeacherInfo) => {
+
+    const {courses, classes} = data
+
+    const employmentData = [
+        {statement: 'ID', response: "1"},
+        {statement: 'Position', response: "Professeur de Collège"},
+        ...(courses ? [] : [{statement: 'Mobile', response: courses}]),
+        ...(classes ? [] : [{statement: '@', response: classes}])
+    ]
+
     return(
-        <Section title={"Informations Professionnelles"}>
+        <Section title="Informations Professionnelles">
             Informations Professionnelles
         </Section>
     )

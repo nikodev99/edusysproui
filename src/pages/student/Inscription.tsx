@@ -5,7 +5,7 @@ import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {EnrollmentSchema, enrollmentSchema, GuardianSchema} from "../../schema";
 import {useEffect, useState, useTransition} from "react";
-import {Gender} from "../../entity/enums/gender.ts";
+import {Gender} from "../../entity/enums/gender.tsx";
 import {Status} from "../../entity/enums/status.ts";
 import {Guardian, toGuardianSchema} from "../../entity";
 import {redirectTo} from "../../context/RedirectContext.ts";

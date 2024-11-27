@@ -13,7 +13,7 @@ import {ValidateStatus} from "antd/es/form/FormItem";
 import React, {CSSProperties, ReactNode} from "react";
 import {AcademicYear, Guardian, Student, Teacher} from "../entity";
 import {SectionType} from "../entity/enums/section.ts";
-import {Gender} from "../entity/enums/gender.ts";
+import {Gender} from "../entity/enums/gender.tsx";
 import {AttendanceStatus} from "../entity/enums/attendanceStatus.ts";
 import {Employee} from "../entity/domain/employee.ts";
 import {AddressOwner, IndividualType} from "../core/shared/sharedEnums.ts";

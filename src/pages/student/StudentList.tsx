@@ -10,7 +10,7 @@ import {AiOutlineUserAdd} from "react-icons/ai";
 import {fetchEnrolledStudents, fetchSearchedEnrolledStudents} from "../../data";
 import {AxiosResponse} from "axios";
 import {Response} from '../../data/action/response.ts'
-import {TableColumnsType} from "antd";
+import {TableColumnsType, Tag} from "antd";
 import Avatar from "../../components/ui/layout/Avatar.tsx";
 import {dateCompare, enumToObjectArrayForFiltering, fDatetime, setFirstName} from "../../utils/utils.ts";
 import {Gender} from "../../entity/enums/gender.ts";
@@ -110,6 +110,7 @@ const StudentList = () => {
             dataIndex: 'grade',
             key: 'grade',
             align: 'center',
+            render: (text) => (<Tag>{text}</Tag>)
             //TODO getting all the grade distinct grade and filter by grade
         },
         {

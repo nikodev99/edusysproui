@@ -1,4 +1,4 @@
-import {Gender} from "../enums/gender.ts";
+import {Gender} from "../enums/gender.tsx";
 import {Address} from "./address.ts";
 import {Status} from "../enums/status.ts";
 

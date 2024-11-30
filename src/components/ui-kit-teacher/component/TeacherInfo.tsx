@@ -2,12 +2,16 @@ import Section from "../../ui/layout/Section.tsx";
 import Block from "../../ui/layout/Block.tsx";
 import PanelSection from "../../ui/layout/PanelSection.tsx";
 import PanelTable from "../../ui/layout/PanelTable.tsx";
-import {InfoPageProps} from "../../../utils/interfaces.ts";
-import {Teacher} from "../../../entity";
-import {fDate, firstLetter, getAge, getCountry, isNull, setName} from "../../../utils/utils.ts";
-import {useEffect, useState} from "react";
+import {InfoPageProps, CalendarEvent} from "../../../utils/interfaces.ts";
+import {Schedule, Teacher} from "../../../entity";
+import {fDate, firstLetter, getAge, getCountry, isNull, setName, timeToCurrentDatetime} from "../../../utils/utils.ts";
+import {useEffect, useRef, useState} from "react";
 import {Gender} from "../../../entity/enums/gender.tsx";
 import {Flag} from "../../ui/layout/Flag.tsx";
+import {Flex, Tag} from "antd";
+import {useRawFetch} from "../../../hooks/useFetch.ts";
+import {getTeacherScheduleByDay} from "../../../data/repository/teacherRepository.ts";
+import {BigCalendar} from "../../graph/BigCalendar.tsx";
 
 type TeacherInfo = InfoPageProps<Teacher>
 
@@ -16,13 +20,10 @@ const IndividualInfo = ({data, color}: TeacherInfo) => {
     const [nation, setNation] = useState<string>()
     
     const {personalInfo: {
-        firstName, lastName, maidenName, birthCity, birthDate, nationality, gender, address,
-        telephone, emailId, mobile
-    }} = data
+        firstName, lastName, maidenName, birthCity, birthDate, nationality, gender, address, telephone, emailId, mobile
+    }} = data ?? {}
 
     const country = getCountry(nationality as string)
-
-    console.log("Country: ", country)
 
     const infoData = [
         {statement: 'Nom complet', response: setName(lastName, firstName, maidenName, true)},
@@ -79,31 +80,66 @@ const ProsInfo = ({data, color}: TeacherInfo) => {
     const {courses, classes} = data
 
     const employmentData = [
+        //TODO adding prof job id {incorporating reference in personalInfo} and position in the database
         {statement: 'ID', response: "1"},
         {statement: 'Position', response: "Professeur de Collège"},
-        ...(courses ? [] : [{statement: 'Mobile', response: courses}]),
-        ...(classes ? [] : [{statement: '@', response: classes}])
+    ]
+
+    const courseTaught = [
+        {response: <Flex wrap gap={.5}>
+                {courses?.map((c, i) => <Tag key={i}>{c.abbr}</Tag>)}
+        </Flex>}
+    ]
+
+    const classeTaught = [
+        {response: <Flex wrap gap={.5}>
+                {classes?.map((c, i) => <Tag key={i}>{c.name}</Tag>)}
+        </Flex>}
     ]
 
     return(
-        <Section title="Informations Professionnelles">
-            Informations Professionnelles
+        <PanelSection title="Informations Professionnelles">
+            <PanelTable title='Position' data={employmentData} panelColor={color}/>
+            {courses && courses?.length > 0 ? <PanelTable title='Cours' data={courseTaught} panelColor={color}/> : undefined}
+            {classes && classes?.length > 0 ? <PanelTable title='Classes' data={classeTaught} panelColor={color}/> : undefined}
+        </PanelSection>
+    )
+}
+
+const CalendarSection = ({data}: TeacherInfo) => {
+
+    const [schedules, setSchedules] = useState<Schedule[] | undefined>()
+    const allDay = useRef<boolean>(!(data?.courses && data?.courses?.length > 0));
+    const fetch = useRawFetch()
+
+    useEffect(() => {
+        fetch(getTeacherScheduleByDay, [data.id, allDay.current])
+            .then(response => setSchedules(response.data as Schedule[]))
+    }, [data, fetch]);
+
+    const events = schedules && schedules.map((s: Schedule) => ({
+        allDay: allDay.current,
+        title: s.designation,
+        start: s.startTime ? timeToCurrentDatetime(s.startTime) : new Date(),
+        end: s.endTime ? timeToCurrentDatetime(s.endTime): new Date(),
+    }))
+
+    console.log('events: ', events)
+
+    return(
+        <Section title='Informations sur l’emploi du temps'>
+            <BigCalendar data={events as CalendarEvent} views={['day']} defaultView='day' />
         </Section>
     )
 }
 
-const DepartmentInfo = () => {
+const DepartmentInfo = ({data}: TeacherInfo) => {
+
+    console.log(data)
+
     return(
         <Section title='Données organisationnelles'>
             Données organisationnelles
-        </Section>
-    )
-}
-
-const CalendarSection = () => {
-    return(
-        <Section title='Informations sur l’emploi du temps'>
-            Informations sur l’emploi du temps
         </Section>
     )
 }
@@ -145,8 +181,8 @@ export const TeacherInfo = (teacherInfoProps: TeacherInfo) => {
         <Block items={[
             <IndividualInfo {...teacherInfoProps} />,
             <ProsInfo {...teacherInfoProps} />,
-            <DepartmentInfo />,
-            <CalendarSection />,
+            <CalendarSection {...teacherInfoProps} />,
+            <DepartmentInfo {...teacherInfoProps} />,
             <MarkMean />,
             <LessonPlan />,
             <StudentReprimanded />,

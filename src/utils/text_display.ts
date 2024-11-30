@@ -44,3 +44,18 @@ export const text = {
     schoolID: '81148a1b-bdb9-4be1-9efd-fdf4106341d6',
     http: 'http://localhost:5173'
 }
+
+export const calendarMessages = {
+    allDay: 'Journée entière',
+    previous: 'Précédent',
+    next: 'Suivant',
+    today: 'Aujourd\'hui',
+    month: 'Mois',
+    week: 'Semaine',
+    day: 'Jour',
+    agenda: 'Agenda',
+    date: 'Date',
+    time: 'Heure',
+    event: 'Événement',
+    showMore: (total: unknown) => `+ Voir ${total} autres`,
+};

@@ -78,7 +78,9 @@ const TeacherList = () => {
                 <div className='render__name'>
                     <Avatar firstText={personalInfo?.firstName} lastText={text}/>
                     <div>
-                        <p>{`${text?.toUpperCase()}, ${setFirstName(personalInfo?.firstName)}`}</p>
+                        <p style={{textAlign: 'left'}}>
+                            {`${text?.toUpperCase()}, ${setFirstName(personalInfo?.firstName)}`}
+                        </p>
                         <p className='st__ref'>{personalInfo?.emailId}</p>
                     </div>
                 </div>

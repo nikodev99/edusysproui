@@ -233,3 +233,90 @@
 .widget {
   box-shadow: $box-shadow-panel!important;
 }
+//CALENDAR CUSTOM UI
+.rbc-btn-group:first-child {//button de navigation
+  display: none!important;
+}
+
+.rbc-toolbar-group {//date en titre
+  text-align: right!important;
+  padding: 0 20px!important;
+}
+
+.rbc-btn-group:last-child {//button d'affichage
+  font-size: 13px!important;
+
+  button {
+    border: none!important;
+    background-color: #f1f0ff!important;
+    margin-left: 2px!important;
+
+    &.rbc-active {//Button de navigation active
+      background-color: #dbdafe!important;
+      box-shadow: none!important;
+    }
+  }
+}
+
+.rbc-time-view {//aside menu des times
+  background-color: #eee!important;
+
+  .rbc-time-header {
+    display: none!important;
+  }
+
+  .rbc-time-content {
+    border: none!important;
+  }
+
+  .rbc-time-gutter.rbc-time-column {
+    font-size: 12px;
+    text-align: center!important;
+  }
+
+  .rbc-time-gutter.rbc-time-column .rbc-timeslot-group{
+    padding: 0 15px;
+  }
+
+  .rbc-timeslot-group {
+    background-color: #f7fdff!important;
+  }
+
+  .rbc-day-slot {
+    font-size: 14px!important;
+  }
+
+  .rbc-event {
+    border: none!important;
+    color: #000!important;
+
+    &:nth-child(1) {
+      background-color: #e2f8ff!important;
+    }
+    &:nth-child(2) {
+      background-color: #fefce8!important;
+    }
+    &:nth-child(3) {
+      background-color: #f2f1ff!important;
+    }
+    &:nth-child(4) {
+      background-color: #fdf2fb!important;
+    }
+    &:nth-child(5) {
+      background-color: #e2f8ff!important;
+    }
+    &:nth-child(6) {
+      background-color: #fefce8!important;
+    }
+    &:nth-child(7) {
+      background-color: #f2f1ff!important;
+    }
+    &:nth-child(8) {
+      background-color: #fdf2fb!important;
+    }
+
+    .rbc-event-label {
+      color: gray!important;
+    }
+  }
+}

@@ -12,6 +12,6 @@ export interface Schedule {
     course: Course
     designation?: string
     dayOfWeek?: Day | number
-    startTime: Date | number[]
-    endTime: Date | number[]
+    startTime?: Date | number[]
+    endTime?: Date | number[]
 }

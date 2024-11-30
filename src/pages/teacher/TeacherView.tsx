@@ -133,7 +133,8 @@ const TeacherView = () => {
             <Widgets items={widgetItems}/>
             <ViewRoot
                 items={[
-                    {label: "Info", children: <TeacherInfo data={teacher as Teacher} color={color} dataKey='info' />}
+                    {label: "Info", children: <TeacherInfo data={teacher as Teacher} color={color} dataKey='info' />},
+                    {label: "Students", children: <TeacherInfo data={teacher as Teacher} color={color} dataKey='info' />}
                 ]}
                 exists={teacher !== null}
                 addMargin={{

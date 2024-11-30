@@ -26,7 +26,9 @@ export {
     getAllTeachers,
     getSearchedTeachers,
     getTeacherById,
-    getNumberOfStudentTaughtByTeacher
+    getNumberOfStudentTaughtByTeacher,
+    getTeacherSchedule,
+    getTeacherScheduleByDay
 } from '../repository/teacherRepository'
 
 export {getAllCourses} from '../repository/courseRepository.ts'

@@ -95,6 +95,14 @@
   .render__name {
     @include display(flex, center, flex-start);
     gap: 10px;
+
+    div p:first-child {
+      cursor: pointer;
+      &:hover {
+        font-weight: bold;
+        color: $primary_color;
+      }
+    }
   }
 
   .st__ref {

@@ -4,6 +4,7 @@ import dayjs from "dayjs";
 import 'dayjs/locale/fr.js'
 import {BloodType} from "../entity/enums/bloodType.ts";
 import {ProgressProps} from "antd";
+import {Day} from "../entity/enums/day.ts";
 
 export const createElement = (htmlElement: string, parentNode: Element|null, attributes?: {[key: string]: string}, content?: string) => {
 
@@ -108,6 +109,12 @@ export const fullDay = (date?: Date | number[] | string) => {
     return formattedDate(date, format);
 }
 
+export const getDayFromDate = (): Day => {
+    const date = new Date();
+    const dateIndex = date.getDay();
+    return (dateIndex + 6) % 7
+}
+
 export const monthsBetween = (startDate?: Date | number[] | string, endDate?: Date | number[] | string) => {
     const end = setDayJsDate(endDate)
     const start = setDayJsDate(startDate)
@@ -156,6 +163,15 @@ export const isCurrentTimeBetween = (startTime: number[], endTime: number[]): bo
     const end = dayjs().hour(endTime[0]).minute(endTime[1]);
     return now.isAfter(start) && now.isBefore(end);
 };
+
+export const timeToCurrentDatetime = (time: Date | number[] | string) => {
+    const today = new Date()
+    if (Array.isArray(time))
+        return new Date(today.getFullYear(), today.getMonth(), today.getDate(), time[0], time[1])
+    if (typeof time === 'string')
+        return dayjs(time).format('YYYY-MM-DDTHH:mm')
+    return new Date(time)
+}
 
 export const chooseColor = (name: string): string | undefined  => {
     if (name)

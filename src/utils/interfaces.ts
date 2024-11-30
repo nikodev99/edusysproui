@@ -17,6 +17,7 @@ import {Gender} from "../entity/enums/gender.tsx";
 import {AttendanceStatus} from "../entity/enums/attendanceStatus.ts";
 import {Employee} from "../entity/domain/employee.ts";
 import {AddressOwner, IndividualType} from "../core/shared/sharedEnums.ts";
+import {CalendarProps} from "react-big-calendar";
 
 export interface Metadata {
     title: string
@@ -249,3 +250,5 @@ export type CustomUpdateProps = {
     setSuccessMessage: (msg: string | undefined) => void,
     setErrorMessage: (msg: string | undefined) => void
 }
+
+export type CalendarEvent = CalendarProps['events']

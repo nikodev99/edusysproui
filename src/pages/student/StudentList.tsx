@@ -13,7 +13,7 @@ import {Response} from '../../data/action/response.ts'
 import {TableColumnsType, Tag} from "antd";
 import Avatar from "../../components/ui/layout/Avatar.tsx";
 import {dateCompare, enumToObjectArrayForFiltering, fDatetime, setFirstName} from "../../utils/utils.ts";
-import {Gender} from "../../entity/enums/gender.ts";
+import {Gender} from "../../entity/enums/gender.tsx";
 import Tagger from "../../components/ui/layout/Tagger.tsx";
 import ActionButton from "../../components/ui/layout/ActionButton.tsx";
 import {useColumnSearch} from "../../hooks/useColumnSearch.tsx";

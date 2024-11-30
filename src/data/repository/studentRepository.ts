@@ -41,13 +41,13 @@ export const getStudentById = (studentId: string): Promise<AxiosResponse<Enrollm
 }
 
 export const getRandomStudentClassmate = (studentId: string, classeId: number): Promise<AxiosResponse<Enrollment[]>> => {
-    return apiClient.get<Enrollment[]>(`enroll/classmates/${studentId}-${classeId}`)
+    return apiClient.get<Enrollment[]>(`enroll/classmates/${studentId}_${classeId}`)
 }
 
 export const getAllStudentClassmate = (studentId: string, classeId: number, academicYearId: string, pageable: Pageable) => {
     return request({
         method: 'GET',
-        url: `/enroll/${studentId}-${classeId}`,
+        url: `/enroll/${studentId}_${classeId}`,
         params: {
             academicYearId: academicYearId,
             page: pageable.page,

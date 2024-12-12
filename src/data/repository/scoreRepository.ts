@@ -1,6 +1,6 @@
 import {AxiosResponse} from "axios";
 import {Score} from "../../entity";
-import {request} from "../axiosConfig.ts";
+import {apiClient, request} from "../axiosConfig.ts";
 
 export const getAllStudentScores = (page: number, size: number, studentId: string, academicYearId: string): Promise<AxiosResponse<Score[]>> => {
     return request({
@@ -22,4 +22,8 @@ export const getAllStudentScoresBySubject = (academicYearId: string, subjectId: 
             academicYearId: academicYearId,
         }
     })
+}
+
+export const getAllTeacherMarks = (teacherId: string) => {
+    return apiClient.get(`/score/all_teacher_marks/${teacherId}`)
 }

@@ -6,9 +6,10 @@ interface PanelTableProps {
     title: ReactNode
     panelColor?: string
     data?: {
-        statement?: string
+        statement?: string | ReactNode
         response: string | number | ReactNode
         link?: string,
+        tableRow?: boolean
     }[]
 }
 
@@ -22,8 +23,8 @@ const PanelTable = ({title, data, panelColor}: PanelTableProps) => {
         <>
             <div className="table-head" style={panelColor ? {backgroundColor: panelColor}: {}}><span>{title}</span></div>
             <div className="table-body">
-                {data?.length === 0 ? <VoidData /> : data?.map((d, i) => (
-                    <div className="table-row" key={`${d.statement}-${i}`}>
+                {!data || data?.length === 0 ? <VoidData /> : data?.map((d, i) => (
+                    <div className={d.tableRow ? '' : "table-row"} key={`${d.statement}-${i}`}>
                         <div>{d.statement}</div>
                         {d.link ? (
                             <div className="linked" onClick={() => goThrough(d.link!)}>

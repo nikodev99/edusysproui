@@ -7,7 +7,7 @@ import {CourseProgram} from "./courseProgram.ts";
 export interface Teacher {
     id?: string
     personalInfo: Individual
-    hireDate?: Date
+    hireDate?: Date | number[] | string
     classes?: Classe[]
     courses?: Course[]
     salaryByHour?: number

@@ -3,8 +3,8 @@ import {Button, Carousel, Divider, Table, TableColumnsType, Avatar as AntAvatar}
 import {HTMLProps, ReactNode, useEffect, useState} from "react";
 import {Enrollment, HealthCondition, Schedule} from "../../../entity";
 import {
-    bloodLabel,convertToM, fDate, fDatetime, firstLetter, fullDay, getAge, getCountry, isCurrentTimeBetween,
-    chooseColor,isNull, lowerName, monthsBetween, setFirstName, timeConcat
+    bloodLabel, convertToM, fDate, fDatetime, firstLetter, fullDay, getAge, getCountry,
+    chooseColor, isNull, lowerName, monthsBetween, setFirstName, timeToCurrentDatetime, currency
 } from "../../../utils/utils.ts";
 import PanelStat from "../../ui/layout/PanelStat.tsx";
 import { Table as CustomTable } from "../../ui/layout/Table.tsx";
@@ -23,11 +23,12 @@ import PieChart from "../../graph/PieChart.tsx";
 import {Reprimand} from "../../../entity/domain/reprimand.ts";
 import Section from "../../ui/layout/Section.tsx";
 import PanelSection from "../../ui/layout/PanelSection.tsx";
-import {ExamData, InfoPageProps} from "../../../utils/interfaces.ts";
+import {CalendarEvent, ExamData, InfoPageProps} from "../../../utils/interfaces.ts";
 import {initExamData} from "../../../entity/domain/score.ts";
 import {attendanceTag} from "../../../entity/enums/attendanceStatus.ts";
 import Tag from "../../ui/layout/Tag.tsx";
 import {LuBan} from "react-icons/lu";
+import {BigCalendar} from "../../graph/BigCalendar.tsx";
 
 type StudentInfoProps = InfoPageProps<Enrollment>
 
@@ -197,10 +198,6 @@ const GraphSection = ({data}: StudentInfoProps) => {
 const SchoolHistory = ({data, color}: StudentInfoProps) => {
     const {student: {enrollments}} = data
 
-    const format = (input: number) => {
-        return Intl.NumberFormat('fr-CG', {style: 'currency', currency: 'XAF'}).format(input)
-    }
-
     const columns: TableColumnsType<HistoryData> = [
         {
             title: "Année",
@@ -221,7 +218,7 @@ const SchoolHistory = ({data, color}: StudentInfoProps) => {
             dataIndex: 'yearAmount',
             key: 'yearAmount',
             align: 'center',
-            render: (text) => (<span>{text ? format(text) : ''}</span>),
+            render: (text) => (<span>{text ? currency(text) : ''}</span>),
         },
     ];
 
@@ -368,41 +365,27 @@ const HealthData = ({data, color}: StudentInfoProps) => {
     )
 }
 
-const CourseSchedule = ({data, color}: StudentInfoProps) => {
+const CourseSchedule = ({data}: StudentInfoProps) => {
     const {classe} = data
     const schedules: Schedule[] = classe.schedule !== null ? classe.schedule : []
 
-    const columns: TableColumnsType<Schedule> = [
-        {
-            title: "Heures",
-            dataIndex: 'startTime',
-            key: 'time',
-            align: 'center',
-            render: (text, s) => (<p style={{textAlign: 'left'}}>{timeConcat(text, s.endTime as number[])}</p>),
-            responsive: ['md'],
-        },
-        {
-            title: "Matières",
-            dataIndex: 'course',
-            key: 'course',
-            align: 'center',
-            render: (c, r) => (<p style={{textAlign: 'left'}}>{c?.course ?? r.designation}</p>),
-        },
-    ];
+    const events = schedules.map((schedule: Schedule) => ({
+        title: schedule?.course?.course ? schedule?.course?.course : schedule?.designation,
+        start: schedule.startTime ? timeToCurrentDatetime(schedule.startTime) : new Date(),
+        end: schedule.endTime ? timeToCurrentDatetime(schedule.endTime): new Date(),
+        allDay: false
+    }))
+
+    console.log('schedules: ', schedules)
 
     return(
         <Section title={`Emploi du temps: ${setFirstName(fullDay(new Date()))}`}>
-            <CustomTable
-                color={color}
-                tableProps={{
-                    className: 'score-table',
-                    columns: columns as [],
-                    dataSource: schedules,
-                    pagination: false,
-                    size: 'small',
-                    rowKey: (record) => `row-${record.id}`,
-                    rowClassName: (record) => isCurrentTimeBetween(record.startTime as number[], record.endTime as number[]) ? 'highlight-row' : ''
-                }}
+            <BigCalendar
+                data={events as CalendarEvent}
+                views={['day']}
+                defaultView='day'
+                startDayTime={[8, 0]}
+                endDayTime={[14, 0]}
             />
         </Section>
     )
@@ -445,6 +428,10 @@ const DisciplinaryRecords = ({data, seeMore, color}: StudentInfoProps) => {
 }
 
 //TODO add the bar graph for the 5 last exams
+/**
+ * TODO Add graph pour la progression des notes (trouver la moyenne de note par années et l'afficher)
+ * suivi d'un tableau qui classe les élèves par moyenne de notes.
+ */
 
 export const StudentInfo = ({enrollment, seeMore, color}: { enrollment: Enrollment, color?: string, seeMore?: (key: string) => void }) => {
 

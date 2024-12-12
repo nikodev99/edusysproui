@@ -1,5 +1,6 @@
 import {ResponsiveContainer, PieChart as ReChartPieChart, Pie, Cell} from "recharts";
-import {PieProps} from "../../utils/interfaces.ts";
+import {PieChartProps} from "../ui/ui_interfaces.ts";
+import {COLOR} from "../../utils/utils.ts";
 
 const RADIAN = Math.PI / 180;
 const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }: {
@@ -16,25 +17,48 @@ const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, per
     );
 };
 
-const PieChart = ({data, colors}: PieProps) => {
+const PieChart = (pieProps: PieChartProps) => {
+    const {
+        colors, width, height, data, outerRadius, innerRadius, defaultColor, activeIndex, hasLabel,
+        activeShape, labelling, onMouseEnter, minHeight, startAngle, endAngle
+    } = pieProps
 
-    const COLORS = colors ? colors : ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+    const CUSTOM_COLOR = (() => {
+        if (colors && defaultColor) {
+            return [defaultColor, ...colors];
+        }
+        if (!colors && defaultColor) {
+            return [defaultColor, ...COLOR];
+        }
+        if (colors && !defaultColor) {
+            return colors;
+        }
+        return COLOR;
+    })();
 
     return (
-        <ResponsiveContainer width="100%" height="100%">
-            <ReChartPieChart width={400} height={400}>
+        <ResponsiveContainer width={width ?? "100%"} height={height ?? 400} minHeight={minHeight}>
+            <ReChartPieChart>
                 <Pie
+                    activeIndex={activeIndex}
+                    activeShape={activeShape}
                     data={data}
                     cx="50%"
                     cy="50%"
-                    labelLine={false}
-                    label={renderCustomizedLabel}
-                    outerRadius={80}
+                    startAngle={startAngle}
+                    endAngle={endAngle}
+                    labelLine={labelling ?? false}
+                    label={hasLabel ? renderCustomizedLabel : undefined}
+                    innerRadius={innerRadius}
+                    outerRadius={outerRadius ?? 80}
                     fill="#8884d8"
                     dataKey="value"
+                    onMouseEnter={onMouseEnter}
                 >
                     {data.map((_entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        <Cell key={`cell-${index}`} fill={
+                            _entry.color ? _entry.color : CUSTOM_COLOR[index % CUSTOM_COLOR.length]
+                        } />
                     ))}
                 </Pie>
             </ReChartPieChart>

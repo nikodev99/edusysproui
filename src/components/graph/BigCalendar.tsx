@@ -11,12 +11,14 @@ dayjs.locale('fr')
 const localized = dayjsLocalizer(dayjs)
 
 interface BigCalendarProps<TEvents extends object> {
-    data?: CalendarProps['events']
+    data: CalendarProps['events']
     views: ViewsProps<TEvents>
     defaultView: View
+    startDayTime?: number[]
+    endDayTime?: [number, number]
 }
 
-export const BigCalendar = <T extends object>({data, views, defaultView}: BigCalendarProps<T>) => {
+export const BigCalendar = <T extends object>({data, views, defaultView, startDayTime, endDayTime}: BigCalendarProps<T>) => {
 
     const [view, setView] = useState<View>(defaultView)
 
@@ -36,8 +38,8 @@ export const BigCalendar = <T extends object>({data, views, defaultView}: BigCal
                     views={views}
                     view={view}
                     style={{height: 'auto'}}
-                    min={timeToCurrentDatetime([7, 0]) as Date}
-                    max={timeToCurrentDatetime([17, 0]) as Date}
+                    min={timeToCurrentDatetime(startDayTime ?? [7, 0]) as Date}
+                    max={timeToCurrentDatetime(endDayTime ?? [17, 0]) as Date}
                     messages={calendarMessages}
                     onView={handleOnChangeView}
                 />

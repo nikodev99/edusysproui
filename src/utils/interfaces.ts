@@ -18,6 +18,9 @@ import {AttendanceStatus} from "../entity/enums/attendanceStatus.ts";
 import {Employee} from "../entity/domain/employee.ts";
 import {AddressOwner, IndividualType} from "../core/shared/sharedEnums.ts";
 import {CalendarProps} from "react-big-calendar";
+import {ReprimandType} from "../entity/enums/reprimandType.ts";
+import {PunishmentType} from "../entity/enums/punishmentType.ts";
+import {PunishmentStatus} from "../entity/enums/punishmentStatus.ts";
 
 export interface Metadata {
     title: string
@@ -179,6 +182,27 @@ export interface ExamData {
     obtainedMark: number;
 }
 
+export interface ReprimandData {
+    key?: number
+    studentId: number
+    studentName?: string
+    studentClasse?: string
+    studentSection?: string
+    reprimandDate?: Date | number[] | string
+    reprimandType?: ReprimandType
+    description?: string
+    issueBy?: string
+    punishmentId?: number
+    isRequired?: boolean
+    punishmentType?: PunishmentType,
+    punishmentDescription?: string
+    punishmentDates?: string
+    punishmentStatus?: PunishmentStatus
+    appealed?:boolean
+    executedBy?: string
+    appealedNote?:string
+}
+
 export interface AttendanceRecord {
     id: number
     date: string
@@ -190,12 +214,6 @@ export interface AttendanceRecord {
 export interface Pageable {
     page: number,
     size: number,
-}
-
-export interface PieProps {
-    data: {type: string, value: number}[];
-    label?: (obj: object) => string;
-    colors?: Color[];
 }
 
 export interface InfoPageProps<T extends object> {
@@ -216,6 +234,7 @@ export type RedirectFunction = (link: string) => void;
 export type Moment = Date | number[] | string
 export type Color = string
 export type Counted = Record<string, number>
+export type CountType = {classe?: string, count?: number};
 
 export type WidgetItem = {
     title: ReactNode

@@ -290,6 +290,18 @@
     }
   }
 
+  .ui__table {
+    .ant-table, .ant-table-container, .ant-table-cell {
+      border-start-start-radius: unset!important;
+      border-start-end-radius: unset!important;
+    }
+
+    .ant-table-thead .ant-table-cell{
+      background-color: $primary_color;
+      color: #fff!important;
+    }
+  }
+
   .score-table {
     .ant-table, .ant-table-container, .ant-table-cell {
       border-start-start-radius: unset!important;
@@ -297,7 +309,7 @@
     }
     .ant-table-thead .ant-table-cell{
       background-color: $primary_color;
-      color: $text-color_over_primary_color!important;
+      color: #fff!important;
     }
 
     .highlight-row {

@@ -1,4 +1,4 @@
-import {EnumType} from "./interfaces.ts"
+import {Color, EnumType} from "./interfaces.ts"
 import countries from 'world-countries'
 import dayjs from "dayjs";
 import 'dayjs/locale/fr.js'
@@ -81,12 +81,44 @@ export const getAge = (dateArray?: number[]): number => {
     return date.getFullYear() - incomingYear
 }
 
+export const currency = (input?: number) => {
+    return numberFormat(input, {locale: 'fr-CG', style: "currency", currency: 'XAF'})
+}
+
+export const numberFormat = (input?: number, options?: {
+    locale: string | string[],
+    style?: string | 'decimal' | 'currency' | 'percent' | 'unit',
+    currency?: string
+}) => {
+    return input ?
+        Intl.NumberFormat(options?.locale ?? 'fr-CG', {
+            style: options?.style ?? 'currency',
+            currency: options?.style ?? 'XAF'
+        }).format(input) :
+        Intl.NumberFormat(options?.locale ?? 'fr-CG', {
+            style: options?.style ?? 'currency',
+            currency: options?.style ?? 'XAF'
+        }).format(0)
+}
+
 const arrayToDate = (dateArray: Date | number[]): Date => {
     if (Array.isArray(dateArray)) {
         const [year, month, day] = dateArray
         return new Date(year, month - 1, day);
     }
     return new Date(dateArray)
+}
+
+export const getDistinctArray = <T>(arr: T[], keySelector: (item: T) => unknown): T[] => {
+    const seen = new Set<unknown>()
+    return arr.filter(item => {
+        const key = keySelector ? keySelector(item) : item
+        if (seen.has(key)) {
+            return false
+        }
+        seen.add(key)
+        return true
+    })
 }
 
 export const fDatetime = (timestamp: Date | number | string, to?: boolean) => {
@@ -315,4 +347,5 @@ export const getShortSortOrder = (order: string | undefined): 'asc' | 'desc' | u
     }
 };
 
+export const COLOR: Color[] = ['#0088FE', '#FF6F61', '#00C49F', '#6B8E23','#FFBB28','#FFD700', '#FF8042', '#20B2AA', '#FF6347', '#4682B4','#8A2BE2', '#D2691E', '#32CD32'];
 export const fontFamily = 'Mulish, Kameron, Helvetica, sans-serif'

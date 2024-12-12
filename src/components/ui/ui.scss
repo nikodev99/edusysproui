@@ -110,7 +110,16 @@
     text-align: center;
     text-transform: uppercase;
     padding: 4px 0;
-    color: $text_color_over_primary_color;
+    color: #fff;
+  }
+
+  .linked {
+    cursor: pointer;
+    transition: .5s;
+
+    &:hover .title {
+      color: blue;
+    }
   }
 
   .table-body {
@@ -145,6 +154,10 @@
           color: $primary_color;
         }
       }
+    }
+
+    .timeline {
+      margin-top: 25px!important;
     }
   }
 }

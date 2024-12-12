@@ -10,6 +10,7 @@ export const Table = ({tableProps, color}: CustomTableProps) => {
     return(
         <AntTable
             {...tableProps}
+            className='ui__table'
             components={
                 color ? {
                     header: {

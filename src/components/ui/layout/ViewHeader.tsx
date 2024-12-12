@@ -1,16 +1,16 @@
 import {Button, Dropdown, Flex, Skeleton} from "antd";
-import Avatar from "./Avatar.tsx";
 import {LuChevronDown, LuPencil} from "react-icons/lu";
-import {setFirstName} from "../../../utils/utils.ts";
 import {useToggle} from "../../../hooks/useToggle.ts";
 import {ReactNode, useEffect, useState} from "react";
 import {ItemType} from "antd/es/menu/interface";
+import {AvatarProps} from "../ui_interfaces.ts";
+import {AvatarTitle} from "./AvatarTitle.tsx";
 
 interface ViewProps {
     isLoading: boolean,
     setEdit: (toEdit: boolean) => void
     closeState: boolean
-    avatarProps:{image?: string, firstName?: string, lastName?: string, reference?: string},
+    avatarProps: AvatarProps
     blockProps:{title: ReactNode, mention: ReactNode}[]
     items?: ItemType[]
     btnLabel?: ReactNode
@@ -31,8 +31,6 @@ const ViewHeader = ({isLoading, setEdit, closeState, avatarProps, blockProps, it
         }
     }, [closeState, color, open, pColor, setOpen]);
 
-    const {image, reference, lastName, firstName} = avatarProps
-
     if (isLoading) {
         return (
             <Skeleton loading={isLoading} active={isLoading} avatar paragraph={{rows: 2}} />
@@ -48,13 +46,7 @@ const ViewHeader = ({isLoading, setEdit, closeState, avatarProps, blockProps, it
 
     return(
         <Flex align='center' justify='space-between' component='header' className='view__block'>
-            <Flex className="avatar-container" align='center' gap={10}>
-                <Avatar image={image} firstText={firstName} lastText={lastName} size={60} setColor={setColor} />
-                <Flex className="legal" vertical justify='center'>
-                    <span className='title'>{`${lastName?.toUpperCase()}, ${setFirstName(firstName)}`}</span>
-                    <span className='mention'>{reference}</span>
-                </Flex>
-            </Flex>
+            <AvatarTitle {...avatarProps} setColor={setColor} />
 
             {blockProps && blockProps.map(({title, mention}, index) => (
                 <Flex className='block' align='flex-start' vertical gap={4} key={index}>

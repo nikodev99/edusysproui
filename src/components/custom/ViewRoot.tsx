@@ -3,6 +3,7 @@ import {TabItemType} from "../../utils/interfaces.ts";
 import {cloneElement, ReactElement, ReactNode, useState} from "react";
 import LocalStorageManager from "../../core/LocalStorageManager.ts";
 import {firstLetter} from "../../utils/utils.ts";
+import StickyBox from "react-sticky-box";
 
 interface ViewProps {
     items: TabItemType[]
@@ -43,11 +44,18 @@ const ViewRoot = ({items, tab, exists, isLoading, skeleton, addMargin}: ViewProp
         closable: item.closable ?? false,
     }))
 
+    const renderTabBar: TabsProps['renderTabBar'] = (props, DefaultTabBar) => (
+        <StickyBox offsetTop={0} offsetBottom={0} style={{ zIndex: 1 }}>
+            <DefaultTabBar {...props} style={{backgroundColor: '#f4f6fd'}} />
+        </StickyBox>
+    );
+
     return(
         <section className='sticky-wrapper' style={addMargin ? {
             [`margin${firstLetter(addMargin.position)}`]: addMargin.size
         } : undefined}>
             <Tabs
+                renderTabBar={renderTabBar as TabsProps['renderTabBar']}
                 items={tabItem}
                 onChange={handleTabChange}
                 activeKey={tabKey}

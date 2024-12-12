@@ -1,14 +1,15 @@
-import {Student} from "./student.ts";
 import {Moment} from "../../utils/interfaces.ts";
 import {ReprimandType} from "../enums/reprimandType.ts";
 import {Punishment} from "./punishment.ts";
+import {Enrollment} from "./enrollment.ts";
+import {Individual} from "./individual.ts";
 
 export interface Reprimand {
     id: number
-    student: Student
+    student: Enrollment
     reprimandDate: Moment
     type: ReprimandType
     description: string
-    issuedBy: string
+    issuedBy: Individual
     punishment: Punishment
 }

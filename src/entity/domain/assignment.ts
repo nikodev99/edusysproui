@@ -3,12 +3,13 @@ import {Exam} from "./exam.ts";
 import {Classe} from "./classe.ts";
 import {Course} from "./course.ts";
 import {Score} from "./score.ts";
+import {Individual} from "./individual.ts";
 
 export interface Assignment {
     id: bigint
     semester: Planning
     exam: Exam
-    preparedBy: string
+    preparedBy: Individual
     classe: Classe
     subject: Course
     examName: string

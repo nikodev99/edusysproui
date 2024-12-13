@@ -1,8 +1,9 @@
 import {getStatusKey, Status} from "../entity/enums/status.ts";
-import React, {ReactNode} from "react";
+import {ReactNode} from "react";
 import Tag from "../components/ui/layout/Tag.tsx";
-import {Popover, StepsProps} from "antd";
+import {Flex, Popover, Space, StepsProps} from "antd";
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const statusTags = (status: Status, female?: boolean): ReactNode => {
     const label = getStatusKey(status, female)
     switch (status) {
@@ -26,12 +27,14 @@ export const statusTags = (status: Status, female?: boolean): ReactNode => {
     }
 }
 
-export const requiredMark = (label: React.ReactNode, {required}: {required: boolean}) => (
+// eslint-disable-next-line react-refresh/only-export-components
+export const requiredMark = (label: ReactNode, {required}: {required: boolean}) => (
     <>
         {required ? <Tag color='danger'>requis</Tag> : <Tag color='warning'>optionnel</Tag>}&nbsp;{label}
     </>
 )
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const customDot: StepsProps['progressDot'] = (dot: ReactNode, {status, index}) => (
     <Popover content={<span>
         étape: {index + 1} status: {status}
@@ -39,3 +42,12 @@ export const customDot: StepsProps['progressDot'] = (dot: ReactNode, {status, in
         {dot}
     </Popover>
 )
+
+export const IconText = ({ icon, text }: { icon: ReactNode; text: string }) => (
+    <Space>
+        <Flex gap={10} align='center'>
+            {icon}
+            {text}
+        </Flex>
+    </Space>
+);

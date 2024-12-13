@@ -2,7 +2,7 @@ import Section from "../../ui/layout/Section.tsx";
 import Block from "../../ui/layout/Block.tsx";
 import PanelSection from "../../ui/layout/PanelSection.tsx";
 import PanelTable from "../../ui/layout/PanelTable.tsx";
-import {InfoPageProps, CalendarEvent, ReprimandData, CountType} from "../../../utils/interfaces.ts";
+import {CalendarEvent, CountType, InfoPageProps, ReprimandData} from "../../../utils/interfaces.ts";
 import {Classe, Course, Department, Schedule, Score, Teacher} from "../../../entity";
 import {
     fDate,
@@ -10,14 +10,15 @@ import {
     getAge,
     getCountry,
     getDistinctArray,
-    isNull, lowerName,
-    setName,
+    isNull,
+    lowerName,
+    setName, setTime,
     timeToCurrentDatetime
 } from "../../../utils/utils.ts";
 import {useEffect, useRef, useState} from "react";
 import {Gender} from "../../../entity/enums/gender.tsx";
 import {Flag} from "../../ui/layout/Flag.tsx";
-import {Avatar, Flex, List, Skeleton, TableColumnsType, Tag, TimelineProps, Typography} from "antd";
+import {Flex, List, Skeleton, TableColumnsType, Tag, TimelineProps, Typography} from "antd";
 import {useFetch, useRawFetch} from "../../../hooks/useFetch.ts";
 import {getNumberOfStudentTaughtByClasse, getTeacherScheduleByDay} from "../../../data/repository/teacherRepository.ts";
 import {BigCalendar} from "../../graph/BigCalendar.tsx";
@@ -36,6 +37,8 @@ import {ShapePieChart} from "../../graph/ShapePieChart.tsx";
 import {PieChartDataEntry} from "../../ui/ui_interfaces.ts";
 import {Assignment} from "../../../entity/domain/assignment.ts";
 import {getSomeTeacherAssignments} from "../../../data/repository/assignmentRepository.ts";
+import {IconText} from "../../../utils/tsxUtils.tsx";
+import {LuCalendarDays, LuClock, LuClock9} from "react-icons/lu";
 
 type TeacherInfo = InfoPageProps<Teacher>
 
@@ -49,6 +52,7 @@ const IndividualInfo = ({data, color}: TeacherInfo) => {
 
     const infoData = [
         {statement: 'Nom complet', response: setName(personalInfo?.lastName, personalInfo?.firstName, personalInfo?.maidenName, true)},
+        {statement: 'Genre', response: Gender[personalInfo?.gender as unknown as keyof typeof Gender]},
         {statement: 'Date de naissance', response: `${fDate(personalInfo?.birthDate)} (${getAge(personalInfo?.birthDate as number[])} ans)`},
         {statement: 'Lieu de naissance', response: firstLetter(personalInfo?.birthCity)},
         {statement: 'Pays de naissance', response: <div className='country__flag'>
@@ -175,8 +179,7 @@ const MarkMean = ({data, color}: TeacherInfo) => {
         const count = marks.filter((mark, index) =>
             index === 0 ? mark >= min && mark <= max : mark > min && mark <= max
         ).length;
-        const percent = Math.round(((count / marks.length) * 100))
-        return percent
+        return Math.round(((count / marks.length) * 100))
     }
 
     const histogramData = [
@@ -201,7 +204,7 @@ const MarkMean = ({data, color}: TeacherInfo) => {
     )
 }
 
-const DepartmentInfo = ({data, color}: InfoPageProps<Teacher>) => {
+const DepartmentInfo = ({data, color}: TeacherInfo) => {
 
     const [departments, setDepartments] = useState<Department[] | undefined>()
     //TODO the value of the primary department code should be in the settings
@@ -392,20 +395,22 @@ const AssignmentPlan = ({data}: TeacherInfo) => {
                 }
             })
     }, [fetch, personalInfo.id]);
-
-    console.log("Prof: ")
     
     return(
         <PanelSection title='Suivi des devoirs'>
-            <PanelTable title='Les devoirs à venir' data={[{
+            <PanelTable title='Les devoirs à venir' ps={true} data={[{
                 response: <List
                     itemLayout='vertical'
                     dataSource={assignments}
                     renderItem={(item: Assignment) => (
-                        <List.Item key={item.id} >
+                        <List.Item key={item.id} actions={[
+                            <IconText icon={<LuCalendarDays />} text={fDate(item.examDate) as string} key="list-vertical-star-o" />,
+                            <IconText icon={<LuClock />} text={setTime(item.startTime as number[])} key="list-vertical-like-o" />,
+                            <IconText icon={<LuClock9 /> } text={setTime(item.endTime as number[])} key="list-vertical-message" />,
+                        ]}>
                             <List.Item.Meta
                                 title={<a href="https://ant.design">{item.examName}</a>}
-                                description="Ant Design, a design language for background applications, is refined by Ant UED Team"
+                                description={<Tag>{`${item.subject?.course} - ${item.classe?.name}`}</Tag>}
                             />
                         </List.Item>
                     )}
@@ -415,7 +420,6 @@ const AssignmentPlan = ({data}: TeacherInfo) => {
         </PanelSection>
     )
 }
-
 
 export const TeacherInfo = (teacherInfoProps: TeacherInfo) => {
     return (

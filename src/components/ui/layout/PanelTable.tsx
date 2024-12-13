@@ -10,10 +10,11 @@ interface PanelTableProps {
         response: string | number | ReactNode
         link?: string,
         tableRow?: boolean
-    }[]
+    }[],
+    ps?: boolean
 }
 
-const PanelTable = ({title, data, panelColor}: PanelTableProps) => {
+const PanelTable = ({title, data, panelColor, ps}: PanelTableProps) => {
 
     const navigate = useNavigate()
 
@@ -21,8 +22,8 @@ const PanelTable = ({title, data, panelColor}: PanelTableProps) => {
 
     return (
         <>
-            <div className="table-head" style={panelColor ? {backgroundColor: panelColor}: {}}><span>{title}</span></div>
-            <div className="table-body">
+            <div className='table-head' style={panelColor ? {backgroundColor: panelColor}: {}}><span>{title}</span></div>
+            <div className='table-body' style={ps ? {padding: '0 12px'}: undefined}>
                 {!data || data?.length === 0 ? <VoidData /> : data?.map((d, i) => (
                     <div className={d.tableRow ? '' : "table-row"} key={`${d.statement}-${i}`}>
                         <div>{d.statement}</div>

@@ -123,8 +123,6 @@
   }
 
   .table-body {
-    padding-top: 4px;
-
     .table-row {
       padding: 8px 10px;
       @include display(flex, center, space-between);

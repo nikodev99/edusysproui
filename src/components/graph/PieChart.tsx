@@ -37,7 +37,7 @@ const PieChart = (pieProps: PieChartProps) => {
     })();
 
     return (
-        <ResponsiveContainer width={width ?? "100%"} height={height ?? 400} minHeight={minHeight}>
+        <ResponsiveContainer width={width || "100%"} height={height || 400} minHeight={minHeight}>
             <ReChartPieChart>
                 <Pie
                     activeIndex={activeIndex}
@@ -50,7 +50,7 @@ const PieChart = (pieProps: PieChartProps) => {
                     labelLine={labelling ?? false}
                     label={hasLabel ? renderCustomizedLabel : undefined}
                     innerRadius={innerRadius}
-                    outerRadius={outerRadius ?? 80}
+                    outerRadius={outerRadius || 80}
                     fill="#8884d8"
                     dataKey="value"
                     onMouseEnter={onMouseEnter}

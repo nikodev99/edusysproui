@@ -381,7 +381,7 @@ const StudentByClasse = ({data, color}: TeacherInfo) => {
     )
 }
 
-const AssignmentPlan = ({data}: TeacherInfo) => {
+const AssignmentPlan = ({data,color}: TeacherInfo) => {
     const {personalInfo} = data
     
     const [assignments, setAssignments] = useState<Assignment[]>([])
@@ -416,7 +416,7 @@ const AssignmentPlan = ({data}: TeacherInfo) => {
                     )}
                 />,
                 tableRow: true
-            }]} />
+            }]} panelColor={color} />
         </PanelSection>
     )
 }

@@ -5,7 +5,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css'
 import {timeToCurrentDatetime} from "../../utils/utils.ts";
 import 'dayjs/locale/fr'
 import {calendarMessages} from "../../utils/text_display.ts";
-import {useState} from "react";
+import {CSSProperties, useState} from "react";
 
 dayjs.locale('fr')
 const localized = dayjsLocalizer(dayjs)
@@ -16,9 +16,13 @@ interface BigCalendarProps<TEvents extends object> {
     defaultView: View
     startDayTime?: number[]
     endDayTime?: [number, number]
+    className?: string
+    styles?: CSSProperties
 }
 
-export const BigCalendar = <T extends object>({data, views, defaultView, startDayTime, endDayTime}: BigCalendarProps<T>) => {
+export const BigCalendar = <T extends object>({
+    data, views, defaultView, startDayTime, endDayTime, className, styles
+}: BigCalendarProps<T>) => {
 
     const [view, setView] = useState<View>(defaultView)
 
@@ -37,11 +41,12 @@ export const BigCalendar = <T extends object>({data, views, defaultView, startDa
                     endAccessor="end"
                     views={views}
                     view={view}
-                    style={{height: 'auto'}}
+                    style={{height: 'auto', ...styles}}
                     min={timeToCurrentDatetime(startDayTime ?? [7, 0]) as Date}
                     max={timeToCurrentDatetime(endDayTime ?? [17, 0]) as Date}
                     messages={calendarMessages}
                     onView={handleOnChangeView}
+                    className={className}
                 />
         }
         </div>

@@ -272,8 +272,12 @@
 .rbc-time-view {//aside menu des times
   background-color: #eee!important;
 
-  .rbc-time-header {
+  .rbc-allday-cell {
     display: none!important;
+  }
+
+  .rbc-time-header {
+    //display: none!important;
   }
 
   .rbc-time-content {
@@ -329,5 +333,11 @@
     .rbc-event-label {
       color: gray!important;
     }
+  }
+}
+
+.agenda {
+  .rbc-day-slot {
+    font-size: 12px!important;
   }
 }

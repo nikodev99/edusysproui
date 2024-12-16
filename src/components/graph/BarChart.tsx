@@ -16,12 +16,12 @@ export const BarChart = <T extends object>({
     }
 
     return (
-        <ResponsiveContainer width="100%" height="100%" minHeight={minHeight ?? 400}>
+        <ResponsiveContainer width="100%" height="100%" minHeight={minHeight || 400}>
             <ReChardBarChart
-                width={width ?? 500}
-                height={height ?? 300}
+                width={width || 500}
+                height={height || 300}
                 data={data}
-                margin={margins ?? {
+                margin={margins || {
                     top: 20,
                     right: 20,
                     left: 10,

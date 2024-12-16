@@ -22,7 +22,7 @@ const RadarChart = ({data, xField, yField, color, width, height}: RadarProps) =>
     const COLOR = color ? color : '#8884d8'
 
     return (
-        <ResponsiveContainer width="100%" height={width ?? 350} maxHeight={height ?? 400}>
+        <ResponsiveContainer width="100%" height={width || 350} maxHeight={height || 400}>
             <ReChartRadarChart cx="50%" cy="50%" outerRadius="80%" data={data}>
                 <PolarGrid />
                 <PolarAngleAxis dataKey={xField} />

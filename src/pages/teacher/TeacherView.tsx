@@ -21,7 +21,7 @@ import {
     LuTrash2,
     LuUserMinus,
 } from "react-icons/lu";
-import {TeacherEditDrawer, TeacherInfo} from "../../components/ui-kit-teacher";
+import {TeacherAgenda, TeacherEditDrawer, TeacherInfo} from "../../components/ui-kit-teacher";
 import {useToggle} from "../../hooks/useToggle.ts";
 import {ViewRoot} from "../../components/custom/ViewRoot.tsx";
 
@@ -134,7 +134,7 @@ const TeacherView = () => {
             <ViewRoot
                 items={[
                     {label: "Info", children: <TeacherInfo data={teacher as Teacher} color={color} dataKey='info' />},
-                    {label: "Students", children: <TeacherInfo data={teacher as Teacher} color={color} dataKey='info' />}
+                    {label: "Agenda", children: <TeacherAgenda data={teacher as Teacher} dataKey='agenda' />}
                 ]}
                 exists={teacher !== null}
                 addMargin={{

@@ -1,4 +1,4 @@
-import {Color, EnumType} from "./interfaces.ts"
+import {ApiEvent, Color, EnumType} from "./interfaces.ts"
 import countries from 'world-countries'
 import dayjs from "dayjs";
 import 'dayjs/locale/fr.js'
@@ -346,6 +346,40 @@ export const getShortSortOrder = (order: string | undefined): 'asc' | 'desc' | u
             return undefined;
     }
 };
+
+export const transformEvents = (apiEvents: ApiEvent[]) => {
+    const getDayDate = (dayOfWeek: Day, [hour, minute]: [number, number]): Date[] => {
+        const now = new Date();
+        const day = Day[dayOfWeek as unknown as keyof typeof Day];
+        if (day === Day.ALL_DAYS) {
+            return [Day.MONDAY, Day.TUESDAY, Day.WEDNESDAY, Day.THURSDAY, Day.FRIDAY].map(day => {
+                const date = new Date(now);
+                console.log('Day Date: ', day)
+                date.setDate(now.getDate() + ((day - now.getDay() + 7) % 6));
+                date.setHours(hour, minute, 0, 0);
+                return date;
+            });
+        } else {
+            const date = new Date(now);
+            date.setDate(now.getDate() + ((day - now.getDay() + 7) % 6));
+            date.setHours(hour, minute, 0, 0);
+            return [date];
+        }
+    };
+
+    return apiEvents?.flatMap(event => {
+        const startDates = getDayDate(event.dayOfWeek, event.startTime);
+        const endDates = getDayDate(event.dayOfWeek, event.endTime);
+
+        return startDates.map((start, index) => ({
+            title: event.event,
+            start,
+            end: endDates[index] || start, // Ensure `end` aligns with `start`
+            allDay: false,
+        }));
+    });
+};
+
 
 export const COLOR: Color[] = ['#0088FE', '#FF6F61', '#00C49F', '#6B8E23','#FFBB28','#FFD700', '#FF8042', '#20B2AA', '#FF6347', '#4682B4','#8A2BE2', '#D2691E', '#32CD32'];
 export const fontFamily = 'Mulish, Kameron, Helvetica, sans-serif'

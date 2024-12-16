@@ -21,6 +21,7 @@ import {CalendarProps} from "react-big-calendar";
 import {ReprimandType} from "../entity/enums/reprimandType.ts";
 import {PunishmentType} from "../entity/enums/punishmentType.ts";
 import {PunishmentStatus} from "../entity/enums/punishmentStatus.ts";
+import {Day} from "../entity/enums/day.ts";
 
 export interface Metadata {
     title: string
@@ -268,6 +269,14 @@ export type CustomUpdateProps = {
     personal: AddressOwner | IndividualType,
     setSuccessMessage: (msg: string | undefined) => void,
     setErrorMessage: (msg: string | undefined) => void
+}
+
+export interface ApiEvent {
+    dayOfWeek: Day
+    event: string
+    allDay: boolean
+    startTime: [number, number]
+    endTime: [number, number]
 }
 
 export type CalendarEvent = CalendarProps['events']

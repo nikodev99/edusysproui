@@ -55,6 +55,10 @@ export {
     getSomeTeacherAssignments
 } from '../repository/assignmentRepository.ts'
 
+export {
+    getAllTeacherProgram, getAllTeacherCourseProgram
+} from '../repository/CourseProgramRepository.ts'
+
 
 
 

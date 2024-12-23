@@ -42,15 +42,15 @@ import {LuCalendarDays, LuClock, LuClock9} from "react-icons/lu";
 
 type TeacherInfo = InfoPageProps<Teacher>
 
-const IndividualInfo = ({data, color}: TeacherInfo) => {
+const IndividualInfo = ({infoData, color}: TeacherInfo) => {
 
     const [nation, setNation] = useState<string>()
     
-    const {personalInfo, personalInfo: {address}} = data ?? {}
+    const {personalInfo, personalInfo: {address}} = infoData ?? {}
 
     const country = getCountry(personalInfo?.nationality as string)
 
-    const infoData = [
+    const informationData = [
         {statement: 'Nom complet', response: setName(personalInfo?.lastName, personalInfo?.firstName, personalInfo?.maidenName, true)},
         {statement: 'Genre', response: Gender[personalInfo?.gender as unknown as keyof typeof Gender]},
         {statement: 'Date de naissance', response: `${fDate(personalInfo?.birthDate)} (${getAge(personalInfo?.birthDate as number[])} ans)`},
@@ -79,12 +79,12 @@ const IndividualInfo = ({data, color}: TeacherInfo) => {
     ]
 
     useEffect(() => {
-        if (data && country && personalInfo?.gender === Gender.FEMME) {
+        if (infoData && country && personalInfo?.gender === Gender.FEMME) {
             setNation(country?.demonyms.fra.f)
         } else {
             setNation(country?.demonyms.fra.m)
         }
-    }, [country, data, personalInfo?.gender]);
+    }, [country, infoData, personalInfo?.gender]);
 
 
     return(
@@ -94,16 +94,16 @@ const IndividualInfo = ({data, color}: TeacherInfo) => {
                 <p className='subtitle'>Informations Générales sur l'enseignant</p>
             </div>
         }>
-            <PanelTable title='Données personnelles' panelColor={color} data={infoData} />
+            <PanelTable title='Données personnelles' panelColor={color} data={informationData} />
             <PanelTable title='Adresse' data={addressData} panelColor={color}/>
             <PanelTable title='Coordonnées' data={cordData} panelColor={color}/>
         </PanelSection>
     )
 }
 
-const ProsInfo = ({data, color}: TeacherInfo) => {
+const ProsInfo = ({infoData, color}: TeacherInfo) => {
 
-    const {courses, classes, salaryByHour, hireDate} = data
+    const {courses, classes, salaryByHour, hireDate} = infoData
 
     const employmentData = [
         //TODO adding prof job id {incorporating reference in personalInfo} and position in the database
@@ -135,16 +135,16 @@ const ProsInfo = ({data, color}: TeacherInfo) => {
     )
 }
 
-const CalendarSection = ({data}: TeacherInfo) => {
+const CalendarSection = ({infoData, seeMore}: TeacherInfo) => {
 
     const [schedules, setSchedules] = useState<Schedule[] | undefined>()
-    const allDay = useRef<boolean>(!(data?.courses && data?.courses?.length > 0));
+    const allDay = useRef<boolean>(!(infoData?.courses && infoData?.courses?.length > 0));
     const fetch = useRawFetch()
 
     useEffect(() => {
-        fetch(getTeacherScheduleByDay, [data.id, allDay.current])
+        fetch(getTeacherScheduleByDay, [infoData.id, allDay.current])
             .then(response => setSchedules(response.data as Schedule[]))
-    }, [data, fetch]);
+    }, [infoData, fetch]);
 
     const events = schedules && schedules.map((s: Schedule) => ({
         allDay: false,
@@ -153,16 +153,20 @@ const CalendarSection = ({data}: TeacherInfo) => {
         end: s.endTime ? timeToCurrentDatetime(s.endTime): new Date()
     }))
 
+    const handleClick = () => {
+        seeMore && seeMore('1')
+    }
+
     return(
-        <Section title='Informations sur l’emploi du temps'>
+        <Section title='Informations sur l’emploi du temps' more={true} seeMore={handleClick}>
             <BigCalendar data={events as CalendarEvent} views={['day']} defaultView='day' />
         </Section>
     )
 }
 
-const MarkMean = ({data, color}: TeacherInfo) => {
+const MarkMean = ({infoData, color}: TeacherInfo) => {
     const [marks, setMarks] = useState<number[]>([])
-    const {data: fetchedMarks, isLoading} = useFetch(['teacher-marks'], getAllTeacherMarks, [data?.personalInfo?.id])
+    const {data: fetchedMarks, isLoading} = useFetch(['teacher-marks'], getAllTeacherMarks, [infoData?.personalInfo?.id])
 
     useEffect(() => {
         if (fetchedMarks) {
@@ -198,13 +202,12 @@ const MarkMean = ({data, color}: TeacherInfo) => {
                 legend='range'
                 color={color}
                 minHeight={300}
-                isPercent={true}
             />
         </Section>
     )
 }
 
-const DepartmentInfo = ({data, color}: TeacherInfo) => {
+const DepartmentInfo = ({infoData, color}: TeacherInfo) => {
 
     const [departments, setDepartments] = useState<Department[] | undefined>()
     //TODO the value of the primary department code should be in the settings
@@ -212,16 +215,16 @@ const DepartmentInfo = ({data, color}: TeacherInfo) => {
     const fetch = useRawFetch()
 
     useEffect(() => {
-        if (data.courses && data.courses?.length !== 0) {
+        if (infoData.courses && infoData.courses?.length !== 0) {
             const deps: Department[] = Array.from(
-                new Set(data.courses?.map((course) => course.department))
+                new Set(infoData.courses?.map((course) => course.department))
             ) as Department[]
             setDepartments(getDistinctArray<Department>(deps, (dep: Department) => dep?.id))
         }else {
             fetch(getPrimaryDepartment, [primary.current])
                 .then(response => setDepartments([response.data] as Department[]))
         }
-    }, [data.courses, fetch]);
+    }, [infoData.courses, fetch]);
 
     return(
         <>
@@ -255,9 +258,9 @@ const DepartmentInfo = ({data, color}: TeacherInfo) => {
     )
 }
 
-const LessonPlan = ({data, color}: TeacherInfo) => {
+const LessonPlan = ({infoData, color, seeMore}: TeacherInfo) => {
 
-    const {courseProgram} = data
+    const {courseProgram} = infoData
 
     const items: TimelineProps['items'] = courseProgram
         ? [...courseProgram].reverse().map(t => ({
@@ -267,8 +270,12 @@ const LessonPlan = ({data, color}: TeacherInfo) => {
         }))
         : [];
 
+    const handleClick = () => {
+        seeMore && seeMore('2')
+    }
+
     return(
-        <PanelSection title='Plans de cours'>
+        <PanelSection title='Plans de cours' more={true} seeMore={handleClick}>
             <PanelTable title='Année 2024-2025' data={items.length > 0 ? [
                 {response: <Timeline mode='alternate' items={items} rootClassName='timeline' />, tableRow: true}
             ]: []} panelColor={color} />
@@ -276,8 +283,8 @@ const LessonPlan = ({data, color}: TeacherInfo) => {
     )
 }
 
-const StudentReprimanded = ({data, color}: TeacherInfo) => {
-    const {personalInfo} = data
+const StudentReprimanded = ({infoData, color, seeMore}: TeacherInfo) => {
+    const {personalInfo} = infoData
 
     const [studentReprimanded, setStudentReprimanded] = useState<Reprimand[]>([])
     const fetch = useRawFetch();
@@ -338,8 +345,12 @@ const StudentReprimanded = ({data, color}: TeacherInfo) => {
         },
     ];
 
+    const handleClick = () => {
+        seeMore && seeMore('4')
+    }
+
     return(
-        <Section title='Liste des élèves réprimandé'>
+        <Section title='Liste des élèves réprimandé' more={true} seeMore={handleClick}>
           <CustomTable tableProps={{
               size: 'small',
               columns: columns as [],
@@ -350,18 +361,18 @@ const StudentReprimanded = ({data, color}: TeacherInfo) => {
     )
 }
 
-const StudentByClasse = ({data, color}: TeacherInfo) => {
+const StudentByClasse = ({infoData, color}: TeacherInfo) => {
     const [countFetched, setCountFetched] = useState<CountType[]>([])
     const fetch = useRawFetch();
 
     useEffect(() => {
-        fetch(getNumberOfStudentTaughtByClasse, [data.id])
+        fetch(getNumberOfStudentTaughtByClasse, [infoData.id])
             .then(resp => {
                 if (resp.isSuccess) {
                     setCountFetched(resp.data as CountType[])
                 }
             })
-    }, [data.id, fetch]);
+    }, [infoData.id, fetch]);
 
     const entryData: PieChartDataEntry[] = countFetched?.map(c => ({
         name: c.classe,
@@ -381,8 +392,8 @@ const StudentByClasse = ({data, color}: TeacherInfo) => {
     )
 }
 
-const AssignmentPlan = ({data,color}: TeacherInfo) => {
-    const {personalInfo} = data
+const AssignmentPlan = ({infoData,color, seeMore}: TeacherInfo) => {
+    const {personalInfo} = infoData
     
     const [assignments, setAssignments] = useState<Assignment[]>([])
     const fetch = useRawFetch();
@@ -395,9 +406,13 @@ const AssignmentPlan = ({data,color}: TeacherInfo) => {
                 }
             })
     }, [fetch, personalInfo.id]);
+
+    const handleClick = () => {
+        seeMore && seeMore('3')
+    }
     
     return(
-        <PanelSection title='Suivi des devoirs'>
+        <PanelSection title='Suivi des devoirs' more={true} seeMore={handleClick}>
             <PanelTable title='Les devoirs à venir' ps={true} data={[{
                 response: <List
                     itemLayout='vertical'

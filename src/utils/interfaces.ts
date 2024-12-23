@@ -30,6 +30,10 @@ export interface Metadata {
 }
 
 export type ID = string | bigint | number
+export type IDS = {
+    classId: number
+    courseId: number
+}
 
 type NestedKeyOf<ObjectType extends object> = {
     [Key in keyof ObjectType & (string | number)]: ObjectType[Key] extends object
@@ -218,7 +222,7 @@ export interface Pageable {
 }
 
 export interface InfoPageProps<T extends object> {
-    data: T
+    infoData: T
     dataKey: string
     seeMore?: (key: string) => void
     color?: string

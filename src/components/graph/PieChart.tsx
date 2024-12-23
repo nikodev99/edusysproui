@@ -1,4 +1,4 @@
-import {ResponsiveContainer, PieChart as ReChartPieChart, Pie, Cell} from "recharts";
+import {ResponsiveContainer, PieChart as ReChartPieChart, Pie, Cell, Legend} from "recharts";
 import {PieChartProps} from "../ui/ui_interfaces.ts";
 import {COLOR} from "../../utils/utils.ts";
 
@@ -20,7 +20,7 @@ const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, per
 const PieChart = (pieProps: PieChartProps) => {
     const {
         colors, width, height, data, outerRadius, innerRadius, defaultColor, activeIndex, hasLabel,
-        activeShape, labelling, onMouseEnter, minHeight, startAngle, endAngle
+        activeShape, labelling, onMouseEnter, minHeight, startAngle, endAngle, hasLegend
     } = pieProps
 
     const CUSTOM_COLOR = (() => {
@@ -61,6 +61,7 @@ const PieChart = (pieProps: PieChartProps) => {
                         } />
                     ))}
                 </Pie>
+                {hasLegend && <Legend />}
             </ReChartPieChart>
         </ResponsiveContainer>
     )

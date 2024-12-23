@@ -39,9 +39,9 @@ interface HistoryData {
     yearAmount: number
 }
 
-const IndividualInfo = ({data, color}: StudentInfoProps) => {
+const IndividualInfo = ({infoData, color}: StudentInfoProps) => {
 
-    const {student, student: {personalInfo, healthCondition}} = data
+    const {student, student: {personalInfo, healthCondition}} = infoData
 
     const [nationality, setNationality] = useState<string>()
     const country = getCountry(personalInfo?.nationality as string)
@@ -90,8 +90,8 @@ const IndividualInfo = ({data, color}: StudentInfoProps) => {
     )
 }
 
-const GuardianBlock = ({data, color}: StudentInfoProps) => {
-    const {student: {guardian: {personalInfo}}} = data
+const GuardianBlock = ({infoData, color}: StudentInfoProps) => {
+    const {student: {guardian: {personalInfo}}} = infoData
 
     const guardianData = [
         {statement: 'Nom(s)', response: personalInfo?.lastName},
@@ -119,9 +119,9 @@ const GuardianBlock = ({data, color}: StudentInfoProps) => {
     )
 }
 
-const ExamList = ({data, seeMore, color}: StudentInfoProps) => {
+const ExamList = ({infoData, seeMore, color}: StudentInfoProps) => {
 
-    const {student: {marks}} = data
+    const {student: {marks}} = infoData
 
     const handleClick = () => {
         seeMore && seeMore('1')
@@ -172,9 +172,9 @@ const ExamList = ({data, seeMore, color}: StudentInfoProps) => {
     )
 }
 
-const GraphSection = ({data}: StudentInfoProps) => {
+const GraphSection = ({infoData}: StudentInfoProps) => {
 
-    const {student: {personalInfo, marks}} = data
+    const {student: {personalInfo, marks}} = infoData
 
     const graphData = marks.map((s) => ({
         subject: s.assignment?.subject?.course,
@@ -195,8 +195,8 @@ const GraphSection = ({data}: StudentInfoProps) => {
     )
 }
 
-const SchoolHistory = ({data, color}: StudentInfoProps) => {
-    const {student: {enrollments}} = data
+const SchoolHistory = ({infoData, color}: StudentInfoProps) => {
+    const {student: {enrollments}} = infoData
 
     const columns: TableColumnsType<HistoryData> = [
         {
@@ -250,9 +250,9 @@ const SchoolHistory = ({data, color}: StudentInfoProps) => {
     )
 }
 
-const AttendanceSection = ({data, seeMore, color}: StudentInfoProps) => {
+const AttendanceSection = ({infoData, seeMore, color}: StudentInfoProps) => {
 
-    const { student: { attendances } } = data
+    const { student: { attendances } } = infoData
 
     const handleClick = () => {
         seeMore && seeMore('2')
@@ -274,7 +274,7 @@ const AttendanceSection = ({data, seeMore, color}: StudentInfoProps) => {
     )
 }
 
-const SchoolColleagues = ({data, seeMore, color}: StudentInfoProps) => {
+const SchoolColleagues = ({infoData, seeMore, color}: StudentInfoProps) => {
     
     const [classmates, setClassmates] = useState<Enrollment[]>([])
 
@@ -284,7 +284,7 @@ const SchoolColleagues = ({data, seeMore, color}: StudentInfoProps) => {
 
     useEffect(() => {
         const fetchData = async () => {
-            await fetchStudentClassmatesRandomly(data).then(async (res) => {
+            await fetchStudentClassmatesRandomly(infoData).then(async (res) => {
                 if (res?.isSuccess && 'data' in res) {
                     setClassmates(res?.data as Enrollment[])
                 }
@@ -292,7 +292,7 @@ const SchoolColleagues = ({data, seeMore, color}: StudentInfoProps) => {
         }
 
         fetchData().then()
-    }, [data]);
+    }, [infoData]);
 
     const handleSeeDetails = (id: string) => {
         redirectTo(`${text.student.group.view.href}${id}`)
@@ -326,9 +326,9 @@ const SchoolColleagues = ({data, seeMore, color}: StudentInfoProps) => {
     )
 }
 
-const HealthData = ({data, color}: StudentInfoProps) => {
+const HealthData = ({infoData, color}: StudentInfoProps) => {
 
-    const {student} = data
+    const {student} = infoData
     const healthCondition: HealthCondition = student.healthCondition !== null ? student.healthCondition : {} as HealthCondition
 
     const conditions = healthCondition.medicalConditions?.map((condition) => ({
@@ -365,8 +365,8 @@ const HealthData = ({data, color}: StudentInfoProps) => {
     )
 }
 
-const CourseSchedule = ({data}: StudentInfoProps) => {
-    const {classe} = data
+const CourseSchedule = ({infoData}: StudentInfoProps) => {
+    const {classe} = infoData
     const schedules: Schedule[] = classe.schedule !== null ? classe.schedule : []
 
     const events = schedules.map((schedule: Schedule) => ({
@@ -391,9 +391,9 @@ const CourseSchedule = ({data}: StudentInfoProps) => {
     )
 }
 
-const DisciplinaryRecords = ({data, seeMore, color}: StudentInfoProps) => {
+const DisciplinaryRecords = ({infoData, seeMore, color}: StudentInfoProps) => {
 
-    const {student: {personalInfo}} = data
+    const {student: {personalInfo}} = infoData
     const reprimands = [] as Reprimand[]
     const values = Object.values(
         reprimands.reduce((acc, curr) => {
@@ -438,20 +438,20 @@ export const StudentInfo = ({enrollment, seeMore, color}: { enrollment: Enrollme
     const {classe: {grade}} = enrollment
 
     const items: ReactNode[] = [
-        <IndividualInfo data={enrollment} dataKey='individual-block' color={color}/>,
+        <IndividualInfo infoData={enrollment} dataKey='individual-block' color={color}/>,
         ...(grade?.section != SectionType.MATERNELLE && grade?.section != SectionType.PRIMAIRE ? [
-            <GraphSection data={enrollment}  dataKey='graph-block' color={color}/>
+            <GraphSection infoData={enrollment} dataKey='graph-block' color={color}/>
         ] : []),
-        <GuardianBlock data={enrollment} dataKey='guardian-section' color={color} />,
+        <GuardianBlock infoData={enrollment} dataKey='guardian-section' color={color} />,
         ...(grade?.section != SectionType.MATERNELLE && grade?.section != SectionType.PRIMAIRE ? [
-            <ExamList data={enrollment}  seeMore={seeMore} dataKey='exam-block' color={color}/>
+            <ExamList infoData={enrollment} seeMore={seeMore} dataKey='exam-block' color={color}/>
         ] : []),
-        <SchoolHistory data={enrollment} seeMore={seeMore}  dataKey='school-history-block' color={color}/>,
-        <AttendanceSection data={enrollment} seeMore={seeMore} dataKey='attendance-block' color={color}/>,
-        <HealthData data={enrollment} dataKey='health-section' color={color} />,
-        <SchoolColleagues data={enrollment} seeMore={seeMore} dataKey='classmates-block' color={color}/>,
-        <CourseSchedule data={enrollment} dataKey='schedule-section' color={color} />,
-        <DisciplinaryRecords data={enrollment} dataKey='disciplinary-section' color={color} />
+        <SchoolHistory infoData={enrollment} seeMore={seeMore} dataKey='school-history-block' color={color}/>,
+        <AttendanceSection infoData={enrollment} seeMore={seeMore} dataKey='attendance-block' color={color}/>,
+        <HealthData infoData={enrollment} dataKey='health-section' color={color} />,
+        <SchoolColleagues infoData={enrollment} seeMore={seeMore} dataKey='classmates-block' color={color}/>,
+        <CourseSchedule infoData={enrollment} dataKey='schedule-section' color={color} />,
+        <DisciplinaryRecords infoData={enrollment} dataKey='disciplinary-section' color={color} />
     ]
 
     return (

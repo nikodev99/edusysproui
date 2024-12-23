@@ -11,6 +11,9 @@
     "host": "vite --host"
   },
   "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
     "@hookform/resolvers": "^3.4.2",
     "@tanstack/react-query": "^5.45.1",
     "@types/react-big-calendar": "^1.16.0",

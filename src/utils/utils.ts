@@ -141,6 +141,14 @@ export const fullDay = (date?: Date | number[] | string) => {
     return formattedDate(date, format);
 }
 
+export const today = (format?: string): string => {
+    return fDate(new Date(), format) as string;
+}
+
+export const ISOToday = (): string => {
+    return today('DD/MM/YYYY');
+}
+
 export const getDayFromDate = (): Day => {
     const date = new Date();
     const dateIndex = date.getDay();
@@ -348,28 +356,53 @@ export const getShortSortOrder = (order: string | undefined): 'asc' | 'desc' | u
 };
 
 export const transformEvents = (apiEvents: ApiEvent[]) => {
-    const getDayDate = (dayOfWeek: Day, [hour, minute]: [number, number]): Date[] => {
-        const now = new Date();
+    const getWeekRange = (date: Date) => {
+        const day = date.getDay()
+        const diffToMonday = date.getDate() - day + (day === 0 ? -6 : 1)
+        const monday = new Date(date.setDate(diffToMonday))
+        const friday = new Date(monday)
+        const saturday = new Date(monday)
+        friday.setDate(monday.getDate() + 4)
+        saturday.setDate(monday.getDate() + 5)
+        return {monday, friday, saturday}
+    }
+
+    const getDayDate = (dayOfWeek: Day, [hour, minute]: [number, number], now: Date): (Date | null)[] => {
         const day = Day[dayOfWeek as unknown as keyof typeof Day];
         if (day === Day.ALL_DAYS) {
-            return [Day.MONDAY, Day.TUESDAY, Day.WEDNESDAY, Day.THURSDAY, Day.FRIDAY].map(day => {
-                const date = new Date(now);
-                console.log('Day Date: ', day)
-                date.setDate(now.getDate() + ((day - now.getDay() + 7) % 6));
-                date.setHours(hour, minute, 0, 0);
-                return date;
-            });
-        } else {
-            const date = new Date(now);
-            date.setDate(now.getDate() + ((day - now.getDay() + 7) % 6));
-            date.setHours(hour, minute, 0, 0);
-            return [date];
+            const {monday, friday} = getWeekRange(now)
+            const currentDay = new Date(monday)
+            const dates: Date[] = []
+            while (currentDay <= friday) {
+                const date = new Date(currentDay)
+                date.setHours(hour, minute, 0, 0)
+                dates.push(date)
+                currentDay.setDate(currentDay.getDate() + 1)
+            }
+            return dates
+        }else {
+            const {monday} = getWeekRange(now)
+            return Array.from({length: 6}).map((_, index) => {
+                const date = new Date(monday)
+                date.setDate(monday.getDate() + index)
+                console.log("Get Day: ", date.getDay())
+                if(date.getDay() === day + 1) {
+                    date.setHours(hour, minute, 0, 0)
+                    return date
+                }
+                return null
+            }).filter(date => date !== null)
         }
     };
 
+    const now = new Date()
     return apiEvents?.flatMap(event => {
-        const startDates = getDayDate(event.dayOfWeek, event.startTime);
-        const endDates = getDayDate(event.dayOfWeek, event.endTime);
+        const startDates = getDayDate(event.dayOfWeek, event.startTime, now);
+        const endDates = getDayDate(event.dayOfWeek, event.endTime, now);
+
+        while(endDates.length < startDates.length) {
+            endDates.push(endDates[endDates.length - 1]);
+        }
 
         return startDates.map((start, index) => ({
             title: event.event,

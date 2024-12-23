@@ -7,18 +7,18 @@ import {getTeacherSchedule} from "../../../data/repository/teacherRepository.ts"
 import {Day} from "../../../entity/enums/day.ts";
 import {transformEvents} from "../../../utils/utils.ts";
 
-export const TeacherAgenda = ({data}: InfoPageProps<Teacher>) => {
+export const TeacherAgenda = ({infoData}: InfoPageProps<Teacher>) => {
     const [schedules, setSchedules] = useState<Schedule[]>([])
     const fetch = useRawFetch()
 
     useEffect(() => {
-        fetch(getTeacherSchedule, [data.id])
+        fetch(getTeacherSchedule, [infoData.id])
             .then(resp => {
                 if (resp.isSuccess) {
                     setSchedules(resp.data as Schedule[])
                 }
             })
-    }, [data.id, fetch]);
+    }, [infoData.id, fetch]);
 
     console.log("Schedules ", schedules);
 

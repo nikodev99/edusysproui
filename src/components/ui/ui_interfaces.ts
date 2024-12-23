@@ -23,6 +23,7 @@ export interface PieChartProps {
     colors?: Color[];
     defaultColor?: Color;
     hasLabel?: boolean
+    hasLegend?: boolean
     outerRadius?: number
     innerRadius?: number
     activeIndex?: number
@@ -35,7 +36,7 @@ export interface PieChartProps {
 
 export interface BarChartProps <T>{
     data: T[],
-    dataKey: [keyof T],
+    dataKey?: [keyof T],
     legend?: keyof T,
     color?: string
     showLegend?: boolean
@@ -45,4 +46,7 @@ export interface BarChartProps <T>{
     height?: number
     minHeight?: number
     isPercent?: boolean
+    stackId?: string
+    stackBars?: number
+    stackKeys?: Array<keyof T>
 }

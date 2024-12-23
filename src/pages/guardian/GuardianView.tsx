@@ -56,6 +56,8 @@ const GuardianView: React.FC = () => {
         refetch().then(r => r.data)
     }
 
+    console.log('Guardian: ', guardian)
+
     return (
         <>
             <PageHierarchy items={pageHierarchy as [{title: string | ReactNode, path?: string}]} mBottom={25} />

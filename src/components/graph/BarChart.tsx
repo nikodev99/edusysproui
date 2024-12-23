@@ -3,7 +3,8 @@ import {BarChartProps} from "../ui/ui_interfaces.ts";
 import {COLOR} from "../../utils/utils.ts";
 
 export const BarChart = <T extends object>({
-   data, dataKey, legend, color, showLegend, showCartesian, margins, width, height, minHeight, isPercent
+   data, dataKey, legend, color, showLegend, showCartesian, margins, width, height, minHeight, isPercent, stackId, stackBars,
+   stackKeys
 }: BarChartProps<T>) => {
 
     const keys = dataKey
@@ -16,7 +17,7 @@ export const BarChart = <T extends object>({
     }
 
     return (
-        <ResponsiveContainer width="100%" height="100%" minHeight={minHeight || 400}>
+        <ResponsiveContainer minHeight={minHeight || 400}>
             <ReChardBarChart
                 width={width || 500}
                 height={height || 300}
@@ -32,11 +33,29 @@ export const BarChart = <T extends object>({
                 <YAxis tickFormatter={isPercent ? (value) => value + '%' : undefined} />
                 <Tooltip />
                 {showLegend && <Legend />}
-                {keys.map((key, index) => (
-                    <Bar dataKey={key as string} key={index} fill={setColor(index)} activeBar={
-                        <Rectangle fill={setColor(index)} stroke={setColor(index)} />
-                    } />
-                ))}
+                {keys && keys?.length > 0
+                    ? keys.map((key, index) => (
+                        <Bar
+                            dataKey={key as string}
+                            key={index}
+                            stackId={stackId}
+                            fill={setColor(index)}
+                            activeBar={
+                                <Rectangle fill={setColor(index)} stroke={setColor(index)} />
+                            }
+                        />
+                    ))
+                    : Array.from({ length: stackBars || 0 }).map((_, index) => (
+                        <Bar
+                            key={index}
+                            dataKey={stackKeys ? stackKeys[index] as string : `bar${index}`}
+                            stackId={stackId}
+                            fill={setColor(index)}
+                            activeBar={
+                                <Rectangle fill={setColor(index)} stroke={setColor(index)} />
+                            }
+                        />
+                    ))}
             </ReChardBarChart>
         </ResponsiveContainer>
     )

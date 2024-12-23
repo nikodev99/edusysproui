@@ -1,0 +1,165 @@
+import {InfoPageProps} from "../../../utils/interfaces.ts";
+import {Teacher, CourseProgram} from "../../../entity";
+import {useEffect, useMemo, useState} from "react";
+import {useFetch} from "../../../hooks/useFetch.ts";
+import TabItem from "../../view/TabItem.tsx";
+import {Button, Card, Descriptions, DescriptionsProps, Flex, Select, TimelineItemProps} from "antd";
+import Grid from "../../ui/layout/Grid.tsx";
+import Responsive from "../../ui/layout/Responsive.tsx";
+import {AiFillClockCircle} from "react-icons/ai";
+import {DraggedTimeline} from "../../graph/DraggedTimeline.tsx";
+import {LuChevronsRight} from "react-icons/lu";
+import Tag from "../../ui/layout/Tag.tsx";
+import {ISOToday} from "../../../utils/utils.ts";
+import {getAllTeacherCourseProgram, getAllTeacherProgram} from "../../../data/request";
+import {BarChart} from "../../graph/BarChart.tsx";
+
+export const TeacherProgram = ({infoData, color}: InfoPageProps<Teacher>) => {
+    const {id, courses, classes} = infoData
+
+    const [programs, setPrograms] = useState<CourseProgram[]>([])
+    const [subjectValue, setSubjectValue] = useState<number | null>(courses && courses?.length > 0 ? courses[0].id as number : null)
+    const [classeValue, setClasseValue] = useState<number>(classes && classes?.length > 0 ? classes[0].id as number : 0)
+    const courseExists: boolean = courses && courses?.length > 0 || false
+
+    const dataFetchFnc = courseExists ? getAllTeacherCourseProgram : getAllTeacherProgram
+
+    const {data, isSuccess, refetch} = useFetch('program-id', dataFetchFnc, [infoData.id, {
+        classId: classeValue,
+        courseId: subjectValue
+    }])
+
+    const subjects = useMemo(() => {
+        return courses?.map(c => ({
+            value: c.id, label: c.course
+        }))
+    }, [courses])
+
+    const classrooms = useMemo(() => {
+        return classes?.map(c => ({
+            value: c.id, label: c.name
+        }))
+    }, [classes])
+
+    useEffect(() => {
+        if(isSuccess) {
+            setPrograms(data)
+        }
+        if (classeValue || subjectValue) {
+            refetch()
+        }
+    }, [classeValue, data, isSuccess, refetch, subjectValue]);
+
+    const handleClasseValue = (value: number) => {
+        setClasseValue(value)
+    }
+
+    const handleSubjectValue = (value: number) => {
+        setSubjectValue(value)
+    }
+
+    const items: TimelineItemProps[] = programs
+        ? [...programs].reverse().map((t, index, arr) => {
+
+            const isFirstOfSemester = index === arr.length - 1 || t.semester.semesterName !== arr[index + 1].semester.semesterName
+
+            return {
+                color: t.active ? 'green' : t.passed ? color : undefined,
+                dot: t.active ? <AiFillClockCircle/> : undefined,
+                label: isFirstOfSemester ?
+                    t.semester?.semesterName :
+                    t.active ?
+                        <span style={{color: 'green'}}>{ISOToday()}</span> :
+                        undefined,
+                children: <span style={{color: t.active ? 'green' : t.passed ? color : 'inherit'}}>
+                    {`${t.classe.name} - ${t.topic}`}
+                </span>
+            }
+        })
+        : [];
+
+    const activeItem = programs?.filter(item => item.active)
+    const activeDescs = (item: CourseProgram): DescriptionsProps['items'] => {
+        return [
+            {key: 2, label: 'Description', children: item?.description, span: 3},
+            {key: 1, label: 'Objective', children: item?.purpose, span: 3},
+            {key: 3, label: 'Semestre' , children: item?.semester?.semesterName, span: 2},
+            {key: 4, label: 'Status', children: <Tag color='success'>En cours</Tag>},
+            //TODO Only the user with teacher role could view the below button
+            {key: 5, children: <Button>Cliquer pour passer</Button>, span: 3},
+        ]
+    }
+
+    const passeItems = programs?.filter(item => item.passed)
+    const chartData = [
+        {
+            name: 'Programme',
+            complet: Math.round((passeItems?.length / items?.length) * 100),
+            incomplet: Math.round(((items?.length - passeItems?.length) / items?.length) * 100),
+        }
+    ]
+
+    return(
+        <TabItem
+            title={`Programme de ${infoData.personalInfo?.lastName}`}
+            selects={[
+                courses && courses.length > 0 && (<Select
+                    className='select-control'
+                    defaultValue={subjectValue}
+                    options={subjects}
+                    onChange={handleSubjectValue}
+                    variant='borderless'
+                />),
+                <Select
+                    className='select-control'
+                    defaultValue={classeValue}
+                    options={classrooms}
+                    onChange={handleClasseValue}
+                    variant='borderless'
+                />
+            ]}
+            items={[
+                {
+                    key: 'program-list',
+                    label: 'Program List',
+                    children: <Responsive gutter={[16, 16]} style={{margin: '20px'}}>
+                        <Grid xs={24} md={12} lg={12}>
+                            <Card>
+                                <DraggedTimeline
+                                    timelineProps={{
+                                        mode:'left',
+                                        items:items,
+                                        rootClassName:'timeline'
+                                    }}
+                                    localStorage={id as string}
+                                />
+                            </Card>
+                        </Grid>
+                        <Grid xs={24} md={12} lg={12}>
+                            <Flex vertical gap={15}>
+                                {activeItem && activeItem?.map(item => (<Card key={item?.id}>
+                                    <Descriptions title={<div style={{display: 'flex', alignItems: 'center', justifyItems: 'center'}}>
+                                        <LuChevronsRight style={{color: 'green'}} size={25}/> {item.topic}
+                                    </div>} items={activeDescs(item)}  />
+                                </Card>))}
+                                <Card>
+                                    <BarChart
+                                        data={chartData}
+                                        legend='name'
+                                        color={color}
+                                        minHeight={350}
+                                        isPercent={true}
+                                        stackId='a'
+                                        stackBars={2}
+                                        stackKeys={['complet', 'incomplet']}
+                                        showLegend
+                                    />
+                                </Card>
+                            </Flex>
+                        </Grid>
+                    </Responsive>
+                }
+            ]}
+        />
+    )
+}

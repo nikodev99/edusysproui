@@ -4,7 +4,7 @@ import {COLOR} from "../../utils/utils.ts";
 
 export const BarChart = <T extends object>({
    data, dataKey, legend, color, showLegend, showCartesian, margins, width, height, minHeight, isPercent, stackId, stackBars,
-   stackKeys
+   stackKeys, barSize
 }: BarChartProps<T>) => {
 
     const keys = dataKey
@@ -22,6 +22,7 @@ export const BarChart = <T extends object>({
                 width={width || 500}
                 height={height || 300}
                 data={data}
+                barSize={barSize}
                 margin={margins || {
                     top: 20,
                     right: 20,
@@ -31,7 +32,7 @@ export const BarChart = <T extends object>({
                 {showCartesian && <CartesianGrid strokeDasharray="3 3" />}
                 <XAxis dataKey={legend as string} />
                 <YAxis tickFormatter={isPercent ? (value) => value + '%' : undefined} />
-                <Tooltip />
+                <Tooltip formatter={isPercent ? (value) => value + '%' : undefined} />
                 {showLegend && <Legend />}
                 {keys && keys?.length > 0
                     ? keys.map((key, index) => (

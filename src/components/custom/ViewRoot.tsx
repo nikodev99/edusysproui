@@ -15,18 +15,19 @@ interface ViewProps {
         position?: "top" | "bottom" | "left" | "right",
         size?: number
     }
+    memorizedTabKey?: string
 }
 
-const ViewRoot = ({items, tab, exists, isLoading, skeleton, addMargin}: ViewProps) => {
+const ViewRoot = ({items, tab, exists, isLoading, skeleton, addMargin, memorizedTabKey}: ViewProps) => {
 
-    const activeTabKey = LocalStorageManager.get("tabKey") as string || "0"
+    const activeTabKey = LocalStorageManager.get(memorizedTabKey ?? "tabKey") as string || "0"
     const [tabKey, setTabKey] = useState<string>(activeTabKey)
 
     const loadingSkeleton = skeleton ?? <Skeleton loading={isLoading} active={isLoading} paragraph={{rows: 5}} />
 
     const handleTabChange = (activeKey: string) => {
         setTabKey(activeKey)
-        LocalStorageManager.update('tabKey', () => activeKey)
+        LocalStorageManager.update(memorizedTabKey ?? 'tabKey', () => activeKey)
     }
 
     const tabItem: TabsProps['items'] = items.map((item: TabItemType, index: number) => ({
@@ -45,7 +46,7 @@ const ViewRoot = ({items, tab, exists, isLoading, skeleton, addMargin}: ViewProp
     }))
 
     const renderTabBar: TabsProps['renderTabBar'] = (props, DefaultTabBar) => (
-        <StickyBox offsetTop={0} offsetBottom={0} style={{ zIndex: 1 }}>
+        <StickyBox offsetTop={0} offsetBottom={0} style={{ zIndex: 10 }}>
             <DefaultTabBar {...props} style={{backgroundColor: '#f4f6fd'}} />
         </StickyBox>
     );

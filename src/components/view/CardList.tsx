@@ -1,17 +1,17 @@
-import Grid from "./Grid.tsx";
+import Grid from "../ui/layout/Grid.tsx";
 import {Card, Divider, Flex, Skeleton, Tag, Typography} from "antd";
-import ActionButton from "./ActionButton.tsx";
-import {dateCompare, fDatetime, setFirstName} from "../../../utils/utils.ts";
-import Avatar from "./Avatar.tsx";
+import ActionButton from "../ui/layout/ActionButton.tsx";
+import {dateCompare, fDatetime, setFirstName} from "../../utils/utils.ts";
+import Avatar from "../ui/layout/Avatar.tsx";
 import {ItemType} from "antd/es/menu/interface";
 import {ReactNode, useMemo} from "react";
-import {Gender, selectedGenderIcon} from "../../../entity/enums/gender.tsx";
-import {StudentListDataType} from "../../../utils/interfaces.ts";
-import Tagger from "./Tagger.tsx";
-import {Guardian, Teacher} from "../../../entity";
-import {statusTags} from "../../../utils/tsxUtils.tsx";
-import {Status} from "../../../entity/enums/status.ts";
+import {Gender, selectedGenderIcon} from "../../entity/enums/gender.tsx";
+import Tagger from "../ui/layout/Tagger.tsx";
+import {Guardian, Teacher} from "../../entity";
+import {statusTags} from "../../utils/tsxUtils.tsx";
+import {Status} from "../../entity/enums/status.ts";
 import {AiOutlineMore} from "react-icons/ai";
+import {StudentListDataType} from "../../utils/interfaces.ts";
 
 interface CardListProps<TData> {
     content: TData,

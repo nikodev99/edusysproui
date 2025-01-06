@@ -9,7 +9,7 @@ import {
 import { FilterValue, SorterResult } from "antd/es/table/interface";
 import LocalStorageManager from "../../core/LocalStorageManager.ts";
 import Responsive from "../../components/ui/layout/Responsive.tsx";
-import CardList from "../../components/ui/layout/CardList.tsx";
+import CardList from "../view/CardList.tsx";
 import PageDescription from "./PageDescription.tsx";
 import PageError from "../../pages/PageError.tsx";
 import {useFetch} from "../../hooks/useFetch.ts";
@@ -17,9 +17,11 @@ import {AxiosResponse} from "axios";
 import {Response} from '../../data/action/response.ts'
 import {ItemType} from "antd/es/menu/interface";
 import {LuLayoutDashboard, LuList} from "react-icons/lu";
+import {Enrollment} from "../../entity";
+import {StudentListDataType} from "../../utils/interfaces.ts";
 
 interface ListViewerProps<TData extends object, TError> {
-    callback: () => Promise<AxiosResponse<TData, TError | TData[]>>
+    callback: () => Promise<AxiosResponse<TData | TData[], TError>>
     searchCallback: (...args: unknown[]) => Promise<Response<TData>>
     tableColumns: TableColumnsType<TData>
     dropdownItems?: (url: string) => ItemType[]
@@ -27,6 +29,7 @@ interface ListViewerProps<TData extends object, TError> {
     cardType?: string
     hasCount?: boolean,
     countTitle?: string,
+    fetchId?: string
     localStorage?: {activeIcon?: string, pageSize?: string, page?: string, pageCount?: string}
 }
 
@@ -40,7 +43,8 @@ const ListViewer = <TData extends object, TError>(
         cardType,
         hasCount,
         countTitle,
-        localStorage
+        localStorage,
+        fetchId
     }: ListViewerProps<TData, TError>
 ) => {
 
@@ -59,8 +63,8 @@ const ListViewer = <TData extends object, TError>(
     const [size, setSize] = useState<number>(pageSizeCount!)
     const [searchQuery, setSearchQuery] = useState<string>('')
 
-    const { data, error, isLoading, refetch } = useFetch('students', callback, [pageCount, size, sortField, sortOrder])
-
+    const { data, error, isLoading, refetch } = useFetch(fetchId ?? 'students', callback, [pageCount, size, sortField, sortOrder])
+    
     useEffect( () => {
         if (searchQuery) {
             searchCallback(searchQuery)
@@ -69,7 +73,6 @@ const ListViewer = <TData extends object, TError>(
                         setContent(resp.data as TData[])
                     }
                 })
-
         }else {
             refetch().then(r => r.data)
             if (sortField && sortOrder || size || pageCount) {
@@ -135,7 +138,23 @@ const ListViewer = <TData extends object, TError>(
         }
     ]
 
-    console.log(content)
+    const dataSource = !fetchId
+        ? content?.map(tData => {
+            const c = tData as Enrollment
+            return {
+                id: c.student.id,
+                academicYear: c.academicYear,
+                reference: c.student.reference,
+                firstName: c.student.personalInfo?.firstName,
+                lastName: c.student.personalInfo?.lastName,
+                gender: c.student.personalInfo?.gender,
+                lastEnrolledDate: c.enrollmentDate,
+                classe: c.classe?.name,
+                grade: c.classe?.grade?.section,
+                image: c.student?.personalInfo?.image,
+            } as StudentListDataType;
+        }).filter((item): item is StudentListDataType => item !== null)
+        : content;
 
     return(
         <>
@@ -155,9 +174,9 @@ const ListViewer = <TData extends object, TError>(
                 <Responsive gutter={[16, 16]} className={`${activeIcon !== 2 ? 'student__list__datatable' : ''}`}>
                     {
                         activeIcon === 2 ? <CardList
-                                content={content as TData[]}
+                                content={dataSource as TData[]}
                                 isActive={activeIcon === 2 }
-                                isLoading={isLoading && content !== undefined}
+                                isLoading={isLoading || dataSource === undefined}
                                 dropdownItems={dropdownItems!}
                                 throughDetails={throughDetails!}
                                 cardType={cardType}
@@ -166,8 +185,8 @@ const ListViewer = <TData extends object, TError>(
                                 style={{width: '100%'}}
                                 rowKey={'id' as keyof TData}
                                 columns={tableColumns}
-                                dataSource={content as TData[]}
-                                loading={isLoading && content !== undefined}
+                                dataSource={dataSource as TData[]}
+                                loading={isLoading || dataSource === undefined}
                                 onChange={handleSorterChange}
                                 pagination={false}
                                 scroll={{y: 550}}

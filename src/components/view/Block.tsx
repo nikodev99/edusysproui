@@ -1,5 +1,5 @@
-import '../ui.scss'
-import BlockItem from "./BlockItem.tsx";
+import '../ui/ui.scss'
+import BlockItem from "../ui/layout/BlockItem.tsx";
 import {isValidElement, ReactNode} from "react";
 import Masonry, {ResponsiveMasonry} from "react-masonify";
 

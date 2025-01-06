@@ -1,4 +1,4 @@
-import {Calendar, CalendarProps, dayjsLocalizer, View, ViewsProps} from 'react-big-calendar'
+import {Calendar, dayjsLocalizer, View, ViewsProps, Event} from 'react-big-calendar'
 import dayjs from 'dayjs'
 import {Skeleton} from "antd";
 import 'react-big-calendar/lib/css/react-big-calendar.css'
@@ -10,18 +10,22 @@ import {CSSProperties, useState} from "react";
 dayjs.locale('fr')
 const localized = dayjsLocalizer(dayjs)
 
-interface BigCalendarProps<TEvents extends object> {
-    data: CalendarProps['events']
+interface BigCalendarProps<TEvents extends object = Event> {
+    data: TEvents[]
     views: ViewsProps<TEvents>
     defaultView: View
     startDayTime?: number[]
     endDayTime?: [number, number]
     className?: string
     styles?: CSSProperties
+    onSelectEvent?: (event: TEvents) => void
+    start?: keyof TEvents
+    end?: keyof TEvents
+    showNavButton?: boolean
 }
 
-export const BigCalendar = <T extends object>({
-    data, views, defaultView, startDayTime, endDayTime, className, styles
+export const BigCalendar = <T extends object = Event>({
+    data, views, defaultView, startDayTime, endDayTime, className, styles, onSelectEvent, start, end, showNavButton
 }: BigCalendarProps<T>) => {
 
     const [view, setView] = useState<View>(defaultView)
@@ -37,8 +41,8 @@ export const BigCalendar = <T extends object>({
                 <Calendar
                     localizer={localized}
                     events={data}
-                    startAccessor="start"
-                    endAccessor="end"
+                    startAccessor={start}
+                    endAccessor={end}
                     views={views}
                     view={view}
                     style={{height: 'auto', ...styles}}
@@ -46,7 +50,8 @@ export const BigCalendar = <T extends object>({
                     max={timeToCurrentDatetime(endDayTime ?? [17, 0]) as Date}
                     messages={calendarMessages}
                     onView={handleOnChangeView}
-                    className={className}
+                    className={!showNavButton ? `big-calendar ${className}` : className}
+                    onSelectEvent={onSelectEvent}
                 />
         }
         </div>

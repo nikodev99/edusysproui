@@ -29,7 +29,7 @@ export interface PieChartProps {
     activeIndex?: number
     activeShape?: ActiveShape<PieSectorDataItem>
     onMouseEnter?: (_: unknown, index: number) => void
-    labelling?: boolean
+    labelLine?: boolean
     startAngle?: number
     endAngle?: number
 }
@@ -49,4 +49,5 @@ export interface BarChartProps <T>{
     stackId?: string
     stackBars?: number
     stackKeys?: Array<keyof T>
+    barSize?: number
 }

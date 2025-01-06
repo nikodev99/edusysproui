@@ -16,7 +16,7 @@ const VoidData = () => {
                         </g>
                     </svg>
                 </div>
-                <div className='empty__desc'>No Data</div>
+                <div className='empty__desc'>Aucune Donnée Trouvé</div>
             </div>
         </div>
     )

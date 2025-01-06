@@ -52,7 +52,7 @@ const TeacherView = () => {
 
     useEffect(() => {
         if (isSuccess && data) {
-            setTeacher(data)
+            setTeacher(data as Teacher)
         }
     }, [isSuccess, data])
 
@@ -150,6 +150,7 @@ const TeacherView = () => {
                     position: "top",
                     size: 30
                 }}
+                memorizedTabKey={'teacherTabKey'}
             />
             <section>
                 <TeacherEditDrawer

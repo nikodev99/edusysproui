@@ -125,13 +125,14 @@ const GuardianList = () => {
             <ListPageHierarchy items={pageHierarchy as [Breadcrumb]} />
             <ListViewer
                 callback={fetchEnrolledStudentsGuardians as () => Promise<AxiosResponse<Guardian[]>>}
-                searchCallback={fetchSearchedEnrolledStudentsGuardian as (input: unknown) => Promise<Response<Guardian[]>>}
-                tableColumns={columns as TableColumnsType<Guardian[]>}
+                searchCallback={fetchSearchedEnrolledStudentsGuardian as (input: unknown) => Promise<Response<Guardian>>}
+                tableColumns={columns as TableColumnsType<Guardian>}
                 dropdownItems={getItems}
                 throughDetails={throughDetails}
                 countTitle='Liste de Tuteur'
                 hasCount={false}
                 cardType='guardian'
+                fetchId='guardian-list'
             />
         </>
     )

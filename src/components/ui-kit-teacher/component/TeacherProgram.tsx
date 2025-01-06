@@ -13,6 +13,7 @@ import Tag from "../../ui/layout/Tag.tsx";
 import {ISOToday} from "../../../utils/utils.ts";
 import {getAllTeacherCourseProgram, getAllTeacherProgram} from "../../../data/request";
 import {BarChart} from "../../graph/BarChart.tsx";
+import VoidData from "../../view/VoidData.tsx";
 
 export const TeacherProgram = ({infoData, color}: InfoPageProps<Teacher>) => {
     const {id, courses, classes} = infoData
@@ -24,10 +25,12 @@ export const TeacherProgram = ({infoData, color}: InfoPageProps<Teacher>) => {
 
     const dataFetchFnc = courseExists ? getAllTeacherCourseProgram : getAllTeacherProgram
 
-    const {data, isSuccess, refetch} = useFetch('program-id', dataFetchFnc, [infoData.id, {
+    const {data, isSuccess, refetch, isLoading, isRefetching, isLoadingError} = useFetch('program-id', dataFetchFnc, [infoData.id, {
         classId: classeValue,
         courseId: subjectValue
     }])
+
+    const pending: boolean = isLoading || isRefetching || isLoadingError
 
     const subjects = useMemo(() => {
         return courses?.map(c => ({
@@ -79,7 +82,7 @@ export const TeacherProgram = ({infoData, color}: InfoPageProps<Teacher>) => {
         : [];
 
     const activeItem = programs?.filter(item => item.active)
-    const activeDescs = (item: CourseProgram): DescriptionsProps['items'] => {
+    const activeDesc = (item: CourseProgram): DescriptionsProps['items'] => {
         return [
             {key: 2, label: 'Description', children: item?.description, span: 3},
             {key: 1, label: 'Objective', children: item?.purpose, span: 3},
@@ -94,8 +97,8 @@ export const TeacherProgram = ({infoData, color}: InfoPageProps<Teacher>) => {
     const chartData = [
         {
             name: 'Programme',
-            complet: Math.round((passeItems?.length / items?.length) * 100),
-            incomplet: Math.round(((items?.length - passeItems?.length) / items?.length) * 100),
+            complet: items && items.length > 0 ? Math.round((passeItems?.length / items?.length) * 100): 0,
+            incomplet: items && items.length > 0 ? Math.round(((items?.length - passeItems?.length) / items?.length) * 100): 0,
         }
     ]
 
@@ -121,30 +124,31 @@ export const TeacherProgram = ({infoData, color}: InfoPageProps<Teacher>) => {
             items={[
                 {
                     key: 'program-list',
-                    label: 'Program List',
+                    label: 'Liste Programme',
                     children: <Responsive gutter={[16, 16]} style={{margin: '20px'}}>
                         <Grid xs={24} md={12} lg={12}>
-                            <Card>
-                                <DraggedTimeline
+                            <Card loading={pending}>
+                                {items && items.length > 0 ? <DraggedTimeline
                                     timelineProps={{
                                         mode:'left',
                                         items:items,
                                         rootClassName:'timeline'
                                     }}
                                     localStorage={id as string}
-                                />
+                                /> : <VoidData />}
                             </Card>
                         </Grid>
                         <Grid xs={24} md={12} lg={12}>
                             <Flex vertical gap={15}>
-                                {activeItem && activeItem?.map(item => (<Card key={item?.id}>
+                                {activeItem && activeItem?.map(item => (<Card loading={pending} key={item?.id}>
                                     <Descriptions title={<div style={{display: 'flex', alignItems: 'center', justifyItems: 'center'}}>
                                         <LuChevronsRight style={{color: 'green'}} size={25}/> {item.topic}
-                                    </div>} items={activeDescs(item)}  />
+                                    </div>} items={activeDesc(item)}  />
                                 </Card>))}
-                                <Card>
+                                <Card loading={pending}>
                                     <BarChart
-                                        data={chartData}
+                                        data={chartData || []}
+                                        barSize={200}
                                         legend='name'
                                         color={color}
                                         minHeight={350}

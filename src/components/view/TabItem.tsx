@@ -1,5 +1,5 @@
 import {Tabs} from "antd";
-import PageWrapper from "../ui/layout/PageWrapper.tsx";
+import PageWrapper from "./PageWrapper.tsx";
 import {ReactNode} from "react";
 
 

@@ -25,7 +25,8 @@ export {
 export {
     getAllStudentScores,
     getAllTeacherMarks,
-    getAllStudentScoresBySubject
+    getAllStudentScoresBySubject,
+    getAllAssignmentMarks
 } from '../repository/scoreRepository'
 
 export {
@@ -52,12 +53,14 @@ export {
 } from '../repository/reprimandRepository.ts'
 
 export {
-    getSomeTeacherAssignments
+    getSomeTeacherAssignments,
+    getAllTeacherAssignments,
+    getAllTeacherCourseAssignments
 } from '../repository/assignmentRepository.ts'
 
 export {
     getAllTeacherProgram, getAllTeacherCourseProgram
-} from '../repository/CourseProgramRepository.ts'
+} from '../repository/courseProgramRepository.ts'
 
 
 

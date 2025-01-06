@@ -1,5 +1,5 @@
 import Section from "../../ui/layout/Section.tsx";
-import Block from "../../ui/layout/Block.tsx";
+import Block from "../../view/Block.tsx";
 import PanelSection from "../../ui/layout/PanelSection.tsx";
 import PanelTable from "../../ui/layout/PanelTable.tsx";
 import {CalendarEvent, CountType, InfoPageProps, ReprimandData} from "../../../utils/interfaces.ts";
@@ -31,7 +31,6 @@ import {AiFillClockCircle} from "react-icons/ai";
 import {getSomeStudentReprimandedByTeacher} from "../../../data/repository/reprimandRepository.ts";
 import {Reprimand} from "../../../entity/domain/reprimand.ts";
 import {Table as CustomTable} from "../../ui/layout/Table.tsx";
-import {PunishmentType} from "../../../entity/enums/punishmentType.ts";
 import {ReprimandType} from "../../../entity/enums/reprimandType.ts";
 import {ShapePieChart} from "../../graph/ShapePieChart.tsx";
 import {PieChartDataEntry} from "../../ui/ui_interfaces.ts";
@@ -146,12 +145,12 @@ const CalendarSection = ({infoData, seeMore}: TeacherInfo) => {
             .then(response => setSchedules(response.data as Schedule[]))
     }, [infoData, fetch]);
 
-    const events = schedules && schedules.map((s: Schedule) => ({
+    const events: CalendarEvent = schedules && schedules.map((s: Schedule) => ({
         allDay: false,
         title: `${s?.classe?.name} - ${s.designation}`,
         start: s.startTime ? timeToCurrentDatetime(s.startTime) : new Date(),
         end: s.endTime ? timeToCurrentDatetime(s.endTime): new Date()
-    }))
+    })) as CalendarEvent
 
     const handleClick = () => {
         seeMore && seeMore('1')
@@ -159,7 +158,7 @@ const CalendarSection = ({infoData, seeMore}: TeacherInfo) => {
 
     return(
         <Section title='Informations sur l’emploi du temps' more={true} seeMore={handleClick}>
-            <BigCalendar data={events as CalendarEvent} views={['day']} defaultView='day' />
+            <BigCalendar data={events as []} views={['day']} defaultView='day' />
         </Section>
     )
 }
@@ -187,10 +186,10 @@ const MarkMean = ({infoData, color}: TeacherInfo) => {
     }
 
     const histogramData = [
-        { range: "0-5", count: filter(0, 5) },
-        { range: "6-10", count: filter(5, 10) },
-        { range: "11-15", count: filter(10, 15) },
-        { range: "16-20", count: filter(15, 20) },
+        { range: "0-5", pourcentage: filter(0, 5) },
+        { range: "6-10", pourcentage: filter(5, 10) },
+        { range: "11-15", pourcentage: filter(10, 15) },
+        { range: "16-20", pourcentage: filter(15, 20) },
     ];
 
     return(
@@ -198,10 +197,11 @@ const MarkMean = ({infoData, color}: TeacherInfo) => {
             {isLoading && <Skeleton active={isLoading} />}
             <BarChart
                 data={histogramData}
-                dataKey={['count']}
+                dataKey={['pourcentage']}
                 legend='range'
                 color={color}
                 minHeight={300}
+                isPercent
             />
         </Section>
     )
@@ -303,11 +303,9 @@ const StudentReprimanded = ({infoData, color, seeMore}: TeacherInfo) => {
         studentId: r.student?.student?.id,
         studentName: `${lowerName(r.student?.student?.personalInfo?.firstName, r.student?.student?.personalInfo?.lastName, 15)}`,
         reprimandType: r.type,
-        punishmentType: r.punishment?.type,
         punishmentDates: `${fDate(r.punishment?.startDate, 'DD/MM/YYYY')} à ${fDate(r.punishment?.endDate, 'DD/MM/YYYY')}`,
         studentClasse: r.student?.classe?.name,
-        studentSection: r.student?.classe?.grade?.section,
-        punishmentStatus: r.punishment?.status
+        studentSection: r.student?.classe?.grade?.section
     })) as []
 
     const columns: TableColumnsType<ReprimandData> = [
@@ -332,15 +330,6 @@ const StudentReprimanded = ({infoData, color, seeMore}: TeacherInfo) => {
             align: 'center',
             render: text => (
                 <Tag color="volcano">{ReprimandType[text as unknown as keyof typeof ReprimandType]}</Tag>
-            ),
-        },
-        {
-            title: "Punition",
-            dataIndex: "punishmentType",
-            key: "punishmentType",
-            align: 'center',
-            render: text => (
-                <Tag>{PunishmentType[text as unknown as keyof typeof PunishmentType]}</Tag>
             ),
         },
     ];
@@ -424,7 +413,8 @@ const AssignmentPlan = ({infoData,color, seeMore}: TeacherInfo) => {
                             <IconText icon={<LuClock9 /> } text={setTime(item.endTime as number[])} key="list-vertical-message" />,
                         ]}>
                             <List.Item.Meta
-                                title={<a href="https://ant.design">{item.examName}</a>}
+                                //TODO adding a link to the assignment view
+                                title={<a href="#">{item.examName}</a>}
                                 description={<Tag>{`${item.subject?.course} - ${item.classe?.name}`}</Tag>}
                             />
                         </List.Item>

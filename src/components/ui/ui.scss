@@ -245,9 +245,12 @@
   box-shadow: $box-shadow-panel!important;
 }
 //CALENDAR CUSTOM UI
-.rbc-btn-group:first-child {//button de navigation
-  display: none!important;
+.big-calendar {
+  .rbc-btn-group:first-child {//button de navigation
+    display: none!important;
+  }
 }
+
 
 .rbc-toolbar-group {//date en titre
   text-align: right!important;

@@ -36,7 +36,7 @@ export const TeacherAgenda = ({infoData}: InfoPageProps<Teacher>) => {
 
     return(
         <BigCalendar
-            data={events}
+            data={events as []}
             views={['week', 'day']}
             defaultView={'week'}
             className='agenda'

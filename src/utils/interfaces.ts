@@ -17,11 +17,12 @@ import {Gender} from "../entity/enums/gender.tsx";
 import {AttendanceStatus} from "../entity/enums/attendanceStatus.ts";
 import {Employee} from "../entity/domain/employee.ts";
 import {AddressOwner, IndividualType} from "../core/shared/sharedEnums.ts";
-import {CalendarProps} from "react-big-calendar";
+import {CalendarProps, Event} from "react-big-calendar";
 import {ReprimandType} from "../entity/enums/reprimandType.ts";
 import {PunishmentType} from "../entity/enums/punishmentType.ts";
 import {PunishmentStatus} from "../entity/enums/punishmentStatus.ts";
 import {Day} from "../entity/enums/day.ts";
+import {AxiosResponse} from "axios";
 
 export interface Metadata {
     title: string
@@ -284,3 +285,6 @@ export interface ApiEvent {
 }
 
 export type CalendarEvent = CalendarProps['events']
+export type EventProps = Event
+
+export type TabFunction<T> = (teacherId: string, ids: IDS, pageable?: Pageable) => Promise<AxiosResponse<T>>

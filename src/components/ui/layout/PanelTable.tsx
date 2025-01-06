@@ -1,6 +1,6 @@
 import {useNavigate} from "react-router-dom";
 import {ReactNode} from "react";
-import VoidData from "./VoidData.tsx";
+import VoidData from "../../view/VoidData.tsx";
 
 interface PanelTableProps {
     title: ReactNode

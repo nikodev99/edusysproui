@@ -16,5 +16,8 @@ export interface Assignment {
     examDate: Date | number[] | string
     startTime: Date | number[] | string
     endTime: Date | number[] | string
+    passed: boolean
     marks: Score[]
+    addedDate: Date | number | string
+    updatedDate: Date | number | string
 }

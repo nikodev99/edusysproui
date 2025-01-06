@@ -1,4 +1,4 @@
-import Block from "../../ui/layout/Block.tsx";
+import Block from "../../view/Block.tsx";
 import {Button, Carousel, Divider, Table, TableColumnsType, Avatar as AntAvatar} from "antd";
 import {HTMLProps, ReactNode, useEffect, useState} from "react";
 import {Enrollment, HealthCondition, Schedule} from "../../../entity";

@@ -174,8 +174,8 @@ const TeacherList = () => {
             />
             <ListViewer
                 callback={fetchTeachers as () => Promise<AxiosResponse<Teacher[]>>}
-                searchCallback={fetchSearchedTeachers as (input: unknown) => Promise<Response<Teacher[]>>}
-                tableColumns={columns as TableColumnsType<Teacher[]>}
+                searchCallback={fetchSearchedTeachers as (input: unknown) => Promise<Response<Teacher>>}
+                tableColumns={columns as TableColumnsType<Teacher>}
                 dropdownItems={getItems}
                 throughDetails={throughDetails}
                 countTitle={text.teacher.label}
@@ -186,6 +186,7 @@ const TeacherList = () => {
                     page: 'teacherPage',
                     pageCount: 'teacherPageCount'
                 }}
+                fetchId='teacher-list'
             />
         </>
     )

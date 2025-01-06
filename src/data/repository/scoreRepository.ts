@@ -27,3 +27,19 @@ export const getAllStudentScoresBySubject = (academicYearId: string, subjectId: 
 export const getAllTeacherMarks = (teacherId: string) => {
     return apiClient.get(`/score/all_teacher_marks/${teacherId}`)
 }
+
+export const getAllAssignmentMarks = (assignmentId: string, size: number) => {
+    return apiClient.get(`/score/all_assignment_marks/${assignmentId}`, {
+        params: {
+            size: size
+        }
+    })
+}
+
+export const getBestStudentBySubjectScore = (personalInfoId: number, subjectId: number) => {
+    return apiClient.get<Score[]>(`/score/students/${personalInfoId}/${subjectId}`)
+}
+
+export const getBestStudentByScore = (personalInfoId: number) => {
+    return apiClient.get<Score[]>(`/score/students/${personalInfoId}`)
+}

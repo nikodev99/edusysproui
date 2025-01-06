@@ -1,6 +1,6 @@
 import {ApiEvent, Color, EnumType} from "./interfaces.ts"
 import countries from 'world-countries'
-import dayjs from "dayjs";
+import dayjs, {OpUnitType} from "dayjs";
 import 'dayjs/locale/fr.js'
 import {BloodType} from "../entity/enums/bloodType.ts";
 import {ProgressProps} from "antd";
@@ -101,10 +101,15 @@ export const numberFormat = (input?: number, options?: {
         }).format(0)
 }
 
-const arrayToDate = (dateArray: Date | number[]): Date => {
+export const arrayToDate = (dateArray: Date | number[], time?: number[]): Date => {
     if (Array.isArray(dateArray)) {
         const [year, month, day] = dateArray
-        return new Date(year, month - 1, day);
+        let date = new Date(year, month - 1, day)
+        if (time) {
+            const [hour, minute] = time && time?.length > 0 ? time : [0, 0]
+            date = new Date(year, month - 1, day, hour, minute, 0)
+        }
+        return new Date(date);
     }
     return new Date(dateArray)
 }
@@ -121,10 +126,13 @@ export const getDistinctArray = <T>(arr: T[], keySelector: (item: T) => unknown)
     })
 }
 
-export const fDatetime = (timestamp: Date | number | string, to?: boolean) => {
-    const format: string = to ? 'DD/MM/YYYY à HH:mm' : 'DD/MM/YYYY HH:mm'
+export const fDatetime = (timestamp: Date | number | string, to?: boolean, format?: string) => {
+    let defaultFormat: string = to ? 'DD/MM/YYYY à HH:mm' : 'DD/MM/YYYY HH:mm'
     if (timestamp) {
-        return dayjs.unix(timestamp as number).format(format)
+        if (format) {
+            defaultFormat = format
+        }
+        return dayjs.unix(timestamp as number).format(defaultFormat)
     }
     return undefined
 }
@@ -133,7 +141,7 @@ export const fDate = (date?: Date | number[] | string, format?: string) => {
     if (!format) {
         format = 'D MMMM YYYY';
     }
-    return formattedDate(date, format);
+    return setFirstName(formattedDate(date, format));
 }
 
 export const fullDay = (date?: Date | number[] | string) => {
@@ -168,6 +176,12 @@ export const dateCompare = (date: Date) => {
     return dateToCompareWith.isAfter(today)
 }
 
+export const dateBefore = (date: Date, unit?: OpUnitType) => {
+    const today = dayjs()
+    const dateToCompareWith = dayjs(date)
+    return dateToCompareWith.isBefore(today, unit)
+}
+
 export const setDayJsDate = (date?: Date | number[] | string) => {
     if (date) {
         let dayjsDate
@@ -184,7 +198,29 @@ export const setDayJsDate = (date?: Date | number[] | string) => {
     return undefined
 }
 
-const formattedDate = (date?: Date | number[] | string, format?: string) => {
+export function getDiffBetweenDates(date1: string | number[] | Date, date2: string | number[] | Date, unit?: "minute" | "hour" | "day" | "month" | "year" ): number | null {
+    const day1 = setDayJsDate(date1)
+    const day2 = setDayJsDate(date2)
+
+    if (day1 && day2) return day2?.diff(day1, unit)
+    return null
+}
+
+export function getDiffFromNow(date:[number, number, number], unit?: "minute" | "hour" | "day" | "month" | "year", time?: [number, number]): number | null {
+    const day1 = setDayJsDate(new Date())
+    if (date) {
+        let dateTime = new Date(date[0], date[1] - 1, date[2]);
+        if (time) {
+            dateTime = new Date(date[0], date[1] - 1, date[2], time[0], time[1], 0);
+        }
+        const day2 = setDayJsDate(dateTime)
+
+        if (day1 && day2) return day2?.diff(day1, unit)
+    }
+    return null
+}
+
+const formattedDate = (date?: Date | number[] | string, format?: string): string | undefined => {
     return setDayJsDate(date)?.locale('fr').format(format);
 }
 

@@ -2,6 +2,7 @@ import {getStatusKey, Status} from "../entity/enums/status.ts";
 import {ReactNode} from "react";
 import Tag from "../components/ui/layout/Tag.tsx";
 import {Flex, Popover, Space, StepsProps} from "antd";
+import {Color} from "./interfaces.ts";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const statusTags = (status: Status, female?: boolean): ReactNode => {
@@ -43,9 +44,9 @@ export const customDot: StepsProps['progressDot'] = (dot: ReactNode, {status, in
     </Popover>
 )
 
-export const IconText = ({ icon, text }: { icon: ReactNode; text: string }) => (
+export const IconText = ({ icon, text, color }: { icon: ReactNode; text: string, color?: Color }) => (
     <Space>
-        <Flex gap={10} align='center'>
+        <Flex gap={10} align='center' style={color ? {color: color} : undefined}>
             {icon}
             {text}
         </Flex>

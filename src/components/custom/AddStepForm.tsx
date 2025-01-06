@@ -9,7 +9,7 @@ import queryString from 'query-string'
 import {Metadata} from "../../utils/interfaces.ts";
 import FormError from "../../components/ui/form/FormError.tsx";
 import FormSuccess from "../../components/ui/form/FormSuccess.tsx";
-import PageWrapper from "../../components/ui/layout/PageWrapper.tsx";
+import PageWrapper from "../view/PageWrapper.tsx";
 import {redirectTo} from "../../context/RedirectContext.ts";
 import {requiredMark} from "../../utils/tsxUtils.tsx";
 import {ValidationAlert} from "../ui/form/ValidationAlert.tsx";

@@ -1,4 +1,4 @@
-import PageWrapper from "../../ui/layout/PageWrapper.tsx";
+import PageWrapper from "../../view/PageWrapper.tsx";
 import {Button, List, Select, Skeleton} from "antd";
 import {useEffect, useMemo, useRef, useState} from "react";
 import TabItem from "../../view/TabItem.tsx";
@@ -9,6 +9,7 @@ import {getAllStudentClassmate} from "../../../data/repository/studentRepository
 import Avatar from "../../ui/layout/Avatar.tsx";
 import {redirectTo} from "../../../context/RedirectContext.ts";
 import {text} from "../../../utils/text_display.ts";
+import {LoadMoreList} from "../../ui/layout/LoadMoreList.tsx";
 
 
 const count = 3;
@@ -38,16 +39,6 @@ export const StudentClasse = ({enrolledStudent, setActiveKey}: {enrolledStudent:
         ];
     }, [academicYear.id, academicYear.academicYear, student.enrollments]);
 
-    const classes = useMemo(() => {
-        return [
-            { value: classe.id, label: classe.name },
-            ...student.enrollments.map(e => ({
-                value: e.classe.id,
-                label: e.classe.name
-            }))
-        ];
-    }, [classe.id, classe.name, student.enrollments]);
-
     useEffect(() => {
         if (size && classeId || data || student.id) {
             refetch().then(r => r.data)
@@ -73,28 +64,10 @@ export const StudentClasse = ({enrolledStudent, setActiveKey}: {enrolledStudent:
         redirectTo(`${text.student.group.view.href}${id}`)
     }
 
-    const loadMore =
-        !isLoading ? (
-            <div style={{
-                textAlign: 'center',
-                marginTop: 12,
-                height: 32,
-                lineHeight: '32px',
-            }}>
-                <Button type='dashed' disabled={size >= allItems} onClick={onLoadMore} loading={isLoading}>Charger plus</Button>
-            </div>
-        ) : null;
-
     const handleAcademicYearIdValue = (value: string) => {
         const enrollment = student.enrollments.find(e => e.academicYear.id === value)
         setAcademicYearId(value)
         setClasseId(enrollment ? enrollment.classe.id : classe.id)
-    }
-
-    const handleClasseValue = (value: number) => {
-        const enrollment = student.enrollments.find(e => e.classe.id === value)
-        setClasseId(value)
-        setAcademicYearId(enrollment ? enrollment.academicYear.id : academicYear.id)
     }
 
     return(
@@ -103,15 +76,6 @@ export const StudentClasse = ({enrolledStudent, setActiveKey}: {enrolledStudent:
                 tabClassName='class-tab'
                 title={`Les condisciple de ${studentName}`}
                 selects={[
-                    (
-                        <Select
-                            className='select-control'
-                            defaultValue={classe.id}
-                            options={classes}
-                            onChange={handleClasseValue}
-                            variant='borderless'
-                        />
-                    ),
                     (
                         <Select
                             className='select-control'
@@ -124,39 +88,43 @@ export const StudentClasse = ({enrolledStudent, setActiveKey}: {enrolledStudent:
                 ]}
                 items={[
                     {key: '1', label: `Classe ${classe.name}`, children: (
-                        <List
-                            className="loadmore-list"
-                            loading={isLoading}
-                            loadMore={loadMore}
-                            dataSource={classmates}
-                            renderItem={(item) => (
-                                <List.Item actions={[
-                                    <Button
-                                        disabled={isFetching}
-                                        type='link'
-                                        key="list-loadmore-more"
-                                        onClick={() => handleWatchClassmate(item.student.id)}
-                                    >
-                                        Voir plus
-                                    </Button>
-                                ]}>
-                                    <Skeleton avatar loading={isLoading} active={isLoading}>
-                                        <List.Item.Meta
-                                            avatar={<Avatar
-                                                image={item?.student?.personalInfo?.image}
-                                                firstText={item?.student?.personalInfo?.firstName}
-                                                lastText={item?.student?.personalInfo?.lastName}
-                                            />}
-                                            title={
-                                                <span className='name' onClick={() => handleWatchClassmate(item?.student?.id)}>
+                        <LoadMoreList
+                            listProps={{
+                                className: 'loadmore-list',
+                                dataSource: classmates,
+                                renderItem: (item) => (
+                                    <List.Item actions={[
+                                        <Button
+                                            disabled={isFetching}
+                                            type='link'
+                                            key="list-loadmore-more"
+                                            onClick={() => handleWatchClassmate(item.student.id)}
+                                        >
+                                            Voir plus
+                                        </Button>
+                                    ]}>
+                                        <Skeleton avatar loading={isLoading} active={isLoading}>
+                                            <List.Item.Meta
+                                                avatar={<Avatar
+                                                    image={item?.student?.personalInfo?.image}
+                                                    firstText={item?.student?.personalInfo?.firstName}
+                                                    lastText={item?.student?.personalInfo?.lastName}
+                                                />}
+                                                title={
+                                                    <span className='name' onClick={() => handleWatchClassmate(item?.student?.id)}>
                                                     {item?.student?.personalInfo?.lastName} {setFirstName(`${item?.student?.personalInfo?.firstName}`)}
                                                 </span>
-                                            }
-                                            description={item.student.reference}
-                                        />
-                                    </Skeleton>
-                                </List.Item>
-                            )}
+                                                }
+                                                description={item.student.reference}
+                                            />
+                                        </Skeleton>
+                                    </List.Item>
+                                )
+                            }}
+                            isLoading={isLoading}
+                            size={size}
+                            allItems={allItems}
+                            onLoadMore={onLoadMore}
                         />
                     )}
                 ]}

@@ -22,13 +22,13 @@ const GuardianView: React.FC = () => {
     const [openDrawer, setOpenDrawer] = useState<boolean>(false)
     const [color, setColor] = useState('')
 
-    const {data, isLoading, isSuccess, refetch} = useFetch(['guardian-id'], fetchGuardianWithStudents, [id])
+    const {data, isLoading, isSuccess, refetch} = useFetch(['guardian-id', id], fetchGuardianWithStudents, [id])
 
     const guardianName = guardian ? setName(guardian?.personalInfo?.lastName, guardian?.personalInfo?.firstName) : 'Tuteur'
 
     useDocumentTitle({
         title: guardianName,
-        description: "Student description",
+        description: "Guardian description",
     })
 
     const pageHierarchy = setBreadcrumb([
@@ -43,7 +43,7 @@ const GuardianView: React.FC = () => {
 
     useEffect(() => {
         if (isSuccess && data) {
-            setGuardian(data);
+            setGuardian(data as Guardian);
         }
     }, [data, isSuccess])
 
@@ -55,8 +55,6 @@ const GuardianView: React.FC = () => {
         setOpenDrawer(false)
         refetch().then(r => r.data)
     }
-
-    console.log('Guardian: ', guardian)
 
     return (
         <>

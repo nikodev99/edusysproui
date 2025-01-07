@@ -185,6 +185,7 @@ export interface ExamData {
     examDate: string;
     examName: string;
     classe: string;
+    subject: string
     obtainedMark: number;
 }
 

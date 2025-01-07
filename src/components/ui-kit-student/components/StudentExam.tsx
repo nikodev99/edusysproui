@@ -1,6 +1,6 @@
 import {Enrollment, Score} from "../../../entity";
-import {fDatetime, setFirstName, startsWithVowel} from "../../../utils/utils.ts";
-import {Select, Table, TableColumnsType} from "antd";
+import {fDate, setFirstName, startsWithVowel} from "../../../utils/utils.ts";
+import {Badge, Select, Table, TableColumnsType, Typography} from "antd";
 import {ExamData} from "../../../utils/interfaces.ts";
 import {fetchAllStudentScores, fetchAllStudentScoresBySubject} from "../../../data/action/fetch_score.ts";
 import LocalStorageManager from "../../../core/LocalStorageManager.ts";
@@ -29,19 +29,20 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
 
     const studentName = `${setFirstName(personalInfo?.lastName)} ${setFirstName(personalInfo?.firstName)}`
 
-    const {data, error, isLoading, refetch} = useFetch('student-scores', fetchAllStudentScores, [examCount, 10, student.id, academicYearId])
+    const {data, error, isLoading, refetch} = useFetch(['student-scores', student?.id], fetchAllStudentScores, [examCount, 10, student.id, academicYearId])
 
     const subjects = useMemo(() => {
         return [
             {value: 0, label: 'Tous'},
-            ...scores.map(s => ({
-                value: s.assignment.subject?.id,
-                label: s.assignment.subject?.course,
+            ...scores.filter(s => s?.assignment)
+                .map(s => ({
+                value: s.assignment?.subject?.id,
+                label: s.assignment?.subject?.course,
             }))]
     }, [scores])
 
     const academicYears = useMemo(() => {
-        return [
+        return enrollments && [
             { value: id, label: academicYear},
             ...enrollments.map(e => ({
                 value: e.academicYear.id,
@@ -73,33 +74,41 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
         return <PageError />
     }
 
+    console.log("Score data: ", subjects)
+
     const columns: TableColumnsType<ExamData> = [
         {
             title: "Examen",
             dataIndex: 'examName',
             key: 'ExamName',
             align: 'left',
-            width: '20%',
+            width: '30%',
+            render: text => <Typography.Link>{text}</Typography.Link>
         },
         {
             title: "Classe",
             dataIndex: 'classe',
             key: 'classe',
-            align: 'center'
+            align: 'center',
+            render: text => <Typography.Text mark>{text}</Typography.Text>
         },
         {
             title: "Date",
             dataIndex: 'examDate',
             key: 'examDate',
             align: 'center',
-            render: (text) => (<span>{fDatetime(text)}</span>),
+            render: text => fDate(text),
             responsive: ['md'],
         },
         {
             title: "Note",
             dataIndex: 'obtainedMark',
             key: 'obtainedMark',
-            align: 'center'
+            align: 'center',
+            render: (text: number) => <Typography.Title level={4}>
+                {text}
+                <Badge color={text >= 15 ? 'green' : text >= 10 ? 'gold' : 'red' } />
+            </Typography.Title>
         },
         {
             title: (<LuEye size={15} />),
@@ -124,7 +133,7 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
         <TabItem
             title={`Les notes d${startsWithVowel(personalInfo?.lastName) ? "'" : 'e '}${studentName}`}
             selects={[
-                <Select
+                subjects.length > 1 && <Select
                     className='select-control'
                     defaultValue={0}
                     options={subjects}

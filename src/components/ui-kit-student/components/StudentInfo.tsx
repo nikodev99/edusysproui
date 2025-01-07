@@ -3,7 +3,7 @@ import {Button, Carousel, Divider, Table, TableColumnsType, Avatar as AntAvatar}
 import {HTMLProps, ReactNode, useEffect, useState} from "react";
 import {Enrollment, HealthCondition, Schedule} from "../../../entity";
 import {
-    bloodLabel, convertToM, fDate, fDatetime, firstLetter, fullDay, getAge, getCountry,
+    bloodLabel, convertToM, fDate, firstLetter, fullDay, getAge, getCountry,
     chooseColor, isNull, lowerName, monthsBetween, setFirstName, timeToCurrentDatetime, currency
 } from "../../../utils/utils.ts";
 import PanelStat from "../../ui/layout/PanelStat.tsx";
@@ -23,7 +23,7 @@ import PieChart from "../../graph/PieChart.tsx";
 import {Reprimand} from "../../../entity/domain/reprimand.ts";
 import Section from "../../ui/layout/Section.tsx";
 import PanelSection from "../../ui/layout/PanelSection.tsx";
-import {CalendarEvent, ExamData, InfoPageProps} from "../../../utils/interfaces.ts";
+import {ExamData, InfoPageProps} from "../../../utils/interfaces.ts";
 import {initExamData} from "../../../entity/domain/score.ts";
 import {attendanceTag} from "../../../entity/enums/attendanceStatus.ts";
 import Tag from "../../ui/layout/Tag.tsx";
@@ -133,7 +133,7 @@ const ExamList = ({infoData, seeMore, color}: StudentInfoProps) => {
             dataIndex: 'examDate',
             key: 'examDate',
             align: 'center',
-            render: (text) => (<span>{fDatetime(text)}</span>),
+            render: (text) => (<span>{fDate(text, 'DD/MM/YYYY')}</span>),
             responsive: ['md'],
         },
         {
@@ -146,7 +146,8 @@ const ExamList = ({infoData, seeMore, color}: StudentInfoProps) => {
             title: "Examen",
             dataIndex: 'examName',
             key: 'ExamName',
-            align: 'center'
+            align: 'center',
+            render: (text, score) => (<span>{score.subject ?? text}</span>),
         },
         {
             title: "Note",
@@ -164,7 +165,8 @@ const ExamList = ({infoData, seeMore, color}: StudentInfoProps) => {
                     size:'small',
                     columns: columns as [],
                     dataSource: initExamData(marks),
-                    pagination: false
+                    pagination: false,
+                    rowKey: 'examId'
                 }}
                 color={color}
             />
@@ -181,12 +183,13 @@ const GraphSection = ({infoData}: StudentInfoProps) => {
         score: s.obtainedMark
     }))
 
-    //TODO this should be average score
-    graphData.push({subject: 'Physique chimie', score: 16})
-    graphData.push({subject: 'French', score: 12})
-    graphData.push({subject: 'Anglais', score: 18})
-    graphData.push({subject: 'Music', score: 15})
-    graphData.push({subject: 'Math', score: 13})
+    if (graphData.length === 0) {
+        graphData.push({subject: 'Physique chimie', score: 16})
+        graphData.push({subject: 'French', score: 12})
+        graphData.push({subject: 'Anglais', score: 18})
+        graphData.push({subject: 'Music', score: 15})
+        graphData.push({subject: 'Math', score: 13})
+    }
 
     return (
         <Section title='Progression aux examens'>
@@ -381,7 +384,7 @@ const CourseSchedule = ({infoData}: StudentInfoProps) => {
     return(
         <Section title={`Emploi du temps: ${setFirstName(fullDay(new Date()))}`}>
             <BigCalendar
-                data={events as CalendarEvent}
+                data={events as []}
                 views={['day']}
                 defaultView='day'
                 startDayTime={[8, 0]}

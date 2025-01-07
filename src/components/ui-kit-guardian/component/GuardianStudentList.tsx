@@ -11,12 +11,10 @@ import {BloodType} from "../../../entity/enums/bloodType.ts";
 
 export const GuardianStudentList = ({students}: {students?: Student[]}) => {
 
-    console.log('Student: ', students);
-
     return (
         <Responsive gutter={[16, 16]}>
             {students && students.map((student, index) => (
-                <Grid xs={24} md={12} lg={8} xl={6} xxl={4.8} key={index}>
+                <Grid xs={24} md={12} lg={8} xxl={6} key={index}>
                     <div className="card-container">
                         <div className="header">
                             <img

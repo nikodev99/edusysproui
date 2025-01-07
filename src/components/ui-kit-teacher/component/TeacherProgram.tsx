@@ -97,7 +97,7 @@ export const TeacherProgram = ({infoData, color}: InfoPageProps<Teacher>) => {
     const chartData = [
         {
             name: 'Programme',
-            complet: items && items.length > 0 ? Math.round((passeItems?.length / items?.length) * 100): 0,
+            terminer: items && items.length > 0 ? Math.round((passeItems?.length / items?.length) * 100): 0,
             incomplet: items && items.length > 0 ? Math.round(((items?.length - passeItems?.length) / items?.length) * 100): 0,
         }
     ]
@@ -155,7 +155,7 @@ export const TeacherProgram = ({infoData, color}: InfoPageProps<Teacher>) => {
                                         isPercent={true}
                                         stackId='a'
                                         stackBars={2}
-                                        stackKeys={['complet', 'incomplet']}
+                                        stackKeys={['terminer', 'incomplet']}
                                         showLegend
                                     />
                                 </Card>

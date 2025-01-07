@@ -28,7 +28,7 @@ const StudentView = () => {
     const [openDrawer, setOpenDrawer] = useState(false)
     const [color, setColor] = useState('')
 
-    const {data, isLoading, isSuccess, error, refetch} = useFetch(['student-id', id as string], fetchStudentById, [id])
+    const {data, isLoading, isSuccess, error, refetch} = useFetch<Enrollment, unknown>(['student-id', id as string], fetchStudentById, [id])
 
     const studentName = enrolledStudent ? setName(
         enrolledStudent?.student.personalInfo?.lastName,
@@ -53,7 +53,7 @@ const StudentView = () => {
 
     useEffect(() => {
         if (isSuccess && data) {
-            setEnrolledStudent(data)
+            setEnrolledStudent(data as Enrollment)
         }
     }, [data, isSuccess]);
 
@@ -91,7 +91,7 @@ const StudentView = () => {
                             enrolledStudent?.student?.guardian?.personalInfo?.maidenName
                         ),
                     },
-                    {title: enrolledStudent?.classe.name, mention: enrolledStudent?.classe.grade.section}
+                    {title: enrolledStudent?.classe?.name, mention: enrolledStudent?.classe?.grade?.section}
                 ]}
                 items={[
                     {

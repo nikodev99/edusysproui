@@ -6,7 +6,7 @@ import {useCallback} from "react";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const useFetch = <TData, TError>(
-    key: string | string[],
+    key: unknown | unknown[],
     callback: (...args: any[]) => Promise<AxiosResponse<TData | TData[], TError>>,
     params: any[] = [],
     options?: UseQueryOptions<TData | TData[], TError, TData | TData[], QueryKey>

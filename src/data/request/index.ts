@@ -12,7 +12,7 @@ export {
 } from '../repository/classeRepository'
 
 export {
-    getAcademicYear
+    getCurrentAcademicYear
 } from '../repository/academicYearRepository'
 
 export {

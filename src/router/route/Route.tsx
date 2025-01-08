@@ -4,7 +4,6 @@ import PageError from "../../pages/PageError.tsx";
 import Dashboard from "../../pages/dashboard/page.tsx";
 import StudentList from "../../pages/student/StudentList.tsx";
 import Inscription from "../../pages/student/Inscription.tsx";
-import Setting from "../../pages/setting/page.tsx";
 import StudentView from "../../pages/student/StudentView.tsx";
 import RedirectProvider from "../../providers/RedirectProvider.tsx";
 import TeacherList from "../../pages/teacher/TeacherList.tsx";
@@ -12,6 +11,7 @@ import GuardianList from "../../pages/guardian/GuardianList.tsx";
 import GuardianView from "../../pages/guardian/GuardianView.tsx";
 import AddTeacher from "../../pages/teacher/AddTeacher.tsx";
 import TeacherView from "../../pages/teacher/TeacherView.tsx";
+import {Organization} from "../../pages/setting/Organization.tsx";
 
 export const Route = createBrowserRouter([
     {
@@ -50,7 +50,9 @@ export const Route = createBrowserRouter([
             },
             {
                 path: 'settings',
-                element: <Setting />
+                children: [
+                    {path: 'organization', element: <Organization />}
+                ]
             }
         ]
     }

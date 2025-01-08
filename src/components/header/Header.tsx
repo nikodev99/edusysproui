@@ -4,18 +4,28 @@ import Search from "antd/es/input/Search";
 import AvatarDropdown from "./AvatarDropdown.tsx";
 import NotificationDropdown from "./NotificationDropdown.tsx";
 import {LuBell, LuMenu, LuUser} from "react-icons/lu";
+import {useGlobalStore} from "../../core/global/store.ts";
 
 
 const Header = ({onCollapsed}: {onCollapsed: () => void}) => {
+
+    const {academicYear} = useGlobalStore()
+
     return(
         <Layout.Header className='header'>
             <Flex align='center' justify='space-between'>
                 <div className='hamburger'>
                     <LuMenu onClick={onCollapsed}/>
                 </div>
-                <Typography.Title level={5} type='secondary' className='welcome-message'>
-                    Welcome Back, Nikhe
-                </Typography.Title>
+                <Flex align='center' vertical>
+                    <Typography.Text type='secondary' className='welcome-message'>
+                        Année académique
+                    </Typography.Text>
+                    <Typography.Text type='secondary' className='welcome-message'>
+                        {academicYear}
+                    </Typography.Text>
+                </Flex>
+
                 <Flex align='center' style={{width: '600px'}}>
                     <Search placeholder='Search...' allowClear className='search-input' size='large' variant='filled' />
                 </Flex>

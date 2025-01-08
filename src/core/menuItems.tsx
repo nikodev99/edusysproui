@@ -12,7 +12,6 @@ import {
 } from "react-icons/lu";
 import {MenuProps} from "antd";
 import {PiNotebook, PiStudent} from "react-icons/pi";
-import {FaUserTie} from "react-icons/fa";
 import {text} from "../utils/text_display.ts";
 
 export const menuItems: Required<MenuProps>['items'][number][] = [
@@ -35,11 +34,6 @@ export const menuItems: Required<MenuProps>['items'][number][] = [
         key: text.teacher.href,
         icon: <LuUsers />,
         label: text.teacher.label + 's'
-    },
-    {
-        key: '/employees',
-        icon: <FaUserTie />,
-        label: "Employés"
     },
     {
         key: '/classes-and-subjects',
@@ -85,6 +79,16 @@ export const menuItems: Required<MenuProps>['items'][number][] = [
     {
         key: '/settings',
         icon: <LuCog />,
-        label: "Paramètres"
+        label: "Paramètres",
+        children: [
+            {key: '/settings/organization', label: "Organization"},
+            {key: '/settings/customization', label: "Customiser"},
+            {key: '/settings/product_management', label: "Management des produits"},
+            {key: '/settings/security', label: "Sécurité"},
+            {key: '/settings/tags', label: "Tags"},
+            {key: '/settings/legal_certificate', label: "Certificat Légal"},
+            {key: '/settings/general_term', label: "Terme Général"},
+            {key: '/settings/special_document', label: "Document Spéciale & Contrat"}
+        ]
     },
 ]

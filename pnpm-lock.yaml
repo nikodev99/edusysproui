@@ -80,9 +80,6 @@ importers:
       react-masonify:
         specifier: ^0.0.2
         version: 0.0.2
-      react-photo-album:
-        specifier: ^3.0.2
-        version: 3.0.2(@types/react@18.2.79)(react@18.2.0)
       react-router-dom:
         specifier: ^6.22.3
         version: 6.22.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -1817,16 +1814,6 @@ packages:
     peerDependencies:
       react: '>=16.3.0'
       react-dom: '>=16.3.0'
-
-  react-photo-album@3.0.2:
-    resolution: {integrity: sha512-w3+8i6aj9l1jRfcubgVbAlBGSdtiXcqWdcwZcH4/Bavc+v7X7h+S3TkQ723pvDABjhaaxS168g9ECEBP6xnKrQ==}
-    engines: {node: '>=18'}
-    peerDependencies:
-      '@types/react': '>=18'
-      react: '>=18'
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
 
   react-refresh@0.14.0:
     resolution: {integrity: sha512-wViHqhAd8OHeLS/IRMJjTSDHF3U9eWi62F/MledQGPdJGDhodXJ9PBLNGr6WWL7qlH12Mt3TyTpbS+hGXMjCzQ==}
@@ -3961,12 +3948,6 @@ snapshots:
       react-dom: 18.2.0(react@18.2.0)
       uncontrollable: 7.2.1(react@18.2.0)
       warning: 4.0.3
-
-  react-photo-album@3.0.2(@types/react@18.2.79)(react@18.2.0):
-    dependencies:
-      react: 18.2.0
-    optionalDependencies:
-      '@types/react': 18.2.79
 
   react-refresh@0.14.0: {}
 

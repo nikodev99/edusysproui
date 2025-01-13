@@ -1,11 +1,23 @@
 import {Course} from "../../entity";
 import {ErrorCatch} from "./error_catch.ts";
-import {getAllCourses} from "../repository/courseRepository.ts";
+import {getAllBasicCourses, getAllCourses} from "../repository/courseRepository.ts";
 import {Response} from "./response.ts";
+import {AxiosResponse} from "axios";
+import {getShortSortOrder, setSortFieldName} from "../../utils/utils.ts";
+
+export const getAllSchoolCourses = async (page: number, size: number, sortField?: string, sortOrder?: string): Promise<AxiosResponse<Course[]>> => {
+    console.log('Sorted: ', sortField, sortOrder);
+    if(sortField && sortOrder) {
+        sortOrder = getShortSortOrder(sortOrder)
+        sortField = sortedField(sortField);
+        return await getAllCourses({page: page, size: size}, `${sortField}:${sortOrder}`);
+    }
+    return await getAllCourses({page: page, size: size})
+}
 
 export const fetchAllCourses = async (): Promise<Response<Course[]>> => {
     try {
-        const resp = await getAllCourses()
+        const resp = await getAllBasicCourses()
         if (resp && 'data' in resp) {
             return {
                 isSuccess: true,
@@ -18,5 +30,14 @@ export const fetchAllCourses = async (): Promise<Response<Course[]>> => {
         }
     }catch (err: unknown) {
         return ErrorCatch(err)
+    }
+}
+
+const sortedField = (sortField: string | string[]) => {
+    switch (setSortFieldName(sortField)) {
+        case 'course':
+            return 'c.course'
+        default:
+            return undefined;
     }
 }

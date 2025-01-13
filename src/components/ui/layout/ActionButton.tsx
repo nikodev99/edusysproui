@@ -3,7 +3,7 @@ import {Dropdown} from "antd";
 import {ItemType} from "antd/es/menu/interface";
 import {ReactNode} from "react";
 
-const ActionButton = ({items, placement, arrow, icon}: {
+export const ActionButton = ({items, placement, arrow, icon}: {
     items?: ItemType[],
     placement?: "bottomLeft" | "topLeft" | "topCenter" | "topRight" | "bottomCenter" | "bottomRight" | "top" | "bottom" | undefined
     arrow?: boolean,
@@ -17,5 +17,3 @@ const ActionButton = ({items, placement, arrow, icon}: {
         </Dropdown>
     )
 }
-
-export default ActionButton

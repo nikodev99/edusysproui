@@ -1,4 +1,4 @@
-import {StudentListDataType as DataType} from "../../utils/interfaces.ts";
+import {DataProps, StudentListDataType, StudentListDataType as DataType} from "../../utils/interfaces.ts";
 import ListViewer from "../../components/custom/ListViewer.tsx";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {text} from "../../utils/text_display.ts";
@@ -6,16 +6,16 @@ import {Breadcrumb, setBreadcrumb} from "../../core/breadcrumb.tsx";
 import {ListPageHierarchy} from "../../components/custom/ListPageHierarchy.tsx";
 import {useRef} from "react";
 import {redirectTo} from "../../context/RedirectContext.ts";
-import {AiOutlineUserAdd} from "react-icons/ai";
+import {AiOutlineEllipsis, AiOutlineUserAdd} from "react-icons/ai";
 import {fetchEnrolledStudents, fetchSearchedEnrolledStudents} from "../../data";
 import {AxiosResponse} from "axios";
 import {Response} from '../../data/action/response.ts'
 import {TableColumnsType, Tag} from "antd";
-import Avatar from "../../components/ui/layout/Avatar.tsx";
+import {Avatar} from "../../components/ui/layout/Avatar.tsx";
 import {dateCompare, enumToObjectArrayForFiltering, fDatetime, setFirstName} from "../../utils/utils.ts";
 import {Gender} from "../../entity/enums/gender.tsx";
 import Tagger from "../../components/ui/layout/Tagger.tsx";
-import ActionButton from "../../components/ui/layout/ActionButton.tsx";
+import {ActionButton} from "../../components/ui/layout/ActionButton.tsx";
 import {useColumnSearch} from "../../hooks/useColumnSearch.tsx";
 import {LuEye} from "react-icons/lu";
 
@@ -114,13 +114,30 @@ const StudentList = () => {
             //TODO getting all the grade distinct grade and filter by grade
         },
         {
-            title: "Action",
+            title: <AiOutlineEllipsis />,
             dataIndex: 'id',
             key: 'action',
             align: 'right',
             render: (text) => (<ActionButton items={getItems(text)} />)
         }
     ];
+
+    const cardData = (data: StudentListDataType[]) => {
+        return data?.map(c => ({
+            id: c?.id,
+            lastName: c?.lastName,
+            firstName: c?.firstName,
+            gender: c?.gender,
+            image: c?.image,
+            reference: c?.reference,
+            tag: <Tagger status={dateCompare(c?.academicYear?.endDate as Date)} successMessage='inscrit'
+                         warnMessage='fin_annee_scolaire'/>,
+            description: [
+                `${c.grade} - ${c.classe}`,
+                `Inscrit le, ${fDatetime(c.lastEnrolledDate, true)}`
+            ]
+        })) as DataProps[]
+    }
 
     return(
         <>
@@ -139,7 +156,7 @@ const StudentList = () => {
                 dropdownItems={getItems}
                 throughDetails={throughDetails}
                 countTitle='Etudiant'
-                cardType='student'
+                cardData={cardData}
                 localStorage={{
                     activeIcon: 'activeIcon',
                     pageSize: 'pageSize',

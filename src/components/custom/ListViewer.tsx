@@ -16,21 +16,23 @@ import {useFetch} from "../../hooks/useFetch.ts";
 import {AxiosResponse} from "axios";
 import {Response} from '../../data/action/response.ts'
 import {ItemType} from "antd/es/menu/interface";
-import {LuLayoutDashboard, LuList} from "react-icons/lu";
+import {LuLayoutDashboard, LuTable} from "react-icons/lu";
 import {Enrollment} from "../../entity";
-import {StudentListDataType} from "../../utils/interfaces.ts";
+import {DataProps, StudentListDataType} from "../../utils/interfaces.ts";
 
 interface ListViewerProps<TData extends object, TError> {
     callback: () => Promise<AxiosResponse<TData | TData[], TError>>
-    searchCallback: (...args: unknown[]) => Promise<Response<TData>>
+    searchCallback: ((...args: unknown[]) => Promise<Response<TData>>) | ((...args: unknown[]) => Promise<AxiosResponse<TData[]>>)
     tableColumns: TableColumnsType<TData>
     dropdownItems?: (url: string) => ItemType[]
     throughDetails?: (id: string) => void
-    cardType?: string
     hasCount?: boolean,
     countTitle?: string,
     fetchId?: string
     localStorage?: {activeIcon?: string, pageSize?: string, page?: string, pageCount?: string}
+    cardNotAvatar?: boolean
+    cardData: (data: TData[]) => DataProps[]
+    level?: number
 }
 
 const ListViewer = <TData extends object, TError>(
@@ -40,11 +42,13 @@ const ListViewer = <TData extends object, TError>(
         tableColumns,
         dropdownItems,
         throughDetails,
-        cardType,
         hasCount,
         countTitle,
         localStorage,
-        fetchId
+        fetchId,
+        cardData,
+        cardNotAvatar,
+        level
     }: ListViewerProps<TData, TError>
 ) => {
 
@@ -69,7 +73,8 @@ const ListViewer = <TData extends object, TError>(
         if (searchQuery) {
             searchCallback(searchQuery)
                 .then((resp) => {
-                    if (resp && resp.isSuccess) {
+                    if (resp) {
+                        console.log('Response: ', resp)
                         setContent(resp.data as TData[])
                     }
                 })
@@ -129,7 +134,7 @@ const ListViewer = <TData extends object, TError>(
         {
             label: '',
             value: '1',
-            icon: <LuList />
+            icon: <LuTable />
         },
         {
             label: '',
@@ -156,56 +161,63 @@ const ListViewer = <TData extends object, TError>(
         }).filter((item): item is StudentListDataType => item !== null)
         : content;
 
+    console.log('Courses: ', dataSource)
+
     return(
         <>
-
-            <>
-                <div className='header__area'>
-                    <PageDescription count={dataCount} title={`${countTitle}${dataCount > 1 ? 's' : ''}`} isCount={hasCount !== undefined ? hasCount : true}/>
-                    <div className='flex__end'>
-                        <Input size='middle' placeholder='Recherche...' style={{width: '300px'}} className='search__input' onChange={handleSearchInput} />
-                        <Segmented
-                            options={selectableIcons}
-                            onChange={(value) => selectedIcon(Number.parseInt(value))}
-                            value={activeIcon.toString()}
-                        />
-                    </div>
-                </div>
-                <Responsive gutter={[16, 16]} className={`${activeIcon !== 2 ? 'student__list__datatable' : ''}`}>
-                    {
-                        activeIcon === 2 ? <CardList
-                                content={dataSource as TData[]}
-                                isActive={activeIcon === 2 }
-                                isLoading={isLoading || dataSource === undefined}
-                                dropdownItems={dropdownItems!}
-                                throughDetails={throughDetails!}
-                                cardType={cardType}
-                            />
-                            : <Table
-                                style={{width: '100%'}}
-                                rowKey={'id' as keyof TData}
-                                columns={tableColumns}
-                                dataSource={dataSource as TData[]}
-                                loading={isLoading || dataSource === undefined}
-                                onChange={handleSorterChange}
-                                pagination={false}
-                                scroll={{y: 550}}
-                            />
-                    }
-                </Responsive>
-                <div style={{textAlign: 'right', marginTop: '15px'}}>
-                    <Pagination
-                        current={currentPage}
-                        defaultCurrent={1}
-                        total={dataCount}
-                        pageSize={size}
-                        responsive={true}
-                        onShowSizeChange={handleSizeChange}
-                        onChange={handleNavChange}
-                        disabled={!!(isLoading || searchQuery)}
+            <div className='header__area'>
+                <PageDescription count={dataCount} title={`${countTitle}${dataCount > 1 ? 's' : ''}`} isCount={hasCount !== undefined ? hasCount : true}/>
+                <div className='flex__end'>
+                    <Input
+                        allowClear
+                        size='middle'
+                        placeholder='Recherche...'
+                        style={{width: '300px'}}
+                        className='search__input'
+                        onChange={handleSearchInput}
+                    />
+                    <Segmented
+                        options={selectableIcons}
+                        onChange={(value) => selectedIcon(Number.parseInt(value))}
+                        value={activeIcon.toString()}
                     />
                 </div>
-            </>
+            </div>
+            <Responsive gutter={[16, 16]} className={`${activeIcon !== 2 ? 'student__list__datatable' : ''}`}>
+                {
+                    activeIcon === 2 ? <CardList
+                            content={cardData(dataSource as TData[])}
+                            isActive={activeIcon === 2 }
+                            isLoading={isLoading || dataSource === undefined}
+                            dropdownItems={dropdownItems!}
+                            throughDetails={throughDetails!}
+                            avatarLess={cardNotAvatar}
+                            titleLevel={level as 1}
+                        />
+                        : <Table
+                            style={{width: '100%'}}
+                            rowKey={'id' as keyof TData}
+                            columns={tableColumns}
+                            dataSource={dataSource as TData[]}
+                            loading={isLoading || dataSource === undefined}
+                            onChange={handleSorterChange}
+                            pagination={false}
+                            scroll={{y: 550}}
+                        />
+                }
+            </Responsive>
+            <div style={{textAlign: 'right', marginTop: '15px'}}>
+                <Pagination
+                    current={currentPage}
+                    defaultCurrent={1}
+                    total={dataCount}
+                    pageSize={size}
+                    responsive={true}
+                    onShowSizeChange={handleSizeChange}
+                    onChange={handleNavChange}
+                    disabled={!!(isLoading || searchQuery)}
+                />
+            </div>
         </>
     )
 }

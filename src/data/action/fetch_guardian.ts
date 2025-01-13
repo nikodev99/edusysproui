@@ -6,7 +6,7 @@ import {
     getSearchedEnrolledStudentGuardian
 } from "../request";
 import {Guardian} from "../../entity";
-import {getShortSortOrder} from "../../utils/utils.ts";
+import {getShortSortOrder, setSortFieldName} from "../../utils/utils.ts";
 
 export const fetchEnrolledStudentsGuardians = async (page: number, size: number, sortField?: string, sortOrder?: string) => {
     if (sortField && sortOrder) {
@@ -57,10 +57,10 @@ export const fetchGuardianWithStudents = async (guardianId: string) => {
     return await getGuardianWithStudentsById(guardianId)
 }
 
-const sortedField = (sortField: string) => {
-    switch (sortField) {
+const sortedField = (sortField: string | string[]) => {
+    switch (setSortFieldName(sortField)) {
         case 'lastName':
-            return 'e.student.guardian.lastName'
+            return 'e.student.guardian.personalInfo.lastName'
         default:
             return undefined;
     }

@@ -1,4 +1,4 @@
-import Avatar from "./Avatar.tsx";
+import {Avatar} from "./Avatar.tsx";
 import {Flex} from "antd";
 import {setFirstName} from "../../../utils/utils.ts";
 import {AvatarProps} from "../ui_interfaces.ts";

@@ -1,4 +1,4 @@
-import {getShortSortOrder} from "../../utils/utils.ts";
+import {getShortSortOrder, setSortFieldName} from "../../utils/utils.ts";
 import {
     getAllTeachers,
     getNumberOfStudentTaughtByTeacher,
@@ -59,11 +59,7 @@ export const count = async (teacherId: string) => {
 }
 
 const sortedField = (sortField: string[] | string) => {
-    if (Array.isArray(sortField)) {
-        const fieldName = sortField[1]
-        return getSorted(fieldName)
-    }
-    return getSorted(sortField)
+    return getSorted(setSortFieldName(sortField))
 }
 
 

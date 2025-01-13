@@ -4,12 +4,12 @@ import {text} from "../../utils/text_display.ts";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import ListViewer from "../../components/custom/ListViewer.tsx";
 import {TableColumnsType} from "antd";
-import Avatar from "../../components/ui/layout/Avatar.tsx";
+import {Avatar} from "../../components/ui/layout/Avatar.tsx";
 import {enumToObjectArrayForFiltering, setFirstName} from "../../utils/utils.ts";
 import {Gender} from "../../entity/enums/gender.tsx";
 import {Guardian} from "../../entity";
 import {fetchEnrolledStudentsGuardians, fetchSearchedEnrolledStudentsGuardian} from "../../data";
-import ActionButton from "../../components/ui/layout/ActionButton.tsx";
+import {ActionButton} from "../../components/ui/layout/ActionButton.tsx";
 import {LuEye} from "react-icons/lu";
 import {redirectTo} from "../../context/RedirectContext.ts";
 import {AxiosResponse} from "axios";
@@ -17,6 +17,8 @@ import {Response} from "../../data/action/response.ts";
 import {AiOutlineUserDelete} from "react-icons/ai";
 import {BiSolidUserAccount} from "react-icons/bi";
 import {statusTags} from "../../utils/tsxUtils.tsx";
+import {Status} from "../../entity/enums/status.ts";
+import {DataProps} from "../../utils/interfaces.ts";
 
 const GuardianList = () => {
 
@@ -112,13 +114,25 @@ const GuardianList = () => {
             //TODO getting all the grade distinct classes and filter by grade
         },
         {
-            title: "Action",
+            title: '',
             dataIndex: 'id',
             key: 'action',
             align: 'right',
             render: (text) => (<ActionButton items={getItems(text)} />)
         }
     ]
+
+    const cardData = (data: Guardian[]) => {
+        return data?.map(c => ({
+            id: c.id,
+            lastName: c.personalInfo?.lastName,
+            firstName: c.personalInfo?.firstName,
+            gender: c.personalInfo?.gender,
+            reference: c.personalInfo?.emailId,
+            tag: statusTags(c.personalInfo?.status as Status, c.personalInfo?.gender === Gender.FEMME),
+            description: []
+        })) as DataProps[]
+    }
 
     return(
         <>
@@ -131,7 +145,7 @@ const GuardianList = () => {
                 throughDetails={throughDetails}
                 countTitle='Liste de Tuteur'
                 hasCount={false}
-                cardType='guardian'
+                cardData={cardData}
                 fetchId='guardian-list'
             />
         </>

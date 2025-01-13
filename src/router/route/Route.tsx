@@ -12,6 +12,9 @@ import GuardianView from "../../pages/guardian/GuardianView.tsx";
 import AddTeacher from "../../pages/teacher/AddTeacher.tsx";
 import TeacherView from "../../pages/teacher/TeacherView.tsx";
 import {Organization} from "../../pages/setting/Organization.tsx";
+import ClasseSubjectLists from "../../pages/classe_subject/ClasseSubjectLists.tsx";
+import ClasseView from "../../pages/classe_subject/ClasseView.tsx";
+import SubjectView from "../../pages/classe_subject/SubjectView.tsx";
 
 export const Route = createBrowserRouter([
     {
@@ -46,6 +49,14 @@ export const Route = createBrowserRouter([
                 children: [
                     { path: '', element: <GuardianList /> },
                     { path: ':id', element: <GuardianView /> }
+                ]
+            },
+            {
+                path: 'classes-and-subjects',
+                children: [
+                    {path: '', element: <ClasseSubjectLists />},
+                    {path: 'classe/:id', element: <ClasseView />},
+                    {path: 'subject/:id', element: <SubjectView />},
                 ]
             },
             {

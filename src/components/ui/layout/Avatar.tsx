@@ -11,7 +11,7 @@ interface AvatarProps {
     onClick?: () => void
 }
 
-const Avatar = ({image, firstText, lastText, size, setColor, onClick}: AvatarProps) => {
+export const Avatar = ({image, firstText, lastText, size, setColor, onClick}: AvatarProps) => {
     
     const color: string = chooseColor(firstText as string) as string
 
@@ -32,5 +32,3 @@ const Avatar = ({image, firstText, lastText, size, setColor, onClick}: AvatarPro
         </>
     )
 }
-
-export default Avatar

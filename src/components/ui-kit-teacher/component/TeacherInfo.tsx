@@ -38,6 +38,7 @@ import {Assignment} from "../../../entity/domain/assignment.ts";
 import {getSomeTeacherAssignments} from "../../../data/repository/assignmentRepository.ts";
 import {IconText} from "../../../utils/tsxUtils.tsx";
 import {LuCalendarDays, LuClock, LuClock9} from "react-icons/lu";
+import {useGlobalStore} from "../../../core/global/store.ts";
 
 type TeacherInfo = InfoPageProps<Teacher>
 
@@ -211,7 +212,8 @@ const DepartmentInfo = ({infoData, color}: TeacherInfo) => {
 
     const [departments, setDepartments] = useState<Department[] | undefined>()
     //TODO the value of the primary department code should be in the settings
-    const primary = useRef<string | undefined>("DPP")
+    const primaryDepartmentCode = useGlobalStore.use.primaryDepartment()
+    const primary = useRef<string | undefined>(primaryDepartmentCode)
     const fetch = useRawFetch()
 
     useEffect(() => {

@@ -19,6 +19,7 @@ const createSelectors = <S extends UseBoundStore<StoreApi<object>>>(
 
 export const useGlobalStore = createSelectors(create(combine({
     academicYear: '2024-2025',
+    primaryDepartment: 'DPP'
 }, (set) => ({
     updateAcademicYear (academicYear: string) {
         set({academicYear: academicYear});

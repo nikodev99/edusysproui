@@ -5,19 +5,21 @@ import {redirectTo} from "../../context/RedirectContext.ts";
 import {LuEye, LuMoreVertical} from "react-icons/lu";
 import {BiSolidUserAccount} from "react-icons/bi";
 import {AiOutlineUserDelete, AiOutlineUsergroupAdd} from "react-icons/ai";
-import {Flex, TableColumnsType, Tag} from "antd";
+import {Divider, Flex, TableColumnsType, Tag} from "antd";
 import {Classe, Course, Teacher} from "../../entity";
-import Avatar from "../../components/ui/layout/Avatar.tsx";
+import {Avatar} from "../../components/ui/layout/Avatar.tsx";
 import {enumToObjectArrayForFiltering, getAge, setFirstName} from "../../utils/utils.ts";
 import {Gender} from "../../entity/enums/gender.tsx";
 import {statusTags} from "../../utils/tsxUtils.tsx";
-import ActionButton from "../../components/ui/layout/ActionButton.tsx";
+import {ActionButton} from "../../components/ui/layout/ActionButton.tsx";
 import {ListPageHierarchy} from "../../components/custom/ListPageHierarchy.tsx";
 import ListViewer from "../../components/custom/ListViewer.tsx";
 import {fetchSearchedTeachers, fetchTeachers} from "../../data";
 import {AxiosResponse} from "axios";
 import {Response} from "../../data/action/response.ts";
 import {useRef} from "react";
+import {Status} from "../../entity/enums/status.ts";
+import {DataProps} from "../../utils/interfaces.ts";
 
 const TeacherList = () => {
 
@@ -60,6 +62,27 @@ const TeacherList = () => {
                 danger: true
             }
         ]
+    }
+
+    const cardData = (data: Teacher[]) => {
+        return data?.map(t => ({
+            id: t.id,
+            lastName: t?.personalInfo?.lastName,
+            firstName: t?.personalInfo?.firstName,
+            gender: t?.personalInfo?.gender,
+            reference: t?.personalInfo?.emailId,
+            tag: statusTags(t?.personalInfo?.status as Status, t?.personalInfo?.gender === Gender.FEMME),
+            description: <>
+                <Divider style={{fontSize: '12px'}}>Cours ou classes</Divider>
+                <Flex gap={2} wrap justify={"center"}>
+                    {(t.courses && t.courses.length > 0
+                        ? t.courses.map((tcc) => tcc?.course).filter(Boolean)
+                        : t.classes?.map((c) => c?.name).filter(Boolean) ?? []).map((item, index) => (
+                        <Tag key={index}>{item}</Tag>
+                    ))}
+                </Flex>
+            </>
+        })) as DataProps[]
     }
 
     const columns: TableColumnsType<Teacher> = [
@@ -179,7 +202,7 @@ const TeacherList = () => {
                 dropdownItems={getItems}
                 throughDetails={throughDetails}
                 countTitle={text.teacher.label}
-                cardType='teacher'
+                cardData={cardData}
                 localStorage={{
                     activeIcon: 'teacherActiveIcon',
                     pageSize: 'teacherPageSize',

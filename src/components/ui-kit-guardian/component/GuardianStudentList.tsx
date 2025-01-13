@@ -3,7 +3,7 @@ import './student_card.scss'
 import Responsive from "../../ui/layout/Responsive.tsx";
 import Grid from "../../ui/layout/Grid.tsx";
 import {bloodLabel, fDate} from "../../../utils/utils.ts";
-import Avatar from "../../ui/layout/Avatar.tsx";
+import {Avatar} from "../../ui/layout/Avatar.tsx";
 import {QRCode} from "antd";
 import {text} from "../../../utils/text_display.ts";
 import {Link} from "react-router-dom";

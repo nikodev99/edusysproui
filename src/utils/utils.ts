@@ -391,6 +391,12 @@ export const getShortSortOrder = (order: string | undefined): 'asc' | 'desc' | u
     }
 };
 
+export const setSortFieldName = (sortField: string | string[])=>  {
+    return Array.isArray(sortField)
+        ? sortField[sortField.length - 1]
+        : sortField
+}
+
 export const transformEvents = (apiEvents: ApiEvent[]) => {
     const getWeekRange = (date: Date) => {
         const day = date.getDay()

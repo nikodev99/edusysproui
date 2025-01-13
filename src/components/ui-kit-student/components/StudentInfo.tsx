@@ -12,7 +12,7 @@ import {Gender} from "../../../entity/enums/gender.tsx";
 import PanelTable from "../../ui/layout/PanelTable.tsx";
 import {SectionType} from "../../../entity/enums/section.ts";
 import {fetchStudentClassmatesRandomly} from "../../../data/action/fetch_student.ts";
-import Avatar from "../../ui/layout/Avatar.tsx";
+import {Avatar} from "../../ui/layout/Avatar.tsx";
 import {text} from "../../../utils/text_display.ts";
 import {BloodType} from "../../../entity/enums/bloodType.ts";
 import {MdHealthAndSafety} from "react-icons/md";

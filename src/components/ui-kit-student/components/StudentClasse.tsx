@@ -6,7 +6,7 @@ import {Enrollment} from "../../../entity";
 import {setFirstName} from "../../../utils/utils.ts";
 import {useFetch} from "../../../hooks/useFetch.ts";
 import {getAllStudentClassmate} from "../../../data/repository/studentRepository.ts";
-import Avatar from "../../ui/layout/Avatar.tsx";
+import {Avatar} from "../../ui/layout/Avatar.tsx";
 import {redirectTo} from "../../../context/RedirectContext.ts";
 import {text} from "../../../utils/text_display.ts";
 import {LoadMoreList} from "../../ui/layout/LoadMoreList.tsx";

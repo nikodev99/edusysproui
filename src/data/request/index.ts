@@ -45,7 +45,7 @@ export {
 } from '../repository/teacherRepository'
 
 export {
-    getAllCourses
+    getAllBasicCourses
 } from '../repository/courseRepository.ts'
 
 export {

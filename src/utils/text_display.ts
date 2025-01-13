@@ -41,6 +41,33 @@ export const text = {
             }
         }
     },
+    cc: {
+        label: 'Classes & Matières',
+        href: '/classes-and-subjects',
+        group: {
+            classe: {
+                add: {
+                    label: 'Nouvelle Classe',
+                    href: '/classes-and-subjects/classe/new'
+                },
+                view: {
+                    label: 'Voir',
+                    href: '/classes-and-subjects/classe/'
+                },
+            },
+            course: {
+                view: {
+                    label: 'Voir la Matière',
+                    href: '/classes-and-subjects/subject/'
+                },
+                add: {
+                    label: 'Nouvelle Matière',
+                    href: '/classes-and-subjects/subject/new'
+                }
+            },
+
+        }
+    },
     schoolID: '81148a1b-bdb9-4be1-9efd-fdf4106341d6',
     http: 'http://localhost:5173'
 }

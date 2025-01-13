@@ -180,6 +180,17 @@ export interface StudentListDataType {
     image: string
 }
 
+export interface DataProps {
+    id?: string | number
+    lastName?: string
+    firstName?: string
+    gender?: Gender
+    image?: string
+    reference?: string
+    tag?: string | ReactNode
+    description?: string | ReactNode | string[] | ReactNode[]
+}
+
 export interface ExamData {
     examId?: number
     examDate: string;

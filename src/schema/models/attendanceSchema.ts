@@ -2,14 +2,14 @@ import {z} from "zod";
 import {AttendanceStatus} from "../../entity/enums/attendanceStatus.ts";
 import {academicYearSchema} from "./academicYearSchema.ts";
 import {studentSchema} from "./studentSchema.ts";
-import {classeSchema} from "./classeSchema.ts";
+import {classeSchemaMerge} from "./classeSchema.ts";
 import dayjs from "dayjs";
 
 export const attendanceSchema = z.object({
     id: z.number().optional(),
     academicYear: academicYearSchema.optional(),
     student: studentSchema.optional(),
-    classe: classeSchema.optional(),
+    classe: classeSchemaMerge.optional(),
     attendanceDate: z.preprocess(
         (arg) => {
             if (dayjs.isDayjs(arg)) {

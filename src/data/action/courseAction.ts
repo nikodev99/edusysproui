@@ -37,6 +37,14 @@ const sortedField = (sortField: string | string[]) => {
     switch (setSortFieldName(sortField)) {
         case 'course':
             return 'c.course'
+        case 'abbr':
+            return 'c.abbr'
+        case 'name':
+            return 'c.department.name'
+        case 'code':
+            return 'c.department.code'
+        case 'createdAt':
+            return 'c.createdAt'
         default:
             return undefined;
     }

@@ -1,17 +1,17 @@
 import {TableColumnsType, Tag} from "antd";
-import {ActionButton} from "../ui/layout/ActionButton.tsx";
-import {Classe} from "../../entity";
+import {ActionButton} from "../../ui/layout/ActionButton.tsx";
+import {Classe} from "../../../entity";
 import {LuDot, LuEye} from "react-icons/lu";
-import ListViewer from "../custom/ListViewer.tsx";
-import {getAllSearchClasses} from "../../data/repository/classeRepository.ts";
-import {redirectTo} from "../../context/RedirectContext.ts";
-import {text} from "../../utils/text_display.ts";
+import ListViewer from "../../custom/ListViewer.tsx";
+import {getAllSearchClasses} from "../../../data/repository/classeRepository.ts";
+import {redirectTo} from "../../../context/RedirectContext.ts";
+import {text} from "../../../utils/text_display.ts";
 import {AxiosResponse} from "axios";
-import {getAllSchoolClasses} from "../../data/action/fetch_classe.ts";
-import {fDatetime} from "../../utils/utils.ts";
-import {DataProps} from "../../utils/interfaces.ts";
+import {getAllSchoolClasses} from "../../../data/action/classeAction.ts";
+import {fDatetime} from "../../../utils/utils.ts";
+import {DataProps} from "../../../utils/interfaces.ts";
 
-export const ClasseList = () => {
+export const ClasseList = ({condition}: {condition?: boolean}) => {
 
     const throughDetails = (link: string) => {
         redirectTo(`${text.cc.group.classe.view.href}${link}`)
@@ -100,6 +100,7 @@ export const ClasseList = () => {
             localStorage={{
                 activeIcon: 'classeActiveIcon'
             }}
+            refetchCondition={condition}
         />
     )
 }

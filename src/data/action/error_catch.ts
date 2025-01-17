@@ -1,4 +1,5 @@
 import {isAxiosError} from "../axiosConfig.ts";
+import {isString} from "../../utils/utils.ts";
 
 export const ErrorCatch = (err: unknown) => {
     if (isAxiosError(err)) {
@@ -17,5 +18,19 @@ export const ErrorCatch = (err: unknown) => {
             isSuccess: false,
             error: `Unexpected error occurred ${err}`
         };
+    }
+}
+
+export const catchError = (err: unknown) => {
+    if (isAxiosError(err)) {
+        if (err.response && err.response?.status === 400) {
+            if (err?.response?.data && isString(err?.response?.data)) {
+                return err.response?.data
+            }else {
+                return err?.message
+            }
+        }else {
+            return err.message
+        }
     }
 }

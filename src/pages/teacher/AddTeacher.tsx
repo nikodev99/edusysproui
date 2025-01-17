@@ -5,7 +5,7 @@ import {useForm} from "react-hook-form";
 import {AddressOwner, IndividualType} from "../../core/shared/sharedEnums.ts";
 import AddressForm from "../../components/forms/AddressForm.tsx";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {ClasseSchema, CourseSchema, TeacherSchema, teacherSchema} from "../../schema";
+import {ClasseSchemaMerge, CourseSchemaMerge, TeacherSchema, teacherSchema} from "../../schema";
 import {AddStepForm} from "../../components/custom/AddStepForm.tsx";
 import {customDot} from "../../utils/tsxUtils.tsx";
 import {redirectTo} from "../../context/RedirectContext.ts";
@@ -39,9 +39,9 @@ const AddTeacher = () => {
     const [validationTriggered, setValidationTriggered] = useState(false)
     const [showMaidenName, setShowMaidenName] = useState(false)
     const [image, setImage] = useState<string | undefined>(undefined)
-    const [classes, setClasses] = useState<ClasseSchema[]>([])
+    const [classes, setClasses] = useState<ClasseSchemaMerge[]>([])
     const [defaultClasses, setDefaultClasses] = useState<number[]>()
-    const [courses, setCourses] = useState<CourseSchema[]>([])
+    const [courses, setCourses] = useState<CourseSchemaMerge[]>([])
     const [defaultCourses, setDefaultCourses] = useState<number[]>()
     const [isPending, startTransition] = useTransition()
 
@@ -55,7 +55,7 @@ const AddTeacher = () => {
 
     const formData = watch()
 
-    const handleTeacherClassCourse = ({ courses, classes }: { courses: CourseSchema[], classes: ClasseSchema[] }) => {
+    const handleTeacherClassCourse = ({ courses, classes }: { courses: CourseSchemaMerge[], classes: ClasseSchemaMerge[] }) => {
         setValue('classes', classes, {
             shouldValidate: true,
         })
@@ -130,7 +130,7 @@ const AddTeacher = () => {
         }
     }
 
-    const handleClassesAndCourses = ({ courses, classes }: { courses?: CourseSchema[], classes?: ClasseSchema[] }) => {
+    const handleClassesAndCourses = ({ courses, classes }: { courses?: CourseSchemaMerge[], classes?: ClasseSchemaMerge[] }) => {
         setClasses(classes!)
         setCourses(courses ? courses : [])
     }
@@ -216,6 +216,7 @@ const AddTeacher = () => {
             isPending={isLoading || isPending}
             stepsDots={customDot}
             currentNumber={5}
+            follow="Souhaitez vous continuer à ajouter "
         />
     )
 }

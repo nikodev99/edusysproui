@@ -1,6 +1,6 @@
 import {z} from "zod";
-import {courseSchema} from "./models/courseSchema.ts";
-import {classeSchema} from "./models/classeSchema.ts";
+import {courseSchema, courseSchemaMerge} from "./models/courseSchema.ts";
+import {classeSchema, classeSchemaMerge} from "./models/classeSchema.ts";
 import {guardianSchema} from "./models/guardianSchema.ts";
 import {enrollmentSchema} from "./models/enrollmentSchema.ts";
 import {studentSchema} from "./models/studentSchema.ts";
@@ -10,8 +10,10 @@ import {teacherSchema} from "./models/teacherSchema.ts";
 import {individualSchema} from "./models/individualSchema.ts";
 
 export {enrollmentSchema} from './models/enrollmentSchema'
-export {classeSchema} from './models/classeSchema'
-export {courseSchema} from './models/courseSchema.ts'
+export {classeSchemaMerge, classeSchema} from './models/classeSchema'
+export {courseSchemaMerge, courseSchema} from './models/courseSchema.ts'
+export {gradeSchemaMerge} from './models/gradeSchema.ts'
+export {departmentSchemaMerge} from './models/departmentSchema.ts'
 export {schoolSchema} from './models/schoolSchema'
 export {guardianSchema} from './models/guardianSchema'
 export {studentSchema} from './models/studentSchema'
@@ -21,6 +23,8 @@ export {healthSchema} from './models/healthSchema'
 export {individualSchema} from './models/individualSchema.ts'
 
 export type CourseSchema = z.infer<typeof courseSchema>
+export type CourseSchemaMerge = z.infer<typeof courseSchemaMerge>
+export type ClasseSchemaMerge = z.infer<typeof classeSchemaMerge>
 export type ClasseSchema = z.infer<typeof classeSchema>
 export type GuardianSchema = z.infer<typeof guardianSchema>
 export type EnrollmentSchema = z.infer<typeof enrollmentSchema>

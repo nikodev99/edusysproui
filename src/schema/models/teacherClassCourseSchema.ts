@@ -1,8 +1,8 @@
 import {z} from "zod";
-import {courseSchema} from "./courseSchema.ts";
-import {classeSchema} from "./classeSchema.ts";
+import {courseSchemaMerge} from "./courseSchema.ts";
+import {classeSchemaMerge} from "./classeSchema.ts";
 
 export const teacherClassCourseSchema = z.object({
-    course: courseSchema.optional(),
-    classe: classeSchema
+    course: courseSchemaMerge.optional(),
+    classe: classeSchemaMerge
 })

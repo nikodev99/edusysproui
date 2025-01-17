@@ -26,6 +26,10 @@
 
 }
 
+.ant-btn-color-primary {
+  box-shadow: none;
+}
+
 .add__btn {
   @include flex-center;
 }

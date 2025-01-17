@@ -4,6 +4,10 @@ import {apiClient} from "../axiosConfig.ts";
 /**
  * TODO add to the setting how to find primary departments if it exists and use this method to find it
  */
+export const getDepartmentBasics = () => {
+    return apiClient.get<Department[]>(`/department/basics`)
+}
+
 export const getPrimaryDepartment = (primary?: string) => {
     return apiClient.get<Department>(`/department`, {
         params: {

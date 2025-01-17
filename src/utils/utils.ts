@@ -28,6 +28,8 @@ export const createElement = (htmlElement: string, parentNode: Element|null, att
     parentNode?.appendChild(element)
 }
 
+export const isString = (value: unknown): value is string => typeof value === 'string'
+
 export const connectToElement = (connector: string, attributes?: {[key: string]: string}) => {
     const element = document.querySelector(connector);
     if (element) {

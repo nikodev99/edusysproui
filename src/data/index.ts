@@ -1,6 +1,6 @@
 export {addStudent, updateStudent} from './action/enroll_student'
 
-export {findClassesBasicValue} from './action/fetch_classe'
+export {findClassesBasicValue} from './action/classeAction.ts'
 
 export {
     fetchEnrolledStudentsGuardians,
@@ -18,6 +18,6 @@ export {
 
 export {fetchTeachers, fetchSearchedTeachers, fetchTeacherById, count} from './action/fetch_teacher.ts'
 
-export {fetchAllCourses} from './action/fetch_course.ts'
+export {fetchAllCourses} from './action/courseAction.ts'
 
 export {addTeacher} from './action/add_teacher.ts'

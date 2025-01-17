@@ -1,6 +1,6 @@
 import {z} from "zod";
-import {classeSchema} from "./classeSchema.ts";
-import {courseSchema} from "./courseSchema.ts";
+import {classeSchemaMerge} from "./classeSchema.ts";
+import {courseSchemaMerge} from "./courseSchema.ts";
 import dayjs from "dayjs";
 import {scoreSchema} from "./scoreSchema.ts";
 
@@ -8,8 +8,8 @@ export const assignmentSchema = z.object({
     id: z.bigint().optional(),
     semester: z.string().optional(),
     preparedBy: z.string().optional(),
-    classe: classeSchema,
-    subject: courseSchema.optional(),
+    classe: classeSchemaMerge,
+    subject: courseSchemaMerge.optional(),
     examName: z.string(),
     examDate: z.preprocess(
         (arg) => {

@@ -26,6 +26,7 @@ interface AddStepsProps<TFieldValues extends FieldValues> {
     isPending: boolean
     currentNumber: number
     stepsDots?: boolean | ((iconDot: ReactNode, {index, status, title, description}: never) => ReactNode)
+    follow?: ReactNode
 }
 
 const AddStepForm = <TFieldValues extends FieldValues>(
@@ -40,7 +41,8 @@ const AddStepForm = <TFieldValues extends FieldValues>(
         messages,
         isPending,
         stepsDots,
-        currentNumber
+        currentNumber,
+        follow
     }: AddStepsProps<TFieldValues>
 ) => {
 
@@ -83,7 +85,7 @@ const AddStepForm = <TFieldValues extends FieldValues>(
             })
             Modal.confirm({
                 title: 'Poursuivre ?',
-                content: 'Souhaitez vous vraiment poursuivre avec l\'inscription ?',
+                content: follow ?? 'Souhaitez vous vraiment poursuivre avec l\'inscription ?',
                 okText: 'Confirmer',
                 cancelText: 'Annuler',
                 onOk: () => handleSubmit(onSubmit)()

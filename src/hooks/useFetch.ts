@@ -25,6 +25,10 @@ export const useRawFetch = <T extends object>() => {
     }, []);
 };
 
+export const fetchFunc = <T extends object>(callback: (...args: any[]) => Promise<AxiosResponse<T | T[]>>, params: any[] = []) => {
+    return customFetch(callback, params);
+}
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const customFetch = async <T>(
     callback: (...args: any[]) => Promise<AxiosResponse<T | T[]>>,

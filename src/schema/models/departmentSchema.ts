@@ -17,3 +17,7 @@ export const departmentSchema: ZodType = z.object({
         z.array(z.number()),
     ]).optional()
 })
+
+export const departmentSchemaMerge = z.object({
+    id: z.number({required_error: 'Le department est requis'}),
+})

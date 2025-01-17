@@ -16,3 +16,7 @@ export const gradeSchema = z.object({
         z.array(z.number()),
     ]).optional()
 })
+
+export const gradeSchemaMerge = z.object({
+    id: z.number({required_error: 'Le grade est requis'}),
+})

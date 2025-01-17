@@ -1,11 +1,11 @@
 import {z} from "zod";
 import dayjs from "dayjs";
 import {schoolSchema} from "./schoolSchema.ts";
-import {courseSchema} from "./courseSchema.ts";
-import {classeSchema} from "./classeSchema.ts";
+import {classeSchemaMerge} from "./classeSchema.ts";
 import {individualSchema} from "./individualSchema.ts";
+import {courseSchemaMerge} from "./courseSchema.ts";
 
-export const teacherSchema = z.object({
+export const teacherSchema = z.lazy(() => z.object({
     personalInfo: individualSchema.extend({
         status: z.union([z.string({required_error: "Le status est requis"}), z.number({required_error: "Le status est requis"})]),
         birthDate: z.preprocess(
@@ -39,8 +39,8 @@ export const teacherSchema = z.object({
             return undefined
         }, z.date().refine(date => !isNaN(date.getTime()), {message: 'Date invalide'})
     ).optional(),
-    courses: z.array(courseSchema).optional(),
-    classes: z.array(classeSchema, {required_error: "La(es) classe(s) de l'enseignants est (sont) requis"}),
+    courses: z.array(courseSchemaMerge).optional(),
+    classes: z.array(classeSchemaMerge, {required_error: "La(es) classe(s) de l'enseignants est (sont) requis"}),
     salaryByHour: z.number(),
     school: schoolSchema.optional(),
-})
+}))

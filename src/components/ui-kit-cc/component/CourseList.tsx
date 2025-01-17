@@ -1,18 +1,18 @@
-import {redirectTo} from "../../context/RedirectContext.ts";
-import {text} from "../../utils/text_display.ts";
+import {redirectTo} from "../../../context/RedirectContext.ts";
+import {text} from "../../../utils/text_display.ts";
 import {LuEye} from "react-icons/lu";
 import {TableColumnsType, Tag} from "antd";
-import {Course} from "../../entity";
-import {ActionButton} from "../ui/layout/ActionButton.tsx";
-import ListViewer from "../custom/ListViewer.tsx";
-import {getAllCoursesSearch} from "../../data/repository/courseRepository.ts";
-import {getAllSchoolCourses} from "../../data/action/fetch_course.ts";
+import {Course} from "../../../entity";
+import {ActionButton} from "../../ui/layout/ActionButton.tsx";
+import ListViewer from "../../custom/ListViewer.tsx";
+import {getAllCoursesSearch} from "../../../data/repository/courseRepository.ts";
+import {getAllSchoolCourses} from "../../../data/action/courseAction.ts";
 import {AxiosResponse} from "axios";
-import {DataProps} from "../../utils/interfaces.ts";
+import {DataProps} from "../../../utils/interfaces.ts";
 import {AiOutlineEllipsis} from "react-icons/ai";
-import {fDatetime} from "../../utils/utils.ts";
+import {fDatetime} from "../../../utils/utils.ts";
 
-export const CourseList = () => {
+export const CourseList = ({condition}: {condition?: boolean}) => {
 
     const throughDetails = (link: string) => {
         redirectTo(`${text.cc.group.course.view.href}${link}`)
@@ -39,6 +39,8 @@ export const CourseList = () => {
             key: 'course',
             align: 'left',
             sorter: true,
+            showSorterTooltip: false,
+            width: '25%',
             render: (text) => <p>{text?.toUpperCase()}</p>
         },
         {
@@ -47,6 +49,7 @@ export const CourseList = () => {
             key: 'abbr',
             align: 'center',
             sorter: true,
+            showSorterTooltip: false,
             render: (text) => <Tag>{text?.toUpperCase()}</Tag>
         },
         {
@@ -54,12 +57,16 @@ export const CourseList = () => {
             dataIndex: ['department', 'name'],
             key: 'department',
             align: 'center',
+            sorter: true,
+            showSorterTooltip: false,
         },
         {
             title: "Discipline",
             dataIndex: ['department', 'code'],
             key: 'code',
             align: 'center',
+            sorter: true,
+            showSorterTooltip: false,
             render: text => <Tag color='cyan'>{text}</Tag>
         },
         {
@@ -67,6 +74,8 @@ export const CourseList = () => {
             dataIndex: 'createdAt',
             key: 'createdAt',
             align: 'right',
+            sorter: true,
+            showSorterTooltip: false,
             render: text => fDatetime(text, true)
         },
         {
@@ -104,6 +113,7 @@ export const CourseList = () => {
             localStorage={{
                 activeIcon: 'courseActiveIcon'
             }}
+            refetchCondition={condition}
         />
     )
 }

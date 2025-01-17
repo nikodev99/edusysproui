@@ -19,7 +19,7 @@
     "@types/react-big-calendar": "^1.16.0",
     "@uploadcare/blocks": "^0.42.1",
     "@uploadcare/react-uploader": "^0.5.4",
-    "antd": "^5.20.6",
+    "antd": "^5.23.1",
     "antd-img-crop": "^4.22.0",
     "axios": "^1.7.8",
     "country-flag-icons": "^1.5.13",

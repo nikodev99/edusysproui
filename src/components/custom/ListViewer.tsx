@@ -1,4 +1,4 @@
-import {ChangeEvent, useEffect, useState} from "react";
+import {ChangeEvent, useEffect, useLayoutEffect, useState} from "react";
 import {
     Input,
     Pagination, Segmented,
@@ -33,6 +33,7 @@ interface ListViewerProps<TData extends object, TError> {
     cardNotAvatar?: boolean
     cardData: (data: TData[]) => DataProps[]
     level?: number
+    refetchCondition?: boolean
 }
 
 const ListViewer = <TData extends object, TError>(
@@ -48,7 +49,8 @@ const ListViewer = <TData extends object, TError>(
         fetchId,
         cardData,
         cardNotAvatar,
-        level
+        level,
+        refetchCondition
     }: ListViewerProps<TData, TError>
 ) => {
 
@@ -92,6 +94,10 @@ const ListViewer = <TData extends object, TError>(
 
     }, [data, isLoading, pageCount, refetch, searchCallback, searchQuery, size, sortField, sortOrder]);
 
+    useLayoutEffect(() => {
+        if(refetchCondition) refetch()
+    }, [refetch, refetchCondition]);
+    
     if (error) {
         return <PageError />
     }

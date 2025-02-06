@@ -51,13 +51,13 @@ export const text = {
                     href: '/classes-and-subjects/classe/new'
                 },
                 view: {
-                    label: 'Voir',
+                    label: 'Afficher',
                     href: '/classes-and-subjects/classe/'
                 },
             },
             course: {
                 view: {
-                    label: 'Voir la Matière',
+                    label: 'afficher la Matière',
                     href: '/classes-and-subjects/subject/'
                 },
                 add: {

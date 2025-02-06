@@ -23,6 +23,7 @@ import {PunishmentType} from "../entity/enums/punishmentType.ts";
 import {PunishmentStatus} from "../entity/enums/punishmentStatus.ts";
 import {Day} from "../entity/enums/day.ts";
 import {AxiosResponse} from "axios";
+import IntrinsicElements = React.JSX.IntrinsicElements;
 
 export interface Metadata {
     title: string
@@ -239,6 +240,7 @@ export interface InfoPageProps<T extends object> {
     dataKey: string
     seeMore?: (key: string) => void
     color?: string
+    viewLink?: string
 }
 
 export interface EditProps<TData extends object> {
@@ -252,6 +254,7 @@ export type RedirectFunction = (link: string) => void;
 export type Moment = Date | number[] | string
 export type Color = string
 export type Counted = Record<string, number>
+export type GenderCounted = {gender: Gender, count: number, ageAverage: number}
 export type CountType = {classe?: string, count?: number};
 
 export type WidgetItem = {
@@ -300,3 +303,20 @@ export type CalendarEvent = CalendarProps['events']
 export type EventProps = Event
 
 export type TabFunction<T> = (teacherId: string, ids: IDS, pageable?: Pageable) => Promise<AxiosResponse<T>>
+
+export type DateExplose = {
+    day: number
+    month: number
+    year: number
+    hour?: number
+    minute?: number
+    second?: number
+}
+
+export interface MasonryProps {
+    columns?: number
+    gap?: number
+    itemTag?: keyof IntrinsicElements
+    sequential?: boolean
+    children: ReactNode[]
+}

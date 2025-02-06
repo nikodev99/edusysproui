@@ -7,7 +7,7 @@ import AddressForm from "../../components/forms/AddressForm.tsx";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {ClasseSchemaMerge, CourseSchemaMerge, TeacherSchema, teacherSchema} from "../../schema";
 import {AddStepForm} from "../../components/custom/AddStepForm.tsx";
-import {customDot} from "../../utils/tsxUtils.tsx";
+import {CustomDot} from "../../utils/tsxUtils.tsx";
 import {redirectTo} from "../../context/RedirectContext.ts";
 import {TeacherForm} from "../../components/forms/TeacherForm.tsx";
 import {Gender} from "../../entity/enums/gender.tsx";
@@ -106,7 +106,7 @@ const AddTeacher = () => {
                             classes: classes,
                             courses: courses
                         })
-                        setDefaultCourses(courses ? courses.map(c => c.id) : [])
+                        setDefaultCourses((courses ? courses.map(c => c.id) : []) as number[])
                         setDefaultClasses(classes.map(c => c.id))
                     }
                     validate(classes.length != 0, current)
@@ -214,7 +214,7 @@ const AddTeacher = () => {
             steps={steps}
             messages={{success: successMessage, error: errorMessage}}
             isPending={isLoading || isPending}
-            stepsDots={customDot}
+            stepsDots={CustomDot}
             currentNumber={5}
             follow="Souhaitez vous continuer à ajouter "
         />

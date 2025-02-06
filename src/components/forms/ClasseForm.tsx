@@ -9,7 +9,7 @@ import {getAllSchoolGrades} from "../../data/repository/gradeRepository.ts";
 import {SectionType} from "../../entity/enums/section.ts";
 import {FormConfig} from "../../config/FormConfig.ts";
 
-export const AddClasseForm = <T extends FieldValues>(
+export const ClasseForm = <T extends FieldValues>(
     {control, data, errors}: FormContentProps<T, Classe>
 ) => {
     const [grades, setGrades] = useState<Grade[] | null>(null)

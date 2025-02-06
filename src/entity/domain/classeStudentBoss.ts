@@ -4,8 +4,8 @@ import {Student} from "./student.ts";
 export interface ClasseStudentBoss {
     id?: number
     academicYear?: AcademicYear
-    principalTeacher?: Student
+    principalStudent?: Student
     current?: boolean
-    startPeriod?: Date
-    endPeriod?: Date
+    startPeriod?: Date | number[]
+    endPeriod?:  | number[]
 }

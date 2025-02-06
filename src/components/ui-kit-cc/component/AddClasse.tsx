@@ -1,5 +1,5 @@
 import {ModalProps} from "antd";
-import {AddClasseForm} from "../../forms/AddClasseForm.tsx";
+import {ClasseForm} from "../../forms/ClasseForm.tsx";
 import {useForm} from "react-hook-form";
 import {classeSchema, ClasseSchema} from "../../../schema";
 import {zodResolver} from "@hookform/resolvers/zod";
@@ -17,7 +17,7 @@ export const AddClasse = ({open, onCancel}: ModalProps) => {
     return(
         <InsertSchema
             data={classeSchema}
-            customForm={<AddClasseForm control={control} errors={errors} />}
+            customForm={<ClasseForm control={control} errors={errors} />}
             postFunc={addClasse}
             open={open}
             onCancel={onCancel}

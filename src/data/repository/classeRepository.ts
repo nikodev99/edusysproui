@@ -13,10 +13,6 @@ export const addClasse = (data: ClasseSchema): Promise<AxiosResponse<ClasseSchem
     })
 }
 
-export const getClassesBasicValues = (): Promise<AxiosResponse<Classe[]>> => {
-    return apiClient.get<Classe[]>("/classes/basic");
-}
-
 export const getAllClasses = (page: Pageable, sortCriteria?: string) => {
     return apiClient.get<Classe[]>("/classes", {
         params: {
@@ -33,4 +29,16 @@ export const getAllSearchClasses = (classeName: string): Promise<AxiosResponse<C
             q: classeName
         }
     });
+}
+
+export const getClasse = (classeId: number, academicYear: string) => {
+    return apiClient.get<Classe>(`/classes/${classeId}`, {
+        params: {
+            academicYear: academicYear
+        }
+    })
+}
+
+export const getClassesBasicValues = (): Promise<AxiosResponse<Classe[]>> => {
+    return apiClient.get<Classe[]>("/classes/basic");
 }

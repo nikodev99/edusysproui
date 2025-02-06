@@ -7,6 +7,7 @@ import {ItemType} from "antd/es/menu/interface";
 import {Gender, selectedGenderIcon} from "../../entity/enums/gender.tsx";
 import {AiOutlineMore} from "react-icons/ai";
 import {DataProps} from "../../utils/interfaces.ts";
+import {SuperWord} from "../../utils/tsxUtils.tsx";
 
 interface CardListProps {
     content: DataProps[]
@@ -53,7 +54,7 @@ const CardList = (
                                     </div>}
                                     <div className='col__name'>
                                         <Title level={titleLevel ?? 4} onClick={() => throughDetails(c?.id as string)}>
-                                            {c.firstName ? `${c?.lastName?.toUpperCase()}, ${setFirstName(c?.firstName)}`: c.lastName}
+                                            <SuperWord input={c.firstName ? `${c?.lastName?.toUpperCase()}, ${setFirstName(c?.firstName)}`: c.lastName as string} />
                                         </Title>
                                         <Text className='st__ref'>{c?.reference}</Text>
                                         {c?.tag && <div className='card__tag'>{c?.tag}</div>}

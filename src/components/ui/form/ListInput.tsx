@@ -1,5 +1,5 @@
 import {Button, Form, FormListFieldData, Input} from "antd";
-import {LuMinusCircle, LuPlus, LuSave} from "react-icons/lu";
+import {LuCircleMinus, LuPlus, LuSave} from "react-icons/lu";
 import {Controller, FieldValues, Path} from "react-hook-form";
 import {InputType, TypedInputType, ZodListControl} from "../../../utils/interfaces.ts";
 import Grid from "../layout/Grid.tsx";
@@ -31,7 +31,7 @@ export const ListTextInput = <T extends FieldValues>(listProps: InputListProps<T
                                 <Input style={{width: '80%'}} {...field} />
                             )} />
                             {fields.length >= 1 ? (
-                                <LuMinusCircle className='dynamic_delete_button' onClick={() => remove(name)} />
+                                <LuCircleMinus className='dynamic_delete_button' onClick={() => remove(name)} />
                             ) : null}
                         </Form.Item>
                     ))}

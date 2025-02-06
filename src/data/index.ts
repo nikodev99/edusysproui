@@ -1,4 +1,4 @@
-export {addStudent, updateStudent} from './action/enroll_student'
+export {addStudent, updateStudent} from './action/enrollAction.ts'
 
 export {findClassesBasicValue} from './action/classeAction.ts'
 
@@ -14,7 +14,7 @@ export {
     fetchSearchedEnrolledStudents,
     fetchStudentById,
     countStudents
-} from './action/fetch_student'
+} from './action/studentAction.ts'
 
 export {fetchTeachers, fetchSearchedTeachers, fetchTeacherById, count} from './action/fetch_teacher.ts'
 

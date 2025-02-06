@@ -11,7 +11,7 @@ import FormError from "../../components/ui/form/FormError.tsx";
 import FormSuccess from "../../components/ui/form/FormSuccess.tsx";
 import PageWrapper from "../view/PageWrapper.tsx";
 import {redirectTo} from "../../context/RedirectContext.ts";
-import {requiredMark} from "../../utils/tsxUtils.tsx";
+import {RequiredMark} from "../../utils/tsxUtils.tsx";
 import {ValidationAlert} from "../ui/form/ValidationAlert.tsx";
 
 interface AddStepsProps<TFieldValues extends FieldValues> {
@@ -113,7 +113,7 @@ const AddStepForm = <TFieldValues extends FieldValues>(
                 <Flex className='inscription-wrapper' vertical>
                     <div className='form-wrapper'>
                         <Form layout="vertical" initialValues={{requiredMarkValue: 'customize'}}
-                              requiredMark={requiredMark} onFinish={handleForm.handleSubmit(onSubmit)}>
+                              requiredMark={RequiredMark} onFinish={handleForm.handleSubmit(onSubmit)}>
                             <div className='step-content'>
                                 {steps[current].content}
                             </div>

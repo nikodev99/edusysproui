@@ -4,14 +4,14 @@ import {HTMLProps, ReactNode, useEffect, useState} from "react";
 import {Enrollment, HealthCondition, Schedule} from "../../../entity";
 import {
     bloodLabel, convertToM, fDate, firstLetter, fullDay, getAge, getCountry,
-    chooseColor, isNull, lowerName, monthsBetween, setFirstName, timeToCurrentDatetime, currency
+    chooseColor, isNull, lowerName, monthsBetween, setFirstName, timeToCurrentDatetime, currency, getMinMaxTimes
 } from "../../../utils/utils.ts";
 import PanelStat from "../../ui/layout/PanelStat.tsx";
 import { Table as CustomTable } from "../../ui/layout/Table.tsx";
 import {Gender} from "../../../entity/enums/gender.tsx";
 import PanelTable from "../../ui/layout/PanelTable.tsx";
 import {SectionType} from "../../../entity/enums/section.ts";
-import {fetchStudentClassmatesRandomly} from "../../../data/action/fetch_student.ts";
+import {fetchStudentClassmatesRandomly} from "../../../data/action/studentAction.ts";
 import {Avatar} from "../../ui/layout/Avatar.tsx";
 import {text} from "../../../utils/text_display.ts";
 import {BloodType} from "../../../entity/enums/bloodType.ts";
@@ -29,6 +29,7 @@ import {attendanceTag} from "../../../entity/enums/attendanceStatus.ts";
 import Tag from "../../ui/layout/Tag.tsx";
 import {LuBan} from "react-icons/lu";
 import {BigCalendar} from "../../graph/BigCalendar.tsx";
+import {ScheduleDayCalendar} from "../../common/ScheduleDayCalendar.tsx";
 
 type StudentInfoProps = InfoPageProps<Enrollment>
 
@@ -315,7 +316,7 @@ const SchoolColleagues = ({infoData, seeMore, color}: StudentInfoProps) => {
                                 />
                             </div>
                             <div className='name'>
-                                <span>{lowerName(c.student?.personalInfo?.firstName, c.student?.personalInfo?.lastName)}</span>
+                                <span>{lowerName(c.student?.personalInfo?.firstName as string, c.student?.personalInfo?.lastName)}</span>
                             </div>
                         </a>
                         <div className='view__button'>
@@ -372,25 +373,11 @@ const CourseSchedule = ({infoData}: StudentInfoProps) => {
     const {classe} = infoData
     const schedules: Schedule[] = classe.schedule !== null ? classe.schedule : []
 
-    const events = schedules.map((schedule: Schedule) => ({
-        title: schedule?.course?.course ? schedule?.course?.course : schedule?.designation,
-        start: schedule.startTime ? timeToCurrentDatetime(schedule.startTime) : new Date(),
-        end: schedule.endTime ? timeToCurrentDatetime(schedule.endTime): new Date(),
-        allDay: false
-    }))
-
-    console.log('schedules: ', schedules)
-
     return(
-        <Section title={`Emploi du temps: ${setFirstName(fullDay(new Date()))}`}>
-            <BigCalendar
-                data={events as []}
-                views={['day']}
-                defaultView='day'
-                startDayTime={[8, 0]}
-                endDayTime={[14, 0]}
-            />
-        </Section>
+        <ScheduleDayCalendar
+            eventSchedule={schedules}
+            sectionTitle={`Emploi du temps: ${setFirstName(fullDay(new Date()))}`}
+        />
     )
 }
 
@@ -422,7 +409,8 @@ const DisciplinaryRecords = ({infoData, seeMore, color}: StudentInfoProps) => {
                                 <span className='big-text'>Aucune réprimande trouvée</span>
                                 <GiAchievement className='health-icon' size={100}/>
                             </div>
-                        )
+                        ),
+                        tableRow: true
                     }]} panelColor={color}/>
                 </div>
             )}

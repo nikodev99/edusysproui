@@ -1,12 +1,12 @@
 import {FieldValues} from "react-hook-form";
-import {getCountyListInFrench} from "../../../utils/utils.ts";
+import {getCountryListInFrench} from "../../../utils/utils.ts";
 import {TypedInputType} from "../../../utils/interfaces.ts";
 import {useMemo} from "react";
 import SelectInput from "./SelectInput.tsx";
 
 const CountrySelect = <T extends FieldValues>(countryOptionsProps: TypedInputType<T>) => {
 
-    const countryOptions = useMemo(() => getCountyListInFrench(), [])
+    const countryOptions = useMemo(() => getCountryListInFrench(), [])
     const filterOption = (input: string, option?: { label: string; value: string }) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
 
     const {defaultValue} = countryOptionsProps

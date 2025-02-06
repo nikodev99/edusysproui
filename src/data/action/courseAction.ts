@@ -6,7 +6,6 @@ import {AxiosResponse} from "axios";
 import {getShortSortOrder, setSortFieldName} from "../../utils/utils.ts";
 
 export const getAllSchoolCourses = async (page: number, size: number, sortField?: string, sortOrder?: string): Promise<AxiosResponse<Course[]>> => {
-    console.log('Sorted: ', sortField, sortOrder);
     if(sortField && sortOrder) {
         sortOrder = getShortSortOrder(sortOrder)
         sortField = sortedField(sortField);

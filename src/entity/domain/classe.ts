@@ -4,7 +4,7 @@ import {Schedule} from "./schedule.ts";
 import {Course} from "./course.ts";
 import {ClasseTeacherBoss} from "./classeTeacherBoss.ts";
 import {ClasseStudentBoss} from "./classeStudentBoss.ts";
-import {TeacherClassCourse} from "./TeacherClassCourse.ts";
+import {Teacher} from "./teacher.ts";
 
 export interface Classe {
     id: number
@@ -17,8 +17,8 @@ export interface Classe {
     principalStudent: ClasseStudentBoss
     principalCourse: Course
     students: Student[]
-    classTeacherCourses: TeacherClassCourse[]
+    classeTeachers: Teacher[]
     monthCost: number
-    createdAt: Date
-    modifiedAt: Date
+    createdAt: Date | number
+    modifiedAt: Date | number
 }

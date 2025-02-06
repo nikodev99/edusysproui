@@ -10,6 +10,7 @@ import {AxiosResponse} from "axios";
 import {getAllSchoolClasses} from "../../../data/action/classeAction.ts";
 import {fDatetime} from "../../../utils/utils.ts";
 import {DataProps} from "../../../utils/interfaces.ts";
+import {SuperWord} from "../../../utils/tsxUtils.tsx";
 
 export const ClasseList = ({condition}: {condition?: boolean}) => {
 
@@ -32,7 +33,7 @@ export const ClasseList = ({condition}: {condition?: boolean}) => {
     }
 
     const cardData = (data: Classe[]) => {
-        return data.map(c => ({
+        return data?.map(c => ({
             id: c.id,
             lastName: c.name,
             reference: c.category,
@@ -53,7 +54,7 @@ export const ClasseList = ({condition}: {condition?: boolean}) => {
             align: 'left',
             sorter: true,
             showSorterTooltip: false,
-            render: (text) => <p>{text?.toUpperCase()}</p>
+            render: (text) => <SuperWord input={text} />
         },
         {
             title: "Category",

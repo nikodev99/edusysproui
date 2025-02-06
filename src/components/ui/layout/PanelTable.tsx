@@ -26,7 +26,7 @@ const PanelTable = ({title, data, panelColor, ps}: PanelTableProps) => {
             <div className='table-body' style={ps ? {padding: '0 12px'}: undefined}>
                 {!data || data?.length === 0 ? <VoidData /> : data?.map((d, i) => (
                     <div className={d.tableRow ? '' : "table-row"} key={`${d.statement}-${i}`}>
-                        <div>{d.statement}</div>
+                        {!d.tableRow && (<div>{d.statement}</div>)}
                         {d.link ? (
                             <div className="linked" onClick={() => goThrough(d.link!)}>
                                 {d.response}

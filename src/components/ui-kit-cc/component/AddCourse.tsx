@@ -4,7 +4,7 @@ import {useForm} from "react-hook-form";
 import {courseSchema, CourseSchema} from "../../../schema";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {addCourse} from "../../../data/repository/courseRepository.ts";
-import {AddCourseForm} from "../../forms/AddCourseForm.tsx";
+import {CourseForm} from "../../forms/CourseForm.tsx";
 
 export const AddCourse = ({open, onCancel}: ModalProps) => {
 
@@ -17,7 +17,7 @@ export const AddCourse = ({open, onCancel}: ModalProps) => {
     return (
         <InsertSchema
             data={courseSchema}
-            customForm={<AddCourseForm control={control} errors={errors} />}
+            customForm={<CourseForm control={control} errors={errors} />}
             handleForm={form}
             postFunc={addCourse}
             open={open}

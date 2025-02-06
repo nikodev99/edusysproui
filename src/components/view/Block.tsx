@@ -11,7 +11,7 @@ const Block = ({items}: BlockProps) => {
 
     return(
         <ResponsiveMasonry columnsCountBreakPoints={{350: 1, 750: 2, 1100: 3}}>
-            <Masonry gap='10px' itemTag='section' sequential={false}>
+            <Masonry gap='20px' itemTag='section'>
                 {items.map((item, index) => {
                     if (isValidElement(item)) {
                         const { dataKey } = item.props;

@@ -86,9 +86,12 @@
         @include flex-center;
         font-size: 13px;
         border: 2px solid #e1e1e1;
+        text-align: center;
+        line-height: 35px;
 
         span {
-          transform: translate(-2%, 18%);
+          text-align: center;
+          padding: 0; margin: 0;
         }
 
         span, img {
@@ -96,6 +99,10 @@
           height: 35px;
           color: $text_color;
         }
+      }
+
+      .round-text {
+        color: red;
       }
     }
   }
@@ -133,18 +140,18 @@
         border-bottom: none;
       }
 
-      & > p:nth-child(odd) {
+      & > div:nth-child(odd) {
         color: #717171;
         max-width: 50%;
       }
 
-      & > p:nth-child(even) {
+      & > div:nth-child(even) {
         color: $text_color;
         max-width: 50%;
         text-align: right;
       }
 
-      p.linked {
+      div.linked {
         cursor: pointer;
         transition: .3s;
 

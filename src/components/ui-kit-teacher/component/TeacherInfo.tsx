@@ -18,7 +18,7 @@ import {
 import {useEffect, useRef, useState} from "react";
 import {Gender} from "../../../entity/enums/gender.tsx";
 import {Flag} from "../../ui/layout/Flag.tsx";
-import {Flex, List, Skeleton, TableColumnsType, Tag, TimelineProps, Typography} from "antd";
+import {Flex, Skeleton, TableColumnsType, Tag, TimelineProps, Typography} from "antd";
 import {useFetch, useRawFetch} from "../../../hooks/useFetch.ts";
 import {getNumberOfStudentTaughtByClasse, getTeacherScheduleByDay} from "../../../data/repository/teacherRepository.ts";
 import {BigCalendar} from "../../graph/BigCalendar.tsx";
@@ -36,16 +36,16 @@ import {ShapePieChart} from "../../graph/ShapePieChart.tsx";
 import {PieChartDataEntry} from "../../ui/ui_interfaces.ts";
 import {Assignment} from "../../../entity/domain/assignment.ts";
 import {getSomeTeacherAssignments} from "../../../data/repository/assignmentRepository.ts";
-import {IconText} from "../../../utils/tsxUtils.tsx";
-import {LuCalendarDays, LuClock, LuClock9} from "react-icons/lu";
 import {useGlobalStore} from "../../../core/global/store.ts";
+import {DatedListItem} from "../../ui/layout/DatedListItem.tsx";
+import {SwitchTag} from "../../ui/layout/SwitchTag.tsx";
 
 type TeacherInfo = InfoPageProps<Teacher>
 
 const IndividualInfo = ({infoData, color}: TeacherInfo) => {
 
     const [nation, setNation] = useState<string>()
-    
+
     const {personalInfo, personalInfo: {address}} = infoData ?? {}
 
     const country = getCountry(personalInfo?.nationality as string)
@@ -115,15 +115,15 @@ const ProsInfo = ({infoData, color}: TeacherInfo) => {
     ]
 
     const courseTaught = [
-        {response: <Flex wrap gap={.5}>
+        {response: <Flex wrap gap={.5} justify='end' style={{padding: '10px'}}>
                 {courses?.map((c: Course, i) => <Tag key={i}>{c.abbr}</Tag>)}
-        </Flex>}
+        </Flex>, tableRow: true}
     ]
 
     const classeTaught = [
-        {response: <Flex wrap gap={.5}>
+        {response: <Flex wrap gap={.5} justify='end' style={{padding: '10px'}}>
                 {classes?.map((c: Classe, i) => <Tag key={i}>{c.name}</Tag>)}
-        </Flex>}
+        </Flex>, tableRow: true}
     ]
 
     return(
@@ -238,21 +238,24 @@ const DepartmentInfo = ({infoData, color}: TeacherInfo) => {
                     ]} panelColor={color} />
                     <PanelTable title='Chef de department' data={[
                         {statement: 'Nom(s), prénom(s)', response: <Flex justify='center'>
-                                <AvatarTitle
-                                    lastName={department?.boss?.d_boss?.personalInfo?.lastName}
-                                    firstName={department?.boss?.d_boss?.personalInfo?.firstName}
-                                    image={department?.boss?.d_boss?.personalInfo?.image}
-                                    gap={2} size={30}
-                                />
+                            <AvatarTitle
+                                lastName={department?.boss?.d_boss?.personalInfo?.lastName}
+                                firstName={department?.boss?.d_boss?.personalInfo?.firstName}
+                                image={department?.boss?.d_boss?.personalInfo?.image}
+                                gap={2} size={30}
+                            />
                         </Flex>, link: `/teachers/${department.boss?.d_boss?.id}`},
                         {statement: 'Debut de mandat', response: <span>{fDate(department.boss?.startPeriod, 'DD/MM/YYYY')}</span>},
                         {
                             statement: 'Status',
-                            response: <Tag color='success'>Mandat en cours</Tag>
+                            response: <SwitchTag
+                                mustSwitch={department?.boss?.current as boolean}
+                                texts={{success: 'Mandat en cours', failed: 'Mandat terminé'}}
+                            />
                         }
                     ]} panelColor={color}/>
                     {department?.purpose ? <PanelTable title='Objectif' panelColor={color} data={[
-                        {response: <Typography.Text>{department?.purpose}</Typography.Text>}
+                        {response: <Typography.Text>{department?.purpose}</Typography.Text>, tableRow: true}
                     ]} /> : null}
                 </PanelSection>
             ))}
@@ -303,7 +306,7 @@ const StudentReprimanded = ({infoData, color, seeMore}: TeacherInfo) => {
     const dataSource = studentReprimanded?.map(r => ({
         key: r.id,
         studentId: r.student?.student?.id,
-        studentName: `${lowerName(r.student?.student?.personalInfo?.firstName, r.student?.student?.personalInfo?.lastName, 15)}`,
+        studentName: `${lowerName(r.student?.student?.personalInfo?.firstName as string, r.student?.student?.personalInfo?.lastName, 15)}`,
         reprimandType: r.type,
         punishmentDates: `${fDate(r.punishment?.startDate, 'DD/MM/YYYY')} à ${fDate(r.punishment?.endDate, 'DD/MM/YYYY')}`,
         studentClasse: r.student?.classe?.name,
@@ -385,7 +388,7 @@ const StudentByClasse = ({infoData, color}: TeacherInfo) => {
 
 const AssignmentPlan = ({infoData,color, seeMore}: TeacherInfo) => {
     const {personalInfo} = infoData
-    
+
     const [assignments, setAssignments] = useState<Assignment[]>([])
     const fetch = useRawFetch();
 
@@ -401,26 +404,20 @@ const AssignmentPlan = ({infoData,color, seeMore}: TeacherInfo) => {
     const handleClick = () => {
         seeMore && seeMore('3')
     }
-    
+
     return(
         <PanelSection title='Suivi des devoirs' more={true} seeMore={handleClick}>
             <PanelTable title='Les devoirs à venir' ps={true} data={[{
-                response: <List
-                    itemLayout='vertical'
-                    dataSource={assignments}
-                    renderItem={(item: Assignment) => (
-                        <List.Item key={item.id} actions={[
-                            <IconText icon={<LuCalendarDays />} text={fDate(item.examDate) as string} key="list-vertical-star-o" />,
-                            <IconText icon={<LuClock />} text={setTime(item.startTime as number[])} key="list-vertical-like-o" />,
-                            <IconText icon={<LuClock9 /> } text={setTime(item.endTime as number[])} key="list-vertical-message" />,
-                        ]}>
-                            <List.Item.Meta
-                                //TODO adding a link to the assignment view
-                                title={<a href="#">{item.examName}</a>}
-                                description={<Tag>{`${item.subject?.course} - ${item.classe?.name}`}</Tag>}
-                            />
-                        </List.Item>
-                    )}
+                response: <DatedListItem
+                    dataSource={assignments?.map(a => (
+                        {
+                            date: fDate(a.examDate),
+                            startTime: setTime(a.startTime as number[]),
+                            endTime: setTime(a.endTime as number[]),
+                            title: <a href="#">{a.examName}</a>,
+                            description: <Tag>{`${a.subject?.course} - ${a.classe?.name}`}</Tag>
+                        }
+                    ))}
                 />,
                 tableRow: true
             }]} panelColor={color} />

@@ -1,14 +1,13 @@
 import {
     LuAtSign,
     LuBadgeCheck,
-    LuBadgeDollarSign,
-    LuBarChart3,
+    LuBadgeDollarSign, LuChartBar,
     LuClipboardCheck,
     LuCog,
     LuContact,
     LuLayoutDashboard,
     LuLibrary,
-    LuUsers, LuUsers2
+    LuUsers, LuUsersRound,
 } from "react-icons/lu";
 import {MenuProps} from "antd";
 import {PiNotebook, PiStudent} from "react-icons/pi";
@@ -27,7 +26,7 @@ export const menuItems: Required<MenuProps>['items'][number][] = [
     },
     {
         key: text.guardian.href,
-        icon: <LuUsers2 />,
+        icon: <LuUsersRound />,
         label: text.guardian.label
     },
     {
@@ -73,7 +72,7 @@ export const menuItems: Required<MenuProps>['items'][number][] = [
     },
     {
         key: '/report-and-analytics',
-        icon: <LuBarChart3 />,
+        icon: <LuChartBar />,
         label: "Rapport/Analyses"
     },
     {

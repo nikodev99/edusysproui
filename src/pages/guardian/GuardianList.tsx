@@ -16,7 +16,7 @@ import {AxiosResponse} from "axios";
 import {Response} from "../../data/action/response.ts";
 import {AiOutlineUserDelete} from "react-icons/ai";
 import {BiSolidUserAccount} from "react-icons/bi";
-import {statusTags} from "../../utils/tsxUtils.tsx";
+import {StatusTags} from "../../utils/tsxUtils.tsx";
 import {Status} from "../../entity/enums/status.ts";
 import {DataProps} from "../../utils/interfaces.ts";
 
@@ -97,7 +97,7 @@ const GuardianList = () => {
             key: 'status',
             align: 'center',
             responsive: ['md'],
-            render: (text, {personalInfo}) => statusTags(text, personalInfo?.gender === Gender.FEMME)
+            render: (text, {personalInfo}) => <StatusTags status={text} female={personalInfo?.gender === Gender.FEMME} />
         },
         {
             title: "Numéro de téléphone",
@@ -129,7 +129,7 @@ const GuardianList = () => {
             firstName: c.personalInfo?.firstName,
             gender: c.personalInfo?.gender,
             reference: c.personalInfo?.emailId,
-            tag: statusTags(c.personalInfo?.status as Status, c.personalInfo?.gender === Gender.FEMME),
+            tag: <StatusTags status={c.personalInfo?.status as Status} female={c.personalInfo?.gender === Gender.FEMME} />,
             description: []
         })) as DataProps[]
     }

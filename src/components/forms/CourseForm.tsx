@@ -6,7 +6,7 @@ import {InputTypeEnum} from "../../core/shared/sharedEnums.ts";
 import {FormConfig} from "../../config/FormConfig.ts";
 import {initDepartments} from "../../core/global/store.ts";
 
-export const AddCourseForm = <T extends FieldValues>(
+export const CourseForm = <T extends FieldValues>(
     {control, errors, data}: FormContentProps<T, Course>
 ) => {
 

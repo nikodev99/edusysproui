@@ -167,8 +167,6 @@ const ListViewer = <TData extends object, TError>(
         }).filter((item): item is StudentListDataType => item !== null)
         : content;
 
-    console.log('Courses: ', dataSource)
-
     return(
         <>
             <div className='header__area'>

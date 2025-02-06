@@ -5,9 +5,9 @@ export interface Planning {
     id?: number
     semester?: Semester
     designation?: string
-    termStartDate?: Date
-    termEndDate?: Date
+    termStartDate?: Date | number[]
+    termEndDate?: Date | number[]
     grade?: Grade
-    createdAt?: Date
-    updatedAt?: Date
+    createdAt?: Date | number
+    updatedAt?: Date | number
 }

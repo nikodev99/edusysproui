@@ -16,7 +16,7 @@ import {
     StudentHistory,
     StudentInfo
 } from "../../components/ui-kit-student";
-import {LuTrash, LuUserCircle, LuUserPlus} from "react-icons/lu";
+import {LuCircleUser, LuTrash, LuUserPlus} from "react-icons/lu";
 import {redirectTo} from "../../context/RedirectContext.ts";
 import {ViewRoot} from "../../components/custom/ViewRoot.tsx";
 
@@ -97,7 +97,7 @@ const StudentView = () => {
                     {
                         key: 2,
                         label: 'Tuteur légal',
-                        icon: <LuUserCircle/>,
+                        icon: <LuCircleUser/>,
                         onClick: () => redirectTo(text.guardian.group.view.href + enrolledStudent?.student.guardian.id)
                     },
                     {key: 3, label: 'Réinscrire', icon: <LuUserPlus/>},

@@ -2,7 +2,7 @@ import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {text} from "../../utils/text_display.ts";
 import {Breadcrumb, setBreadcrumb} from "../../core/breadcrumb.tsx";
 import {redirectTo} from "../../context/RedirectContext.ts";
-import {LuEye, LuMoreVertical} from "react-icons/lu";
+import {LuEllipsisVertical, LuEye} from "react-icons/lu";
 import {BiSolidUserAccount} from "react-icons/bi";
 import {AiOutlineUserDelete, AiOutlineUsergroupAdd} from "react-icons/ai";
 import {Divider, Flex, TableColumnsType, Tag} from "antd";
@@ -10,7 +10,7 @@ import {Classe, Course, Teacher} from "../../entity";
 import {Avatar} from "../../components/ui/layout/Avatar.tsx";
 import {enumToObjectArrayForFiltering, getAge, setFirstName} from "../../utils/utils.ts";
 import {Gender} from "../../entity/enums/gender.tsx";
-import {statusTags} from "../../utils/tsxUtils.tsx";
+import {StatusTags} from "../../utils/tsxUtils.tsx";
 import {ActionButton} from "../../components/ui/layout/ActionButton.tsx";
 import {ListPageHierarchy} from "../../components/custom/ListPageHierarchy.tsx";
 import ListViewer from "../../components/custom/ListViewer.tsx";
@@ -71,7 +71,7 @@ const TeacherList = () => {
             firstName: t?.personalInfo?.firstName,
             gender: t?.personalInfo?.gender,
             reference: t?.personalInfo?.emailId,
-            tag: statusTags(t?.personalInfo?.status as Status, t?.personalInfo?.gender === Gender.FEMME),
+            tag: <StatusTags status={t?.personalInfo?.status as Status} female={t?.personalInfo?.gender === Gender.FEMME} />,
             description: <>
                 <Divider style={{fontSize: '12px'}}>Cours ou classes</Divider>
                 <Flex gap={2} wrap justify={"center"}>
@@ -138,7 +138,7 @@ const TeacherList = () => {
             responsive: ['md'],
             sorter: true,
             showSorterTooltip: false,
-            render: (text, {personalInfo}) => statusTags(text, personalInfo?.gender === Gender.FEMME)
+            render: (text, {personalInfo}) => <StatusTags status={text} female={personalInfo?.gender === Gender.FEMME} />
         },
         {
             title: "Matières",
@@ -178,7 +178,7 @@ const TeacherList = () => {
             width: '6%',
             render: (text) => (
                 <ActionButton
-                    icon={<LuMoreVertical size={30} style={{borderStyle: 'border'}} />}
+                    icon={<LuEllipsisVertical size={30} style={{borderStyle: 'border'}} />}
                     items={getItems(text)}
                 />
             )

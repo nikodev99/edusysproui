@@ -121,7 +121,7 @@ export const TeacherAssignments = ({infoData}: InfoPageProps<Teacher>) => {
                     <Tooltip title="Supprimer">
                         <Button icon={<LuX />} />
                     </Tooltip>
-                    <Tooltip title="Changer de date">
+                    <Tooltip title="Changer de date"> {/* TODO Gerer les boutons supprimer et changer de date */}
                         <Button icon={<LuRefreshCcw />} />
                     </Tooltip>
                 </Space.Compact>}]
@@ -142,8 +142,6 @@ export const TeacherAssignments = ({infoData}: InfoPageProps<Teacher>) => {
         {name: 'Accompli', value: assignments?.filter(a => a.passed)?.length, color: '#228B22'},
         {name: 'Date dépassé', value: assignments?.filter(a => !a.passed && !dateCompare(a?.examDate as Date))?.length, color: '#B22222'}
     ]
-
-    console.log('Scores: ', studentAllScore)
 
     assignment.current = getNextAssignment(assignments)
     passedAssignment.current = getLastPassedAssignment(assignments)

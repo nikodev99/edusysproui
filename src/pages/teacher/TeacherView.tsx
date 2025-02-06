@@ -15,9 +15,8 @@ import ViewHeader from "../../components/ui/layout/ViewHeader.tsx";
 import {getStatusKey, Status} from "../../entity/enums/status.ts";
 import {Gender} from "../../entity/enums/gender.tsx";
 import {
-    LuClipboardEdit,
-    LuListChecks,
-    LuSubtitles,
+    LuClipboardPenLine,
+    LuListChecks, LuListTodo,
     LuTrash2,
     LuUserMinus,
 } from "react-icons/lu";
@@ -130,9 +129,9 @@ const TeacherView = () => {
                 ]}
                 items={[
                     {key: 2, label: 'Ajouter programme', icon: <LuListChecks/>},
-                    {key: 3, label: 'Créer examen', icon: <LuClipboardEdit/>},
+                    {key: 3, label: 'Créer examen', icon: <LuClipboardPenLine/>},
                     {key: 4, label: 'Réprimander', icon: <LuUserMinus/>},
-                    {key: 5, label: 'Compte rendu', icon: <LuSubtitles/>},
+                    {key: 5, label: 'Compte rendu', icon: <LuListTodo/>},
                     {key: 6, label: 'Retirer l\'enseignant', danger: true, icon: <LuTrash2/>}
                 ]}
             />

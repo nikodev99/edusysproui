@@ -1,10 +1,12 @@
-import {ApiEvent, Color, EnumType} from "./interfaces.ts"
+import {ApiEvent, Color, DateExplose, EnumType, GenderCounted} from "./interfaces.ts"
 import countries from 'world-countries'
 import dayjs, {OpUnitType} from "dayjs";
 import 'dayjs/locale/fr.js'
 import {BloodType} from "../entity/enums/bloodType.ts";
 import {ProgressProps} from "antd";
 import {Day} from "../entity/enums/day.ts";
+import {Gender} from "../entity/enums/gender.tsx";
+import {Schedule} from "../entity";
 
 export const createElement = (htmlElement: string, parentNode: Element|null, attributes?: {[key: string]: string}, content?: string) => {
 
@@ -29,6 +31,10 @@ export const createElement = (htmlElement: string, parentNode: Element|null, att
 }
 
 export const isString = (value: unknown): value is string => typeof value === 'string'
+
+export const isObjectEmpty = (value: object): boolean => {
+    return Object.keys(value).length === 0
+}
 
 export const connectToElement = (connector: string, attributes?: {[key: string]: string}) => {
     const element = document.querySelector(connector);
@@ -59,7 +65,7 @@ export const enumToObjectArrayForFiltering = (enumObj: EnumType) => {
         }))
 }
 
-export const getCountyListInFrench = () => {
+export const getCountryListInFrench = () => {
     return countries.map(country => ({
         value: country.cca3,
         label: country.translations.fra.common
@@ -75,6 +81,12 @@ export const getStringAcademicYear = (startDate?: Date | [number, number, number
         return `${arrayToDate(startDate).getFullYear()} - ${arrayToDate(endDate).getFullYear()}`
     }
     return undefined
+}
+
+export const calculateAverageAge = (students?: GenderCounted[] | null): number => {
+    const totalStudents = students?.reduce((sum, group) => sum + group.count, 0)
+    const totalAge = students?.reduce((sum, group) => sum + group.count * group.ageAverage, 0)
+    return totalStudents && totalAge && totalStudents > 0 ? totalAge / totalStudents : 0
 }
 
 export const getAge = (dateArray?: number[]): number => {
@@ -103,6 +115,11 @@ export const numberFormat = (input?: number, options?: {
         }).format(0)
 }
 
+export const findPercent = (index: number, total: number, showSign?: boolean): number | string | undefined => {
+    const percent: number = Math.round((index * 100) / total)
+    return index && total ? showSign ? `${percent} '%'` : percent : undefined
+}
+
 export const arrayToDate = (dateArray: Date | number[], time?: number[]): Date => {
     if (Array.isArray(dateArray)) {
         const [year, month, day] = dateArray
@@ -114,6 +131,27 @@ export const arrayToDate = (dateArray: Date | number[], time?: number[]): Date =
         return new Date(date);
     }
     return new Date(dateArray)
+}
+
+export const getMinMaxTimes = (data: Schedule[]) => {
+    let minStartTime: [number, number] = [24, 0]
+    let maxEndTime: [number, number] = [0, 0]
+
+    for (const entry of data) {
+        const start: [number, number] = entry.startTime as [number, number]
+        const end: [number, number] = entry.endTime as [number, number]
+        const startDate = start ? new Date(0, 0, 0, start[0], start[1] as number, 0) : new Date
+        const endDate = end ? new Date(0, 0, 0, end[0], end[1], 0) : new Date()
+
+        if (startDate < new Date(0, 0, 0, minStartTime[0], minStartTime[1], 0)) {
+            minStartTime = start
+        }
+
+        if (endDate > new Date(0, 0, 0, maxEndTime[0], maxEndTime[1], 0)) {
+            maxEndTime = end
+        }
+    }
+    return {minStartTime, maxEndTime}
 }
 
 export const getDistinctArray = <T>(arr: T[], keySelector: (item: T) => unknown): T[] => {
@@ -139,11 +177,36 @@ export const fDatetime = (timestamp: Date | number | string, to?: boolean, forma
     return undefined
 }
 
+export const datetimeExpose = (timestamp?: number): DateExplose | undefined => {
+    if (timestamp) {
+        const date = dayjs.unix(timestamp)
+        return {
+            day: date.date(),
+            month: date.month() + 1,
+            year: date.year(),
+            hour: date.hour(),
+            minute: date.minute(),
+            second: date.second(),
+        } as DateExplose
+    }
+    return undefined
+}
+
 export const fDate = (date?: Date | number[] | string, format?: string) => {
     if (!format) {
-        format = 'D MMMM YYYY';
+        format = 'DD MMMM YYYY';
     }
     return setFirstName(formattedDate(date, format));
+}
+
+export const showDates = (startDate: Date | number[], endDate: Date | number[], format?: string) => {
+    const start = setDayJsDate(startDate)
+    const end = setDayJsDate(endDate)
+    let formatted = `${start?.format(format ?? 'DD/MM/YYYY')} - ${end?.format(format ?? 'DD/MM/YYYY')}`
+    if (start?.year() === end?.year()) {
+        formatted = `${start?.format(format ?? 'DD/MM')} - ${end?.format(format ?? 'DD/MM/YYYY')}`
+    }
+    return formatted
 }
 
 export const fullDay = (date?: Date | number[] | string) => {
@@ -251,8 +314,37 @@ export const timeToCurrentDatetime = (time: Date | number[] | string) => {
     return new Date(time)
 }
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export const assignKeys = (baseItems: any[], additionalItems: any[]) => {
+    const baseWithKeys = baseItems.map((item, index) => ({
+        ...item,
+        key: index + 1
+    }))
+    const additionalWithKeys = additionalItems.length > 0 ? additionalItems.map((item, index) => ({
+        ...item,
+        key: baseItems.length + index + 1
+    })) : []
+    return [...baseWithKeys, ...additionalWithKeys]
+}
+
 export const chooseColor = (name: string): string | undefined  => {
-    if (name)
+    if (name) {
+        const firstChar = name.charAt(0).toUpperCase()
+        if (/[0-9]/.test(firstChar)) {
+            switch (firstChar) {
+                case '0': return '#6e5d01'; // Gold
+                case '1': return '#DC143C'; // Crimson
+                case '2': return '#036241'; // Medium Spring Green
+                case '3': return '#FF4500'; // Orange Red
+                case '4': return '#DAA520'; // Goldenrod
+                case '5': return '#3b7502'; // Chartreuse
+                case '6': return '#41619a'; // Cornflower Blue
+                case '7': return '#7a0a47'; // Deep Pink
+                case '8': return '#188680'; // Light Sea Green
+                case '9': return '#B22222'; // Firebrick
+                default: return undefined;
+            }
+        }
         switch (name.toUpperCase().charAt(0)) {
             case 'A': return '#8B0000'; // Dark Red
             case 'B': return '#00008B'; // Dark Blue
@@ -282,6 +374,7 @@ export const chooseColor = (name: string): string | undefined  => {
             case 'Z': return '#4682B4'; // Dark Steel Blue
             default: return undefined;
         }
+    }
 }
 
 export const createConicGradient = (colors: string[], hasStep?: boolean): string[] | ProgressProps['strokeColor'] => {
@@ -308,6 +401,10 @@ export const bloodLabel = (blood: BloodType) => {
         case BloodType.O: return 'O+'
         case BloodType.O_: return 'O-'
     }
+}
+
+export const setGender = (gender: string) => {
+    return Gender[gender as unknown as keyof typeof Gender]
 }
 
 export const setFirstName = (firstName?: string) => {
@@ -342,6 +439,18 @@ export const setLastName = (lastName?: string, maidenName?: string, upper ?: boo
     return ''
 }
 
+export const cutStatement = (statement: string, maxLength: number) => {
+    if (statement) {
+        if (statement?.length <= maxLength) {
+            return statement
+        }
+        const truncate = statement.slice(0, maxLength)
+        const lastSpaceIndex = truncate.lastIndexOf(' ')
+        return statement?.slice(0, lastSpaceIndex)
+    }
+    return undefined
+}
+
 export const joinWord = (word: string, joinCharacter?: string) => {
     return word.toLowerCase().split(' ').join(joinCharacter)
 }
@@ -360,13 +469,34 @@ export const firstWord = (word?: string): string => {
     return setFirstName(word).split(' ')[0]
 }
 
-export const lowerName = (first?: string, last?: string, length?: number) => {
+export const lowerName = (first: string, last?: string, length?: number) => {
     const name = `${firstWord(first)} ${firstWord(last)}`
     const nameLength = length ? length : 17
-    if (name.length >= nameLength) {
-        first = first?.charAt(0).toUpperCase() + '.'
+    const setInitial = (names: string[]): string => {
+        return names.map((name: string) => name?.charAt(0).toUpperCase() + '.').join(' ')
     }
-    return `${firstWord(first)} ${firstWord(last)}`
+    let result: string = name
+    if (name.length >= nameLength) {
+        const firstParts = firstWord(first).split(' ')
+        const lastParts = last ? firstWord(last).split(' ') : []
+        const [fullFirst, ...remainingFirstArray] = firstParts
+        const [fullLast, ...remainingLastArray] = lastParts
+        let fullFName = firstParts.length > 1 ? `${fullFirst} ${setInitial(remainingFirstArray)}` : fullFirst
+        let fullLName = lastParts.length > 0 ? lastParts.length > 1 ? `${fullLast} ${setInitial(remainingLastArray)}` : fullLast : ''
+
+        result = `${fullFName} ${fullLName}`
+        if (result?.length >= nameLength) {
+            fullFName = fullFirst
+            fullLName = fullLast ? fullLast : ''
+            result = `${fullFName} ${fullLName}`
+
+            if (result?.length >= nameLength) {
+                fullFName = setInitial([fullFirst])
+                result = `${fullFName} ${fullLName}`
+            }
+        }
+    }
+    return result
 }
 
 export const convertToM = (cm?: number) => {

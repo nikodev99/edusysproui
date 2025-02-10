@@ -1,19 +1,9 @@
 import {Card, Progress, Statistic} from "antd";
+import {WidgetItem} from "../../../utils/interfaces.ts";
 
-interface WidgetProps {
-    title: string;
-    value: string | number;
-    progress?: {
-        active: boolean
-        status?: string
-        type?: string
-        percent: number
-        color?: string
-    }
-}
-
-const Widget = ({title, value, progress}: WidgetProps) => {
-
+const Widget = (
+    {title, value, progress, precision, valueStyle, prefix, suffix, bottomValue, hasShadow}: WidgetItem
+) => {
 
     const progressElement = progress && progress.active ?
         <Progress
@@ -25,14 +15,18 @@ const Widget = ({title, value, progress}: WidgetProps) => {
         : undefined
 
     return (
-        <Card bordered={false} className='widget'>
+        <Card bordered={false} className={hasShadow ? 'widget': undefined}>
             <Statistic
                 title={title}
                 value={value}
+                precision={precision}
+                valueStyle={valueStyle}
+                prefix={prefix}
+                suffix={suffix}
             />
-            {progressElement}
+            {bottomValue ?? progressElement ?? undefined}
         </Card>
     )
 }
 
-export default Widget
+export { Widget }

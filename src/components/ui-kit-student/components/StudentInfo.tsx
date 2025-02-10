@@ -1,10 +1,10 @@
 import Block from "../../view/Block.tsx";
-import {Button, Carousel, Divider, Table, TableColumnsType, Avatar as AntAvatar} from "antd";
+import {Divider, Table, TableColumnsType, Avatar as AntAvatar, Typography, Badge} from "antd";
 import {HTMLProps, ReactNode, useEffect, useState} from "react";
 import {Enrollment, HealthCondition, Schedule} from "../../../entity";
 import {
     bloodLabel, convertToM, fDate, firstLetter, fullDay, getAge, getCountry,
-    chooseColor, isNull, lowerName, monthsBetween, setFirstName, timeToCurrentDatetime, currency, getMinMaxTimes
+    chooseColor, isNull, monthsBetween, setFirstName, currency
 } from "../../../utils/utils.ts";
 import PanelStat from "../../ui/layout/PanelStat.tsx";
 import { Table as CustomTable } from "../../ui/layout/Table.tsx";
@@ -12,7 +12,6 @@ import {Gender} from "../../../entity/enums/gender.tsx";
 import PanelTable from "../../ui/layout/PanelTable.tsx";
 import {SectionType} from "../../../entity/enums/section.ts";
 import {fetchStudentClassmatesRandomly} from "../../../data/action/studentAction.ts";
-import {Avatar} from "../../ui/layout/Avatar.tsx";
 import {text} from "../../../utils/text_display.ts";
 import {BloodType} from "../../../entity/enums/bloodType.ts";
 import {MdHealthAndSafety} from "react-icons/md";
@@ -28,8 +27,8 @@ import {initExamData} from "../../../entity/domain/score.ts";
 import {attendanceTag} from "../../../entity/enums/attendanceStatus.ts";
 import Tag from "../../ui/layout/Tag.tsx";
 import {LuBan} from "react-icons/lu";
-import {BigCalendar} from "../../graph/BigCalendar.tsx";
 import {ScheduleDayCalendar} from "../../common/ScheduleDayCalendar.tsx";
+import {StudentCarousel} from "../../common/StudentCarousel.tsx";
 
 type StudentInfoProps = InfoPageProps<Enrollment>
 
@@ -154,7 +153,11 @@ const ExamList = ({infoData, seeMore, color}: StudentInfoProps) => {
             title: "Note",
             dataIndex: 'obtainedMark',
             key: 'obtainedMark',
-            align: 'center'
+            align: 'center',
+            render: (text: number) => <Typography.Title level={4}>
+                {text}
+                <Badge color={text >= 15 ? 'green' : text >= 10 ? 'gold' : 'red' } />
+            </Typography.Title>
         }
     ];
 
@@ -303,30 +306,12 @@ const SchoolColleagues = ({infoData, seeMore, color}: StudentInfoProps) => {
     }
 
     return (
-        <Section title='Condisciples' more={true} seeMore={handleClick}>
-            <Carousel slidesToShow={3} slidesToScroll={1} dots={false} arrows draggable autoplay>
-                {classmates && classmates.map((c, i) => (<div className='classmate-team' key={`${c.student.id}-${i}`}>
-                    <div className='scroll-box'>
-                        <a onClick={() => handleSeeDetails(c.student.id)}>
-                            <div className='avatar'>
-                                <Avatar
-                                    image={c.student?.personalInfo?.image}
-                                    size={{xs: 24, sm: 32, md: 40, lg: 64, xl: 80, xxl: 100}}
-                                    firstText={c.student?.personalInfo?.firstName} lastText={c.student?.personalInfo?.lastName}
-                                />
-                            </div>
-                            <div className='name'>
-                                <span>{lowerName(c.student?.personalInfo?.firstName as string, c.student?.personalInfo?.lastName)}</span>
-                            </div>
-                        </a>
-                        <div className='view__button'>
-                            <Button style={{width: '100%', background: color}}>Voir</Button>
-                        </div>
-                    </div>
-
-                </div>))}
-            </Carousel>
-        </Section>
+        <StudentCarousel
+            students={classmates}
+            seeMore={handleClick}
+            redirectTo={handleSeeDetails}
+            color={color}
+        />
     )
 }
 

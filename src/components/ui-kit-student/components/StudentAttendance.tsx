@@ -15,38 +15,35 @@ import {AttendanceAnalysis} from "./AttendanceAnalysis.tsx";
 
 export const StudentAttendance = ({enrolledStudent}: {enrolledStudent: Enrollment}) => {
 
-    const {
-        academicYear: {id, academicYear},
-        student,
-        student: {personalInfo, enrollments}
-    } = enrolledStudent
+    const {academicYear, student: {personalInfo, enrollments}} = enrolledStudent
 
-    const [academicYearId, setAcademicYearId] = useState<string>(id)
+    const [academicYearId, setAcademicYearId] = useState<string>(academicYear?.id)
     const [size, setSize] = useState<number>(10)
     const [pageCount, setPageCount] = useState<number>(0)
     const [attendances, setAttendances] = useState<Attendance[]>([])
     const {data, error, isLoading, isSuccess, refetch} = useFetch('attendance-list', getStudentAttendances, [
-        student.id, {page: pageCount, size: size}, academicYearId
+        personalInfo?.id, {page: pageCount, size: size}, academicYearId
     ])
 
     const academicYears = useMemo(() => {
         return [
-            { value: id, label: academicYear },
+            { value: academicYear?.id, label: academicYear?.academicYear },
             ...enrollments.map(e => ({
                 value: e.academicYear.id,
                 label: e.academicYear.academicYear
             }))
         ];
-    }, [id, academicYear, enrollments]);
+    }, [academicYear, enrollments]);
 
     const dataSource: AttendanceRecord[] = useMemo(() => {
         return attendances.map(att => {
+            console.log('Attendance: ', att?.classe?.name)
             const [tagColor, tagText] = attendanceTag(att.status);
             return {
                 id: att?.id,
                 date: setFirstName(fDate(att.attendanceDate)),
-                classe: `${att?.classe.name}, ${att?.classe.category}`,
-                section: att?.classe.grade.section as string,
+                classe: `${att?.classe?.name}, ${att?.classe?.category}`,
+                section: att?.classe?.grade?.section as string,
                 status: <Tag color={tagColor as 'danger'}>{firstLetter(tagText)}</Tag>,
             };
         })
@@ -116,7 +113,7 @@ export const StudentAttendance = ({enrolledStudent}: {enrolledStudent: Enrollmen
                 (
                     <Select
                         className='select-control'
-                        defaultValue={id}
+                        defaultValue={academicYear?.id}
                         options={academicYears}
                         onChange={handleAcademicYearIdValue}
                         variant='borderless'
@@ -125,16 +122,18 @@ export const StudentAttendance = ({enrolledStudent}: {enrolledStudent: Enrollmen
             ]}
             items={[
                 {key: '1', label: 'Données de présence', children: (
-                    <Table
-                        columns={columns}
-                        dataSource={dataSource}
-                        size='small'
-                        scroll={{y: 500}}
-                        pagination={false}
-                        rowKey={record => `row-${record.id}`}
-                    />
-                )},
-                {key: '2', label: 'Etude Analytique', children: (<AttendanceAnalysis enrollment={enrolledStudent} academicYear={academicYearId} />)}
+                    <>
+                        <AttendanceAnalysis enrollment={enrolledStudent} academicYear={academicYearId} />
+                        <Table
+                            columns={columns}
+                            dataSource={dataSource}
+                            size='small'
+                            scroll={{y: 500}}
+                            pagination={false}
+                            rowKey={record => `row-${record.id}`}
+                        />
+                    </>
+                )}
             ]}
         />
     )

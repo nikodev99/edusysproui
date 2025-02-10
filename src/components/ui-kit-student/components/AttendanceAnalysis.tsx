@@ -1,6 +1,5 @@
 import Responsive from "../../ui/layout/Responsive.tsx";
 import Grid from "../../ui/layout/Grid.tsx";
-import Widget from "../../ui/layout/Widget.tsx";
 import {AttendanceRecord} from "../../../utils/interfaces.ts";
 import {useEffect, useState} from "react";
 import {Attendance, Enrollment} from "../../../entity";
@@ -11,6 +10,7 @@ import {Calendar, Card, Skeleton} from "antd";
 import {AttendanceStatus, attendanceTag, countAttendanceStatuses} from "../../../entity/enums/attendanceStatus.ts";
 import {Dayjs} from "dayjs";
 import VerticalComposeChart from "../../graph/VerticalComposeChart.tsx";
+import {Widgets} from "../../ui/layout/Widgets.tsx";
 
 interface AnalysisProps {
     enrollment: Enrollment;
@@ -30,7 +30,7 @@ export const AttendanceAnalysis = ({enrollment, academicYear}: AnalysisProps) =>
     const fetch = useRawFetch()
 
     useEffect(() => {
-        fetch(getAllStudentAttendances, [student.id, academicYear])
+        fetch(getAllStudentAttendances, [student?.personalInfo?.id, academicYear])
             .then(resp => {
                 setIsLoading(resp.isLoading as boolean)
                 if (resp.isSuccess && Array.isArray(resp.data)) {
@@ -38,7 +38,7 @@ export const AttendanceAnalysis = ({enrollment, academicYear}: AnalysisProps) =>
                     setAllRecord(resp.data?.length ?? 1)
                 }
             })
-    }, [academicYear, fetch, student.id]);
+    }, [academicYear, fetch, student?.personalInfo?.id]);
 
     const dataSource: AttendanceRecord[] = attendances.map(att => ({
         id: att.id,
@@ -93,36 +93,28 @@ export const AttendanceAnalysis = ({enrollment, academicYear}: AnalysisProps) =>
                     {isLoading ?
                         <Skeleton loading={isLoading} active={isLoading} paragraph={{rows: 4}} /> :
                         (<>
-                            {dataSource.length > 0 && (<>
-                                <Grid xs={24} md={8} lg={6}>
-                                    <Widget title='Total Jours Present' value={counts.present} progress={{
-                                        active: true,
-                                        percent: Math.round((counts.present/allRecord) * 100),
-                                        color: COLORS[0]
-                                    }} />
-                                </Grid>
-                                <Grid xs={24} md={8} lg={6}>
-                                    <Widget title='Total Jours Absent' value={counts.absent} progress={{
-                                        active: true,
-                                        percent: Math.round((counts.absent/allRecord) * 100),
-                                        color: COLORS[1]
-                                    }} />
-                                </Grid>
-                                <Grid xs={24} md={8} lg={6}>
-                                    <Widget title='Total Jours en retard' value={counts.late} progress={{
+                            {dataSource.length > 0 && <Widgets hasShadow={true} responsiveness={true} items={[
+                                {title: 'Total Jours Present', value: counts.present, progress: {
+                                    active: true,
+                                    percent: Math.round((counts.present/allRecord) * 100),
+                                    color: COLORS[0]
+                                }},
+                                {title: 'Total Jours Present', value: counts.absent, progress: {
+                                    active: true,
+                                    percent: Math.round((counts.absent/allRecord) * 100),
+                                    color: COLORS[1]
+                                }},
+                                {title: 'Total Jours en retard', value: counts.late, progress: {
                                         active: true,
                                         percent: Math.round((counts.late/allRecord) * 100),
                                         color: COLORS[2]
-                                    }} />
-                                </Grid>
-                                <Grid xs={24} md={8} lg={6}>
-                                    <Widget title='Total Jours excusé' value={counts.excused} progress={{
+                                }},
+                                {title: 'Total Jours excusé', value: counts.excused, progress: {
                                         active: true,
                                         percent: Math.round((counts.excused/allRecord) * 100),
                                         color: COLORS[3]
-                                    }} />
-                                </Grid>
-                            </>)}
+                                }}
+                            ]} />}
                         </>)
                     }
                 </Responsive>

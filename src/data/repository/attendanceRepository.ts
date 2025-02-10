@@ -3,7 +3,7 @@ import {Attendance} from "../../entity";
 import {request} from "../axiosConfig.ts";
 import {Pageable} from "../../utils/interfaces.ts";
 
-export const getStudentAttendances = (studentId: string, pageable: Pageable, academicYearId: string): Promise<AxiosResponse<Attendance[]>> => {
+export const getStudentAttendances = (studentId: number, pageable: Pageable, academicYearId: string): Promise<AxiosResponse<Attendance[]>> => {
     const {page, size} = pageable
     return request({
         method: 'GET',
@@ -16,10 +16,20 @@ export const getStudentAttendances = (studentId: string, pageable: Pageable, aca
     })
 }
 
-export const getAllStudentAttendances = (studentId: string, academicYearId: string): Promise<AxiosResponse<Attendance[]>> => {
+export const getAllStudentAttendances = (studentId: number, academicYearId: string): Promise<AxiosResponse<Attendance[]>> => {
     return request({
         method: 'GET',
         url: `/attendance/all/${studentId}`,
+        params: {
+            academicYear: academicYearId
+        }
+    })
+}
+
+export const getClasseAttendanceStatusCount = (classeId: number, academicYearId: string): Promise<AxiosResponse<Attendance[]>> => {
+    return request({
+        method: 'GET',
+        url: `/attendance/classe_${classeId}`,
         params: {
             academicYear: academicYearId
         }

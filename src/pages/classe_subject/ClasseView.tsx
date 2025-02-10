@@ -1,5 +1,5 @@
 import {useParams} from "react-router-dom";
-import {ReactNode, useEffect, useLayoutEffect, useRef, useState} from "react";
+import {ReactNode, useEffect, useRef, useState} from "react";
 import {AcademicYear, Classe} from "../../entity";
 import {Color, GenderCounted} from "../../utils/interfaces.ts";
 import {useFetch, useRawFetch} from "../../hooks/useFetch.ts";
@@ -12,13 +12,12 @@ import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
 import ViewHeader from "../../components/ui/layout/ViewHeader.tsx";
 import {Select, Tag} from "antd";
 import {
-    LuCalendarCheck, LuCalendarPlus,
-    LuUserCheck,
+    LuBookOpenCheck, LuBookPlus, LuCalendarCheck, LuCalendarPlus, LuUserCheck,
     LuUserPlus, LuUserRoundCheck, LuUserRoundPlus,
 } from "react-icons/lu";
 import {datetimeExpose, isObjectEmpty} from "../../utils/utils.ts";
 import {ViewRoot} from "../../components/custom/ViewRoot.tsx";
-import {ClasseAttendance, ClasseExams, ClasseInfo, ClasseSchedule, ClasseStudent} from "../../components/ui-kit-cc";
+import {ClasseAttendance, ClasseExams, ClasseInfo, ClasseSchedule, ClasseStudent, ClasseCourseReports} from "../../components/ui-kit-cc";
 import {countClasseStudents} from "../../data/repository/studentRepository.ts";
 import {SuperWord} from "../../utils/tsxUtils.tsx";
 
@@ -52,20 +51,31 @@ const ClasseView = () => {
     ])
 
     useEffect(() => {
-        fetch(countClasseStudents, [id, usedAcademicYearId])
-            .then(resp => {
-                if (isSuccess) {
-                    const count = resp.data as GenderCounted[]
-                    setStudentCount(count)
-                    countStudent.current = count?.reduce((sum, current) => sum + current.count, 0)
-                }
-            })
+        if (id && usedAcademicYearId) {
+            fetch(countClasseStudents, [id, usedAcademicYearId])
+                .then(resp => {
+                    if (resp.isSuccess) {
+                        const count = resp.data as GenderCounted[]
+                        setStudentCount(count)
+                        countStudent.current = count?.reduce((sum, current) => sum + current.count, 0)
+                    }
+                })
+                .catch(error => {
+                    console.error("Failed to fetch student count: ", error)
+                })
+        }
     }, [fetch, id, isSuccess, usedAcademicYearId]);
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         if (!isObjectEmpty(currentAcademicYear))
             setUsedAcademicYearId(currentAcademicYear.id)
     }, [currentAcademicYear]);
+
+    useEffect(() => {
+        if (usedAcademicYearId) {
+            refetch()
+        }
+    }, [refetch, usedAcademicYearId]);
 
     useEffect(() => {
         if(isObjectEmpty(currentAcademicYear)) {
@@ -75,13 +85,10 @@ const ClasseView = () => {
             const date = datetimeExpose(classe?.createdAt as number)
             initAcademicYears(date?.year as number)
         }
-        if (usedAcademicYearId) {
-            refetch()
+        if(isSuccess && data) {
+            setClasse(prevClasse => (prevClasse?.id === (data as Classe).id ? prevClasse : (data as Classe)));
         }
-        if(isSuccess) {
-            setClasse(data as Classe)
-        }
-    }, [classe, academicYears, currentAcademicYear, data, isSuccess, usedAcademicYearId, refetch]);
+    }, [academicYears.length, classe?.createdAt, currentAcademicYear, data, isSuccess]);
 
     const academicYearOptions = academicYears?.map(a => ({
         value: a.id,
@@ -91,6 +98,29 @@ const ClasseView = () => {
     const handleAcademicYearIdValue = (value: string) =>  {
         setUsedAcademicYearId(value)
     }
+
+    const linkItem = [
+        {
+            label: classe?.principalStudent ? 'Changer chef de classe' : 'Ajouter chef de classe',
+            icon: classe?.principalStudent ? <LuUserRoundCheck /> : <LuUserRoundPlus />,
+            onClick: () => alert('Pour changer le chef de classe')
+        },
+        {
+            label: classe?.principalTeacher ? 'Changer prof principal' : 'Ajouter prof principal',
+            icon: classe?.principalTeacher ? <LuUserCheck /> : <LuUserPlus />,
+            onClick: () => alert('Pour changer le prof principal')
+        },
+        {
+            label: classe?.principalCourse ? 'Changer matière principal' : 'Ajouter matière principal',
+            icon: classe?.principalCourse ? <LuBookOpenCheck /> : <LuBookPlus />,
+            onClick: () => alert('Pour changer le prof principal')
+        },
+        {
+            label: classe?.schedule && classe.schedule?.length > 0 ? "Changer l'emploi du temps" : "Ajouter l'emploi du temps",
+            icon: classe?.schedule && classe.schedule?.length > 0 ? <LuCalendarCheck /> : <LuCalendarPlus />,
+            onClick: () => alert('Pour changer le prof principal')
+        }
+    ]
 
     return(
         <>
@@ -117,27 +147,10 @@ const ClasseView = () => {
                         />
                     }
                 ]}
-                items={[
-                    {
-                        key: 0,
-                        label: classe?.principalStudent ? 'Changer chef de classe' : 'Ajouter chef de classe',
-                        icon: classe?.principalStudent ? <LuUserRoundCheck /> : <LuUserRoundPlus />,
-                        onClick: () => alert('Pour changer le chef de classe')
-                    },
-                    {
-                        key: 0,
-                        label: classe?.principalTeacher ? 'Changer prof principal' : 'Ajouter prof principal',
-                        icon: classe?.principalTeacher ? <LuUserCheck /> : <LuUserPlus />,
-                        onClick: () => alert('Pour changer le prof principal')
-                    },
-                    {
-                        key: 0,
-                        label: classe?.schedule && classe.schedule?.length > 0 ? "Changer l'emploi du temps" : "Ajouter l'emploi du temps",
-                        icon: classe?.schedule && classe.schedule?.length > 0 ? <LuCalendarCheck /> : <LuCalendarPlus />,
-                        onClick: () => alert('Pour changer le prof principal')
-                    }
-                ]}
+                items={linkItem as []}
                 upperName={true}
+                btnLabel='Gestion de Classe'
+                editText='Editer la classe'
                 pColor={setColor}
             />
             <ViewRoot
@@ -148,14 +161,17 @@ const ClasseView = () => {
                             dataKey='Info'
                             studentCount={studentCount}
                             totalStudents={countStudent.current}
+                            academicYear={usedAcademicYearId as string}
                         />
                     },
                     {label: 'Étudiants', children: <ClasseStudent infoData={classe!} dataKey='students' />},
                     {label: 'Emploi du Temps', children: <ClasseSchedule infoData={classe!} dataKey='schedule' />},
                     {label: 'Présence', children: <ClasseAttendance infoData={classe!} dataKey='attendance' />},
-                    {label: 'Examens', children: <ClasseExams infoData={classe!} dataKey='exams' />}
+                    {label: 'Examens', children: <ClasseExams infoData={classe!} dataKey='exams' />},
+                    {label: 'Compte Rendu', children: <ClasseCourseReports />}
                 ]}
                 exists={classe !== null && usedAcademicYearId !== null}
+                memorizedTabKey='classeTabKey'
                 tab={{
                     centered: true
                 }}

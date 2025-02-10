@@ -24,6 +24,7 @@ import {PunishmentStatus} from "../entity/enums/punishmentStatus.ts";
 import {Day} from "../entity/enums/day.ts";
 import {AxiosResponse} from "axios";
 import IntrinsicElements = React.JSX.IntrinsicElements;
+import {PercentPositionType, ProgressSize} from "antd/es/progress/progress";
 
 export interface Metadata {
     title: string
@@ -241,6 +242,7 @@ export interface InfoPageProps<T extends object> {
     seeMore?: (key: string) => void
     color?: string
     viewLink?: string
+    academicYear?: string
 }
 
 export interface EditProps<TData extends object> {
@@ -265,10 +267,22 @@ export type WidgetItem = {
     valueStyle?: CSSProperties
     prefix?: ReactNode
     suffix?: ReactNode
+    hasShadow?: boolean
+    progress?: {
+        active: boolean
+        status?: string
+        type?: string
+        percent?: number
+        color?: string
+        percentPosition?: PercentPositionType
+        size?: number | [string | number, number] | ProgressSize | {width?: number | undefined, height?: number | undefined } | undefined
+    }
 }
 
 export interface WidgetProps {
     items: WidgetItem[]
+    hasShadow?: boolean
+    responsiveness?: boolean
 }
 
 export type TabItemType = {

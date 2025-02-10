@@ -35,6 +35,21 @@ export const attendanceTag = (status: AttendanceStatus) => {
     return [tagColor, tagText];
 }
 
+export const getColors = (attendanceStatus: AttendanceStatus) => {
+    switch (attendanceStatus) {
+        case AttendanceStatus.ABSENT:
+            return '#dc3545'
+        case AttendanceStatus.EXCUSED:
+            return '#17a2b8'
+        case AttendanceStatus.PRESENT:
+            return '#28a745'
+        case AttendanceStatus.LATE:
+            return '#ffc107'
+        default:
+            return '#ccc'
+    }
+}
+
 export const countAttendanceStatuses = (dataSource: Attendance[] | AttendanceRecord[]) => {
     const counts = {
         present: 0,

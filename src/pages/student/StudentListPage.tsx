@@ -19,7 +19,7 @@ import {ActionButton} from "../../components/ui/layout/ActionButton.tsx";
 import {useColumnSearch} from "../../hooks/useColumnSearch.tsx";
 import {LuEye} from "react-icons/lu";
 
-const StudentList = () => {
+const StudentListPage = () => {
 
     useDocumentTitle({
         title: `EduSysPro - ${text.student.label}`,
@@ -89,7 +89,7 @@ const StudentList = () => {
             render: (text) => (<Tagger status={dateCompare(text?.endDate)} successMessage={'inscrit'} warnMessage={'fin-année-scolaire'} />)
         },
         {
-            title: "Date d'Inscription",
+            title: "Date d'EnrollStudentPage",
             dataIndex: 'lastEnrolledDate',
             key: 'lastEnrolledDate',
             align: 'center',
@@ -168,4 +168,4 @@ const StudentList = () => {
     )
 }
 
-export default StudentList
+export default StudentListPage

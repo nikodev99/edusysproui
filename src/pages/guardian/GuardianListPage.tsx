@@ -20,7 +20,7 @@ import {StatusTags} from "../../utils/tsxUtils.tsx";
 import {Status} from "../../entity/enums/status.ts";
 import {DataProps} from "../../utils/interfaces.ts";
 
-const GuardianList = () => {
+const GuardianListPage = () => {
 
     useDocumentTitle({
         title: text.guardian.label,
@@ -152,4 +152,4 @@ const GuardianList = () => {
     )
 }
 
-export default GuardianList
+export default GuardianListPage

@@ -14,7 +14,7 @@ import {Gender} from "../../entity/enums/gender.tsx";
 import {getStatusKey, Status} from "../../entity/enums/status.ts";
 import {Tabs, Tag} from "antd";
 
-const GuardianView: React.FC = () => {
+const GuardianViewPage: React.FC = () => {
 
     const { id } = useParams();
 
@@ -105,4 +105,4 @@ const GuardianView: React.FC = () => {
     )
 }
 
-export default GuardianView
+export default GuardianViewPage

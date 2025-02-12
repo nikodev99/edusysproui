@@ -21,7 +21,7 @@ import {ClasseAttendance, ClasseExams, ClasseInfo, ClasseSchedule, ClasseStudent
 import {countClasseStudents} from "../../data/repository/studentRepository.ts";
 import {SuperWord} from "../../utils/tsxUtils.tsx";
 
-const ClasseView = () => {
+const ClasseViewPage = () => {
 
     const {id} = useParams();
     const currentAcademicYear: AcademicYear = useGlobalStore.use.currentAcademicYear()
@@ -180,4 +180,4 @@ const ClasseView = () => {
     )
 }
 
-export default ClasseView
+export default ClasseViewPage

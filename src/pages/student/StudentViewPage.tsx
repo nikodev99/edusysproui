@@ -20,7 +20,7 @@ import {LuCircleUser, LuTrash, LuUserPlus} from "react-icons/lu";
 import {redirectTo} from "../../context/RedirectContext.ts";
 import {ViewRoot} from "../../components/custom/ViewRoot.tsx";
 
-const StudentView = () => {
+const StudentViewPage = () => {
 
     const { id } = useParams()
 
@@ -128,4 +128,4 @@ const StudentView = () => {
     )
 }
 
-export default StudentView
+export default StudentViewPage

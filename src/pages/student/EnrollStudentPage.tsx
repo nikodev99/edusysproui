@@ -19,11 +19,11 @@ import {useToggle} from "../../hooks/useToggle.ts";
 import {OutputFileEntry} from "@uploadcare/blocks";
 import {IndividualForm} from "../../components/forms/IndividualForm.tsx";
 
-const Inscription = () => {
+const EnrollStudentPage = () => {
 
     const documentTitle: Metadata = {
-        title: "EduSysPro - Inscription",
-        description: "Inscription description",
+        title: "EduSysPro - EnrollStudentPage",
+        description: "EnrollStudentPage description",
         hasEdu: false
     }
 
@@ -260,4 +260,4 @@ const Inscription = () => {
     )
 }
 
-export default Inscription
+export default EnrollStudentPage

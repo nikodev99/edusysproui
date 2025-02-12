@@ -8,7 +8,7 @@ import {LuBookPlus, LuChevronDown, LuClipboard} from "react-icons/lu";
 import {Button} from "antd";
 import {useEffect, useState} from "react";
 
-const ClasseSubjectLists = () => {
+const ClasseSubjectListsPage = () => {
 
     useDocumentTitle({
         title: text.cc.label,
@@ -70,4 +70,4 @@ const ClasseSubjectLists = () => {
     )
 }
 
-export default ClasseSubjectLists
+export default ClasseSubjectListsPage

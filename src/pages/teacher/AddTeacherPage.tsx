@@ -17,7 +17,7 @@ import {OutputFileEntry} from "@uploadcare/blocks";
 import {addTeacher} from "../../data";
 import {IndividualForm} from "../../components/forms/IndividualForm.tsx";
 
-const AddTeacher = () => {
+const AddTeacherPage = () => {
 
     const metadata = {
         title: "Ajouter enseignant",
@@ -221,4 +221,4 @@ const AddTeacher = () => {
     )
 }
 
-export default AddTeacher;
+export default AddTeacherPage;

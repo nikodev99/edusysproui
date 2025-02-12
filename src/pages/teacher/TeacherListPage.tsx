@@ -21,7 +21,7 @@ import {useRef} from "react";
 import {Status} from "../../entity/enums/status.ts";
 import {DataProps} from "../../utils/interfaces.ts";
 
-const TeacherList = () => {
+const TeacherListPage = () => {
 
     useDocumentTitle({
         title: text.teacher.label,
@@ -215,4 +215,4 @@ const TeacherList = () => {
     )
 }
 
-export default TeacherList
+export default TeacherListPage

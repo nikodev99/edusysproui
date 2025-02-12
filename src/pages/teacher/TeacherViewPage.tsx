@@ -30,7 +30,7 @@ import {
 import {useToggle} from "../../hooks/useToggle.ts";
 import {ViewRoot} from "../../components/custom/ViewRoot.tsx";
 
-const TeacherView = () => {
+const TeacherViewPage = () => {
 
     const { id } = useParams()
 
@@ -163,4 +163,4 @@ const TeacherView = () => {
     )
 }
 
-export default TeacherView;
+export default TeacherViewPage;

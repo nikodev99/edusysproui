@@ -11,7 +11,7 @@ import {
     getCountry,
     getDistinctArray,
     isNull,
-    lowerName,
+    cLowerName,
     setName, setTime,
     timeToCurrentDatetime
 } from "../../../utils/utils.ts";
@@ -306,7 +306,7 @@ const StudentReprimanded = ({infoData, color, seeMore}: TeacherInfo) => {
     const dataSource = studentReprimanded?.map(r => ({
         key: r.id,
         studentId: r.student?.student?.id,
-        studentName: `${lowerName(r.student?.student?.personalInfo?.firstName as string, r.student?.student?.personalInfo?.lastName, 15)}`,
+        studentName: `${cLowerName(r.student?.student?.personalInfo?.firstName as string, r.student?.student?.personalInfo?.lastName, 15)}`,
         reprimandType: r.type,
         punishmentDates: `${fDate(r.punishment?.startDate, 'DD/MM/YYYY')} à ${fDate(r.punishment?.endDate, 'DD/MM/YYYY')}`,
         studentClasse: r.student?.classe?.name,

@@ -90,7 +90,6 @@ export const StudentClasse = ({enrolledStudent, setActiveKey}: {enrolledStudent:
                     {key: '1', label: `Classe ${classe.name}`, children: (
                         <LoadMoreList
                             listProps={{
-                                className: 'loadmore-list',
                                 dataSource: classmates,
                                 renderItem: (item) => (
                                     <List.Item actions={[

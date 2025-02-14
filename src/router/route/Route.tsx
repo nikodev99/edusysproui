@@ -2,19 +2,19 @@ import {createBrowserRouter} from "react-router-dom";
 import PageLayout from "../../pages/PageLayout.tsx";
 import PageError from "../../pages/PageError.tsx";
 import Dashboard from "../../pages/dashboard/page.tsx";
-import StudentList from "../../pages/student/StudentList.tsx";
-import Inscription from "../../pages/student/Inscription.tsx";
-import StudentView from "../../pages/student/StudentView.tsx";
+import StudentListPage from "../../pages/student/StudentListPage.tsx";
+import EnrollStudentPage from "../../pages/student/EnrollStudentPage.tsx";
+import StudentViewPage from "../../pages/student/StudentViewPage.tsx";
 import RedirectProvider from "../../providers/RedirectProvider.tsx";
-import TeacherList from "../../pages/teacher/TeacherList.tsx";
-import GuardianList from "../../pages/guardian/GuardianList.tsx";
-import GuardianView from "../../pages/guardian/GuardianView.tsx";
-import AddTeacher from "../../pages/teacher/AddTeacher.tsx";
-import TeacherView from "../../pages/teacher/TeacherView.tsx";
+import TeacherListPage from "../../pages/teacher/TeacherListPage.tsx";
+import GuardianListPage from "../../pages/guardian/GuardianListPage.tsx";
+import GuardianViewPage from "../../pages/guardian/GuardianViewPage.tsx";
+import AddTeacherPage from "../../pages/teacher/AddTeacherPage.tsx";
+import TeacherViewPage from "../../pages/teacher/TeacherViewPage.tsx";
 import {Organization} from "../../pages/setting/Organization.tsx";
-import ClasseSubjectLists from "../../pages/classe_subject/ClasseSubjectLists.tsx";
-import ClasseView from "../../pages/classe_subject/ClasseView.tsx";
-import SubjectView from "../../pages/classe_subject/SubjectView.tsx";
+import ClasseSubjectListsPage from "../../pages/classe_subject/ClasseSubjectListsPage.tsx";
+import ClasseViewPage from "../../pages/classe_subject/ClasseViewPage.tsx";
+import SubjectViewPage from "../../pages/classe_subject/SubjectViewPage.tsx";
 
 export const Route = createBrowserRouter([
     {
@@ -31,32 +31,32 @@ export const Route = createBrowserRouter([
             {
                 path: 'students',
                 children: [
-                    { path: '', element: <StudentList />},
-                    { path: "new", element: <Inscription />},
-                    { path: ':id', element: <StudentView />}
+                    { path: '', element: <StudentListPage />},
+                    { path: "new", element: <EnrollStudentPage />},
+                    { path: ':id', element: <StudentViewPage />}
                 ]
             },
             {
                 path: 'teachers',
                 children: [
-                    { path: '', element: <TeacherList /> },
-                    { path: 'new', element: <AddTeacher /> },
-                    { path: ':id', element: <TeacherView /> }
+                    { path: '', element: <TeacherListPage /> },
+                    { path: 'new', element: <AddTeacherPage /> },
+                    { path: ':id', element: <TeacherViewPage /> }
                 ]
             },
             {
                 path: 'guardians',
                 children: [
-                    { path: '', element: <GuardianList /> },
-                    { path: ':id', element: <GuardianView /> }
+                    { path: '', element: <GuardianListPage /> },
+                    { path: ':id', element: <GuardianViewPage /> }
                 ]
             },
             {
                 path: 'classes-and-subjects',
                 children: [
-                    {path: '', element: <ClasseSubjectLists />},
-                    {path: 'classe/:id', element: <ClasseView />},
-                    {path: 'subject/:id', element: <SubjectView />},
+                    {path: '', element: <ClasseSubjectListsPage />},
+                    {path: 'classe/:id', element: <ClasseViewPage />},
+                    {path: 'subject/:id', element: <SubjectViewPage />},
                 ]
             },
             {

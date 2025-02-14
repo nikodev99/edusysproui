@@ -1,12 +1,12 @@
 import {Table as AntTable, TableProps} from 'antd';
 import {HTMLProps} from "react";
 
-interface CustomTableProps {
-    tableProps: TableProps,
+export interface CustomTableProps<RecordType> {
+    tableProps: TableProps<RecordType>,
     color?: string
 }
 
-export const Table = ({tableProps, color}: CustomTableProps) => {
+export const Table = <T extends object>({tableProps, color}: CustomTableProps<T>) => {
     return(
         <AntTable
             {...tableProps}

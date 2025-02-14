@@ -11,12 +11,11 @@ export {
 
 export {
     fetchEnrolledStudents,
-    fetchSearchedEnrolledStudents,
     fetchStudentById,
     countStudents
 } from './action/studentAction.ts'
 
-export {fetchTeachers, fetchSearchedTeachers, fetchTeacherById, count} from './action/fetch_teacher.ts'
+export {fetchTeachers, fetchTeacherById, count} from './action/teacherAction.ts'
 
 export {fetchAllCourses} from './action/courseAction.ts'
 

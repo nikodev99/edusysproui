@@ -25,6 +25,8 @@ import {Day} from "../entity/enums/day.ts";
 import {AxiosResponse} from "axios";
 import IntrinsicElements = React.JSX.IntrinsicElements;
 import {PercentPositionType, ProgressSize} from "antd/es/progress/progress";
+import {TableColumnsType} from "antd";
+import {ItemType} from "antd/es/menu/interface";
 
 export interface Metadata {
     title: string
@@ -176,6 +178,7 @@ export interface StudentListDataType {
     firstName: string
     lastName: string
     gender: Gender
+    age: number
     lastEnrolledDate: Date | number
     classe: string
     grade: SectionType | string
@@ -193,6 +196,25 @@ export interface DataProps {
     description?: string | ReactNode | string[] | ReactNode[]
 }
 
+export interface ListViewerProps<TData extends object, TError> {
+    callback: () => Promise<AxiosResponse<TData | TData[], TError>>
+    searchCallback: (...args: unknown[]) => Promise<AxiosResponse<TData[]>>
+    tableColumns?: TableColumnsType<TData>
+    dropdownItems?: (url: string) => ItemType[]
+    throughDetails?: (id: string) => void
+    hasCount?: boolean,
+    countTitle?: string,
+    fetchId?: string | string[]
+    localStorage?: {activeIcon?: string, pageSize?: string, page?: string, pageCount?: string}
+    cardNotAvatar?: boolean
+    cardData?: (data: TData[]) => DataProps[]
+    level?: number
+    refetchCondition?: boolean
+    callbackParams?: unknown[]
+    searchCallbackParams?: unknown[]
+    infinite?: boolean
+}
+
 export interface ExamData {
     examId?: number
     examDate: string;
@@ -200,6 +222,16 @@ export interface ExamData {
     classe: string;
     subject: string
     obtainedMark: number;
+}
+
+export interface AutoScrollProps {
+    isLoading: boolean
+    allItems: number
+    loadMoreSize: () => void
+    size: number
+    height?: number
+    infinite?: boolean
+    seconds?: number
 }
 
 export interface ReprimandData {

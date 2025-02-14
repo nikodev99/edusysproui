@@ -50,4 +50,5 @@ export interface BarChartProps <T>{
     stackBars?: number
     stackKeys?: Array<keyof T>
     barSize?: number
+    layout?: 'horizontal' | 'vertical' | 'centric' | 'radial'
 }

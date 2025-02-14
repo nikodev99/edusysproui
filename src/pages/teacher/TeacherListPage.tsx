@@ -14,12 +14,12 @@ import {StatusTags} from "../../utils/tsxUtils.tsx";
 import {ActionButton} from "../../components/ui/layout/ActionButton.tsx";
 import {ListPageHierarchy} from "../../components/custom/ListPageHierarchy.tsx";
 import ListViewer from "../../components/custom/ListViewer.tsx";
-import {fetchSearchedTeachers, fetchTeachers} from "../../data";
+import {fetchTeachers} from "../../data";
 import {AxiosResponse} from "axios";
-import {Response} from "../../data/action/response.ts";
 import {useRef} from "react";
 import {Status} from "../../entity/enums/status.ts";
 import {DataProps} from "../../utils/interfaces.ts";
+import {getSearchedTeachers} from "../../data/repository/teacherRepository.ts";
 
 const TeacherListPage = () => {
 
@@ -197,7 +197,7 @@ const TeacherListPage = () => {
             />
             <ListViewer
                 callback={fetchTeachers as () => Promise<AxiosResponse<Teacher[]>>}
-                searchCallback={fetchSearchedTeachers as (input: unknown) => Promise<Response<Teacher>>}
+                searchCallback={getSearchedTeachers as ((...input: unknown[]) => Promise<AxiosResponse<Teacher[]>>)}
                 tableColumns={columns as TableColumnsType<Teacher>}
                 dropdownItems={getItems}
                 throughDetails={throughDetails}

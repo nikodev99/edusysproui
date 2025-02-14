@@ -164,10 +164,10 @@ const ClasseViewPage = () => {
                             academicYear={usedAcademicYearId as string}
                         />
                     },
-                    {label: 'Étudiants', children: <ClasseStudent infoData={classe!} dataKey='students' />},
-                    {label: 'Emploi du Temps', children: <ClasseSchedule infoData={classe!} dataKey='schedule' />},
-                    {label: 'Présence', children: <ClasseAttendance infoData={classe!} dataKey='attendance' />},
-                    {label: 'Examens', children: <ClasseExams infoData={classe!} dataKey='exams' />},
+                    {label: 'Étudiants', children: <ClasseStudent infoData={classe!} academicYear={usedAcademicYearId as string} dataKey='students' />},
+                    {label: 'Emploi du Temps', children: <ClasseSchedule infoData={classe!} academicYear={usedAcademicYearId as string} dataKey='schedule' />},
+                    {label: 'Présence', children: <ClasseAttendance infoData={classe!} academicYear={usedAcademicYearId as string} dataKey='attendance' />},
+                    {label: 'Examens', children: <ClasseExams infoData={classe!} academicYear={usedAcademicYearId as string} dataKey='exams' />},
                     {label: 'Compte Rendu', children: <ClasseCourseReports />}
                 ]}
                 exists={classe !== null && usedAcademicYearId !== null}

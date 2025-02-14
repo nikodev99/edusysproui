@@ -1,5 +1,6 @@
 import {Card} from "antd";
 import {ReactNode} from "react";
+import VoidData from "../../view/VoidData.tsx";
 
 export interface SectionProps {
     title: string | ReactNode;
@@ -18,7 +19,7 @@ const Section = ({title, children, more, seeMore}: SectionProps) => {
 
     return(
         <Card className='profile-card' title={title} size='small' {...(extra && {extra})}>
-            {children}
+            {children ?? <VoidData />}
         </Card>
     )
 }

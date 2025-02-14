@@ -17,10 +17,11 @@ interface ViewProps {
     btnLabel?: ReactNode
     pColor?: (color: string) => void
     upperName ?: boolean
+    editText?: ReactNode
 }
 
 const ViewHeader = (
-    {isLoading, setEdit, closeState, avatarProps, blockProps, items, btnLabel, pColor, upperName}: ViewProps
+    {isLoading, setEdit, closeState, avatarProps, blockProps, items, btnLabel, pColor, upperName, editText}: ViewProps
 ) => {
 
     const [color, setColor] = useState<string>('')
@@ -47,7 +48,7 @@ const ViewHeader = (
     }
 
     const baseItems: ItemType[] = [
-        {key: 1, label: 'Editer', icon: <LuPencil />, onClick: handleClick},
+        {key: 1, label: editText ?? 'Editer', icon: <LuPencil />, onClick: handleClick},
     ]
     const additionalItems = items ? items : []
 

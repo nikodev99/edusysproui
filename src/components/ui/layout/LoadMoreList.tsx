@@ -7,7 +7,7 @@ interface LoadMoreListProps<T> {
     isLoading: boolean,
     size: number,
     allItems: number,
-    onLoadMore: () => void
+    onLoadMore?: () => void
     buttonType?: ButtonType
     buttonLabel?: ReactNode
 }
@@ -17,11 +17,11 @@ export const LoadMoreList = <T extends object>(
 ) => {
 
     const handleLoadMore = () => {
-        onLoadMore();
+        onLoadMore && onLoadMore();
     }
 
     const loadMore =
-        !isLoading ? (
+        onLoadMore && !isLoading ? (
             <div style={{
                 textAlign: 'center',
                 marginTop: 12,
@@ -42,6 +42,8 @@ export const LoadMoreList = <T extends object>(
     return(
         <List
             {...listProps}
+            className={`loadmore-list ${listProps.className || ''}`}
+            style={onLoadMore ? {paddingBottom: '30px'} : undefined}
             loadMore={loadMore}
         />
     )

@@ -1,8 +1,8 @@
 import TabItem from "../../view/TabItem.tsx";
 import {Attendance, Enrollment} from "../../../entity";
 import {fDate, firstLetter, setFirstName, startsWithVowel} from "../../../utils/utils.ts";
-import {Select, Table, TableColumnsType} from "antd";
-import {useEffect, useState, useMemo} from "react";
+import {Select, TableColumnsType} from "antd";
+import {useEffect, useState, useMemo, useRef} from "react";
 import {LuEye} from "react-icons/lu";
 import {Link} from "react-router-dom";
 import {useFetch} from "../../../hooks/useFetch.ts";
@@ -12,17 +12,21 @@ import Tag from "../../ui/layout/Tag.tsx";
 import {attendanceTag} from "../../../entity/enums/attendanceStatus.ts";
 import {AttendanceRecord} from "../../../utils/interfaces.ts";
 import {AttendanceAnalysis} from "./AttendanceAnalysis.tsx";
+import {AutoScrollTable} from "../../ui/layout/AutoScrollTable.tsx";
 
-export const StudentAttendance = ({enrolledStudent}: {enrolledStudent: Enrollment}) => {
+export const StudentAttendance = ({enrolledStudent, infinite = true}: {enrolledStudent: Enrollment, infinite?: boolean}) => {
 
     const {academicYear, student: {personalInfo, enrollments}} = enrolledStudent
 
+    const pageItemSize: number = 15
     const [academicYearId, setAcademicYearId] = useState<string>(academicYear?.id)
-    const [size, setSize] = useState<number>(10)
-    const [pageCount, setPageCount] = useState<number>(0)
+    const [size, setSize] = useState<number>(pageItemSize)
+    const [allItems, setAllItems] = useState<number>(0)
     const [attendances, setAttendances] = useState<Attendance[]>([])
-    const {data, error, isLoading, isSuccess, refetch} = useFetch('attendance-list', getStudentAttendances, [
-        personalInfo?.id, {page: pageCount, size: size}, academicYearId
+    const pageCount = useRef<number>(0)
+    
+    const {data, error, isLoading, isFetching, isSuccess, refetch} = useFetch('attendance-list', getStudentAttendances, [
+        personalInfo?.id, {page: pageCount.current, size: size}, academicYearId
     ])
 
     const academicYears = useMemo(() => {
@@ -50,13 +54,14 @@ export const StudentAttendance = ({enrolledStudent}: {enrolledStudent: Enrollmen
     }, [attendances])
 
     useEffect(() => {
-        if (academicYearId || size) {
+        if (academicYearId || size || personalInfo?.id) {
             refetch().then(r => r.data)
         }
-        if (isSuccess && !isLoading && data && 'content' in data) {
+        if (isSuccess && !isLoading && data && 'content' in data && 'totalElements'in data) {
             setAttendances(data.content as Attendance[])
+            setAllItems(data.totalElements as number)
         }
-    }, [academicYearId, data, isLoading, isSuccess, refetch, size])
+    }, [academicYearId, data, isLoading, isSuccess, personalInfo?.id, refetch, size])
 
     if(error) return <PageError />
 
@@ -106,6 +111,10 @@ export const StudentAttendance = ({enrolledStudent}: {enrolledStudent: Enrollmen
         }
     ];
 
+    const handleLoadMore = ()=>  {
+        setSize(prevState => prevState + size)
+    }
+
     return(
         <TabItem
             title={`Suivis de présence d${startsWithVowel(personalInfo?.lastName) ? "'" : 'e '}${studentName}`}
@@ -124,13 +133,21 @@ export const StudentAttendance = ({enrolledStudent}: {enrolledStudent: Enrollmen
                 {key: '1', label: 'Données de présence', children: (
                     <>
                         <AttendanceAnalysis enrollment={enrolledStudent} academicYear={academicYearId} />
-                        <Table
-                            columns={columns}
-                            dataSource={dataSource}
-                            size='small'
-                            scroll={{y: 500}}
-                            pagination={false}
-                            rowKey={record => `row-${record.id}`}
+                        <AutoScrollTable
+                            tableProps={{
+                                columns: columns,
+                                dataSource: dataSource,
+                                size: 'small',
+                                pagination: false,
+                                loading: isLoading || isFetching,
+                                rowKey: record => `row-${record.id}`
+                            }}
+                            isLoading={isLoading || isFetching}
+                            allItems={allItems}
+                            loadMoreSize={handleLoadMore}
+                            size={size}
+                            infinite={infinite}
+                            height={500}
                         />
                     </>
                 )}

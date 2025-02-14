@@ -1,10 +1,10 @@
 import {Grade} from "./grade.ts";
-import {Student} from "./student.ts";
 import {Schedule} from "./schedule.ts";
 import {Course} from "./course.ts";
 import {ClasseTeacherBoss} from "./classeTeacherBoss.ts";
 import {ClasseStudentBoss} from "./classeStudentBoss.ts";
 import {Teacher} from "./teacher.ts";
+import {Enrollment} from "./enrollment.ts";
 
 export interface Classe {
     id: number
@@ -16,7 +16,7 @@ export interface Classe {
     principalTeacher: ClasseTeacherBoss
     principalStudent: ClasseStudentBoss
     principalCourse: Course
-    students: Student[]
+    students: Enrollment[]
     classeTeachers: Teacher[]
     monthCost: number
     createdAt: Date | number

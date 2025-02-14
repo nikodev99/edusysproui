@@ -37,7 +37,7 @@ const VerticalComposeChart = ({data, gridColor, barColor, lineColor}: ComposeCha
             >
                 <CartesianGrid stroke={`${gridColor ? gridColor : '#f5f5f5'}`} />
                 <XAxis type="number" />
-                <YAxis dataKey="name" type="category" scale="band" />
+                <YAxis dataKey="name" type="category" />
                 <Tooltip />
                 <Bar dataKey="valeur" barSize={30} fill={`${barColor ? barColor : '#413ea0'}`}>
                     {data.map((_entry, index) => (

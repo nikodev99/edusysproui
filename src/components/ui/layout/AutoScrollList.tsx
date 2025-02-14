@@ -1,32 +1,30 @@
 import InfiniteScroll from "react-infinite-scroll-component";
 import {List, ListProps, Skeleton} from "antd";
 import {useCallback, useEffect, useRef} from "react";
+import {AutoScrollProps} from "../../../utils/interfaces.ts";
 
 interface AutoScrollListProps<T> {
     listProps: ListProps<T>
-    isLoading: boolean
-    allItems: number
-    loadMore: () => void
-    size: number
-    height?: number
-    infinite?: boolean
 }
 
+type AutoListProps<T> = AutoScrollListProps<T> & AutoScrollProps
+
 export const AutoScrollList = <T extends object>(
-    {listProps, isLoading, allItems, loadMore, size, height, infinite}: AutoScrollListProps<T>
+    {listProps, isLoading, allItems, loadMoreSize, size, height, infinite}: AutoListProps<T>
 ) => {
 
     const isInfinite = useRef<boolean>(infinite ?? true)
 
     const handleLoadMore = useCallback(() => {
         if (!isLoading && size < allItems && isInfinite.current) {
-            loadMore();
+            loadMoreSize();
         }
-    }, [isLoading, size, allItems, loadMore]);
+    }, [isLoading, size, allItems, loadMoreSize]);
 
     useEffect(() => {
-        handleLoadMore()
-    }, [])
+        if (size)
+            handleLoadMore()
+    }, [size])
     
     return(
         <div id='autoScroll' style={{height: height ?? 500, overflow: 'auto', padding: '0 16px'}}>

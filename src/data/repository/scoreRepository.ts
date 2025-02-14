@@ -2,6 +2,14 @@ import {AxiosResponse} from "axios";
 import {Score} from "../../entity";
 import {apiClient, request} from "../axiosConfig.ts";
 
+export const getAllAssignmentMarks = (assignmentId: string, size: number) => {
+    return apiClient.get(`/score/all_assignment_marks/${assignmentId}`, {
+        params: {
+            size: size
+        }
+    })
+}
+
 export const getAllStudentScores = (page: number, size: number, studentId: string, academicYearId: string): Promise<AxiosResponse<Score[]>> => {
     return request({
         method: 'GET',
@@ -24,16 +32,16 @@ export const getAllStudentScoresBySubject = (academicYearId: string, subjectId: 
     })
 }
 
-export const getAllTeacherMarks = (teacherId: string) => {
-    return apiClient.get(`/score/all_teacher_marks/${teacherId}`)
-}
-
-export const getAllAssignmentMarks = (assignmentId: string, size: number) => {
-    return apiClient.get(`/score/all_assignment_marks/${assignmentId}`, {
+export const getClasseBestStudents = (classeId: number, academicYear: string) => {
+    return apiClient.get(`/score/classe/${classeId}`, {
         params: {
-            size: size
+            academicYear: academicYear,
         }
     })
+}
+
+export const getAllTeacherMarks = (teacherId: string) => {
+    return apiClient.get(`/score/all_teacher_marks/${teacherId}`)
 }
 
 export const getBestStudentBySubjectScore = (personalInfoId: number, subjectId: number) => {

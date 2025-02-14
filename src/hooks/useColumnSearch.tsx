@@ -69,11 +69,12 @@ export const useColumnSearch = <TData,>() => {
             record[dataIndex]?.toString()
                 .toLowerCase()
                 .includes((value as string).toLowerCase()) as boolean,
-        onFilterDropdownOpenChange: (visible) => {
+        filterDropdownProps: {
+            onOpenChange: (visible) => {
             if (visible) {
                 setTimeout(() => searchInput.current?.select(), 100);
             }
-        },
+        }},
         render: (text) =>
             searchedColumn === dataIndex ? (
                 <Highlighter

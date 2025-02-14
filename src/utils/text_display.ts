@@ -4,7 +4,7 @@ export const text = {
         href: '/dashboard'
     },
     student: {
-        label: 'Étudiants',
+        label: 'Étudiant',
         href: '/students',
         group: {
             add: {
@@ -32,7 +32,7 @@ export const text = {
         }
     },
     guardian: {
-        label: 'Tuteurs',
+        label: 'Tuteur',
         href: '/guardians',
         group: {
             view: {

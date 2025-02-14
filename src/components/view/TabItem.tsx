@@ -4,7 +4,7 @@ import {ReactNode} from "react";
 
 
 interface TabItemProps {
-    title: string
+    title: string | ReactNode;
     selects?: ReactNode[]
     items?: { key: string; label: ReactNode, children?: ReactNode }[]
     onTabChange?: (tabKey: string) => void,
@@ -22,13 +22,13 @@ const TabItem = ({title, selects, items, onTabChange, tabClassName}: TabItemProp
                 <div className="scores">
                     <div className="pl-scores">
                         <div className="head">
-                            <div className="multi-head-select">
+                            {selects && <div className="multi-head-select">
                                 {selects?.map((select, index) => (
                                     <div className="head-select" key={`item-${index}`}>
                                         {select}
                                     </div>
                                 ))}
-                            </div>
+                            </div>}
                             <Tabs
                                 className={tabClassName}
                                 centered size='small'

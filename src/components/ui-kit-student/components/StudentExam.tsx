@@ -2,7 +2,7 @@ import {Enrollment, Score} from "../../../entity";
 import {fDate, setFirstName, startsWithVowel} from "../../../utils/utils.ts";
 import {Badge, Select, Table, TableColumnsType, Typography} from "antd";
 import {ExamData} from "../../../utils/interfaces.ts";
-import {fetchAllStudentScores, fetchAllStudentScoresBySubject} from "../../../data/action/fetch_score.ts";
+import {fetchAllStudentScores, fetchAllStudentScoresBySubject} from "../../../data/action/scoreAction.ts";
 import LocalStorageManager from "../../../core/LocalStorageManager.ts";
 import {useEffect, useMemo, useState} from "react";
 import {initExamData} from "../../../entity/domain/score.ts";
@@ -74,8 +74,6 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
         return <PageError />
     }
 
-    console.log("Score data: ", subjects)
-
     const columns: TableColumnsType<ExamData> = [
         {
             title: "Examen",
@@ -111,13 +109,12 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
             </Typography.Title>
         },
         {
-            title: (<LuEye size={15} />),
             dataIndex: 'examId',
             key: 'examId',
             align: 'right',
             width: '50px',
             //TODO redirect to the exam link
-            render: (examId) => <Link to={examId}>Voir</Link>
+            render: (examId) => <Link to={examId}><LuEye size={15} /></Link>
         }
     ];
 

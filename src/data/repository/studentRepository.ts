@@ -40,6 +40,30 @@ export const getStudentById = (studentId: string): Promise<AxiosResponse<Enrollm
     return apiClient.get<Enrollment>(`/enroll/student/${studentId}`)
 }
 
+export const getClasseEnrolledStudents = (classeId: number, academicYear: string, {page = 0, size = 10}: Pageable, sortCriteria?: string) => {
+    return request({
+        method: 'GET',
+        url: `/enroll/classroom/${classeId}`,
+        params: {
+            page: page,
+            size: size,
+            academicYear: academicYear,
+            sortCriteria: `${sortCriteria ? `${sortCriteria},e.student.personalInfo.lastName:desc` : 'e.student.personalInfo.lastName:desc'}`
+        }
+    })
+}
+
+export const getClasseEnrolledStudentsSearch = (classeId: number, academicYear: string, searchName?: string) => {
+    return request({
+        method: 'GET',
+        url: `/enroll/classroom_search/${classeId}`,
+        params: {
+            academicYear: academicYear,
+            search: searchName
+        }
+    })
+}
+
 export const getRandomStudentClassmate = (studentId: string, classeId: number): Promise<AxiosResponse<Enrollment[]>> => {
     return apiClient.get<Enrollment[]>(`enroll/classmates/${studentId}_${classeId}`)
 }

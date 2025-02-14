@@ -8,17 +8,17 @@ import {Avatar} from "../../components/ui/layout/Avatar.tsx";
 import {enumToObjectArrayForFiltering, setFirstName} from "../../utils/utils.ts";
 import {Gender} from "../../entity/enums/gender.tsx";
 import {Guardian} from "../../entity";
-import {fetchEnrolledStudentsGuardians, fetchSearchedEnrolledStudentsGuardian} from "../../data";
+import {fetchEnrolledStudentsGuardians} from "../../data";
 import {ActionButton} from "../../components/ui/layout/ActionButton.tsx";
 import {LuEye} from "react-icons/lu";
 import {redirectTo} from "../../context/RedirectContext.ts";
 import {AxiosResponse} from "axios";
-import {Response} from "../../data/action/response.ts";
 import {AiOutlineUserDelete} from "react-icons/ai";
 import {BiSolidUserAccount} from "react-icons/bi";
 import {StatusTags} from "../../utils/tsxUtils.tsx";
 import {Status} from "../../entity/enums/status.ts";
 import {DataProps} from "../../utils/interfaces.ts";
+import {getSearchedEnrolledStudentGuardian} from "../../data/repository/guardianRepository.ts";
 
 const GuardianListPage = () => {
 
@@ -139,7 +139,7 @@ const GuardianListPage = () => {
             <ListPageHierarchy items={pageHierarchy as [Breadcrumb]} />
             <ListViewer
                 callback={fetchEnrolledStudentsGuardians as () => Promise<AxiosResponse<Guardian[]>>}
-                searchCallback={fetchSearchedEnrolledStudentsGuardian as (input: unknown) => Promise<Response<Guardian>>}
+                searchCallback={getSearchedEnrolledStudentGuardian as (...input: unknown[]) => Promise<AxiosResponse<Guardian[]>>}
                 tableColumns={columns as TableColumnsType<Guardian>}
                 dropdownItems={getItems}
                 throughDetails={throughDetails}

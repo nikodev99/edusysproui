@@ -17,7 +17,7 @@ import {Gender} from "../entity/enums/gender.tsx";
 import {AttendanceStatus} from "../entity/enums/attendanceStatus.ts";
 import {Employee} from "../entity/domain/employee.ts";
 import {AddressOwner, IndividualType} from "../core/shared/sharedEnums.ts";
-import {CalendarProps, Event} from "react-big-calendar";
+import {CalendarProps, Event, View, ViewsProps} from "react-big-calendar";
 import {ReprimandType} from "../entity/enums/reprimandType.ts";
 import {PunishmentType} from "../entity/enums/punishmentType.ts";
 import {PunishmentStatus} from "../entity/enums/punishmentStatus.ts";
@@ -25,8 +25,9 @@ import {Day} from "../entity/enums/day.ts";
 import {AxiosResponse} from "axios";
 import IntrinsicElements = React.JSX.IntrinsicElements;
 import {PercentPositionType, ProgressSize} from "antd/es/progress/progress";
-import {TableColumnsType} from "antd";
+import {TableColumnsType, TableProps} from "antd";
 import {ItemType} from "antd/es/menu/interface";
+import {Individual} from "../entity/domain/individual.ts";
 
 export interface Metadata {
     title: string
@@ -213,6 +214,8 @@ export interface ListViewerProps<TData extends object, TError> {
     callbackParams?: unknown[]
     searchCallbackParams?: unknown[]
     infinite?: boolean
+    uuidKey?: keyof TData | string[]
+    tableProps?: TableProps
 }
 
 export interface ExamData {
@@ -290,6 +293,22 @@ export type Color = string
 export type Counted = Record<string, number>
 export type GenderCounted = {gender: Gender, count: number, ageAverage: number}
 export type CountType = {classe?: string, count?: number};
+export type AttendanceCount = {status: AttendanceStatus, count: number}
+export type AttendanceSummary = {individual: Individual, statusCount: AttendanceCount[]}
+export type AttendanceRecentCount = {
+    date: string
+    present: number
+    absent: number
+    late: number
+    excused: number
+}
+
+export type AttendanceStatusCount = {
+    present: number
+    absent: number
+    late: number
+    excused: number
+}
 
 export type WidgetItem = {
     title: ReactNode
@@ -337,16 +356,32 @@ export type CustomUpdateProps = {
     setErrorMessage: (msg: string | undefined) => void
 }
 
-export interface ApiEvent {
+export interface ApiEvent<T extends object> {
     dayOfWeek: Day
-    event: string
+    event: string | ReactNode
     allDay: boolean
     startTime: [number, number]
     endTime: [number, number]
+    resource?: T
 }
 
 export type CalendarEvent = CalendarProps['events']
 export type EventProps = Event
+
+export interface BigCalendarProps<TEvents extends object = Event> {
+    data: TEvents[]
+    views: ViewsProps<TEvents>
+    defaultView: View
+    startDayTime?: number[]
+    endDayTime?: [number, number]
+    className?: string
+    styles?: CSSProperties
+    onSelectEvent?: (event: TEvents) => void
+    start?: keyof TEvents
+    end?: keyof TEvents
+    showNavButton?: boolean
+    height?: number
+}
 
 export type TabFunction<T> = (teacherId: string, ids: IDS, pageable?: Pageable) => Promise<AxiosResponse<T>>
 
@@ -357,6 +392,10 @@ export type DateExplose = {
     hour?: number
     minute?: number
     second?: number
+}
+
+export interface TableSearchProps {
+    searchInput?: boolean
 }
 
 export interface MasonryProps {

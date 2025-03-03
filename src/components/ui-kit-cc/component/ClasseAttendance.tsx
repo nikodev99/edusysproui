@@ -1,8 +1,12 @@
-import {InfoPageProps} from "../../../utils/interfaces.ts";
+import {GenderCounted, InfoPageProps} from "../../../utils/interfaces.ts";
 import {Classe} from "../../../entity";
+import PageWrapper from "../../view/PageWrapper.tsx";
+import {ClasseAttendanceAnalysis} from "./ClasseAttendanceAnalysis.tsx";
 
-export const ClasseAttendance = ({infoData}: InfoPageProps<Classe>) => {
+export const ClasseAttendance = (props: InfoPageProps<Classe> & {studentCount?: GenderCounted[] | null}) => {
     return (
-        <div>Classe Student Attendance</div>
+        <PageWrapper>
+            <ClasseAttendanceAnalysis {...props} />
+        </PageWrapper>
     )
 }

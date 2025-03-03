@@ -1,5 +1,5 @@
 import {Attendance} from "../domain/attendance.ts";
-import {AttendanceRecord} from "../../utils/interfaces.ts";
+import {AttendanceCount, AttendanceRecord, AttendanceStatusCount} from "../../utils/interfaces.ts";
 
 export enum AttendanceStatus {
     PRESENT = 'Présent',
@@ -49,6 +49,40 @@ export const getColors = (attendanceStatus: AttendanceStatus) => {
             return '#ccc'
     }
 }
+
+export const countAll = (status: AttendanceCount[]) => {
+    return status?.reduce((sum, record) => sum + record.count, 0) || 0;
+}
+
+export const countStatus = (attendanceStatus: AttendanceCount[]): AttendanceStatusCount => {
+    const counts = {
+        present: 0,
+        absent: 0,
+        late: 0,
+        excused: 0
+    };
+
+    attendanceStatus.forEach(record => {
+        switch (AttendanceStatus[record.status as unknown as keyof typeof AttendanceStatus]) {
+            case AttendanceStatus.ABSENT:
+                counts.absent = record.count;
+                break;
+            case AttendanceStatus.EXCUSED:
+                counts.excused = record.count;
+                break;
+            case AttendanceStatus.PRESENT:
+                counts.present = record.count;
+                break;
+            case AttendanceStatus.LATE:
+                counts.late = record.count;
+                break;
+            default:
+                break;
+        }
+    });
+
+    return counts;
+};
 
 export const countAttendanceStatuses = (dataSource: Attendance[] | AttendanceRecord[]) => {
     const counts = {

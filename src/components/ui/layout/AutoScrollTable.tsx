@@ -13,7 +13,7 @@ export const AutoScrollTable = <T extends object>(props: AutoScrollTableProps<T>
     const isInfinite = useRef<boolean>(infinite ?? true)
 
     const handleLoadMore = useCallback(() => {
-        if (!isLoading && size < allItems && isInfinite.current) {
+        if (!isLoading && (size < allItems) && isInfinite.current) {
             setWait(true)
             setTimeout(() => {
                 setWait(false)
@@ -27,7 +27,7 @@ export const AutoScrollTable = <T extends object>(props: AutoScrollTableProps<T>
             <InfiniteScroll
                 next={handleLoadMore}
                 hasMore={size <= allItems}
-                loader={wait || isLoading ? <Spin style={{display: 'block', textAlign: 'center', padding: '10px'}} /> : undefined}
+                loader={(wait || isLoading) ? <Spin style={{display: 'block', textAlign: 'center', padding: '10px'}} /> : undefined}
                 dataLength={size}
                 endMessage={allItems > 100 ? <div style={{textAlign: "center"}}>
                     <small>No more data</small>

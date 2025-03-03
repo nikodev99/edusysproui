@@ -1,4 +1,4 @@
-import {ChangeEvent, useEffect, useLayoutEffect, useState} from "react";
+import {ChangeEvent, Key, useEffect, useLayoutEffect, useState} from "react";
 import {Input, Pagination, Segmented, Table, TablePaginationConfig} from "antd";
 import {FilterValue, SorterResult } from "antd/es/table/interface";
 import LocalStorageManager from "../../core/LocalStorageManager.ts";
@@ -31,7 +31,9 @@ const ListViewer = <TData extends object, TError>(
         refetchCondition,
         callbackParams,
         searchCallbackParams,
-        infinite
+        infinite,
+        uuidKey,
+        tableProps
     }: ListViewerProps<TData, TError>
 ) => {
 
@@ -137,6 +139,14 @@ const ListViewer = <TData extends object, TError>(
         }
     ]
 
+    const rowkey = (record: TData) => {
+        if (Array.isArray(uuidKey)) {
+            const [parentKey, childKey] = uuidKey
+            return record?.[parentKey as keyof TData]?.[childKey as keyof object]
+        }
+        return uuidKey
+    }
+
     const dataSource = !fetchId
         ? content?.map(tData => {
             const c = tData as Enrollment
@@ -159,7 +169,7 @@ const ListViewer = <TData extends object, TError>(
     return(
         <>
             <div className='header__area'>
-                <PageDescription count={dataCount} title={`${countTitle}${dataCount > 1 ? 's' : ''}`} isCount={hasCount !== undefined ? hasCount : true}/>
+                <PageDescription count={dataCount} title={countTitle ? `${countTitle}${dataCount > 1 ? 's' : ''}` : undefined} isCount={hasCount !== undefined ? hasCount : true}/>
                 <div className='flex__end'>
                     <Input
                         allowClear
@@ -179,23 +189,24 @@ const ListViewer = <TData extends object, TError>(
             <Responsive gutter={[16, 16]} className={`${activeIcon !== 2 ? 'student__list__datatable' : ''}`}>
                 {
                     activeIcon === 2 ? <CardList
-                            content={cardData ? cardData(dataSource as TData[]) : []}
-                            isActive={activeIcon === 2 }
-                            isLoading={isLoading || dataSource === undefined}
-                            dropdownItems={dropdownItems!}
-                            throughDetails={throughDetails!}
-                            avatarLess={cardNotAvatar}
-                            titleLevel={level as 1}
-                        />
+                        content={cardData ? cardData(dataSource as TData[]) : []}
+                        isActive={activeIcon === 2 }
+                        isLoading={isLoading || dataSource === undefined}
+                        dropdownItems={dropdownItems!}
+                        throughDetails={throughDetails!}
+                        avatarLess={cardNotAvatar}
+                        titleLevel={level as 1}
+                    />
                         : <Grid xs={24} md={24} lg={24}>
                             {infinite ? <AutoScrollTable
                                 tableProps={{
-                                    rowKey: 'id' as keyof TData,
+                                    ...tableProps,
+                                    rowKey: uuidKey ? rowkey as (record: TData) => Key : 'id' as keyof TData,
                                     columns: tableColumns,
                                     dataSource: dataSource as TData[],
                                     loading: isLoading || dataSource === undefined,
                                     pagination: false,
-                                    onChange: handleSorterChange
+                                    onChange: handleSorterChange,
                                 }}
                                 isLoading={isLoading || isRefetching}
                                 allItems={dataCount}
@@ -205,8 +216,9 @@ const ListViewer = <TData extends object, TError>(
                             />
 
                             : <Table
+                                {...tableProps}
                                 style={{width: '100%'}}
-                                rowKey={'id' as keyof TData}
+                                rowKey={uuidKey ? rowkey as (record: TData) => Key : 'id' as keyof TData}
                                 columns={tableColumns}
                                 dataSource={dataSource as TData[]}
                                 loading={isLoading || isFetching || isRefetching || dataSource === undefined}

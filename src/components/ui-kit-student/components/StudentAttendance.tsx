@@ -140,7 +140,7 @@ export const StudentAttendance = ({enrolledStudent, infinite = true}: {enrolledS
                                 size: 'small',
                                 pagination: false,
                                 loading: isLoading || isFetching,
-                                rowKey: record => `row-${record.id}`
+                                rowKey: record => `row-${record.id}`,
                             }}
                             isLoading={isLoading || isFetching}
                             allItems={allItems}

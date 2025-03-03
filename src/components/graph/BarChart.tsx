@@ -9,8 +9,10 @@ import {
     Legend,
     ResponsiveContainer,
 } from 'recharts';
-import {BarChartProps} from "../ui/ui_interfaces.ts";
-import {COLOR} from "../../utils/utils.ts";
+import {BarProps, ChartProps} from "../ui/ui_interfaces.ts";
+import {setGraphColor} from "../../utils/utils.ts";
+
+type BarChartProps<TData> = ChartProps<TData> & BarProps<TData>
 
 export const BarChart = <T extends object>({
    data, dataKey, legend, color, layout, showLegend, showCartesian, margins, width, height, minHeight, isPercent, stackId, stackBars,
@@ -19,11 +21,8 @@ export const BarChart = <T extends object>({
 
     const keys = dataKey
 
-    const  setColor: (index: number) => string = (index: number): string => {
-        if (color && index < 1) {
-            return color
-        }
-        return COLOR[index]
+    const setColor = (index: number) => {
+        return setGraphColor(color as string, index)
     }
 
     return (
@@ -66,7 +65,7 @@ export const BarChart = <T extends object>({
                     ))
                     : Array.from({ length: stackBars || 0 }).map((_, index) => (
                         <Bar
-                            barSize={barSize}
+                            barSize={barSize ?? 50}
                             key={index}
                             dataKey={stackKeys ? stackKeys[index] as string : `bar${index}`}
                             stackId={stackId}
@@ -79,34 +78,4 @@ export const BarChart = <T extends object>({
             </ReChardBarChart>
         </ResponsiveContainer>
     )
-}
-
-export const VerticalBarChart = <T extends object>({data}: BarChartProps<T>) => {
-
-    console.log('data: ', data)
-
-    return (
-        <ResponsiveContainer width="100%" height="100%" minHeight={400}>
-            <ReChardBarChart
-                layout="vertical"
-                width={500}
-                height={400}
-                data={data}
-                barSize={100}
-                margin={{
-                    top: 20,
-                    right: 20,
-                    bottom: 20,
-                    left: 20,
-                }}
-            >
-                <CartesianGrid stroke="#f5f5f5" />
-                <XAxis type="number" />
-                <YAxis dataKey="student" type="category" scale="band" />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="marks" barSize={100} fill="#413ea0" />
-            </ReChardBarChart>
-        </ResponsiveContainer>
-    );
 }

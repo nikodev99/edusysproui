@@ -7,25 +7,31 @@ import {getAllStudentAttendances} from "../../../data/repository/attendanceRepos
 import {fDate, setDayJsDate} from "../../../utils/utils.ts";
 import {useRawFetch} from "../../../hooks/useFetch.ts";
 import {Calendar, Card, Skeleton} from "antd";
-import {AttendanceStatus, attendanceTag, countAttendanceStatuses} from "../../../entity/enums/attendanceStatus.ts";
+import {
+    AttendanceStatus,
+    attendanceTag,
+    countAttendanceStatuses, countStatus,
+    getColors
+} from "../../../entity/enums/attendanceStatus.ts";
 import {Dayjs} from "dayjs";
-import VerticalComposeChart from "../../graph/VerticalComposeChart.tsx";
 import {Widgets} from "../../ui/layout/Widgets.tsx";
+import {SuperWord} from "../../../utils/tsxUtils.tsx";
+import {useClasseAttendance} from "../../../hooks/useClasseAttendance.ts";
+import {BarChart} from "../../graph/BarChart.tsx";
 
 interface AnalysisProps {
     enrollment: Enrollment;
     academicYear: string
 }
 
-const COLORS = ['#28a745', '#dc3545', '#ffc107', '#17a2b8']
-
 export const AttendanceAnalysis = ({enrollment, academicYear}: AnalysisProps) => {
     
-    const {student} = enrollment
+    const {student, classe} = enrollment
 
     const [attendances, setAttendances] = useState<Attendance[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [allRecord, setAllRecord] = useState<number>(0)
+    const {classeAttendances} = useClasseAttendance(classe?.id, academicYear)
 
     const fetch = useRawFetch()
 
@@ -63,26 +69,29 @@ export const AttendanceAnalysis = ({enrollment, academicYear}: AnalysisProps) =>
     }
 
     const counts = countAttendanceStatuses(dataSource)
+    const classeCount = countStatus(classeAttendances)
+    const allClasse = classeAttendances?.reduce((sum, record) => sum + record.count, 0)
+
     const composeData = [
         {
             name: AttendanceStatus.PRESENT as string,
-            valeur: counts.present,
-            '%': Math.round((counts.present/allRecord) * 100)
+            valeur: Math.round((counts.present/classeCount.present) * 100),
+            classe: Math.round((classeCount.present/allClasse) * 100)
         },
         {
             name: AttendanceStatus.ABSENT as string,
-            valeur: counts.absent,
-            '%': Math.round((counts.absent/allRecord) * 100)
+            valeur: Math.round((counts.absent/classeCount.absent) * 100),
+            classe: Math.round((classeCount.absent/allClasse) * 100)
         },
         {
             name: AttendanceStatus.LATE as string,
-            valeur: counts.late,
-            '%': Math.round((counts.late/allRecord) * 100)
+            valeur: Math.round((counts.late/classeCount.late) * 100),
+            classe: Math.round((classeCount.late/allClasse) * 100)
         },
         {
             name: AttendanceStatus.EXCUSED as string,
-            valeur: counts.excused,
-            '%': Math.round((counts.excused/allRecord) * 100)
+            valeur: Math.round((counts.excused/classeCount.excused) * 100),
+            classe: Math.round((classeCount.excused/allClasse) * 100)
         }
     ];
 
@@ -94,25 +103,25 @@ export const AttendanceAnalysis = ({enrollment, academicYear}: AnalysisProps) =>
                         <Skeleton loading={isLoading} active={isLoading} paragraph={{rows: 4}} /> :
                         (<>
                             {dataSource.length > 0 && <Widgets hasShadow={true} responsiveness={true} items={[
-                                {title: 'Total Jours Present', value: counts.present, progress: {
+                                {title: 'Taux de présence', value: counts.present, progress: {
                                     active: true,
                                     percent: Math.round((counts.present/allRecord) * 100),
-                                    color: COLORS[0]
+                                    color: getColors(AttendanceStatus.PRESENT)
                                 }},
-                                {title: 'Total Jours Present', value: counts.absent, progress: {
+                                {title: 'Taux d\'absence', value: counts.absent, progress: {
                                     active: true,
                                     percent: Math.round((counts.absent/allRecord) * 100),
-                                    color: COLORS[1]
+                                    color: getColors(AttendanceStatus.ABSENT)
                                 }},
-                                {title: 'Total Jours en retard', value: counts.late, progress: {
+                                {title: 'Taux de retard', value: counts.late, progress: {
                                         active: true,
                                         percent: Math.round((counts.late/allRecord) * 100),
-                                        color: COLORS[2]
+                                        color: getColors(AttendanceStatus.LATE)
                                 }},
-                                {title: 'Total Jours excusé', value: counts.excused, progress: {
+                                {title: 'Taux d\'excuse', value: counts.excused, progress: {
                                         active: true,
                                         percent: Math.round((counts.excused/allRecord) * 100),
-                                        color: COLORS[3]
+                                        color: getColors(AttendanceStatus.EXCUSED)
                                 }}
                             ]} />}
                         </>)
@@ -120,13 +129,21 @@ export const AttendanceAnalysis = ({enrollment, academicYear}: AnalysisProps) =>
                 </Responsive>
             </Grid>
             <Grid xs={24} md={12} lg={12}>
-                <Card >
+                <Card>
                     <Calendar fullscreen={false} cellRender={dateCellRender} />
                 </Card>
             </Grid>
             <Grid xs={24} md={12} lg={12}>
-                <Card>
-                    <VerticalComposeChart data={composeData} barColor={COLORS} />
+                <Card size='small' title={<SuperWord input={`Taux de présence: ${student?.personalInfo?.lastName} vs ${classe?.name}`}/>}>
+                    <BarChart
+                        data={composeData}
+                        dataKey={['valeur', "classe"]}
+                        legend='name'
+                        eachBarColor={true}
+                        isPercent={true}
+                        barSize={30}
+                        minHeight={310}
+                    />
                 </Card>
             </Grid>
         </Responsive>

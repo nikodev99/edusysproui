@@ -58,11 +58,12 @@ const ClasseSubjectListsPage = () => {
                     {key: '2', label: 'Matières', children: <CourseList condition={courseRefetch} />}
                 ]}
                 tab={{
-                    centered: true,
+                    centered: false,
+                    type: 'card'
                 }}
                 exists={true}
                 memorizedTabKey='classe-course'
-                addMargin={{position: "top", size: 30}}
+                addMargin={{position: "top", size: 10}}
             />
             <AddClasse open={addClasseOpen} onCancel={handleClasseModalClose} />
             <AddCourse open={addCourseOpen} onCancel={handleCourseModalClose} />

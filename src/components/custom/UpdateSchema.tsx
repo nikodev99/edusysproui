@@ -1,49 +1,41 @@
-import React, {useState} from "react";
+import {ID, PutSchemaProps, SchemaProps} from "../../utils/interfaces.ts";
 import {FieldValues} from "react-hook-form";
-import {useQueryPost} from "../../hooks/usePost.ts";
-import {useGlobalStore} from "../../core/global/store.ts";
-import {catchError} from "../../data/action/error_catch.ts";
 import {Alert, Button, Flex, Form, Modal, ModalProps} from "antd";
 import {PopConfirm} from "../ui/layout/PopConfirm.tsx";
-import {PostSchemaProps, SchemaProps} from "../../utils/interfaces.ts";
+import {useQueryUpdate} from "../../hooks/useUpdate.ts";
+import {useToggle} from "../../hooks/useToggle.ts";
+import React, {useState} from "react";
+import {useGlobalStore} from "../../core/global/store.ts";
+import {catchError} from "../../data/action/error_catch.ts";
 
-type InsertSchemaType<TData extends FieldValues> = SchemaProps<TData> & ModalProps & PostSchemaProps<TData>
+type UpdateSchemaProps<TData extends FieldValues> = SchemaProps<TData> & {id: ID, resp?: (resp: Record<string, boolean>) => void} & ModalProps & PutSchemaProps<TData>
 
-const InsertSchema = <TData extends FieldValues>(
-    {
-        data,
-        open,
-        onCancel,
-        postFunc,
-        messageSuccess,
-        title,
-        cancelText,
-        okText,
-        description,
-        customForm,
-        handleForm
-    }: InsertSchemaType<TData>
+export const UpdateSchema = <TData extends FieldValues>(
+    {data, messageSuccess, handleForm, customForm, id, resp, open, title, description, cancelText, onCancel, putFunc, okText}: UpdateSchemaProps<TData>
 ) => {
-    const [openConfirm, setOpenConfirm] = useState<boolean>(false);
+
+    const [openConfirm, setOpenConfirm] = useToggle(false);
     const [successMessage, setSuccessMessage] = useState<string | undefined>(undefined)
     const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined)
-
-    const {mutate, isPending} = useQueryPost<TData>(data)
     const breakpoints = useGlobalStore.use.modalBreakpoints()
+
+    const {mutate, isPending} = useQueryUpdate(data)
 
     const onSubmit = (data: TData) => {
         setErrorMessage(undefined)
         setSuccessMessage(undefined)
-        mutate({postFn: postFunc, data: data}, {
+        mutate({putFn: putFunc, data: data, id: id}, {
             onSuccess: response => {
-                if (response.status === 200) {
+                if (response && response.status === 200) {
                     setSuccessMessage(messageSuccess)
-                    handleForm.reset()
+                    if (resp) {
+                        resp(response?.data as Record<string, boolean>)
+                    }
                 }
             },
             onError: error => setErrorMessage(catchError(error))
         })
-        setOpenConfirm(false)
+        setOpenConfirm()
     }
 
     const handleModalClose = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -54,14 +46,8 @@ const InsertSchema = <TData extends FieldValues>(
         }
     }
 
-    return (
-        <Modal
-            title={title}
-            open={open}
-            onCancel={handleModalClose}
-            width={breakpoints}
-            footer={null}
-        >
+    return(
+        <Modal title={title} open={open} onCancel={handleModalClose} width={breakpoints} footer={null}>
             {successMessage && (<Alert message={successMessage} type="success" showIcon/>)}
             {errorMessage && (<Alert message={errorMessage} type="error" showIcon/>)}
             <Form layout='vertical' style={{marginTop: '15px'}}>
@@ -71,18 +57,16 @@ const InsertSchema = <TData extends FieldValues>(
                     <PopConfirm
                         title='Confirmation'
                         open={openConfirm}
-                        onCancel={() => setOpenConfirm(false)}
+                        onCancel={setOpenConfirm}
                         description={description}
                         okText="Confirmer"
                         onConfirm={handleForm.handleSubmit(onSubmit)}
                     >
-                        <Button disabled={isPending} type='primary'
-                                onClick={() => setOpenConfirm(true)}>{okText}</Button>
+                        <Button disabled={isPending} type='primary' onClick={setOpenConfirm}>{okText}</Button>
                     </PopConfirm>
                 </Flex>
             </Form>
         </Modal>
     )
-}
 
-export { InsertSchema }
+}

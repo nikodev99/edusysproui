@@ -8,6 +8,7 @@ import {addressSchema} from "./models/addressSchema.ts";
 import {healthSchema} from "./models/healthSchema.ts";
 import {teacherSchema} from "./models/teacherSchema.ts";
 import {individualSchema} from "./models/individualSchema.ts";
+import {assignmentDateUpdateSchema} from "./models/assignmentSchema.ts";
 
 export {enrollmentSchema} from './models/enrollmentSchema'
 export {classeSchemaMerge, classeSchema} from './models/classeSchema'
@@ -21,6 +22,7 @@ export {teacherSchema} from './models/teacherSchema'
 export {addressSchema} from './models/addressSchema'
 export {healthSchema} from './models/healthSchema'
 export {individualSchema} from './models/individualSchema.ts'
+export {assignmentDateUpdateSchema} from './models/assignmentSchema.ts'
 
 export type CourseSchema = z.infer<typeof courseSchema>
 export type CourseSchemaMerge = z.infer<typeof courseSchemaMerge>
@@ -33,3 +35,4 @@ export type AddressSchema = z.infer<typeof addressSchema>
 export type HealthSchema = z.infer<typeof healthSchema>
 export type TeacherSchema = z.infer<typeof teacherSchema>
 export type IndividualSchema = z.infer<typeof individualSchema>
+export type AssignmentUpdateDate = z.infer<typeof assignmentDateUpdateSchema>

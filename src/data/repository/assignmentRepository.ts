@@ -1,6 +1,28 @@
 import {apiClient} from "../axiosConfig.ts";
 import {Assignment} from "../../entity/domain/assignment.ts";
-import {IDS} from "../../utils/interfaces.ts";
+import {ID, IDS} from "../../utils/interfaces.ts";
+
+export const getAllClasseAssignments = (
+    {classeId}: {classeId: number, subjectId?: number},
+    academicYear: string
+) => {
+    return apiClient.get(`/assignment/classe/${classeId}`, {
+        params: {
+            academicYear: academicYear
+        }
+    })
+}
+
+export const getAllClasseAssignmentsBySubject = (
+    {classeId, subjectId}: {classeId: number, subjectId?: number},
+    academicYear: string
+) => {
+    return apiClient.get(`/assignment/classe/${classeId}/${subjectId}`, {
+        params: {
+            academicYear: academicYear
+        }
+    })
+}
 
 export const getSomeTeacherAssignments = (personalInfoId: number) => {
     return apiClient.get<Assignment[]>(`/assignment/teacher_some_${personalInfoId}`)
@@ -25,4 +47,12 @@ export const getAllTeacherAssignments = (personalInfoId: number, ids: IDS) => {
             classe: ids.classId
         }
     })
+}
+
+export const changeAssignmentDate = (assignment: Assignment, assignmentId: ID)=>  {
+    return apiClient.put<Assignment>(`/assignment/change/${assignmentId}`, assignment)
+}
+
+export const removeAssignment = (assignmentId: bigint) => {
+    return apiClient.delete(`/assignment/${assignmentId}`)
 }

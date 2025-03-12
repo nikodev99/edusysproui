@@ -37,7 +37,7 @@ export const menuItems: Required<MenuProps>['items'][number][] = [
     {
         key: '/classes-and-subjects',
         icon: <PiNotebook />,
-        label: "Classes et Matières"
+        label: "Classes & Matières"
     },
     {
         key: '/examinations',

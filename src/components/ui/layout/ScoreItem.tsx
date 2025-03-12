@@ -38,7 +38,7 @@ const ScoreItem = (
                                         {score?.student?.personalInfo?.lastName} {setFirstName(`${score?.student?.personalInfo?.firstName}`)}
                                     </span>
                                 }
-                                description={score.student.reference}
+                                description={score?.student?.reference}
                             />
                         </Skeleton>
                     </List.Item>
@@ -47,8 +47,8 @@ const ScoreItem = (
             isLoading={isLoading}
             size={scoreSize}
             allItems={allScores}
-            loadMore={onLoadMore!}
-            height={height ?? 300}
+            loadMoreSize={onLoadMore!}
+            height={height ?? 200}
             infinite={infinite ?? true}
         />
     )

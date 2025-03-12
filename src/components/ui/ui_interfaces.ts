@@ -1,6 +1,7 @@
 import {ActiveShape, Margin} from "recharts/types/util/types";
 import {Color} from "../../utils/interfaces.ts";
 import {PieSectorDataItem} from "recharts/types/polar/Pie";
+import {CurveType} from "recharts/types/shape/Curve";
 
 export interface AvatarProps {
     image?: string,
@@ -34,11 +35,11 @@ export interface PieChartProps {
     endAngle?: number
 }
 
-export interface BarChartProps <T>{
+export interface ChartProps<T>{
     data: T[],
-    dataKey?: [keyof T],
+    dataKey?: (keyof T)[],
     legend?: keyof T,
-    color?: string
+    color?: Color | Color[],
     showLegend?: boolean
     showCartesian?: boolean
     margins?: Margin
@@ -46,9 +47,17 @@ export interface BarChartProps <T>{
     height?: number
     minHeight?: number
     isPercent?: boolean
+    layout?: 'horizontal' | 'vertical' | 'centric' | 'radial'
+    eachBarColor?: boolean
+}
+
+export interface BarProps<T> {
+    barSize?: number
     stackId?: string
     stackBars?: number
     stackKeys?: Array<keyof T>
-    barSize?: number
-    layout?: 'horizontal' | 'vertical' | 'centric' | 'radial'
+}
+
+export interface LineProps {
+    type?: CurveType
 }

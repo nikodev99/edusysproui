@@ -1,6 +1,7 @@
 import {AxiosResponse} from "axios";
 import {Score} from "../../entity";
 import {apiClient, request} from "../axiosConfig.ts";
+import {IDS} from "../../utils/interfaces.ts";
 
 export const getAllAssignmentMarks = (assignmentId: string, size: number) => {
     return apiClient.get(`/score/all_assignment_marks/${assignmentId}`, {
@@ -22,18 +23,34 @@ export const getAllStudentScores = (page: number, size: number, studentId: strin
     })
 }
 
-export const getAllStudentScoresBySubject = (academicYearId: string, subjectId: number): Promise<AxiosResponse<Score[]>> => {
+export const getAllStudentScoresBySubject = (studentId: string, academicYearId: string, subjectId: number): Promise<AxiosResponse<Score[]>> => {
     return request({
         method: 'GET',
-        url: `/score/all/${subjectId}`,
+        url: `/score/${studentId}/${subjectId}`,
         params: {
             academicYearId: academicYearId,
         }
     })
 }
 
-export const getClasseBestStudents = (classeId: number, academicYear: string) => {
-    return apiClient.get(`/score/classe/${classeId}`, {
+export const getClasseBestStudents = ({classId}: IDS, academicYear: string) => {
+    return apiClient.get(`/score/classe_best/${classId}`, {
+        params: {
+            academicYear: academicYear,
+        }
+    })
+}
+
+export const getClasseBestStudentsByCourse = ({classId, courseId}: IDS, academicYear: string) => {
+    return apiClient.get(`/score/classe_best/${classId}/${courseId}`, {
+        params: {
+            academicYear: academicYear,
+        }
+    })
+}
+
+export const getClassePoorStudents = (classeId: number, academicYear: string) => {
+    return apiClient.get(`/score/classe_poor/${classeId}`, {
         params: {
             academicYear: academicYear,
         }

@@ -4,6 +4,11 @@ import {fetchFunc} from "../../hooks/useFetch.ts";
 import {getDepartmentBasics} from "../../data/repository/departmentRepository.ts";
 import {AcademicYear, Department} from "../../entity";
 import {getAcademicYearFromYear, getCurrentAcademicYear} from "../../data/repository/academicYearRepository.ts";
+import {
+    getClasseAttendanceStatusCount,
+    getSchoolAttendanceStatusCount
+} from "../../data/repository/attendanceRepository.ts";
+import {AttendanceStatus} from "../../entity/enums/attendanceStatus.ts";
 
 type WithSelectors<S> = S extends { getState: () => infer T }
     ? S & { use: { [K in keyof T]: () => T[K] } }
@@ -35,6 +40,8 @@ export const useGlobalStore = createSelectors(create(combine({
         xxl: '50%',
     },
     departments: [] as Department[],
+    classeAttendance: [] as {status: AttendanceStatus, count: number}[],
+    schoolAttendance: [] as {status: AttendanceStatus, count: number}[]
 }, (set) => ({
     updateAcademicYear (academicYear: string) {
         set({academicYear: academicYear});
@@ -64,6 +71,24 @@ export const useGlobalStore = createSelectors(create(combine({
                 if (resp.isSuccess)
                     set({academicYears: resp.data as AcademicYear[]})
             })
+    },
+
+    setClasseAttendance (classeId: number, academicYear: string): void {
+        fetchFunc(getClasseAttendanceStatusCount, [classeId, academicYear])
+            .then(resp => {
+                if (resp.isSuccess) {
+                    set({classeAttendance: resp.data as {status: AttendanceStatus, count: number}[]})
+                }
+            })
+    },
+
+    setSchoolAttendance (schoolId: string, academicYear: string): void {
+        fetchFunc(getSchoolAttendanceStatusCount, [schoolId, academicYear])
+            .then(resp => {
+                if (resp.isSuccess) {
+                    set({schoolAttendance: resp.data as {status: AttendanceStatus, count: number}[]})
+                }
+            })
     }
 }))))
 
@@ -83,4 +108,16 @@ export const initAcademicYears = (year: number) => {
     const store = useGlobalStore.getState()
     store.setAcademicYears(year)
     return store.academicYears
+}
+
+export const initClasseAttendance = (classeId: number, academicYear: string) => {
+    const store = useGlobalStore.getState()
+    store.setClasseAttendance(classeId, academicYear)
+    return store.classeAttendance
+}
+
+export const initSchoolAttendance = (schoolId: string, academicYear: string) => {
+    const store = useGlobalStore.getState()
+    store.setSchoolAttendance(schoolId, academicYear)
+    return store.schoolAttendance
 }

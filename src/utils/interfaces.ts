@@ -7,7 +7,7 @@ import {
     UseFormStateReturn,
     ControllerFieldState,
     ControllerRenderProps,
-    FieldPath, UseFormClearErrors,
+    FieldPath, UseFormClearErrors, UseFormReturn,
 } from "react-hook-form";
 import {ValidateStatus} from "antd/es/form/FormItem";
 import React, {CSSProperties, ReactNode} from "react";
@@ -28,6 +28,7 @@ import {PercentPositionType, ProgressSize} from "antd/es/progress/progress";
 import {TableColumnsType, TableProps} from "antd";
 import {ItemType} from "antd/es/menu/interface";
 import {Individual} from "../entity/domain/individual.ts";
+import {z} from "zod";
 
 export interface Metadata {
     title: string
@@ -38,7 +39,7 @@ export interface Metadata {
 export type ID = string | bigint | number
 export type IDS = {
     classId: number
-    courseId: number
+    courseId?: number
 }
 
 type NestedKeyOf<ObjectType extends object> = {
@@ -100,13 +101,14 @@ export type FormItemType<T extends FieldValues> = FormType<T> & ZodControlRender
 export type TypedInputType<T extends FieldValues> = Control<T> & FormType<T> & InputProps & ZodSelect<T> & ZodListControl<T> & {wrapper?: ReactNode}
 export type InputType<T extends FieldValues> = TypedInputType<T> & {isCompact?: boolean}
 export type SelectType<T extends FieldValues> = TypedInputType<T> & {isCompact?: boolean}
-export type DatePickerType<T extends FieldValues> = TypedInputType<T> & {isCompact?: boolean}
+export type DatePickerType<T extends FieldValues> = TypedInputType<T> & {isCompact?: boolean, showTime?: boolean, format?: string}
+export type TimeInputType<T extends FieldValues> = TypedInputType<T> & {isCompact?: boolean}
 export type DataType<TData> = TData;
 export type DataIndex<TData> = keyof DataType<TData>
 
 export interface ZodControl<TFieldValues extends FieldValues> {
     name: Path<TFieldValues>
-    defaultValue?: PathValue<TFieldValues, Path<TFieldValues>>,
+    defaultValue?: PathValue<TFieldValues, Path<TFieldValues>> | unknown,
 }
 
 export interface ZodControlRender<TFieldValues extends FieldValues, TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>> {
@@ -216,6 +218,10 @@ export interface ListViewerProps<TData extends object, TError> {
     infinite?: boolean
     uuidKey?: keyof TData | string[]
     tableProps?: TableProps
+    descMargin?: {
+        position?: "top" | "bottom" | "left" | "right",
+        size?: number | string
+    }
 }
 
 export interface ExamData {
@@ -392,6 +398,22 @@ export type DateExplose = {
     hour?: number
     minute?: number
     second?: number
+}
+
+export interface SchemaProps<TData extends FieldValues> {
+    data: z.ZodSchema<TData>;
+    messageSuccess?: string;
+    description?: string;
+    customForm: ReactNode
+    handleForm: UseFormReturn<TData>
+}
+
+export interface PostSchemaProps<TData extends FieldValues> {
+    postFunc: (data: TData) => Promise<AxiosResponse<TData>>
+}
+
+export interface PutSchemaProps<TData extends FieldValues> {
+    putFunc: (data: TData, id: ID) => Promise<AxiosResponse<TData>>
 }
 
 export interface TableSearchProps {

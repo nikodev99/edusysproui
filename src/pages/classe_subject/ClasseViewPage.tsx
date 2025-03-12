@@ -17,7 +17,7 @@ import {
 } from "react-icons/lu";
 import {datetimeExpose, isObjectEmpty} from "../../utils/utils.ts";
 import {ViewRoot} from "../../components/custom/ViewRoot.tsx";
-import {ClasseAttendance, ClasseExams, ClasseInfo, ClasseSchedule, ClasseStudent, ClasseCourseReports} from "../../components/ui-kit-cc";
+import {ClasseAttendance, ClasseExams, ClasseInfo, ClasseSchedule, ClasseStudent, ClasseReport} from "../../components/ui-kit-cc";
 import {countClasseStudents} from "../../data/repository/studentRepository.ts";
 import {SuperWord} from "../../utils/tsxUtils.tsx";
 
@@ -37,6 +37,8 @@ const ClasseViewPage = () => {
         queryKey: ['classe-id', id],
         enabled: usedAcademicYearId !== null
     })
+
+    console.log('Error: ', error);
     
     const fetch = useRawFetch<GenderCounted>()
 
@@ -164,11 +166,21 @@ const ClasseViewPage = () => {
                             academicYear={usedAcademicYearId as string}
                         />
                     },
-                    {label: 'Étudiants', children: <ClasseStudent infoData={classe!} academicYear={usedAcademicYearId as string} dataKey='students' />},
+                    {label: 'Étudiants', children: <ClasseStudent
+                        infoData={classe!}
+                        academicYear={usedAcademicYearId as string}
+                        studentCount={studentCount}
+                        dataKey='students'
+                    />},
                     {label: 'Emploi du Temps', children: <ClasseSchedule infoData={classe!} academicYear={usedAcademicYearId as string} dataKey='schedule' />},
-                    {label: 'Présence', children: <ClasseAttendance infoData={classe!} academicYear={usedAcademicYearId as string} dataKey='attendance' />},
+                    {label: 'Présence', children: <ClasseAttendance
+                        infoData={classe!}
+                        academicYear={usedAcademicYearId as string}
+                        dataKey='attendance'
+                        studentCount={studentCount}
+                    />},
                     {label: 'Examens', children: <ClasseExams infoData={classe!} academicYear={usedAcademicYearId as string} dataKey='exams' />},
-                    {label: 'Compte Rendu', children: <ClasseCourseReports />}
+                    {label: 'Compte Rendu', children: <ClasseReport />}
                 ]}
                 exists={classe !== null && usedAcademicYearId !== null}
                 memorizedTabKey='classeTabKey'

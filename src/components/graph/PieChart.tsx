@@ -55,7 +55,7 @@ const PieChart = (pieProps: PieChartProps) => {
                     dataKey="value"
                     onMouseEnter={onMouseEnter}
                 >
-                    {data.map((_entry, index) => (
+                    {data?.map((_entry, index) => (
                         <Cell key={`cell-${index}`} fill={
                             _entry.color ? _entry.color : CUSTOM_COLOR[index % CUSTOM_COLOR.length]
                         } />

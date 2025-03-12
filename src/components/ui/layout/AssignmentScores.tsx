@@ -19,7 +19,7 @@ const AssignmentScores = (
     const [allScores, setAllScores] = useState<number>(0)
     const [scoreSize, setScoreSize] = useState<number>(size ?? 5)
     const prevScoreSizeRef = useRef<number>(scoreSize);
-    
+
     const {data, isLoading, isRefetching, isLoadingError, isSuccess, refetch} = useFetch<Score, unknown>('all-scores', getAllAssignmentMarks, [assignment?.id, scoreSize],{
         enabled: assignment !== null && assignment?.id !== undefined && assignment.id > 0,
         queryKey: ['all-scores']
@@ -44,6 +44,8 @@ const AssignmentScores = (
             prevState => prevState < allScores ? prevState + 3 : allScores
         )
     }
+
+    console.log(scoreSize)
     
     return(
         !scorePending || scores && scores?.length > 0 ? (<Collapse

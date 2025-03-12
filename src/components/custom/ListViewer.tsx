@@ -33,7 +33,8 @@ const ListViewer = <TData extends object, TError>(
         searchCallbackParams,
         infinite,
         uuidKey,
-        tableProps
+        tableProps,
+        descMargin
     }: ListViewerProps<TData, TError>
 ) => {
 
@@ -169,7 +170,12 @@ const ListViewer = <TData extends object, TError>(
     return(
         <>
             <div className='header__area'>
-                <PageDescription count={dataCount} title={countTitle ? `${countTitle}${dataCount > 1 ? 's' : ''}` : undefined} isCount={hasCount !== undefined ? hasCount : true}/>
+                <PageDescription
+                    count={dataCount}
+                    title={countTitle ? `${countTitle}${dataCount > 1 ? 's' : ''}` : undefined}
+                    isCount={hasCount !== undefined ? hasCount : true}
+                    addMargin={descMargin}
+                />
                 <div className='flex__end'>
                     <Input
                         allowClear

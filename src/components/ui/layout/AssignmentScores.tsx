@@ -2,17 +2,16 @@ import {Collapse, Skeleton} from "antd";
 import {Score} from "../../../entity";
 import {useFetch} from "../../../hooks/useFetch.ts";
 import {getAllAssignmentMarks} from "../../../data/repository/scoreRepository.ts";
-import {Assignment} from "../../../entity/domain/assignment.ts";
 import {useEffect, useRef, useState} from "react";
 import {ScoreItem} from "./ScoreItem.tsx";
 
 interface AssignmentScoresProps {
-    assignment: Assignment | null
+    assignmentId: bigint | undefined
     size?: number
 }
 
 const AssignmentScores = (
-    {assignment, size}: AssignmentScoresProps
+    {assignmentId, size}: AssignmentScoresProps
 ) => {
 
     const [scores, setScores] = useState<Score[] | null>(null)
@@ -20,8 +19,8 @@ const AssignmentScores = (
     const [scoreSize, setScoreSize] = useState<number>(size ?? 5)
     const prevScoreSizeRef = useRef<number>(scoreSize);
 
-    const {data, isLoading, isRefetching, isLoadingError, isSuccess, refetch} = useFetch<Score, unknown>('all-scores', getAllAssignmentMarks, [assignment?.id, scoreSize],{
-        enabled: assignment !== null && assignment?.id !== undefined && assignment.id > 0,
+    const {data, isLoading, isRefetching, isLoadingError, isSuccess, refetch} = useFetch<Score, unknown>('all-scores', getAllAssignmentMarks, [assignmentId, scoreSize],{
+        enabled: assignmentId !== undefined && assignmentId > 0,
         queryKey: ['all-scores']
     })
     

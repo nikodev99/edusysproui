@@ -8,7 +8,7 @@ import {LuSave} from "react-icons/lu";
 
 export const FormDateInput = <T extends FieldValues>(datePickerProps: DatePickerType<T>) => {
 
-    const {isCompact, placeholder, buttonLabel, defaultValue, clearErrors} = datePickerProps
+    const {isCompact, placeholder, buttonLabel, defaultValue, clearErrors, showTime, format} = datePickerProps
 
     return(
         <FormItem {...datePickerProps} render={({field}) => (
@@ -17,24 +17,30 @@ export const FormDateInput = <T extends FieldValues>(datePickerProps: DatePicker
                     <Space.Compact style={{ width: '100%' }}>
                         <DatePicker
                             {...field}
-                            format="DD/MM/YYYY"
+                            format={format ?? "DD/MM/YYYY"}
                             placeholder={placeholder}
                             style={{width: '100%'}}
                             onChange={(date) => field.onChange(date ? date.toDate() : null)}
                             onFocus={() => clearErrors ? clearErrors(field.name) : null}
                             value={field.value ? dayjs(field.value) : null}
+                            showTime={showTime}
+                            showHour={showTime}
+                            showMinute={showTime}
                         />
                         <Button disabled={field.value === defaultValue} htmlType='submit'>{buttonLabel ?? <LuSave />}</Button>
                     </Space.Compact>
                 ) : (
                     <DatePicker
                         {...field}
-                        format="DD/MM/YYYY"
+                        format={format ?? "DD/MM/YYYY"}
                         placeholder={placeholder}
                         style={{width: '100%'}}
                         onChange={(date) => field.onChange(date ? date.toDate() : null)}
                         value={field.value ? dayjs(field.value) : null}
                         onFocus={() => clearErrors ? clearErrors(field.name) : null}
+                        showTime={showTime}
+                        showHour={showTime}
+                        showMinute={showTime}
                     />
                 )}
             </>
@@ -42,7 +48,9 @@ export const FormDateInput = <T extends FieldValues>(datePickerProps: DatePicker
     )
 }
 
-const DateInput = <T extends FieldValues>(dateInputProps: TypedInputType<T>) => {
+const DateInput = <T extends FieldValues>(dateInputProps: TypedInputType<T> & {
+    format?: string, showTime?: boolean
+}) => {
 
     const {xs, md, lg, hasForm, onFinish} = dateInputProps
 

@@ -1,8 +1,8 @@
 import {Enrollment, Score} from "../../../entity";
-import {fDate, setFirstName, startsWithVowel} from "../../../utils/utils.ts";
-import {Badge, Select, Table, TableColumnsType, Typography} from "antd";
+import {fDate, getUniqueness, setFirstName, startsWithVowel} from "../../../utils/utils.ts";
+import {Badge, Select, TableColumnsType, Typography} from "antd";
 import {ExamData} from "../../../utils/interfaces.ts";
-import {fetchAllStudentScores, fetchAllStudentScoresBySubject} from "../../../data/action/scoreAction.ts";
+import {fetchAllStudentScores} from "../../../data/action/scoreAction.ts";
 import LocalStorageManager from "../../../core/LocalStorageManager.ts";
 import {useEffect, useMemo, useState} from "react";
 import {initExamData} from "../../../entity/domain/score.ts";
@@ -10,8 +10,10 @@ import PageError from "../../../pages/PageError.tsx";
 import {LuEye} from "react-icons/lu";
 import {Link} from "react-router-dom";
 import TabItem from "../../view/TabItem.tsx";
-import {useFetch} from "../../../hooks/useFetch.ts";
+import {useFetch, useRawFetch} from "../../../hooks/useFetch.ts";
 import {ColumnGroupType} from "antd/es/table";
+import {getAllStudentScoresBySubject} from "../../../data/repository/scoreRepository.ts";
+import {AutoScrollTable} from "../../ui/layout/AutoScrollTable.tsx";
 
 interface StudentExamProps {
     enrolledStudent: Enrollment
@@ -19,26 +21,30 @@ interface StudentExamProps {
 
 export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
 
-    const examCount = LocalStorageManager.get<number>('examCount') ?? 0;
+    const examCount = LocalStorageManager.get<number>('examCount') ?? 10;
 
     const {academicYear: {id, academicYear}, student, student: {personalInfo, enrollments}} = enrolledStudent
 
     const [scores, setScores] = useState<Score[]>([])
     const [subjectValue, setSubjectValue] = useState<number>(0)
+    const [allData, setAllData] = useState<number>(0)
+    const [size, setSize] = useState(examCount)
     const [academicYearId, setAcademicYearId] = useState<string>(id)
+    const fetch = useRawFetch()
 
     const studentName = `${setFirstName(personalInfo?.lastName)} ${setFirstName(personalInfo?.firstName)}`
 
-    const {data, error, isLoading, refetch} = useFetch(['student-scores', student?.id], fetchAllStudentScores, [examCount, 10, student.id, academicYearId])
-
-    const subjects = useMemo(() => {
+    const {data, error, isLoading, isRefetching, isFetching, refetch} = useFetch(['student-scores', student?.id], fetchAllStudentScores, [0, size, student.id, academicYearId])
+    
+    const subjectsItems = useMemo(() => {
+        const uniqueCourses = getUniqueness(scores, s => s?.assignment?.subject, s => s?.id as number)
         return [
             {value: 0, label: 'Tous'},
-            ...scores.filter(s => s?.assignment)
-                .map(s => ({
-                value: s.assignment?.subject?.id,
-                label: s.assignment?.subject?.course,
-            }))]
+            ...uniqueCourses && uniqueCourses.map(c => ({
+                value: c?.id,
+                label: c?.course,
+            }))
+        ]
     }, [scores])
 
     const academicYears = useMemo(() => {
@@ -53,7 +59,7 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
     
     useEffect(() => {
         if (subjectValue != 0) {
-            fetchAllStudentScoresBySubject(academicYearId, subjectValue)
+            fetch(getAllStudentScoresBySubject, [student?.id, academicYearId, subjectValue])
                 .then((resp) => {
                     if (resp && resp.isSuccess && 'data' in resp) {
                         setScores(resp.data as Score[])
@@ -61,15 +67,18 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
                 })
         }else {
             refetch().then(r => r.data)
-            if (academicYearId || examCount) {
+            if (academicYearId || size) {
                 refetch().then(r => r.data)
             }
-            if (!isLoading && data && 'content' in data) {
+            if (!isLoading && data && 'content' in data && 'totalElements' in data) {
                 setScores(data.content as Score[])
+                setAllData(data.totalElements as number)
             }
         }
-    }, [academicYearId, data, examCount, isLoading, refetch, subjectValue]);
+    }, [academicYearId, data, fetch, isLoading, refetch, size, student?.id, subjectValue]);
 
+    console.log('subjects', data)
+    
     if (error) {
         return <PageError />
     }
@@ -118,6 +127,10 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
         }
     ];
 
+    const handleLoadMoreSize = () => {
+        setSize(prevState => prevState + examCount)
+    }
+
     const handleAcademicYearIdValue = (value: string) => {
         setAcademicYearId(value)
     }
@@ -130,10 +143,10 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
         <TabItem
             title={`Les notes d${startsWithVowel(personalInfo?.lastName) ? "'" : 'e '}${studentName}`}
             selects={[
-                subjects.length > 1 && <Select
+                subjectsItems.length > 1 && <Select
                     className='select-control'
                     defaultValue={0}
-                    options={subjects}
+                    options={subjectsItems}
                     onChange={handleSubjectValue}
                     variant='borderless'
                 />,
@@ -149,14 +162,21 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
                 {
                     key: 'score-table',
                     label: 'Performance aux examens',
-                    children: <Table
-                        columns={columns as ColumnGroupType[]}
-                        dataSource={initExamData(scores)}
-                        size='small'
-                        pagination={false}
-                        className='score-table'
-                        loading={isLoading}
-                        scroll={{y: 500}}
+                    children: <AutoScrollTable
+                        tableProps={{
+                            columns: columns as ColumnGroupType[],
+                            dataSource: initExamData(scores),
+                            size: 'small',
+                            pagination: false,
+                            className: 'score-table',
+                            loading: isLoading,
+                            rowKey: item => item?.examId,
+                        }}
+                        isLoading={isLoading || isRefetching || isFetching}
+                        allItems={allData}
+                        size={size}
+                        loadMoreSize={handleLoadMoreSize}
+                        height={500}
                     />}
             ]}
         />

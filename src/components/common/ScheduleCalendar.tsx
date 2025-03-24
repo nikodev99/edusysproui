@@ -3,7 +3,7 @@ import {Schedule} from "../../entity";
 import {useRawFetch} from "../../hooks/useFetch.ts";
 import {ApiEvent, EventProps} from "../../utils/interfaces.ts";
 import {Day} from "../../entity/enums/day.ts";
-import {fDate, setTime, transformEvents} from "../../utils/utils.ts";
+import {fDate, getMinMaxTimes, setTime, transformEvents} from "../../utils/utils.ts";
 import {DescriptionsItemType} from "antd/es/descriptions";
 import {text} from "../../utils/text_display.ts";
 import {IconText} from "../../utils/tsxUtils.tsx";
@@ -89,6 +89,8 @@ export const ScheduleCalendar = ({fetchFunc, funcParams, eventTitle, showClass, 
         setIsModalOpen(false)
     }
 
+    const {minStartTime, maxEndTime} = getMinMaxTimes(schedules || [])
+
     return(
         <>
             <PageWrapper>
@@ -99,6 +101,8 @@ export const ScheduleCalendar = ({fetchFunc, funcParams, eventTitle, showClass, 
                     className='agenda'
                     onSelectEvent={onEventSelected}
                     height={500}
+                    startDayTime={minStartTime}
+                    endDayTime={maxEndTime}
                 />
             </PageWrapper>
             <Modal title={selectedSchedule?.designation} open={isModalOpen} footer={null} onCancel={onModalCancel} destroyOnClose>

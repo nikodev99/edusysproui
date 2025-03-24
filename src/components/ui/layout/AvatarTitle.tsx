@@ -3,15 +3,17 @@ import {Flex} from "antd";
 import {setFirstName} from "../../../utils/utils.ts";
 import {AvatarProps} from "../ui_interfaces.ts";
 import {SuperWord} from "../../../utils/tsxUtils.tsx";
+import {redirectTo} from "../../../context/RedirectContext.ts";
 
 type AvatarTitleProps = AvatarProps & {
     setColor?: (color: string) => void;
-    gap?: number;
-    size?: number;
-    isUpper?: boolean;
+    gap?: number
+    size?: number
+    isUpper?: boolean
+    link?: string
 }
 
-export const AvatarTitle = ({image, reference, lastName, firstName, setColor, gap, size, isUpper}: AvatarTitleProps)=>  {
+export const AvatarTitle = ({image, reference, lastName, firstName, setColor, gap, size, isUpper, link}: AvatarTitleProps)=>  {
 
     const avatarText = <SuperWord
         input={`${lastName ? lastName?.toUpperCase() + ',' : ''}${firstName ? ' ' + setFirstName(firstName): ''}`}
@@ -20,12 +22,22 @@ export const AvatarTitle = ({image, reference, lastName, firstName, setColor, ga
 
     return(
         <Flex className="avatar-container" align='center' gap={gap ?? 10}>
-            <Avatar image={image} firstText={firstName} lastText={lastName} size={size ?? 60} setColor={setColor} />
+            <Avatar
+                image={image}
+                firstText={firstName}
+                lastText={lastName}
+                size={size ?? 60}
+                setColor={setColor}
+                onClick={link ? () => redirectTo(link) : undefined}
+            />
             <Flex className="legal" vertical justify='center'>
-                <span className='title'>
+                <span
+                    className={`title ${link ? 'linked' : ''}`}
+                    onClick={link ? () => redirectTo(link) : undefined}
+                >
                     {avatarText}
                 </span>
-                <span className='mention'>{reference}</span>
+                {reference && <span className='mention'>{reference}</span>}
             </Flex>
         </Flex>
     )

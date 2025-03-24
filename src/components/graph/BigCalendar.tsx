@@ -1,31 +1,18 @@
-import {Calendar, dayjsLocalizer, View, ViewsProps, Event} from 'react-big-calendar'
+import {Calendar, dayjsLocalizer, View, Event} from 'react-big-calendar'
 import dayjs from 'dayjs'
 import {Skeleton} from "antd";
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import {timeToCurrentDatetime} from "../../utils/utils.ts";
 import 'dayjs/locale/fr'
 import {calendarMessages} from "../../utils/text_display.ts";
-import {CSSProperties, useState} from "react";
+import {useState} from "react";
+import {BigCalendarProps} from "../../utils/interfaces.ts";
 
 dayjs.locale('fr')
 const localized = dayjsLocalizer(dayjs)
 
-interface BigCalendarProps<TEvents extends object = Event> {
-    data: TEvents[]
-    views: ViewsProps<TEvents>
-    defaultView: View
-    startDayTime?: number[]
-    endDayTime?: [number, number]
-    className?: string
-    styles?: CSSProperties
-    onSelectEvent?: (event: TEvents) => void
-    start?: keyof TEvents
-    end?: keyof TEvents
-    showNavButton?: boolean
-}
-
 export const BigCalendar = <T extends object = Event>({
-    data, views, defaultView, startDayTime, endDayTime, className, styles, onSelectEvent, start, end, showNavButton
+    data, views, defaultView, startDayTime, endDayTime, className, styles, onSelectEvent, start, end, showNavButton, height
 }: BigCalendarProps<T>) => {
 
     const [view, setView] = useState<View>(defaultView)
@@ -45,9 +32,9 @@ export const BigCalendar = <T extends object = Event>({
                     endAccessor={end}
                     views={views}
                     view={view}
-                    style={{height: 'auto', ...styles}}
+                    style={{height: height ? `${height}px` : 'auto', ...styles}}
                     min={timeToCurrentDatetime(startDayTime ?? [7, 0]) as Date}
-                    max={timeToCurrentDatetime(endDayTime ?? [17, 0]) as Date}
+                    max={timeToCurrentDatetime(endDayTime ?? [19, 0]) as Date}
                     messages={calendarMessages}
                     onView={handleOnChangeView}
                     className={!showNavButton ? `big-calendar ${className}` : className}

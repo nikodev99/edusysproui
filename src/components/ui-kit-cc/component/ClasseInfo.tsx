@@ -1,5 +1,5 @@
 import {GenderCounted, InfoPageProps} from "../../../utils/interfaces.ts";
-import {Classe, Planning, Score, Teacher} from "../../../entity";
+import {Classe, Planning, Score, Student, Teacher} from "../../../entity";
 import Block from "../../view/Block.tsx";
 import {ReactNode, useEffect, useState} from "react";
 import Section from "../../ui/layout/Section.tsx";
@@ -9,23 +9,24 @@ import {text} from "../../../utils/text_display.ts";
 import PanelTable from "../../ui/layout/PanelTable.tsx";
 import {SuperWord} from "../../../utils/tsxUtils.tsx";
 import {DatedListItem} from "../../ui/layout/DatedListItem.tsx";
-import {Avatar as AntAvatar, Progress, Tag} from "antd";
+import {Avatar as AntAvatar, Progress, Statistic, TableColumnsType, Tag} from "antd";
 import {IndividualDescription} from "../../ui/layout/IndividualDescription.tsx";
 import {Individual} from "../../../entity/domain/individual.ts";
 import PanelSection from "../../ui/layout/PanelSection.tsx";
 import {ScheduleDayCalendar} from "../../common/ScheduleDayCalendar.tsx";
 import {AvatarTitle} from "../../ui/layout/AvatarTitle.tsx";
 import {redirectTo} from "../../../context/RedirectContext.ts";
-import {StudentCarousel} from "../../common/StudentCarousel.tsx";
-import {BarChart} from "../../graph/BarChart.tsx";
+//import {StudentCarousel} from "../../common/StudentCarousel.tsx";
 import {useRawFetch} from "../../../hooks/useFetch.ts";
-import {getClasseBestStudents} from "../../../data/repository/scoreRepository.ts";
+import {getClasseBestStudents, getClassePoorStudents} from "../../../data/repository/scoreRepository.ts";
 import {LoadMoreList} from "../../ui/layout/LoadMoreList.tsx";
 import {AvatarListItem} from "../../ui/layout/AvatarListItem.tsx";
 import {AttendanceStatus, getColors} from "../../../entity/enums/attendanceStatus.ts";
-import {getClasseAttendanceStatusCount} from "../../../data/repository/attendanceRepository.ts";
 import {ShapePieChart} from "../../graph/ShapePieChart.tsx";
 import VoidData from "../../view/VoidData.tsx";
+import {Table} from "../../ui/layout/Table.tsx";
+import {AiOutlineArrowDown, AiOutlineArrowUp} from "react-icons/ai";
+import {useClasseAttendance} from "../../../hooks/useClasseAttendance.ts";
 
 type ClasseInfoProps = InfoPageProps<Classe> & {
     studentCount?: GenderCounted[] | null
@@ -52,17 +53,17 @@ const ClasseInfoData = ({infoData, color, studentCount, totalStudents, seeMore}:
     return(
         <Section title={<SuperWord input={`Profile de ${infoData?.name}`} />} more={true} seeMore={handleClick}>
             <div className='panel'>
-                {studentCount && studentCount.map((s, i) => (
+                {studentCount && studentCount?.map((s, i) => (
                     <PanelStat
                         key={i}
                         title={s.count}
-                        subTitle={`apprénant${s.count > 1 ? 's' : ''}`}
+                        subTitle={`${text.student.label}${s.count > 1 ? 's' : ''}`}
                         round={<Progress percent={findPercent(s.count, totalStudents!) as number} type='circle' size={35} strokeColor={color} />}
                         desc={setFirstName(setGender(s.gender)) + `${s.count > 1 ? 's' : ''}`}
                     />
                 ))}
                 {studentAverageAge && <PanelStat
-                    title={studentAverageAge}
+                    title={studentAverageAge.toFixed(1)}
                     subTitle={studentAverageAge > 1 ? 'ans' : 'an'}
                     round={<Progress percent={findPercent(studentAverageAge, maxAge) as number} type='circle' size={35} strokeColor={color} />}
                     desc='Age Moyen'
@@ -172,7 +173,8 @@ const ClasseSchedule = ({infoData, seeMore}: ClasseInfoProps) => {
     )
 }
 
-const ClasseStudent = ({infoData, seeMore, color}: ClasseInfoProps) => {
+//TODO Je ne trouve pas l'intérêt de mettre quelque élèves ici
+/*const ClasseStudent = ({infoData, seeMore, color}: ClasseInfoProps) => {
 
     const {students} = infoData
 
@@ -193,7 +195,7 @@ const ClasseStudent = ({infoData, seeMore, color}: ClasseInfoProps) => {
             color={color}
         />
     )
-}
+}*/
 
 const ClasseBestStudent = ({infoData, academicYear, color}: ClasseInfoProps) => {
 
@@ -202,7 +204,7 @@ const ClasseBestStudent = ({infoData, academicYear, color}: ClasseInfoProps) => 
     const fetch = useRawFetch<Score>();
 
     useEffect(() => {
-        fetch(getClasseBestStudents, [classeId, academicYear])
+        fetch(getClasseBestStudents, [{classId: classeId}, academicYear])
             .then(resp => {
                 if(resp.isSuccess) {
                     setScores(resp?.data as Score[])
@@ -210,21 +212,92 @@ const ClasseBestStudent = ({infoData, academicYear, color}: ClasseInfoProps) => 
             })
     }, [academicYear, classeId, fetch]);
 
-   const barData = scores && scores?.length !== 0 ? scores.map(score => ({
-       student: firstWord(score?.student?.personalInfo?.lastName),
-       marks: score?.obtainedMark
-   })) : []
+    const columns: TableColumnsType<Score> = [
+        {
+            title: 'Nom, Prénom',
+            dataIndex: 'student',
+            width: '80%',
+            render: (text: Student) => <AvatarTitle
+                lastName={firstWord(text?.personalInfo?.lastName)}
+                firstName={firstWord(text?.personalInfo?.firstName)}
+                image={firstWord(text?.personalInfo?.image)}
+                size={35}
+            />
+        },
+        {
+            dataIndex: 'obtainedMark',
+            width: '20%',
+            render: text => <Statistic
+                value={text} precision={0} prefix={<AiOutlineArrowUp />}
+                valueStyle={{color: '#10b915', fontSize: '16px'}}
+            />
+        }
+    ]
 
     return(
         <Section title='Meilleurs élèves de la classe'>
-            {scores && scores?.length > 0 ? <BarChart
-                data={barData}
-                dataKey={['marks']}
-                legend='student'
+            {scores && scores?.length > 0 ? <Table
+                tableProps={{
+                    rowKey: (record) => record?.student?.personalInfo?.id as bigint,
+                    dataSource: scores?.sort((a, b) => b.obtainedMark - a.obtainedMark),
+                    columns: columns as [],
+                    size: 'small',
+                    pagination: false
+                }}
                 color={color}
-                minHeight={350}
-                layout={"vertical"}
-                barSize={30}
+            /> : <VoidData />}
+        </Section>
+    )
+}
+
+const ClassePoorStudent = ({infoData, academicYear, color}: ClasseInfoProps) => {
+
+    const [scores, setScores] = useState<Score[] | null>(null)
+    const classeId = infoData?.id
+    const fetch = useRawFetch<Score>();
+
+    useEffect(() => {
+        fetch(getClassePoorStudents, [classeId, academicYear])
+            .then(resp => {
+                if(resp.isSuccess) {
+                    setScores(resp?.data as Score[])
+                }
+            })
+    }, [academicYear, classeId, fetch]);
+
+    const columns: TableColumnsType<Score> = [
+        {
+            title: 'Nom, Prénom',
+            dataIndex: 'student',
+            width: '80%',
+            render: (text: Student) => <AvatarTitle
+                lastName={firstWord(text?.personalInfo?.lastName)}
+                firstName={firstWord(text?.personalInfo?.firstName)}
+                image={firstWord(text?.personalInfo?.image)}
+                size={35}
+            />
+        },
+        {
+            dataIndex: 'obtainedMark',
+            width: '20%',
+            render: text => <Statistic
+                value={text} precision={0} prefix={<AiOutlineArrowDown />}
+                valueStyle={{color: '#cf1322', fontSize: '16px'}}
+            />
+        }
+    ]
+
+    return(
+        <Section title='Elèves necessitant une suivie'>
+            {scores && scores?.length > 0 ? <Table
+                tableProps={{
+                    rowKey: (record) => record?.student?.personalInfo?.id as bigint,
+                    dataSource: scores?.sort((a, b) => b.obtainedMark - a.obtainedMark),
+                    columns: columns as [],
+                    size: 'small',
+                    pagination: false
+                }}
+                color={color}
             /> : <VoidData />}
         </Section>
     )
@@ -242,15 +315,19 @@ const ClasseTeachers = ({infoData, seeMore}: ClasseInfoProps) => {
             <LoadMoreList
                 listProps={{
                     dataSource: classeTeachers,
+                    rowKey: (item) => item.id as string,
                     renderItem: (teacher) => (<AvatarListItem
                         item={teacher?.personalInfo}
                         showBtnText='Voir'
                         isLoading={classeTeachers === null}
                         onBtnClick={() => redirectTo(text.teacher.group.view.href + teacher?.id)}
-                        description={teacher?.courses?.map(c => (<Tag key={c.abbr}>{c.course}</Tag>))}
+                        description={teacher?.courses && teacher?.courses[0]?.course !== null
+                            ? teacher?.courses?.map(c => (<Tag key={c.abbr}>{c.course}</Tag>))
+                            : undefined
+                        }
                     />)
                 }}
-                isLoading={classeTeachers === null}
+                isLoading={false}
                 size={10}
                 allItems={classeTeachers?.length}
             />
@@ -260,21 +337,11 @@ const ClasseTeachers = ({infoData, seeMore}: ClasseInfoProps) => {
 
 const ClasseAttendanceGraph = ({infoData, seeMore, academicYear}: ClasseInfoProps) => {
 
-    const [countData, setCountData] = useState<{status?: AttendanceStatus, count?: number}[] | null>(null)
-    const fetch = useRawFetch();
-
     const {id} = infoData
 
-    useEffect(() => {
-        fetch(getClasseAttendanceStatusCount, [id, academicYear])
-            .then(resp => {
-                if (resp.isSuccess) {
-                    setCountData(resp.data as {status?: AttendanceStatus, count?: number}[])
-                }
-            })
-    }, [academicYear, fetch, id]);
+    const {classeAttendances} = useClasseAttendance(id, academicYear as string)
 
-    const graphData = countData && countData?.map(c => ({
+    const graphData = classeAttendances && classeAttendances?.map(c => ({
         name: AttendanceStatus[c.status as unknown as keyof typeof AttendanceStatus],
         value: c.count,
         color: getColors(AttendanceStatus[c.status as unknown as keyof typeof AttendanceStatus])
@@ -286,13 +353,13 @@ const ClasseAttendanceGraph = ({infoData, seeMore, academicYear}: ClasseInfoProp
 
     return(
         <Section title='Donnée de présence' more={true} seeMore={handleClick}>
-            {countData && <ShapePieChart
+            {classeAttendances && classeAttendances.length > 0 ? <ShapePieChart
                 data={graphData as []}
                 height={280}
                 innerRadius={40}
                 outerRadius={80}
                 hasLegend={true}
-            />}
+            />: <VoidData />}
         </Section>
     )
 }
@@ -302,10 +369,11 @@ export const ClasseInfo = (infoData: ClasseInfoProps) => {
     const items: ReactNode[] = [
         <ClasseInfoData {...infoData} />,
         <PlanningInfo {...infoData} />,
-        <ClasseSchedule {...infoData} />,
-        <ClasseStudent {...infoData} />,
-        <ClasseBestStudent {...infoData} />,
         <ClasseTeachers {...infoData} />,
+        <ClasseSchedule {...infoData} />,
+        //<ClasseStudent {...infoData} />,
+        <ClasseBestStudent {...infoData} />,
+        <ClassePoorStudent {...infoData} />,
         <ClasseAttendanceGraph {...infoData} />
     ]
 

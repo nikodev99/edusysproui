@@ -8,7 +8,7 @@ import {Assignment} from "../../entity";
 import {AssignmentScores} from "../ui/layout/AssignmentScores.tsx";
 import {CalendarEvent, EventProps} from "../../utils/interfaces.ts";
 import {
-    dateCompare,
+    dateCompare, getAssignmentBarData,
     getDiffFromNow,
     setName,
     setTime
@@ -16,7 +16,7 @@ import {
 import {ReactNode, useEffect, useLayoutEffect, useRef, useState} from "react";
 import {Score} from "../../entity";
 import {DescriptionsItemType} from "antd/es/descriptions";
-import {IconText} from "../../utils/tsxUtils.tsx";
+import {CardSkeleton, IconText} from "../../utils/tsxUtils.tsx";
 import {LuCalendarDays, LuClock, LuClock9, LuRefreshCcw, LuX} from "react-icons/lu";
 import dayjs from "dayjs";
 import {ScoreItem} from "../ui/layout/ScoreItem.tsx";
@@ -33,6 +33,7 @@ interface AssignmentDescProps {
     assignments: Assignment[] | null
     listTitle: string | ReactNode
     studentAllScore?: Score[] | null
+    isLoading?: boolean
     scoreLoading?: boolean
     hasLegend?: boolean
     showBarChart?: boolean
@@ -61,7 +62,7 @@ const getLastPassedAssignment = (assignments: Assignment[] | null): Assignment |
 }
 
 export const AssignmentDesc = (
-    {assignments, listTitle, studentAllScore, setRefetch, refetch, scoreLoading, hasLegend = true, showBarChart = false, barLayout = 'vertical'}: AssignmentDescProps
+    {assignments, listTitle, isLoading, studentAllScore, setRefetch, refetch, scoreLoading, hasLegend = true, showBarChart = false, barLayout = 'vertical'}: AssignmentDescProps
 ) => {
 
     const [selectedAssignment, setSelectedAssignment] = useState<Assignment | null>(null)
@@ -100,7 +101,6 @@ export const AssignmentDesc = (
     }, [refetch, setRefetch])
 
     const assignmentDesc = (a: Assignment, show?: boolean, plus?: boolean): DescriptionsItemType[] => {
-        console.log("assignmentDesc", a)
         return [
             ...(show ? [{key: 1, label: 'Titre', children: a?.examName, span: 3}] : []),
             ...(a?.semester?.semester ? [{key: 2, label: 'Semestre', children: a?.semester?.semester?.semesterName, span: 3}] : []),
@@ -153,28 +153,7 @@ export const AssignmentDesc = (
     assignment.current = getNextAssignment(assignments)
     passedAssignment.current = getLastPassedAssignment(assignments)
 
-    function getBarData(): {
-        matiere: string;
-        valeur: number;
-    }[] {
-        const subjectCount: { [key: string]: number } | null = assignments && assignments?.reduce((acc: Record<string, number>, exam) => {
-            const subject = exam?.subject?.abbr; // Get the subject abbreviation
-            if (acc[subject as string]) {
-                acc[subject as string] += 1; // Increment the count for the subject
-            } else {
-                acc[subject as string] = 1; // Initialize count for the subject
-            }
-            return acc;
-        }, {});
-
-        // Convert the object to the desired format
-        return subjectCount ? Object.keys(subjectCount!)?.map(key => ({
-            matiere: key,
-            valeur: subjectCount ? subjectCount[key] : 0,
-        })) : [];
-    }
-
-    const barData = getBarData()
+    const barData = getAssignmentBarData(assignments)
 
     function onEventSelected(event: EventProps) {
         setIsModalOpen(true)
@@ -191,43 +170,56 @@ export const AssignmentDesc = (
             {wasDeleted?.status && <FormSuccess message='Evaluation Supprimer avec succès' />}
             <Responsive gutter={[16, 16]} style={{padding: '0 20px 20px 20px'}}>
             <Grid xs={24} md={24} lg={24}>
-                {assignments && assignments.length > 0 ? <Card>
-                    <BigCalendar
-                        styles={{height: 450}}
-                        data={eventData as []}
-                        views={['month', 'week']}
-                        defaultView='month'
-                        onSelectEvent={onEventSelected}
-                        showNavButton
-                    />
-                </Card> : <VoidData />}
+                {!isLoading
+                    ? assignments && assignments?.length > 0
+                        ? <Card>
+                            <BigCalendar
+                                styles={{ height: 450 }}
+                                data={eventData as []}
+                                views={['month', 'week']}
+                                defaultView='month'
+                                onSelectEvent={onEventSelected}
+                                showNavButton
+                            />
+                        </Card>
+                        : <VoidData />
+                    : <CardSkeleton />
+                }
             </Grid>
             <Grid xs={24} md={12} lg={12}>
                 <Responsive gutter={[16, 16]}>
                     <Grid xs={24} md={24} lg={showBarChart ? 12 : 24}>
-                        {assignments && assignments?.length > 0 && <Card title='Status des devoirs' size='small'>
-                            <ShapePieChart
-                                data={pieData as []}
-                                minHeight={290}
-                                height={290}
-                                innerRadius={50}
-                                outerRadius={80}
-                                hasLegend={hasLegend}
-                            />
-                        </Card>}
+                        {!isLoading
+                            ? assignments && assignments?.length > 0 && <Card title='Status des devoirs' size='small'>
+                                <ShapePieChart
+                                    data={pieData as []}
+                                    minHeight={290}
+                                    height={290}
+                                    innerRadius={50}
+                                    outerRadius={80}
+                                    hasLegend={hasLegend}
+                                />
+                            </Card>
+                            : <CardSkeleton title='Status des devoirs' />
+                        }
                     </Grid>
-                    {showBarChart  && <Grid xs={24} md={24} lg={12}>
-                        {showBarChart && <Card title='Status des matières' size='small'>
-                            <BarChart
-                                data={barData as []}
-                                dataKey={['valeur']}
-                                legend='matiere'
-                                minHeight={290}
-                                height={290}
-                                layout={barLayout}
-                            />
-                        </Card>}
-                    </Grid>}
+                    {!isLoading
+                        ? assignments && assignments?.length > 0 && showBarChart && (<Grid xs={24} md={24} lg={12}>
+                            {showBarChart && <Card title='Status des matières' size='small'>
+                                <BarChart
+                                    data={barData as []}
+                                    dataKey={['valeur']}
+                                    legend='matiere'
+                                    minHeight={290}
+                                    height={290}
+                                    layout={barLayout}
+                                />
+                            </Card>}
+                        </Grid>)
+                        : (<Grid xs={24} md={24} lg={12}>
+                            <CardSkeleton title='Status des matières' />
+                        </Grid>)
+                    }
                     {assignments && assignments?.length > 0 && studentAllScore && <Grid xs={24} md={24} lg={24}>
                         <Card size='small' title={listTitle} bordered={false}>
                             {<ScoreItem
@@ -258,7 +250,7 @@ export const AssignmentDesc = (
                                 title={`Dernier devoir terminé`}
                                 items={assignmentDesc(passedAssignment.current as Assignment, true)}
                             />
-                            <AssignmentScores assignment={passedAssignment.current} />
+                            <AssignmentScores assignmentId={passedAssignment.current?.id} />
                         </Card>
                     </Grid>}
                 </Responsive>
@@ -268,7 +260,7 @@ export const AssignmentDesc = (
             <Modal title={selectedAssignment?.examName} open={isModalOpen} footer={null} onCancel={onModalCancel} destroyOnClose>
                 <Card>
                     <Descriptions items={assignmentDesc(selectedAssignment as Assignment, false, true)} />
-                    {selectedAssignment?.passed ? <AssignmentScores assignment={selectedAssignment} size={scoreSize} /> : undefined}
+                    {selectedAssignment?.passed ? <AssignmentScores assignmentId={selectedAssignment?.id} size={scoreSize} /> : undefined}
                 </Card>
             </Modal>
             <UpdateAssignmentDates assignment={selectedAssignment} open={openUpdater} onCancel={setUpdater} resp={setWasUpdated} />

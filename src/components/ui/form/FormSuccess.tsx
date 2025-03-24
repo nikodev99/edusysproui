@@ -24,7 +24,7 @@ const FormSuccess = ({message, toRedirect, redirectLink}: {message?: string, toR
                     redirect(redirectLink ? redirectLink : text.student.href)
                 }
             })
-        }, 1000)
+        }, 2000)
     }, [message, messageApi, redirectLink, toRedirect])
 
     return(

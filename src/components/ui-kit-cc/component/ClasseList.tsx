@@ -102,6 +102,7 @@ export const ClasseList = ({condition}: {condition?: boolean}) => {
                 activeIcon: 'classeActiveIcon'
             }}
             refetchCondition={condition}
+            descMargin={{size: '10px 0'}}
         />
     )
 }

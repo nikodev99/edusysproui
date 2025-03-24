@@ -4,6 +4,7 @@ import {Classe} from "./classe.ts";
 import {Course} from "./course.ts";
 import {Score} from "./score.ts";
 import {Individual} from "./individual.ts";
+import {AssignmentType, AssignmentTypeLiteral} from "../enums/assignmentType.ts";
 
 export interface Assignment {
     id?: bigint
@@ -19,6 +20,7 @@ export interface Assignment {
     passed?: boolean
     marks?: Score[]
     coefficient?: number
+    type?: AssignmentType | AssignmentTypeLiteral
     addedDate?: Date | number | string
     updatedDate?: Date | number | string
 }

@@ -1,8 +1,9 @@
 import {getStatusKey, Status} from "../entity/enums/status.ts";
 import {ReactNode} from "react";
 import Tag from "../components/ui/layout/Tag.tsx";
-import {Flex, Popover, Space, StepsProps} from "antd";
+import {Card, Flex, Popover, Skeleton, Space, StepsProps} from "antd";
 import {Color} from "./interfaces.ts";
+import {MarkType} from "../entity/enums/MarkType.ts";
 
 export const StatusTags = ({status, female}: {status: Status, female?: boolean}): ReactNode => {
     const label = getStatusKey(status, female)
@@ -41,7 +42,11 @@ export const CustomDot: StepsProps['progressDot'] = (dot: ReactNode, {status, in
     </Popover>
 )
 
-export const IconText = ({ icon, text, color }: { icon: ReactNode; text: string, color?: Color }) => (
+export const IconText = ({ icon, text, color }: {
+    icon: ReactNode;
+    text: string | ReactNode,
+    color?: Color
+}) => (
     <Space>
         <Flex gap={10} align='center' style={color ? {color: color} : undefined}>
             {icon}
@@ -90,3 +95,44 @@ export const SuperWord = ({ input, isUpper, textSize = .6 }: { input: string; is
         </p>
     );
 }
+
+export const CardSkeleton = ({title}: {title?: ReactNode}) => {
+    return <Card title={title} style={{ width: '100%', height: '100%' }}>
+        <Skeleton active />
+    </Card>
+}
+
+export const InitMarkType = ({av}: {av: number}) => {
+    let color: string;
+    let text: MarkType;
+
+    if (av >= 18) {
+        text = MarkType.EX;
+        color = 'success';
+    } else if (av >= 16) {
+        text = MarkType.TB;
+        color = 'success';
+    } else if (av >= 14) {
+        text = MarkType.GOOD;
+        color = 'processing';
+    } else if (av >= 12) {
+        text = MarkType.AB;
+        color = 'processing';
+    }else if (av >= 10) {
+        text = MarkType.PA;
+        color = 'warning';
+    }else if (av >= 8) {
+        text = MarkType.IN;
+        color = 'warning';
+    }else if (av >= 6) {
+        text = MarkType.FA;
+        color = 'danger';
+    } else {
+        text = MarkType.TF;
+        color = 'danger';
+    }
+
+    return (
+        <Tag color={color as 'warning'}>{text}</Tag>
+    );
+};

@@ -1,6 +1,7 @@
-import {Tabs} from "antd";
+import {Tabs, TabsProps} from "antd";
 import PageWrapper from "./PageWrapper.tsx";
 import {ReactNode} from "react";
+import {StickyTabs} from "../ui/layout/StickyTabs.tsx";
 
 
 interface TabItemProps {
@@ -8,10 +9,12 @@ interface TabItemProps {
     selects?: ReactNode[]
     items?: { key: string; label: ReactNode, children?: ReactNode }[]
     onTabChange?: (tabKey: string) => void,
-    tabClassName?: string
+    tabClassName?: string,
+    stickTab?: boolean
+    tabsProps?: TabsProps
 }
 
-const TabItem = ({title, selects, items, onTabChange, tabClassName}: TabItemProps) => {
+const TabItem = ({title, selects, items, onTabChange, tabClassName, stickTab = false, tabsProps}: TabItemProps) => {
 
     return (
         <PageWrapper classNameList='item'>
@@ -29,12 +32,27 @@ const TabItem = ({title, selects, items, onTabChange, tabClassName}: TabItemProp
                                     </div>
                                 ))}
                             </div>}
-                            <Tabs
-                                className={tabClassName}
-                                centered size='small'
-                                items={items}
-                                onChange={onTabChange}
-                            />
+                            {
+                                stickTab
+                                    ? (
+                                        <StickyTabs
+                                            {...tabsProps}
+                                            className={tabClassName}
+                                            centered size='small'
+                                            items={items}
+                                            onChange={onTabChange}
+                                        />
+                                    )
+                                    : (
+                                        <Tabs
+                                            {...tabsProps}
+                                            className={tabClassName}
+                                            centered size='small'
+                                            items={items}
+                                            onChange={onTabChange}
+                                        />
+                                    )
+                            }
                         </div>
                     </div>
                 </div>

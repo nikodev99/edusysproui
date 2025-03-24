@@ -69,7 +69,10 @@ export const text = {
         }
     },
     schoolID: '81148a1b-bdb9-4be1-9efd-fdf4106341d6',
-    http: 'http://localhost:5173'
+    http: 'http://localhost:5173',
+    academicYear: {
+        name: 'Année scolaire'
+    }
 }
 
 export const calendarMessages = {

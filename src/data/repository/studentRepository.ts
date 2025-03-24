@@ -64,6 +64,16 @@ export const getClasseEnrolledStudentsSearch = (classeId: number, academicYear: 
     })
 }
 
+export const getClasseStudents = (classeId: number, academicYear: string) => {
+    return request({
+        method: 'GET',
+        url: `/enroll/classe/${classeId}`,
+        params: {
+            academicYear: academicYear,
+        }
+    })
+}
+
 export const getRandomStudentClassmate = (studentId: string, classeId: number): Promise<AxiosResponse<Enrollment[]>> => {
     return apiClient.get<Enrollment[]>(`enroll/classmates/${studentId}_${classeId}`)
 }

@@ -5,7 +5,14 @@ export enum AssignmentType {
     SESSION_ASSIGNMENT,
 }
 
-export const getAssignmentType = (assignmentType: AssignmentType) => {
+export enum AssignmentTypeLiteral {
+    CLASSROOM_ASSIGNMENT = 'TSA',
+    DEPARTMENT_ASSIGNMENT = 'DEF',
+    EXAMINATION_ASSIGNMENT = 'EC',
+    SESSION_ASSIGNMENT = 'EF'
+}
+
+export const getAssignmentType = (assignmentType: AssignmentType): string | undefined => {
     switch (assignmentType) {
         case AssignmentType.CLASSROOM_ASSIGNMENT:
             return 'Travaux de suivi et d’apprentissage'

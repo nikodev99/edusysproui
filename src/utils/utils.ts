@@ -1,12 +1,12 @@
-import {ApiEvent, Color, DateExplose, EnumType, GenderCounted} from "./interfaces.ts"
+import {ApiEvent, Color, DateExplose, EnumType, ExamView, GenderCounted, ID} from "./interfaces.ts"
 import countries from 'world-countries'
-import dayjs, {OpUnitType} from "dayjs";
+import dayjs from "dayjs";
 import 'dayjs/locale/fr.js'
 import {BloodType} from "../entity/enums/bloodType.ts";
 import {ProgressProps} from "antd";
 import {Day} from "../entity/enums/day.ts";
 import {Gender} from "../entity/enums/gender.tsx";
-import {Schedule} from "../entity";
+import {Assignment, Schedule} from "../entity";
 
 export const createElement = (htmlElement: string, parentNode: Element|null, attributes?: {[key: string]: string}, content?: string) => {
 
@@ -89,6 +89,16 @@ export const calculateAverageAge = (students?: GenderCounted[] | null): number =
     return totalStudents && totalAge && totalStudents > 0 ? totalAge / totalStudents : 0
 }
 
+export const sumInArray = <T extends object | number>(arrayToSum: T[], arrayKey?: keyof T): number => {
+    return arrayToSum.reduce((sum, item) => {
+        if (arrayKey && typeof item === 'object' && item !== null) {
+            const value = item[arrayKey] as unknown;
+            return sum + (typeof value === 'number' ? value : 0);
+        }
+        return sum + (typeof item === 'number' ? item : 0);
+    }, 0);
+};
+
 export const getAge = (dateArray?: number[]): number => {
     const date = new Date()
     const incomingYear = dateArray ? arrayToDate(dateArray).getFullYear() : 0
@@ -117,20 +127,23 @@ export const numberFormat = (input?: number, options?: {
 
 export const findPercent = (index: number, total: number, showSign?: boolean): number | string | undefined => {
     const percent: number = Math.round((index * 100) / total)
-    return index && total ? showSign ? `${percent} '%'` : percent : undefined
+    return index >= 0 && total ? showSign ? `${percent} %` : percent : undefined
 }
 
+/**
+ * Converts an array representing a date (optionally with time) into a JavaScript Date object.
+ *
+ * @param {Date | number[]} dateArray - A Date object or an array `[year, month, day]`.
+ * @param {number[]} [time] - An optional array `[hour, minute]`, defaults to `[0, 0]` if not provided.
+ * @returns {Date} A JavaScript Date object representing the specified date and time.
+ */
 export const arrayToDate = (dateArray: Date | number[], time?: number[]): Date => {
     if (Array.isArray(dateArray)) {
-        const [year, month, day] = dateArray
-        let date = new Date(year, month - 1, day)
-        if (time) {
-            const [hour, minute] = time && time?.length > 0 ? time : [0, 0]
-            date = new Date(year, month - 1, day, hour, minute, 0)
-        }
-        return new Date(date);
+        const [year, month, day] = dateArray;
+        const [hour, minute] = time?.length ? time : [0, 0];
+        return new Date(year, month - 1, day, hour, minute, 0);
     }
-    return new Date(dateArray)
+    return new Date(dateArray);
 }
 
 export const getMinMaxTimes = (data: Schedule[]) => {
@@ -167,14 +180,9 @@ export const getDistinctArray = <T>(arr: T[], keySelector: (item: T) => unknown)
 }
 
 export const fDatetime = (timestamp: Date | number | string, to?: boolean, format?: string) => {
-    let defaultFormat: string = to ? 'DD/MM/YYYY à HH:mm' : 'DD/MM/YYYY HH:mm'
-    if (timestamp) {
-        if (format) {
-            defaultFormat = format
-        }
-        return dayjs.unix(timestamp as number).format(defaultFormat)
-    }
-    return undefined
+    if (!timestamp) return undefined;
+    const defaultFormat: string = format || (to ? 'DD/MM/YYYY à HH:mm' : 'DD/MM/YYYY HH:mm');
+    return dayjs(timestamp).format(defaultFormat);
 }
 
 export const datetimeExpose = (timestamp?: number): DateExplose | undefined => {
@@ -199,16 +207,6 @@ export const fDate = (date?: Date | number[] | string, format?: string) => {
     return setFirstName(formattedDate(date, format));
 }
 
-export const showDates = (startDate: Date | number[], endDate: Date | number[], format?: string) => {
-    const start = setDayJsDate(startDate)
-    const end = setDayJsDate(endDate)
-    let formatted = `${start?.format(format ?? 'DD/MM/YYYY')} - ${end?.format(format ?? 'DD/MM/YYYY')}`
-    if (start?.year() === end?.year()) {
-        formatted = `${start?.format(format ?? 'DD/MM')} - ${end?.format(format ?? 'DD/MM/YYYY')}`
-    }
-    return formatted
-}
-
 export const fullDay = (date?: Date | number[] | string) => {
     const format: string = 'dddd D MMMM YYYY';
     return formattedDate(date, format);
@@ -222,12 +220,6 @@ export const ISOToday = (): string => {
     return today('DD/MM/YYYY');
 }
 
-export const getDayFromDate = (): Day => {
-    const date = new Date();
-    const dateIndex = date.getDay();
-    return (dateIndex + 6) % 7
-}
-
 export const monthsBetween = (startDate?: Date | number[] | string, endDate?: Date | number[] | string) => {
     const end = setDayJsDate(endDate)
     const start = setDayJsDate(startDate)
@@ -239,12 +231,6 @@ export const dateCompare = (date: Date) => {
     const today = dayjs()
     const dateToCompareWith = dayjs(date)
     return dateToCompareWith.isAfter(today)
-}
-
-export const dateBefore = (date: Date, unit?: OpUnitType) => {
-    const today = dayjs()
-    const dateToCompareWith = dayjs(date)
-    return dateToCompareWith.isBefore(today, unit)
 }
 
 export const setDayJsDate = (date?: Date | number[] | string) => {
@@ -261,14 +247,6 @@ export const setDayJsDate = (date?: Date | number[] | string) => {
         return dayjsDate
     }
     return undefined
-}
-
-export function getDiffBetweenDates(date1: string | number[] | Date, date2: string | number[] | Date, unit?: "minute" | "hour" | "day" | "month" | "year" ): number | null {
-    const day1 = setDayJsDate(date1)
-    const day2 = setDayJsDate(date2)
-
-    if (day1 && day2) return day2?.diff(day1, unit)
-    return null
 }
 
 export function getDiffFromNow(date:[number, number, number], unit?: "minute" | "hour" | "day" | "month" | "year", time?: [number, number]): number | null {
@@ -293,17 +271,6 @@ export const setTime = (time: number[]) => {
     const [hour, minute] = time;
     return dayjs().hour(hour).minute(minute).format('HH:mm');
 }
-
-export const timeConcat = (startTime: number[], endTime: number[]) => {
-    return `${setTime(startTime)} - ${setTime(endTime)}`;
-}
-
-export const isCurrentTimeBetween = (startTime: number[], endTime: number[]): boolean => {
-    const now = dayjs();
-    const start = dayjs().hour(startTime[0]).minute(startTime[1]);
-    const end = dayjs().hour(endTime[0]).minute(endTime[1]);
-    return now.isAfter(start) && now.isBefore(end);
-};
 
 export const timeToCurrentDatetime = (time: Date | number[] | string) => {
     const today = new Date()
@@ -383,7 +350,6 @@ export const createConicGradient = (colors: string[], hasStep?: boolean): string
         return colors.reduce((gradient: Record<string, string>, color, index) => {
             const percentage = `${Math.round(step * index)}%`
             gradient[percentage] = color
-            console.log('returned: ', gradient)
             return gradient
         }, {})
     }
@@ -538,7 +504,7 @@ export const setSortFieldName = (sortField: string | string[])=>  {
         : sortField
 }
 
-export const transformEvents = (apiEvents: ApiEvent[]) => {
+export const transformEvents = <T extends object>(apiEvents: ApiEvent<T>[]) => {
     const getWeekRange = (date: Date) => {
         const day = date.getDay()
         const diffToMonday = date.getDate() - day + (day === 0 ? -6 : 1)
@@ -568,7 +534,6 @@ export const transformEvents = (apiEvents: ApiEvent[]) => {
             return Array.from({length: 6}).map((_, index) => {
                 const date = new Date(monday)
                 date.setDate(monday.getDate() + index)
-                console.log("Get Day: ", date.getDay())
                 if(date.getDay() === day + 1) {
                     date.setHours(hour, minute, 0, 0)
                     return date
@@ -592,10 +557,128 @@ export const transformEvents = (apiEvents: ApiEvent[]) => {
             start,
             end: endDates[index] || start, // Ensure `end` aligns with `start`
             allDay: false,
+            resource: { ...(event.resource || {}), start }
         }));
     });
 };
 
 
 export const COLOR: Color[] = ['#0088FE', '#FF6F61', '#00C49F', '#6B8E23','#FFBB28','#FFD700', '#FF8042', '#20B2AA', '#FF6347', '#4682B4','#8A2BE2', '#D2691E', '#32CD32'];
+export const ATTENDANCE_STATUS_COLORS: Color[] = ['#28a745', '#dc3545', '#ffc107', '#17a2b8']
+export const MAIN_COLOR = '#000C40'
 export const fontFamily = 'Mulish, Kameron, Helvetica, sans-serif'
+
+export const  setGraphColor = (color: Color | Color[], index: number): string => {
+    if (Array.isArray(color)) {
+        const arr =  [...color, ...COLOR]
+        return arr[index % arr.length]
+    }
+    if (color && index < 1) {
+        return color
+    }
+    return COLOR[index]
+}
+
+export function getAssignmentBarData(assignments: Assignment[] | null): { matiere: string; valeur: number; }[] {
+    const subjectCount: { [key: string]: number } | null = assignments && assignments?.reduce((acc: Record<string, number>, exam) => {
+        const subject = exam?.subject?.abbr; // Get the subject abbreviation
+        if (acc[subject as string]) {
+            acc[subject as string] += 1; // Increment the count for the subject
+        } else {
+            acc[subject as string] = 1; // Initialize count for the subject
+        }
+        return acc;
+    }, {});
+
+    // Convert the object to the desired format
+    return subjectCount ? Object.keys(subjectCount!)?.map(key => ({
+        matiere: key,
+        valeur: subjectCount ? subjectCount[key] : 0,
+    })) : [];
+}
+
+export const calculateSubjectsAverage = (assignments: Assignment[]) => {
+    const subjectMarks: {[subject: string]: {totalMarks: number, totalCoefficient: number}} = {}
+    assignments?.forEach(assignment => {
+        const subjectName = assignment?.subject?.course || assignment?.examName || `Devoir ${assignment?.id}`
+        const mark = assignment && assignment.marks?.length && assignment?.marks[0]?.obtainedMark || 0
+        const coefficient = assignment?.coefficient || 1
+
+        if (!subjectMarks[subjectName as string]) {
+            subjectMarks[subjectName as string] = {totalMarks: 0, totalCoefficient: 0}
+        }
+
+        subjectMarks[subjectName as string].totalMarks += mark * coefficient
+        subjectMarks[subjectName as string].totalCoefficient += coefficient
+    })
+
+    const averages: {[subject: string]: number } = {}
+    if (subjectMarks && Object.keys(subjectMarks).length)
+        for (const subject in subjectMarks) {
+            averages[subject] = subjectMarks[subject].totalMarks / subjectMarks[subject].totalCoefficient
+        }
+
+    return averages
+}
+
+export const calculeMarkAverage = (averages: {[subject: string]: number } = {}): number => {
+    return Object.keys(averages).length
+        ? Math.round((sumInArray<number>(Object.values(averages)) / Object.keys(averages).length) * 100) / 100
+        : 0
+}
+
+export const calculateGlobalAverage = (assignments: Assignment[]): number => {
+    let totalMarks = 0;
+    let totalCoefficient = 0;
+
+    assignments?.forEach(assignment => {
+        const mark = assignment && assignment.marks?.length && assignment?.marks[0]?.obtainedMark || 0;
+        const coefficient = assignment?.coefficient || 1;
+
+        totalMarks += mark * coefficient;
+        totalCoefficient += coefficient;
+    });
+
+    return totalCoefficient > 0 ? totalMarks / totalCoefficient : 0;
+};
+
+export const calculateTotalMarks = (assignments: Assignment[]): number => {
+    return assignments.reduce((total, assignment) => {
+        const marks = assignment?.marks?.map(m => m.obtainedMark || 0) || [];
+        return total + marks.reduce((sum, mark) => sum + mark, 0);
+    }, 0)
+}
+
+export const getGoodAverageMedian = (examView: ExamView[] | null): {average: number, median: number} => {
+    const result: {average: number, median: number} = {average: 0, median: 0}
+    const averages: number[] = []
+    if (examView) {
+        examView?.forEach(exam => {
+            averages?.push(exam?.totalAverage)
+        })
+        const sortedNumbers = averages?.sort((a, b) => a - b)
+        const mid = Math.floor(sortedNumbers?.length / 2)
+        result.average = averages?.filter(a => a >= 10)?.length
+        result.median = sortedNumbers?.length % 2 !== 0
+            ? sortedNumbers[mid]
+            : (sortedNumbers[mid - 1] + sortedNumbers[mid]) / 2
+    }
+    return result
+}
+
+export const getUniqueness = <T, K>(
+    objects: T[],
+    keyExtractor: (obj: T) => K,
+    uniqueIdentifier: (item: K) => ID
+): K[] => {
+    return Array.from(
+        objects.reduce((map, obj) => {
+            const keyObj = keyExtractor(obj);
+            const key = uniqueIdentifier(keyObj);
+            if (!map.has(key)) {
+                map.set(key, keyObj);
+            }
+            return map;
+        }, new Map<ID, K>()).values()
+    );
+};

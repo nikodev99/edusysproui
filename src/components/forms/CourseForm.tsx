@@ -4,14 +4,22 @@ import {Course} from "../../entity";
 import FormContent from "../ui/form/FormContent.tsx";
 import {InputTypeEnum} from "../../core/shared/sharedEnums.ts";
 import {FormConfig} from "../../config/FormConfig.ts";
-import {initDepartments} from "../../core/global/store.ts";
+import {useGlobalStore} from "../../core/global/store.ts";
+import {useEffect} from "react";
 
 export const CourseForm = <T extends FieldValues>(
     {control, errors, data}: FormContentProps<T, Course>
 ) => {
-
+    
     const form = new FormConfig(errors)
-    const departments = initDepartments()
+
+    const departments = useGlobalStore(state => state.departments); // Subscribe to Zustand store
+    const setDepartment = useGlobalStore(state => state.setDepartment); // Get the function
+
+    useEffect(() => {
+        if(departments.length === 0)
+            setDepartment()
+    }, [departments.length, setDepartment]);
 
     const departmentOptions = departments && departments.map(d => ({
         value: d.id,
@@ -52,7 +60,7 @@ export const CourseForm = <T extends FieldValues>(
                 type: InputTypeEnum.SELECT,
                 inputProps: {
                     lg: 12,
-                    options: departmentOptions,
+                    options: departmentOptions as [],
                     label: 'Département',
                     control: control,
                     name: 'department.id' as Path<T>,

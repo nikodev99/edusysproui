@@ -13,7 +13,7 @@ interface CardListProps {
     content: DataProps[]
     isActive: boolean
     isLoading: boolean
-    dropdownItems: (url: string) => ItemType[]
+    dropdownItems?: (url: string) => ItemType[]
     throughDetails: (id: string) => void
     avatarLess?: boolean
     titleLevel?: 1 | 4 | 5 | 2 | 3 | undefined
@@ -37,11 +37,11 @@ const CardList = (
                     {content && content?.map(c => (
                         <Grid key={c?.id} xs={24} md={12} lg={8} xl={6}>
                             <Card loading={!content || isLoading} className='card__list'>
-                                <ActionButton
+                                {dropdownItems && <ActionButton
                                     icon={<AiOutlineMore className='cardIcon' size={30} />}
                                     items={dropdownItems(c?.id as string)}
                                     placement="bottom"
-                                />
+                                />}
                                 <div>
                                     {!avatarLess && <div className='card__avatar'>
                                         <Avatar

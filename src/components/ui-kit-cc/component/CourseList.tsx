@@ -114,6 +114,7 @@ export const CourseList = ({condition}: {condition?: boolean}) => {
                 activeIcon: 'courseActiveIcon'
             }}
             refetchCondition={condition}
+            descMargin={{size: '10px 0'}}
         />
     )
 }

@@ -34,7 +34,7 @@ export const ScheduleDayCalendar = (
                 views={['day']}
                 defaultView='day'
                 startDayTime={minStartTime}
-                endDayTime={[maxEndTime[0], maxEndTime[1] + 30]}
+                endDayTime={[maxEndTime[0], maxEndTime[1]]}
             />
         </Section>
     )

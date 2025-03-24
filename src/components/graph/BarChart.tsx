@@ -26,10 +26,8 @@ export const BarChart = <T extends object>({
     }
 
     return (
-        <ResponsiveContainer minHeight={minHeight || 400}>
+        <ResponsiveContainer width={width || '100%'} height={height || (minHeight || 300)} minHeight={300}>
             <ReChardBarChart
-                width={width || 500}
-                height={height || 300}
                 data={data}
                 barSize={barSize}
                 layout={layout}

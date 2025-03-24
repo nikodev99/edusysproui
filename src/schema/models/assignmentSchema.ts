@@ -1,4 +1,4 @@
-import {number, z} from "zod";
+import {z} from "zod";
 import {classeSchemaMerge} from "./classeSchema.ts";
 import {courseSchemaMerge} from "./courseSchema.ts";
 import {scoreSchema} from "./scoreSchema.ts";

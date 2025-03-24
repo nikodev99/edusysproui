@@ -9,7 +9,7 @@ const Widget = (
         <Progress
             type={progress.type ? progress.type as 'line' : 'line'}
             percent={progress.percent}
-            status={progress.status ? progress.status as 'success': 'normal'}
+            status={progress.status ? progress.status as 'success': 'active'}
             strokeColor={progress.color ? progress.color : undefined}
         />
         : undefined

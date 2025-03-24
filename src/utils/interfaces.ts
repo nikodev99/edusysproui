@@ -11,7 +11,7 @@ import {
 } from "react-hook-form";
 import {ValidateStatus} from "antd/es/form/FormItem";
 import React, {CSSProperties, ReactNode} from "react";
-import {AcademicYear, Guardian, Student, Teacher} from "../entity";
+import {AcademicYear, Assignment, Course, Guardian, Student, Teacher} from "../entity";
 import {SectionType} from "../entity/enums/section.ts";
 import {Gender} from "../entity/enums/gender.tsx";
 import {AttendanceStatus} from "../entity/enums/attendanceStatus.ts";
@@ -29,6 +29,7 @@ import {TableColumnsType, TableProps} from "antd";
 import {ItemType} from "antd/es/menu/interface";
 import {Individual} from "../entity/domain/individual.ts";
 import {z} from "zod";
+import {AssignmentTypeLiteral} from "../entity/enums/assignmentType.ts";
 
 export interface Metadata {
     title: string
@@ -231,6 +232,31 @@ export interface ExamData {
     classe: string;
     subject: string
     obtainedMark: number;
+}
+
+export interface ExamView {
+    id?: ID
+    student: Student
+    type: TypedAssignment[],
+    totalAverage: number
+    rank: number
+    nested: NestedExamView
+}
+
+export interface NestedExamView {
+    subject?: Course | string
+    assignments?: Assignment[]
+}
+
+export interface TypedAssignment {
+    type: AssignmentTypeLiteral
+    average: number
+    assignments?: Assignment[]
+}
+
+export interface SubjectAssignment {
+    subject?: Course | string
+    assignments?: Assignment[]
 }
 
 export interface AutoScrollProps {

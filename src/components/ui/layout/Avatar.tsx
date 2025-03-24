@@ -25,7 +25,11 @@ export const Avatar = ({image, firstText, lastText, size, setColor, onClick}: Av
         <>
         {
             image ? <AntAvatar src={image} size={size} onClick={onClick} />
-                : <AntAvatar style={{background: color}} size={size} onClick={onClick}>
+                : <AntAvatar
+                    style={onClick ? {background: color, cursor: 'pointer'} : {background: color}}
+                    size={size}
+                    onClick={onClick}
+                >
                     {`${lastText ? lastText?.charAt(0): ''}${firstText ? firstText?.charAt(0) : ''}`}
                 </AntAvatar>
         }

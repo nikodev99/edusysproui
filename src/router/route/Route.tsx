@@ -15,6 +15,10 @@ import {Organization} from "../../pages/setting/Organization.tsx";
 import ClasseSubjectListsPage from "../../pages/classe_subject/ClasseSubjectListsPage.tsx";
 import ClasseViewPage from "../../pages/classe_subject/ClasseViewPage.tsx";
 import SubjectViewPage from "../../pages/classe_subject/SubjectViewPage.tsx";
+import {text} from "../../utils/text_display.ts";
+import ExamListPage from "../../pages/exam/ExamListPage.tsx";
+import AddExamPage from "../../pages/exam/AddExamPage.tsx";
+import ExamViewPage from "../../pages/exam/ExamViewPage.tsx";
 
 export const Route = createBrowserRouter([
     {
@@ -26,37 +30,45 @@ export const Route = createBrowserRouter([
         ),
         errorElement: <PageError />,
         children: [
-            { path: '/', element: <Dashboard />},
-            { path: 'dashboard', element: <Dashboard />},
+            { path: text.home.path.page[0], element: <Dashboard />},
+            { path: text.home.path.page[1], element: <Dashboard />},
             {
                 path: 'students',
                 children: [
-                    { path: '', element: <StudentListPage />},
-                    { path: "new", element: <EnrollStudentPage />},
-                    { path: ':id', element: <StudentViewPage />}
+                    { path: text.path.page, element: <StudentListPage />},
+                    { path: text.path.new, element: <EnrollStudentPage />},
+                    { path: text.path.view, element: <StudentViewPage />}
                 ]
             },
             {
                 path: 'teachers',
                 children: [
-                    { path: '', element: <TeacherListPage /> },
-                    { path: 'new', element: <AddTeacherPage /> },
-                    { path: ':id', element: <TeacherViewPage /> }
+                    { path: text.path.page, element: <TeacherListPage /> },
+                    { path: text.path.new, element: <AddTeacherPage /> },
+                    { path: text.path.view, element: <TeacherViewPage /> }
                 ]
             },
             {
                 path: 'guardians',
                 children: [
-                    { path: '', element: <GuardianListPage /> },
-                    { path: ':id', element: <GuardianViewPage /> }
+                    { path: text.path.page, element: <GuardianListPage /> },
+                    { path: text.path.view, element: <GuardianViewPage /> }
                 ]
             },
             {
                 path: 'classes-and-subjects',
                 children: [
-                    {path: '', element: <ClasseSubjectListsPage />},
-                    {path: 'classe/:id', element: <ClasseViewPage />},
-                    {path: 'subject/:id', element: <SubjectViewPage />},
+                    {path: text.path.page, element: <ClasseSubjectListsPage />},
+                    {path: text.cc.group.classe.path.view, element: <ClasseViewPage />},
+                    {path: text.cc.group.course.path.view, element: <SubjectViewPage />},
+                ]
+            },
+            {
+                path: 'examinations',
+                children: [
+                    {path: text.path.page, element: <ExamListPage />},
+                    {path: text.path.new, element: <AddExamPage />},
+                    {path: text.path.view, element: <ExamViewPage />}
                 ]
             },
             {

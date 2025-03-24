@@ -35,14 +35,14 @@ export const menuItems: Required<MenuProps>['items'][number][] = [
         label: text.teacher.label + 's'
     },
     {
-        key: '/classes-and-subjects',
+        key: text.cc.href,
         icon: <PiNotebook />,
-        label: "Classes & Matières"
+        label: text.cc.label
     },
     {
-        key: '/examinations',
+        key: text.exam.href,
         icon: <LuClipboardCheck />,
-        label: "Examens"
+        label: text.exam.label
     },
     {
         key: '/attendance',

@@ -1,7 +1,10 @@
 export const text = {
     home: {
         label: 'Tableau de bord',
-        href: '/dashboard'
+        href: '/dashboard',
+        path: {
+            page: ['/', 'dashboard'],
+        },
     },
     student: {
         label: 'Étudiant',
@@ -46,6 +49,9 @@ export const text = {
         href: '/classes-and-subjects',
         group: {
             classe: {
+                path: {
+                    view: 'classe/:id'
+                },
                 add: {
                     label: 'Nouvelle Classe',
                     href: '/classes-and-subjects/classe/new'
@@ -56,6 +62,9 @@ export const text = {
                 },
             },
             course: {
+                path: {
+                    view: 'subject/:id'
+                },
                 view: {
                     label: 'afficher la Matière',
                     href: '/classes-and-subjects/subject/'
@@ -67,6 +76,25 @@ export const text = {
             },
 
         }
+    },
+    exam: {
+        label: 'Evaluations',
+        href: '/examinations',
+        group: {
+            add: {
+                label: 'Créer Devoir',
+                href: '/examinations/new'
+            },
+            view: {
+                label: 'Détails',
+                href: '/examinations/'
+            }
+        }
+    },
+    path: {
+        page: '',
+        new: 'new',
+        view: ':id',
     },
     schoolID: '81148a1b-bdb9-4be1-9efd-fdf4106341d6',
     http: 'http://localhost:5173',

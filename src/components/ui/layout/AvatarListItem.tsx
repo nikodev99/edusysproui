@@ -22,7 +22,7 @@ export const AvatarListItem = (
             ...(showViewBtn ? [<Button
                 disabled={isFetching}
                 type='link'
-                key="list-loadmore-more"
+                key={"list-loadmore-more-" + item?.id}
                 onClick={onBtnClick}
             >
                 {showBtnText}

@@ -11,3 +11,4 @@ export {ClasseAttendanceAnalysis} from './component/ClasseAttendanceAnalysis.tsx
 export {ClasseAttendanceTable} from './component/ClasseAttendanceTable.tsx'
 export {ClasseExamView} from './component/ClasseExamView.tsx'
 export {ClasseReport} from './component/ClasseReport.tsx'
+export {ClasseEditDrawer} from './component/ClasseEditDrawer.tsx'

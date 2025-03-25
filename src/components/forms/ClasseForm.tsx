@@ -69,14 +69,14 @@ export const ClasseForm = <T extends FieldValues>(
                     placeholder: 'Lycée',
                     validateStatus: form.validate('id', 'grade'),
                     help: form.error('id', 'grade'),
-                    selectedValue: (data ? data.grade.section : undefined) as PathValue<T, Path<T>>
+                    selectedValue: (data ? data.grade.id : undefined) as PathValue<T, Path<T>>
                 }
             },
             {
                 type: InputTypeEnum.NUMBER,
                 inputProps: {
                     lg: 12,
-                    label: 'Numéro de la classe',
+                    label: 'Numéro de la salle de classe',
                     control: control,
                     name: 'roomNumber' as Path<T>,
                     placeholder: '30',

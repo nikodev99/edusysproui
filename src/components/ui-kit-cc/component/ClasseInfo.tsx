@@ -315,14 +315,14 @@ const ClasseTeachers = ({infoData, seeMore}: ClasseInfoProps) => {
             <LoadMoreList
                 listProps={{
                     dataSource: classeTeachers,
-                    rowKey: (item) => item.id as string,
+                    rowKey: 'id',
                     renderItem: (teacher) => (<AvatarListItem
                         item={teacher?.personalInfo}
                         showBtnText='Voir'
                         isLoading={classeTeachers === null}
                         onBtnClick={() => redirectTo(text.teacher.group.view.href + teacher?.id)}
                         description={teacher?.courses && teacher?.courses[0]?.course !== null
-                            ? teacher?.courses?.map(c => (<Tag key={c.abbr}>{c.course}</Tag>))
+                            ? teacher?.courses?.map(c => (<Tag key={c?.id}>{c.course}</Tag>))
                             : undefined
                         }
                     />)

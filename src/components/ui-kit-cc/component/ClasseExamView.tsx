@@ -25,7 +25,7 @@ import {InitMarkType} from "../../../utils/tsxUtils.tsx";
 import {text} from "../../../utils/text_display.ts";
 
 const ExamDescription = (
-    {classeId, academicYear, examId}: {classeId: number, academicYear: string, examId: number},
+    {classeId, academicYear, exam}: {classeId: number, academicYear: string, exam: Exam},
 ) => {
 
     const {Link, Title} = Typography
@@ -38,9 +38,9 @@ const ExamDescription = (
 
     const fetch = useRawFetch()
     const {data, isSuccess, isPending, isFetching, isRefetching, isLoading, error} = useFetch(
-        ['assignments-list-per-exam', examId],
+        ['assignments-list-per-exam', exam?.id],
         getClasseExamAssignments,
-        [examId, classeId, academicYear]
+        [exam?.id, classeId, academicYear]
     )
 
     console.log('fetching assignments per examId errors: ', error)
@@ -331,7 +331,7 @@ const ExamDescription = (
 export const ClasseExamView = ({classeId, academicYear}: {classeId: number, academicYear: string}) => {
 
     const [classeExams, setClasseExams] = useState<Exam[]>([])
-    const [activeExam, setActiveExam] = useState<number>(0)
+    const [activeExam, setActiveExam] = useState<Exam | undefined>(undefined)
 
     const {data: examData, isSuccess: examFetchSuccess} = useFetch(['classe-exam-list'], getClasseExams, [classeId, academicYear])
     
@@ -343,7 +343,7 @@ export const ClasseExamView = ({classeId, academicYear}: {classeId: number, acad
     
     useLayoutEffect(() => {
         if (classeExams && classeExams?.length > 0) {
-            setActiveExam(classeExams[0]?.id as number)
+            setActiveExam(classeExams[0])
         }
     }, [classeExams])
 
@@ -352,16 +352,16 @@ export const ClasseExamView = ({classeId, academicYear}: {classeId: number, acad
         value: exam?.id as number,
     }))
 
-    const segmentChange = (value: number) => {
+    const segmentChange = (value: Exam) => {
         setActiveExam(value)
     }
 
     return(
         <>
             {classeExams && classeExams?.length > 0 ? <>
-                <Segmented options={segmentData} value={activeExam} onChange={segmentChange} block />
+                <Segmented options={segmentData as []} value={activeExam as Exam} onChange={segmentChange} block />
                 <main style={{margin: '15px 10px 5px 10px'}}>
-                    <ExamDescription classeId={classeId} academicYear={academicYear} examId={activeExam} />
+                    <ExamDescription classeId={classeId} academicYear={academicYear} exam={activeExam as Exam} />
                 </main></>
                 : <VoidData />
             }

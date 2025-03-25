@@ -1,7 +1,7 @@
 import {AxiosResponse} from "axios";
 import {Classe} from "../../entity";
 import {apiClient, request} from "../axiosConfig.ts";
-import {Pageable} from "../../utils/interfaces.ts";
+import {ID, Pageable} from "../../utils/interfaces.ts";
 import {ClasseSchema} from "../../schema";
 
 export const addClasse = (data: ClasseSchema): Promise<AxiosResponse<ClasseSchema>> => {
@@ -41,4 +41,13 @@ export const getClasse = (classeId: number, academicYear: string) => {
 
 export const getClassesBasicValues = (): Promise<AxiosResponse<Classe[]>> => {
     return apiClient.get<Classe[]>("/classes/basic");
+}
+
+export const updateClasseValues = (data: ClasseSchema, classeId: ID) => {
+    return request({
+        method: 'PUT',
+        url: `/classes/${classeId}`,
+        data: data,
+        headers: {'Content-Type': 'application/json'}
+    })
 }

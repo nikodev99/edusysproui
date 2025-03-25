@@ -315,8 +315,9 @@ export interface InfoPageProps<T extends object> {
 export interface EditProps<TData extends object> {
     open: boolean
     close: () => void
-    isLoading: boolean
+    isLoading?: boolean
     data: TData
+    resp?: (resp: Record<string, boolean>) => void
 }
 
 export type RedirectFunction = (link: string) => void;

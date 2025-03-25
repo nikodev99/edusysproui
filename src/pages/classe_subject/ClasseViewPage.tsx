@@ -17,9 +17,18 @@ import {
 } from "react-icons/lu";
 import {datetimeExpose, isObjectEmpty} from "../../utils/utils.ts";
 import {ViewRoot} from "../../components/custom/ViewRoot.tsx";
-import {ClasseAttendance, ClasseExams, ClasseInfo, ClasseSchedule, ClasseStudent, ClasseReport} from "../../components/ui-kit-cc";
+import {
+    ClasseAttendance,
+    ClasseExams,
+    ClasseInfo,
+    ClasseSchedule,
+    ClasseStudent,
+    ClasseReport,
+    ClasseEditDrawer
+} from "../../components/ui-kit-cc";
 import {countClasseStudents} from "../../data/repository/studentRepository.ts";
 import {SuperWord} from "../../utils/tsxUtils.tsx";
+import {useToggle} from "../../hooks/useToggle.ts";
 
 const ClasseViewPage = () => {
 
@@ -31,6 +40,7 @@ const ClasseViewPage = () => {
     const [color, setColor] = useState<Color>('')
     const [studentCount, setStudentCount] = useState<GenderCounted[] | null>(null)
     const [usedAcademicYearId, setUsedAcademicYearId] = useState<string | null>(null)
+    const [open, setOpen] = useToggle(false)
     const countStudent = useRef<number>(0)
 
     const {data, isSuccess, error, isLoading, refetch} = useFetch(['classe-id', id], getClasse, [id, usedAcademicYearId], {
@@ -75,7 +85,7 @@ const ClasseViewPage = () => {
 
     useEffect(() => {
         if (usedAcademicYearId) {
-            refetch()
+            refetch().then(r => r.data)
         }
     }, [refetch, usedAcademicYearId]);
 
@@ -88,7 +98,7 @@ const ClasseViewPage = () => {
             initAcademicYears(date?.year as number)
         }
         if(isSuccess && data) {
-            setClasse(prevClasse => (prevClasse?.id === (data as Classe).id ? prevClasse : (data as Classe)));
+            setClasse(data as Classe);
         }
     }, [academicYears.length, classe?.createdAt, currentAcademicYear, data, isSuccess]);
 
@@ -99,6 +109,11 @@ const ClasseViewPage = () => {
 
     const handleAcademicYearIdValue = (value: string) =>  {
         setUsedAcademicYearId(value)
+    }
+
+    const handleCloseDrawer = () => {
+        setOpen()
+        refetch().then(r => r.data)
     }
 
     const linkItem = [
@@ -124,12 +139,14 @@ const ClasseViewPage = () => {
         }
     ]
 
+    console.log('CLASSE: ', classe)
+
     return(
         <>
             <PageHierarchy items={pageHierarchy as [{ title: string | ReactNode, path?: string }]} />
             <ViewHeader
                 isLoading={isLoading}
-                setEdit={() => alert('Tu as cliqué sur edit')}
+                setEdit={() => setOpen()}
                 closeState={false}
                 avatarProps={{
                     firstName: classe?.name,
@@ -188,6 +205,7 @@ const ClasseViewPage = () => {
                     centered: true
                 }}
             />
+            <ClasseEditDrawer open={open} close={handleCloseDrawer} data={classe as Classe} />
         </>
     )
 }

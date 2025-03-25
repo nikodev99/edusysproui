@@ -13,7 +13,7 @@ import {assignmentDateUpdateSchema} from "./models/assignmentSchema.ts";
 export {enrollmentSchema} from './models/enrollmentSchema'
 export {classeSchemaMerge, classeSchema} from './models/classeSchema'
 export {courseSchemaMerge, courseSchema} from './models/courseSchema.ts'
-export {gradeSchemaMerge} from './models/gradeSchema.ts'
+export {gradeSchemaMerge, gradeSchema} from './models/gradeSchema.ts'
 export {departmentSchemaMerge} from './models/departmentSchema.ts'
 export {schoolSchema} from './models/schoolSchema'
 export {guardianSchema} from './models/guardianSchema'

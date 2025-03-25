@@ -8,10 +8,14 @@ import React, {useState} from "react";
 import {useGlobalStore} from "../../core/global/store.ts";
 import {catchError} from "../../data/action/error_catch.ts";
 
-type UpdateSchemaProps<TData extends FieldValues> = SchemaProps<TData> & {id: ID, resp?: (resp: Record<string, boolean>) => void} & ModalProps & PutSchemaProps<TData>
+type UpdateSchemaProps<TData extends FieldValues> = SchemaProps<TData> & {
+    id: ID,
+    resp?: (resp: Record<string, boolean>) => void,
+    confirmBtnText?: string
+} & ModalProps & PutSchemaProps<TData>
 
 export const UpdateSchema = <TData extends FieldValues>(
-    {data, messageSuccess, handleForm, customForm, id, resp, open, title, description, cancelText, onCancel, putFunc, okText}: UpdateSchemaProps<TData>
+    {data, messageSuccess, handleForm, customForm, id, resp, open, title, description, cancelText, onCancel, putFunc, okText, confirmBtnText}: UpdateSchemaProps<TData>
 ) => {
 
     const [openConfirm, setOpenConfirm] = useToggle(false);
@@ -27,13 +31,13 @@ export const UpdateSchema = <TData extends FieldValues>(
         mutate({putFn: putFunc, data: data, id: id}, {
             onSuccess: response => {
                 if (response && response.status === 200) {
-                    setSuccessMessage(messageSuccess)
+                    setSuccessMessage(messageSuccess ?? response?.data?.updated)
                     if (resp) {
                         resp(response?.data as Record<string, boolean>)
                     }
                 }
             },
-            onError: error => setErrorMessage(catchError(error))
+            onError: (error) => setErrorMessage(catchError(error))
         })
         setOpenConfirm()
     }
@@ -59,7 +63,7 @@ export const UpdateSchema = <TData extends FieldValues>(
                         open={openConfirm}
                         onCancel={setOpenConfirm}
                         description={description}
-                        okText="Confirmer"
+                        okText={confirmBtnText ?? "Confirmer"}
                         onConfirm={handleForm.handleSubmit(onSubmit)}
                     >
                         <Button disabled={isPending} type='primary' onClick={setOpenConfirm}>{okText}</Button>

@@ -2,7 +2,7 @@ import {getClassesBasicValues} from "../request";
 import {ErrorCatch} from "./error_catch.ts";
 import {Classe} from "../../entity";
 import {AxiosResponse} from "axios";
-import {getShortSortOrder, setSortFieldName} from "../../utils/utils.ts";
+import {getShortSortOrder, setSortFieldName} from "../../core/utils/utils.ts";
 import {getAllClasses} from "../repository/classeRepository.ts";
 
 export const getAllSchoolClasses = async (page: number, size: number, sortField?: string, sortOrder?: string): Promise<AxiosResponse<Classe[]>> => {

@@ -3,7 +3,7 @@ import {ErrorCatch} from "./error_catch.ts";
 import {getAllBasicCourses, getAllCourses} from "../repository/courseRepository.ts";
 import {Response} from "./response.ts";
 import {AxiosResponse} from "axios";
-import {getShortSortOrder, setSortFieldName} from "../../utils/utils.ts";
+import {getShortSortOrder, setSortFieldName} from "../../core/utils/utils.ts";
 
 export const getAllSchoolCourses = async (page: number, size: number, sortField?: string, sortOrder?: string): Promise<AxiosResponse<Course[]>> => {
     if(sortField && sortOrder) {

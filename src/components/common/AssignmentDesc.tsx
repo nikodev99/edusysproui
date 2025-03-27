@@ -6,17 +6,17 @@ import VoidData from "../view/VoidData.tsx";
 import {ShapePieChart} from "../graph/ShapePieChart.tsx";
 import {Assignment} from "../../entity";
 import {AssignmentScores} from "../ui/layout/AssignmentScores.tsx";
-import {CalendarEvent, EventProps} from "../../utils/interfaces.ts";
+import {CalendarEvent, EventProps} from "../../core/utils/interfaces.ts";
 import {
     dateCompare, getAssignmentBarData,
     getDiffFromNow,
     setName,
     setTime
-} from "../../utils/utils.ts";
+} from "../../core/utils/utils.ts";
 import {ReactNode, useEffect, useLayoutEffect, useRef, useState} from "react";
 import {Score} from "../../entity";
 import {DescriptionsItemType} from "antd/es/descriptions";
-import {CardSkeleton, IconText} from "../../utils/tsxUtils.tsx";
+import {CardSkeleton, IconText} from "../../core/utils/tsxUtils.tsx";
 import {LuCalendarDays, LuClock, LuClock9, LuRefreshCcw, LuX} from "react-icons/lu";
 import dayjs from "dayjs";
 import {ScoreItem} from "../ui/layout/ScoreItem.tsx";

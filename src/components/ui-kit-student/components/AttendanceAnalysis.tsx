@@ -1,10 +1,10 @@
 import Responsive from "../../ui/layout/Responsive.tsx";
 import Grid from "../../ui/layout/Grid.tsx";
-import {AttendanceRecord} from "../../../utils/interfaces.ts";
+import {AttendanceRecord} from "../../../core/utils/interfaces.ts";
 import {useEffect, useState} from "react";
 import {Attendance, Enrollment} from "../../../entity";
 import {getAllStudentAttendances} from "../../../data/repository/attendanceRepository.ts";
-import {fDate, setDayJsDate} from "../../../utils/utils.ts";
+import {fDate, setDayJsDate} from "../../../core/utils/utils.ts";
 import {useRawFetch} from "../../../hooks/useFetch.ts";
 import {Calendar, Card, Skeleton} from "antd";
 import {
@@ -15,7 +15,7 @@ import {
 } from "../../../entity/enums/attendanceStatus.ts";
 import {Dayjs} from "dayjs";
 import {Widgets} from "../../ui/layout/Widgets.tsx";
-import {SuperWord} from "../../../utils/tsxUtils.tsx";
+import {SuperWord} from "../../../core/utils/tsxUtils.tsx";
 import {useClasseAttendance} from "../../../hooks/useClasseAttendance.ts";
 import {BarChart} from "../../graph/BarChart.tsx";
 

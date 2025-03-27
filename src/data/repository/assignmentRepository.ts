@@ -1,6 +1,6 @@
 import {apiClient} from "../axiosConfig.ts";
 import {Assignment} from "../../entity/domain/assignment.ts";
-import {ID, IDS} from "../../utils/interfaces.ts";
+import {ID, IDS} from "../../core/utils/interfaces.ts";
 
 export const getAllClasseAssignments = (
     {classeId}: {classeId: number, subjectId?: number},

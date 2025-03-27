@@ -7,11 +7,11 @@ import {useCallback} from "react";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const useFetch = <TData, TError>(
     key: unknown | unknown[],
-    callback: (...args: any[]) => Promise<AxiosResponse<TData | TData[], TError>>,
+    callback: (...args: any[]) => Promise<AxiosResponse<TData, TError>>,
     params: any[] = [],
-    options?: UseQueryOptions<TData | TData[], TError, TData | TData[], QueryKey>
-): UseQueryResult<TData | TData[], TError> => {
-    return  useQuery<TData | TData[], TError>({
+    options?: UseQueryOptions<TData, TError, TData, QueryKey>
+): UseQueryResult<TData, TError> => {
+    return  useQuery<TData, TError>({
         queryKey: Array.isArray(key) ? key : [key],
         queryFn: async () => await callback(...params).then(res => res.data),
         placeholderData: keepPreviousData,
@@ -20,7 +20,7 @@ export const useFetch = <TData, TError>(
 }
 
 export const useRawFetch = <T extends object>() => {
-    return useCallback((callback: (...args: any[]) => Promise<AxiosResponse<T | T[]>>, params: any[] = []) => {
+    return useCallback((callback: (...args: any[]) => Promise<AxiosResponse<T>>, params: any[] = []) => {
         return customFetch(callback, params);
     }, []);
 };
@@ -31,9 +31,9 @@ export const fetchFunc = <T extends object>(callback: (...args: any[]) => Promis
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const customFetch = async <T>(
-    callback: (...args: any[]) => Promise<AxiosResponse<T | T[]>>,
+    callback: (...args: any[]) => Promise<AxiosResponse<T>>,
     params: any[] = []
-): Promise<Response<T | T[]>> => {
+): Promise<Response<T>> => {
     try {
         const response = await callback(...params);
         if(response && response.status === 200) {

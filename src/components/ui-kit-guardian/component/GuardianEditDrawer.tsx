@@ -1,5 +1,5 @@
 import RightSidePane from "../../ui/layout/RightSidePane.tsx";
-import {EditProps} from "../../../utils/interfaces.ts";
+import {EditProps} from "../../../core/utils/interfaces.ts";
 import {Guardian} from "../../../entity";
 import GuardianForm from "../../forms/GuardianForm.tsx";
 import {useForm} from "react-hook-form";
@@ -11,7 +11,7 @@ import {useEffect, useState} from "react";
 import FormSuccess from "../../ui/form/FormSuccess.tsx";
 import FormError from "../../ui/form/FormError.tsx";
 import {Individual} from "../../../entity/domain/individual.ts";
-import {hasField} from "../../../utils/utils.ts";
+import {hasField} from "../../../core/utils/utils.ts";
 import {UpdateAddress} from "../../custom/UpdateAddress.tsx";
 import {UpdatePersonalData} from "../../custom/UpdatePersonalData.tsx";
 import {PatchUpdate} from "../../../core/PatchUpdate.ts";

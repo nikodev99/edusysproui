@@ -11,25 +11,25 @@ import {
 } from "react-hook-form";
 import {ValidateStatus} from "antd/es/form/FormItem";
 import React, {CSSProperties, ReactNode} from "react";
-import {AcademicYear, Assignment, Course, Guardian, Student, Teacher} from "../entity";
-import {SectionType} from "../entity/enums/section.ts";
-import {Gender} from "../entity/enums/gender.tsx";
-import {AttendanceStatus} from "../entity/enums/attendanceStatus.ts";
-import {Employee} from "../entity/domain/employee.ts";
-import {AddressOwner, IndividualType} from "../core/shared/sharedEnums.ts";
+import {AcademicYear, Assignment, Course, Guardian, Student, Teacher} from "../../entity";
+import {SectionType} from "../../entity/enums/section.ts";
+import {Gender} from "../../entity/enums/gender.tsx";
+import {AttendanceStatus} from "../../entity/enums/attendanceStatus.ts";
+import {Employee} from "../../entity/domain/employee.ts";
+import {AddressOwner, IndividualType} from "../shared/sharedEnums.ts";
 import {CalendarProps, Event, View, ViewsProps} from "react-big-calendar";
-import {ReprimandType} from "../entity/enums/reprimandType.ts";
-import {PunishmentType} from "../entity/enums/punishmentType.ts";
-import {PunishmentStatus} from "../entity/enums/punishmentStatus.ts";
-import {Day} from "../entity/enums/day.ts";
+import {ReprimandType} from "../../entity/enums/reprimandType.ts";
+import {PunishmentType} from "../../entity/enums/punishmentType.ts";
+import {PunishmentStatus} from "../../entity/enums/punishmentStatus.ts";
+import {Day} from "../../entity/enums/day.ts";
 import {AxiosResponse} from "axios";
 import IntrinsicElements = React.JSX.IntrinsicElements;
 import {PercentPositionType, ProgressSize} from "antd/es/progress/progress";
 import {TableColumnsType, TableProps} from "antd";
 import {ItemType} from "antd/es/menu/interface";
-import {Individual} from "../entity/domain/individual.ts";
+import {Individual} from "../../entity/domain/individual.ts";
 import {z} from "zod";
-import {AssignmentTypeLiteral} from "../entity/enums/assignmentType.ts";
+import {AssignmentTypeLiteral} from "../../entity/enums/assignmentType.ts";
 
 export interface Metadata {
     title: string

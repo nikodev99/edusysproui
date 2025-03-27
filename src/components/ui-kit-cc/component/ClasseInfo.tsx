@@ -1,17 +1,16 @@
-import {GenderCounted, InfoPageProps} from "../../../utils/interfaces.ts";
-import {Classe, Planning, Score, Student, Teacher} from "../../../entity";
+import {GenderCounted, InfoPageProps} from "../../../core/utils/interfaces.ts";
+import {Classe, Planning, Score, Student, Teacher, Individual} from "../../../entity";
 import Block from "../../view/Block.tsx";
 import {ReactNode, useEffect, useState} from "react";
 import Section from "../../ui/layout/Section.tsx";
 import PanelStat from "../../ui/layout/PanelStat.tsx";
-import {calculateAverageAge, fDate, findPercent, firstWord, setFirstName, setGender} from "../../../utils/utils.ts";
-import {text} from "../../../utils/text_display.ts";
+import {calculateAverageAge, findPercent, firstWord, setFirstName, setGender} from "../../../core/utils/utils.ts";
+import {text} from "../../../core/utils/text_display.ts";
 import PanelTable from "../../ui/layout/PanelTable.tsx";
-import {SuperWord} from "../../../utils/tsxUtils.tsx";
+import {SuperWord} from "../../../core/utils/tsxUtils.tsx";
 import {DatedListItem} from "../../ui/layout/DatedListItem.tsx";
 import {Avatar as AntAvatar, Progress, Statistic, TableColumnsType, Tag} from "antd";
 import {IndividualDescription} from "../../ui/layout/IndividualDescription.tsx";
-import {Individual} from "../../../entity/domain/individual.ts";
 import PanelSection from "../../ui/layout/PanelSection.tsx";
 import {ScheduleDayCalendar} from "../../common/ScheduleDayCalendar.tsx";
 import {AvatarTitle} from "../../ui/layout/AvatarTitle.tsx";
@@ -27,6 +26,7 @@ import VoidData from "../../view/VoidData.tsx";
 import {Table} from "../../ui/layout/Table.tsx";
 import {AiOutlineArrowDown, AiOutlineArrowUp} from "react-icons/ai";
 import {useClasseAttendance} from "../../../hooks/useClasseAttendance.ts";
+import Datetime from "../../../core/datetime.ts";
 
 type ClasseInfoProps = InfoPageProps<Classe> & {
     studentCount?: GenderCounted[] | null
@@ -72,7 +72,7 @@ const ClasseInfoData = ({infoData, color, studentCount, totalStudents, seeMore}:
             <div className="panel-table">
                 <IndividualDescription
                     personalInfo={principalTeacher?.principalTeacher?.personalInfo as Individual}
-                    show={principalTeacher === null || principalTeacher === undefined}
+                    show={principalTeacher === null || principalTeacher?.principalTeacher === undefined}
                     color={color}
                     titles={{panel: 'Responsable de classe'}}
                     redirectLink={redirectLink(principalTeacher?.principalTeacher?.id)}
@@ -136,7 +136,10 @@ const PlanningInfo = ({infoData, color}: ClasseInfoProps) => {
             semester: semesterName,
             data: [{
                 response: <DatedListItem dataSource={planning.map(term => ({
-                    date: [fDate(term?.termStartDate), fDate(term?.termEndDate)],
+                    date: [
+                        Datetime?.of(term?.termStartDate as number[]).fDate(),
+                        Datetime?.of(term?.termEndDate as number[]).fDate()
+                    ],
                     title: term.designation
                 }))} />,
                 tableRow: true

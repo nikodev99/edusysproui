@@ -1,6 +1,6 @@
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
-import {text} from "../../utils/text_display.ts";
-import {Breadcrumb, setBreadcrumb} from "../../core/breadcrumb.tsx";
+import {text} from "../../core/utils/text_display.ts";
+import {Breadcrumb, useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
 import {redirectTo} from "../../context/RedirectContext.ts";
 import {LuEllipsisVertical, LuEye} from "react-icons/lu";
 import {BiSolidUserAccount} from "react-icons/bi";
@@ -8,9 +8,9 @@ import {AiOutlineUserDelete, AiOutlineUsergroupAdd} from "react-icons/ai";
 import {Divider, Flex, TableColumnsType, Tag} from "antd";
 import {Classe, Course, Teacher} from "../../entity";
 import {Avatar} from "../../components/ui/layout/Avatar.tsx";
-import {enumToObjectArrayForFiltering, getAge, setFirstName} from "../../utils/utils.ts";
+import {enumToObjectArrayForFiltering, getAge, setFirstName} from "../../core/utils/utils.ts";
 import {Gender} from "../../entity/enums/gender.tsx";
-import {StatusTags} from "../../utils/tsxUtils.tsx";
+import {StatusTags} from "../../core/utils/tsxUtils.tsx";
 import {ActionButton} from "../../components/ui/layout/ActionButton.tsx";
 import {ListPageHierarchy} from "../../components/custom/ListPageHierarchy.tsx";
 import ListViewer from "../../components/custom/ListViewer.tsx";
@@ -18,7 +18,7 @@ import {fetchTeachers} from "../../data";
 import {AxiosResponse} from "axios";
 import {useRef} from "react";
 import {Status} from "../../entity/enums/status.ts";
-import {DataProps} from "../../utils/interfaces.ts";
+import {DataProps} from "../../core/utils/interfaces.ts";
 import {getSearchedTeachers} from "../../data/repository/teacherRepository.ts";
 
 const TeacherListPage = () => {
@@ -28,7 +28,7 @@ const TeacherListPage = () => {
         description: 'Teacher list',
     })
 
-    const pageHierarchy = setBreadcrumb([
+    const pageHierarchy = useBreadCrumb([
         {
             title: text.teacher.label + 's'
         }

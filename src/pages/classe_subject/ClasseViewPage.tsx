@@ -1,13 +1,13 @@
 import {useParams} from "react-router-dom";
 import {ReactNode, useEffect, useRef, useState} from "react";
 import {AcademicYear, Classe} from "../../entity";
-import {Color, GenderCounted} from "../../utils/interfaces.ts";
+import {Color, GenderCounted} from "../../core/utils/interfaces.ts";
 import {useFetch, useRawFetch} from "../../hooks/useFetch.ts";
 import {getClasse} from "../../data/repository/classeRepository.ts";
 import {initAcademicYears, initCurrentAcademicYear, useGlobalStore} from "../../core/global/store.ts";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
-import {setBreadcrumb} from "../../core/breadcrumb.tsx";
-import {text} from "../../utils/text_display.ts";
+import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
+import {text} from "../../core/utils/text_display.ts";
 import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
 import ViewHeader from "../../components/ui/layout/ViewHeader.tsx";
 import {Select, Tag} from "antd";
@@ -15,7 +15,7 @@ import {
     LuBookOpenCheck, LuBookPlus, LuCalendarCheck, LuCalendarPlus, LuUserCheck,
     LuUserPlus, LuUserRoundCheck, LuUserRoundPlus,
 } from "react-icons/lu";
-import {datetimeExpose, isObjectEmpty} from "../../utils/utils.ts";
+import {datetimeExpose, isObjectEmpty} from "../../core/utils/utils.ts";
 import {ViewRoot} from "../../components/custom/ViewRoot.tsx";
 import {
     ClasseAttendance,
@@ -27,7 +27,7 @@ import {
     ClasseEditDrawer
 } from "../../components/ui-kit-cc";
 import {countClasseStudents} from "../../data/repository/studentRepository.ts";
-import {SuperWord} from "../../utils/tsxUtils.tsx";
+import {SuperWord} from "../../core/utils/tsxUtils.tsx";
 import {useToggle} from "../../hooks/useToggle.ts";
 
 const ClasseViewPage = () => {
@@ -50,14 +50,14 @@ const ClasseViewPage = () => {
 
     console.log('Error: ', error);
     
-    const fetch = useRawFetch<GenderCounted>()
+    const fetch = useRawFetch<GenderCounted[]>()
 
     useDocumentTitle({
         title: classe?.name as string,
         description: "Classe Description"
     })
 
-    const pageHierarchy = setBreadcrumb([
+    const pageHierarchy = useBreadCrumb([
         { title: text.cc.label, path: text.cc.href },
         { title: <SuperWord input={classe?.name as string} /> }
     ])
@@ -138,8 +138,6 @@ const ClasseViewPage = () => {
             onClick: () => alert('Pour changer le prof principal')
         }
     ]
-
-    console.log('CLASSE: ', classe)
 
     return(
         <>

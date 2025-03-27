@@ -1,9 +1,9 @@
 import {FieldValues, Path, PathValue} from "react-hook-form";
-import {FormContentProps} from "../../utils/interfaces.ts";
+import {FormContentProps} from "../../core/utils/interfaces.ts";
 import FormContent from "../ui/form/FormContent.tsx";
 import {AddressOwner, InputTypeEnum} from "../../core/shared/sharedEnums.ts";
 import {Address} from "../../entity";
-import {FormUtils} from "../../utils/formUtils.ts";
+import {FormUtils} from "../../core/utils/formUtils.ts";
 import Responsive from "../ui/layout/Responsive.tsx";
 import Grid from "../ui/layout/Grid.tsx";
 import {FormConfig} from "../../config/FormConfig.ts";

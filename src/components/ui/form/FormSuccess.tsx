@@ -1,6 +1,6 @@
 import {message as successMassage} from 'antd'
 import {useEffect} from "react";
-import {text} from "../../../utils/text_display.ts";
+import {text} from "../../../core/utils/text_display.ts";
 import {redirect} from "react-router-dom";
 
 const FormSuccess = ({message, toRedirect, redirectLink}: {message?: string, toRedirect?: boolean, redirectLink?: string}) => {

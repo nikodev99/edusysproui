@@ -1,4 +1,4 @@
-import {Counted, GenderCounted, Pageable} from "../../utils/interfaces.ts";
+import {Counted, GenderCounted, Pageable} from "../../core/utils/interfaces.ts";
 import {AxiosResponse} from "axios";
 import {Enrollment} from "../../entity";
 import {apiClient, request} from "../axiosConfig.ts";

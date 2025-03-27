@@ -1,5 +1,5 @@
 import {Attendance} from "../domain/attendance.ts";
-import {AttendanceCount, AttendanceRecord, AttendanceStatusCount} from "../../utils/interfaces.ts";
+import {AttendanceCount, AttendanceRecord, AttendanceStatusCount} from "../../core/utils/interfaces.ts";
 
 export enum AttendanceStatus {
     PRESENT = 'Présent',

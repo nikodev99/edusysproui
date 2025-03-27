@@ -1,4 +1,4 @@
-import {GenderCounted, InfoPageProps} from "../../../utils/interfaces.ts";
+import {GenderCounted, InfoPageProps} from "../../../core/utils/interfaces.ts";
 import {Classe} from "../../../entity";
 import PageWrapper from "../../view/PageWrapper.tsx";
 import {ClasseAttendanceAnalysis} from "./ClasseAttendanceAnalysis.tsx";

@@ -1,4 +1,4 @@
-import {CustomUpdateProps} from "../../utils/interfaces.ts";
+import {CustomUpdateProps} from "../../core/utils/interfaces.ts";
 import {IndividualType, UpdateType} from "../../core/shared/sharedEnums.ts";
 import {IndividualForm} from "../forms/IndividualForm.tsx";
 import {useForm} from "react-hook-form";

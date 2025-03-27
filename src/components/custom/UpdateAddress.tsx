@@ -5,7 +5,7 @@ import {useForm} from "react-hook-form";
 import {addressSchema, AddressSchema} from "../../schema";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {PatchUpdate} from "../../core/PatchUpdate.ts";
-import {CustomUpdateProps} from "../../utils/interfaces.ts";
+import {CustomUpdateProps} from "../../core/utils/interfaces.ts";
 import {AddressOwner} from "../../core/shared/sharedEnums.ts";
 
 export const UpdateAddress = ({data, open, close, personal, setSuccessMessage, setErrorMessage}: CustomUpdateProps) => {

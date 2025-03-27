@@ -1,6 +1,6 @@
 import {FieldValues} from "react-hook-form";
 import {Button, Form, Input, InputNumber, Space} from "antd";
-import {InputType, TypedInputType} from "../../../utils/interfaces.ts";
+import {InputType, TypedInputType} from "../../../core/utils/interfaces.ts";
 import Grid from "../layout/Grid.tsx";
 import {LuSave} from "react-icons/lu";
 import FormItem from "./FormItem.tsx";

@@ -9,8 +9,8 @@ import PageError from "../../pages/PageError.tsx";
 import {fetchFunc, useFetch} from "../../hooks/useFetch.ts";
 import {LuLayoutDashboard, LuTable} from "react-icons/lu";
 import {Enrollment} from "../../entity";
-import {ListViewerProps, StudentListDataType} from "../../utils/interfaces.ts";
-import {getAge} from "../../utils/utils.ts";
+import {ListViewerProps, StudentListDataType} from "../../core/utils/interfaces.ts";
+import {getAge} from "../../core/utils/utils.ts";
 import {AutoScrollTable} from "../ui/layout/AutoScrollTable.tsx";
 import Grid from "../ui/layout/Grid.tsx";
 

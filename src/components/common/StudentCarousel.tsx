@@ -1,9 +1,9 @@
 import {Button, Carousel} from "antd";
 import {Avatar} from "../ui/layout/Avatar.tsx";
-import {lowerName} from "../../utils/utils.ts";
+import {lowerName} from "../../core/utils/utils.ts";
 import Section from "../ui/layout/Section.tsx";
 import {Enrollment} from "../../entity";
-import {Color} from "../../utils/interfaces.ts";
+import {Color} from "../../core/utils/interfaces.ts";
 import {ReactNode} from "react";
 
 export const StudentCarousel = (

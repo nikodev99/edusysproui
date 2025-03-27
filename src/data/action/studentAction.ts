@@ -4,7 +4,7 @@ import {
     getRandomStudentClassmate,
     getStudentById
 } from "../request";
-import {getShortSortOrder} from "../../utils/utils.ts";
+import {getShortSortOrder} from "../../core/utils/utils.ts";
 import {ErrorCatch} from "./error_catch.ts";
 import {Enrollment} from "../../entity";
 import {getClasseEnrolledStudents} from "../repository/studentRepository.ts";

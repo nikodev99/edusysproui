@@ -1,13 +1,13 @@
 import {useParams} from "react-router-dom";
 import {fetchStudentById} from "../../data";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
-import {text} from "../../utils/text_display.ts";
-import {setBreadcrumb} from "../../core/breadcrumb.tsx";
+import {text} from "../../core/utils/text_display.ts";
+import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
 import {ReactNode, useEffect, useState} from "react";
 import {Enrollment, Student} from "../../entity";
 import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
 import ViewHeader from "../../components/ui/layout/ViewHeader.tsx";
-import {setName} from "../../utils/utils.ts";
+import {setName} from "../../core/utils/utils.ts";
 import {useFetch} from "../../hooks/useFetch.ts";
 import {
     StudentAttendance,
@@ -41,7 +41,7 @@ const StudentViewPage = () => {
         hasEdu: false
     })
 
-    const pageHierarchy = setBreadcrumb([
+    const pageHierarchy = useBreadCrumb([
         {
             title: text.student.label,
             path: text.student.href

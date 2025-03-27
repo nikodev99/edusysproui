@@ -2,7 +2,7 @@ import {Button, DatePicker, Form, Space} from "antd";
 import {FieldValues} from "react-hook-form";
 import dayjs from "dayjs";
 import Grid from "../layout/Grid.tsx";
-import {DatePickerType, TypedInputType} from "../../../utils/interfaces.ts";
+import {DatePickerType, TypedInputType} from "../../../core/utils/interfaces.ts";
 import FormItem from "./FormItem.tsx";
 import {LuSave} from "react-icons/lu";
 

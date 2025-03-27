@@ -1,5 +1,5 @@
 import {CustomTableProps, Table} from "./Table.tsx";
-import {AutoScrollProps} from "../../../utils/interfaces.ts";
+import {AutoScrollProps} from "../../../core/utils/interfaces.ts";
 import {Spin} from "antd";
 import InfiniteScroll from "react-infinite-scroll-component";
 import {useCallback, useRef, useState} from "react";

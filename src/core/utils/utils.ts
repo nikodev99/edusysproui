@@ -2,11 +2,11 @@ import {ApiEvent, Color, DateExplose, EnumType, ExamView, GenderCounted, ID} fro
 import countries from 'world-countries'
 import dayjs from "dayjs";
 import 'dayjs/locale/fr.js'
-import {BloodType} from "../entity/enums/bloodType.ts";
+import {BloodType} from "../../entity/enums/bloodType.ts";
 import {ProgressProps} from "antd";
-import {Day} from "../entity/enums/day.ts";
-import {Gender} from "../entity/enums/gender.tsx";
-import {Assignment, Schedule} from "../entity";
+import {Day} from "../../entity/enums/day.ts";
+import {Gender} from "../../entity/enums/gender.tsx";
+import {Assignment, Schedule} from "../../entity";
 
 export const createElement = (htmlElement: string, parentNode: Element|null, attributes?: {[key: string]: string}, content?: string) => {
 
@@ -405,10 +405,14 @@ export const setLastName = (lastName?: string, maidenName?: string, upper ?: boo
     return ''
 }
 
-export const cutStatement = (statement: string, maxLength: number) => {
+export const cutStatement = (statement: string, maxLength: number, orElse?: string) => {
     if (statement) {
         if (statement?.length <= maxLength) {
             return statement
+        }else {
+            if (orElse) {
+                return orElse
+            }
         }
         const truncate = statement.slice(0, maxLength)
         const lastSpaceIndex = truncate.lastIndexOf(' ')

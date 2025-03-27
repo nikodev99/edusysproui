@@ -1,7 +1,7 @@
 import {AxiosResponse} from "axios";
 import {Score} from "../../entity";
 import {apiClient, request} from "../axiosConfig.ts";
-import {IDS} from "../../utils/interfaces.ts";
+import {IDS} from "../../core/utils/interfaces.ts";
 
 export const getAllAssignmentMarks = (assignmentId: string, size: number) => {
     return apiClient.get(`/score/all_assignment_marks/${assignmentId}`, {

@@ -1,7 +1,7 @@
-import {StudentListDataType as DataType} from "../../utils/interfaces.ts";
+import {StudentListDataType as DataType} from "../../core/utils/interfaces.ts";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
-import {text} from "../../utils/text_display.ts";
-import {Breadcrumb, setBreadcrumb} from "../../core/breadcrumb.tsx";
+import {text} from "../../core/utils/text_display.ts";
+import {Breadcrumb, useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
 import {ListPageHierarchy} from "../../components/custom/ListPageHierarchy.tsx";
 import {useRef} from "react";
 import {redirectTo} from "../../context/RedirectContext.ts";
@@ -19,7 +19,7 @@ const StudentListPage = () => {
         hasEdu: false
     })
 
-    const pageHierarchy = setBreadcrumb([
+    const pageHierarchy = useBreadCrumb([
         {
             title: text.student.label
         }

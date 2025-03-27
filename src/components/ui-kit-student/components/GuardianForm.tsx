@@ -1,4 +1,4 @@
-import {GuardianProps} from "../../../utils/interfaces.ts";
+import {GuardianProps} from "../../../core/utils/interfaces.ts";
 import Responsive from "../../ui/layout/Responsive.tsx";
 import Grid from "../../ui/layout/Grid.tsx";
 import {Alert, Button, Checkbox, Collapse, Divider, Modal, SelectProps} from "antd";
@@ -10,7 +10,7 @@ import GuardianFormContent from '../../forms/GuardianForm.tsx'
 import {AddressOwner, IndividualType} from "../../../core/shared/sharedEnums.ts";
 import AddressForm from "../../forms/AddressForm.tsx";
 import {EnrollmentSchema} from "../../../schema";
-import {setName} from "../../../utils/utils.ts";
+import {setName} from "../../../core/utils/utils.ts";
 import {IndividualForm} from "../../forms/IndividualForm.tsx";
 
 export const GuardianForm = ({control, errors, showField, checked, onChecked, value, setValue, isExists, setIsExists, guardian, setGuardian}: GuardianProps<EnrollmentSchema, Guardian>) => {

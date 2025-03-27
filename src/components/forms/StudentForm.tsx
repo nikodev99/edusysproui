@@ -1,9 +1,9 @@
-import {FormContentProps} from "../../utils/interfaces.ts";
+import {FormContentProps} from "../../core/utils/interfaces.ts";
 import {FieldValues, Path, PathValue} from "react-hook-form";
 import {InputTypeEnum} from "../../core/shared/sharedEnums.ts";
 import FormContent from "../ui/form/FormContent.tsx";
 import {Student} from "../../entity";
-import {FormUtils} from "../../utils/formUtils.ts";
+import {FormUtils} from "../../core/utils/formUtils.ts";
 
 type StudentFormProps<T extends FieldValues> = FormContentProps<T, Student> & { handleUpdate?: (field: keyof Student, value: unknown) => void };
 

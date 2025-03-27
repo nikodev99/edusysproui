@@ -1,6 +1,6 @@
 import {ResponsiveContainer, PieChart as ReChartPieChart, Pie, Cell, Legend} from "recharts";
 import {PieChartProps} from "../ui/ui_interfaces.ts";
-import {COLOR} from "../../utils/utils.ts";
+import {COLOR} from "../../core/utils/utils.ts";
 
 const RADIAN = Math.PI / 180;
 const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }: {

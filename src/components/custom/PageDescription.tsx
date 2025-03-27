@@ -1,5 +1,5 @@
 import {ReactNode} from "react";
-import {firstLetter} from "../../utils/utils.ts";
+import {firstLetter} from "../../core/utils/utils.ts";
 
 const PageDescription = (
     {title, description, count, isCount, addMargin = {size: '30px 0'}}: {

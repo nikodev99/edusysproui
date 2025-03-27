@@ -8,7 +8,7 @@ import {
     XAxis,
     YAxis
 } from "recharts";
-import {Color} from "../../utils/interfaces.ts";
+import {Color} from "../../core/utils/interfaces.ts";
 
 interface ComposeChartProps {
     data: {name: string, valeur: number, '%': number}[],

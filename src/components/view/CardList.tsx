@@ -1,13 +1,13 @@
 import Grid from "../ui/layout/Grid.tsx";
 import {Card, Divider, Skeleton, Typography} from "antd";
 import {ActionButton} from "../ui/layout/ActionButton.tsx";
-import {setFirstName} from "../../utils/utils.ts";
+import {setFirstName} from "../../core/utils/utils.ts";
 import {Avatar} from "../ui/layout/Avatar.tsx";
 import {ItemType} from "antd/es/menu/interface";
 import {Gender, selectedGenderIcon} from "../../entity/enums/gender.tsx";
 import {AiOutlineMore} from "react-icons/ai";
-import {DataProps} from "../../utils/interfaces.ts";
-import {SuperWord} from "../../utils/tsxUtils.tsx";
+import {DataProps} from "../../core/utils/interfaces.ts";
+import {SuperWord} from "../../core/utils/tsxUtils.tsx";
 
 interface CardListProps {
     content: DataProps[]

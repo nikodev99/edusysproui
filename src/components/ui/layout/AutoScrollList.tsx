@@ -1,7 +1,7 @@
 import InfiniteScroll from "react-infinite-scroll-component";
 import {List, ListProps, Skeleton} from "antd";
 import {useCallback, useEffect, useRef, useState} from "react";
-import {AutoScrollProps} from "../../../utils/interfaces.ts";
+import {AutoScrollProps} from "../../../core/utils/interfaces.ts";
 
 interface AutoScrollListProps<T> {
     listProps: ListProps<T>

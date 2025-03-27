@@ -1,7 +1,7 @@
-import {getShortSortOrder, setSortFieldName} from "../../utils/utils.ts";
+import {getShortSortOrder, setSortFieldName} from "../../core/utils/utils.ts";
 import {getAllTeachers, getNumberOfStudentTaughtByTeacher, getTeacherById} from "../repository/teacherRepository.ts";
 import {ErrorCatch} from "./error_catch.ts";
-import {Counted} from "../../utils/interfaces.ts";
+import {Counted} from "../../core/utils/interfaces.ts";
 
 export const fetchTeachers = async (page: number, size: number, sortField?: string, sortOrder?: string) => {
     if (sortField && sortOrder) {

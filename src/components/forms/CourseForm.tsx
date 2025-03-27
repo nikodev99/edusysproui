@@ -1,5 +1,5 @@
 import {FieldValues, Path, PathValue} from "react-hook-form";
-import {FormContentProps} from "../../utils/interfaces.ts";
+import {FormContentProps} from "../../core/utils/interfaces.ts";
 import {Course} from "../../entity";
 import FormContent from "../ui/form/FormContent.tsx";
 import {InputTypeEnum} from "../../core/shared/sharedEnums.ts";

@@ -1,6 +1,6 @@
 import {AddStepForm} from "../../components/custom/AddStepForm.tsx";
-import {Metadata} from "../../utils/interfaces.ts";
-import {text} from "../../utils/text_display.ts";
+import {Metadata} from "../../core/utils/interfaces.ts";
+import {text} from "../../core/utils/text_display.ts";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {EnrollmentSchema, enrollmentSchema, GuardianSchema} from "../../schema";

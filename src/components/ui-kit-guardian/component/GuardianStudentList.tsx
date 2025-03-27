@@ -2,10 +2,10 @@ import {Student} from "../../../entity";
 import './student_card.scss'
 import Responsive from "../../ui/layout/Responsive.tsx";
 import Grid from "../../ui/layout/Grid.tsx";
-import {bloodLabel, fDate} from "../../../utils/utils.ts";
+import {bloodLabel, fDate} from "../../../core/utils/utils.ts";
 import {Avatar} from "../../ui/layout/Avatar.tsx";
 import {QRCode} from "antd";
-import {text} from "../../../utils/text_display.ts";
+import {text} from "../../../core/utils/text_display.ts";
 import {Link} from "react-router-dom";
 import {BloodType} from "../../../entity/enums/bloodType.ts";
 

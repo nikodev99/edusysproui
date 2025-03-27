@@ -1,7 +1,7 @@
 import '../ui.scss'
 import {Flag} from "./Flag.tsx";
 import {ReactNode} from "react";
-import {isString} from "../../../utils/utils.ts";
+import {isString} from "../../../core/utils/utils.ts";
 
 const PanelStat = (
     {title, subTitle, media, desc, src, round}: {

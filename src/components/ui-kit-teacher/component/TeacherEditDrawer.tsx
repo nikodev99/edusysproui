@@ -1,4 +1,4 @@
-import {EditProps} from "../../../utils/interfaces.ts";
+import {EditProps} from "../../../core/utils/interfaces.ts";
 import RightSidePane from "../../ui/layout/RightSidePane.tsx";
 import {TeacherForm} from "../../forms/TeacherForm.tsx";
 import {useForm} from "react-hook-form";
@@ -12,7 +12,7 @@ import FormError from "../../ui/form/FormError.tsx";
 import {Button} from "antd";
 import {AddressOwner, IndividualType, UpdateType} from "../../../core/shared/sharedEnums.ts";
 import {Individual} from "../../../entity/domain/individual.ts";
-import {hasField} from "../../../utils/utils.ts";
+import {hasField} from "../../../core/utils/utils.ts";
 import {PatchUpdate} from "../../../core/PatchUpdate.ts";
 import {UpdateAddress} from "../../custom/UpdateAddress.tsx";
 import {UpdatePersonalData} from "../../custom/UpdatePersonalData.tsx";

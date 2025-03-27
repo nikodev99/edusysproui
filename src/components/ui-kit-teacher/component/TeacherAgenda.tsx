@@ -1,4 +1,4 @@
-import {InfoPageProps} from "../../../utils/interfaces.ts";
+import {InfoPageProps} from "../../../core/utils/interfaces.ts";
 import {Schedule, Teacher} from "../../../entity";
 import {getTeacherSchedule} from "../../../data/repository/teacherRepository.ts";
 import {ScheduleCalendar} from "../../common/ScheduleCalendar.tsx";

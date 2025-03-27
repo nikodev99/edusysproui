@@ -1,9 +1,9 @@
-import {getStatusKey, Status} from "../entity/enums/status.ts";
+import {getStatusKey, Status} from "../../entity/enums/status.ts";
 import {ReactNode} from "react";
-import Tag from "../components/ui/layout/Tag.tsx";
+import Tag from "../../components/ui/layout/Tag.tsx";
 import {Card, Flex, Popover, Skeleton, Space, StepsProps} from "antd";
 import {Color} from "./interfaces.ts";
-import {MarkType} from "../entity/enums/MarkType.ts";
+import {MarkType} from "../../entity/enums/MarkType.ts";
 
 export const StatusTags = ({status, female}: {status: Status, female?: boolean}): ReactNode => {
     const label = getStatusKey(status, female)

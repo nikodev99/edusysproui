@@ -1,8 +1,8 @@
 import FormContent from "../ui/form/FormContent.tsx";
-import {FormContentProps} from "../../utils/interfaces.ts";
+import {FormContentProps} from "../../core/utils/interfaces.ts";
 import {Guardian} from "../../entity";
 import {FieldValues, Path, PathValue} from "react-hook-form";
-import {FormUtils} from "../../utils/formUtils.ts";
+import {FormUtils} from "../../core/utils/formUtils.ts";
 import {FormConfig} from "../../config/FormConfig.ts";
 import {InputTypeEnum} from "../../core/shared/sharedEnums.ts";
 

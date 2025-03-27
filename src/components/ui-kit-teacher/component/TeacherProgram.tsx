@@ -1,4 +1,4 @@
-import {InfoPageProps} from "../../../utils/interfaces.ts";
+import {InfoPageProps} from "../../../core/utils/interfaces.ts";
 import {Teacher, CourseProgram} from "../../../entity";
 import {useEffect, useMemo, useState} from "react";
 import {useFetch} from "../../../hooks/useFetch.ts";
@@ -10,7 +10,7 @@ import {AiFillClockCircle} from "react-icons/ai";
 import {DraggedTimeline} from "../../graph/DraggedTimeline.tsx";
 import {LuChevronsRight} from "react-icons/lu";
 import Tag from "../../ui/layout/Tag.tsx";
-import {ISOToday} from "../../../utils/utils.ts";
+import {ISOToday} from "../../../core/utils/utils.ts";
 import {getAllTeacherCourseProgram, getAllTeacherProgram} from "../../../data/request";
 import {BarChart} from "../../graph/BarChart.tsx";
 import VoidData from "../../view/VoidData.tsx";

@@ -1,4 +1,4 @@
-import {InfoPageProps} from "../../../utils/interfaces.ts";
+import {InfoPageProps} from "../../../core/utils/interfaces.ts";
 import {Teacher} from "../../../entity";
 
 export const TeacherReprimand = ({infoData}: InfoPageProps<Teacher>) => {

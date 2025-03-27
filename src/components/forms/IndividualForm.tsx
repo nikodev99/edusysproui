@@ -1,10 +1,10 @@
-import {FormContentProps} from "../../utils/interfaces.ts";
+import {FormContentProps} from "../../core/utils/interfaces.ts";
 import {Individual as PersonalInfo} from "../../entity/domain/individual.ts";
 import {FieldValues, Path, PathValue} from "react-hook-form";
 import {IndividualType, InputTypeEnum} from "../../core/shared/sharedEnums.ts";
-import {FormUtils} from "../../utils/formUtils.ts";
+import {FormUtils} from "../../core/utils/formUtils.ts";
 import {useMemo} from "react";
-import {enumToObjectArray} from "../../utils/utils.ts";
+import {enumToObjectArray} from "../../core/utils/utils.ts";
 import {Gender} from "../../entity/enums/gender.tsx";
 import FormContent from "../ui/form/FormContent.tsx";
 import {FormConfig} from "../../config/FormConfig.ts";

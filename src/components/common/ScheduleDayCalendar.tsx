@@ -1,5 +1,5 @@
 import {Schedule} from "../../entity";
-import {getMinMaxTimes, timeToCurrentDatetime} from "../../utils/utils.ts";
+import {getMinMaxTimes, timeToCurrentDatetime} from "../../core/utils/utils.ts";
 import Section from "../ui/layout/Section.tsx";
 import {BigCalendar} from "../graph/BigCalendar.tsx";
 import {ReactNode} from "react";

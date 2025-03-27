@@ -1,12 +1,12 @@
 import {isValidElement, ReactNode, useEffect, useState} from "react";
 import {Schedule} from "../../entity";
 import {useRawFetch} from "../../hooks/useFetch.ts";
-import {ApiEvent, EventProps} from "../../utils/interfaces.ts";
+import {ApiEvent, EventProps} from "../../core/utils/interfaces.ts";
 import {Day} from "../../entity/enums/day.ts";
-import {fDate, getMinMaxTimes, setTime, transformEvents} from "../../utils/utils.ts";
+import {fDate, getMinMaxTimes, setTime, transformEvents} from "../../core/utils/utils.ts";
 import {DescriptionsItemType} from "antd/es/descriptions";
-import {text} from "../../utils/text_display.ts";
-import {IconText} from "../../utils/tsxUtils.tsx";
+import {text} from "../../core/utils/text_display.ts";
+import {IconText} from "../../core/utils/tsxUtils.tsx";
 import {LuCalendarDays, LuClock, LuClock9} from "react-icons/lu";
 import {AvatarTitle} from "../ui/layout/AvatarTitle.tsx";
 import PageWrapper from "../view/PageWrapper.tsx";

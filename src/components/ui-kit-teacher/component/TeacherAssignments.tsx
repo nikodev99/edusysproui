@@ -1,4 +1,4 @@
-import {InfoPageProps} from "../../../utils/interfaces.ts";
+import {InfoPageProps} from "../../../core/utils/interfaces.ts";
 import {Score, Teacher} from "../../../entity";
 import TabItem from "../../view/TabItem.tsx";
 import {Select} from "antd";

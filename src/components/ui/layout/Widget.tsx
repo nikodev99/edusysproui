@@ -1,5 +1,5 @@
 import {Card, Progress, Statistic} from "antd";
-import {WidgetItem} from "../../../utils/interfaces.ts";
+import {WidgetItem} from "../../../core/utils/interfaces.ts";
 
 const Widget = (
     {title, value, progress, precision, valueStyle, prefix, suffix, bottomValue, hasShadow}: WidgetItem

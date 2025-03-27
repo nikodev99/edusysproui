@@ -1,4 +1,4 @@
-import {ZodProps} from "../../../utils/interfaces.ts";
+import {ZodProps} from "../../../core/utils/interfaces.ts";
 import Responsive from "../../ui/layout/Responsive.tsx";
 import {useEffect, useMemo, useState} from "react";
 import {AcademicYear, Classe} from "../../../entity";

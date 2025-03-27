@@ -1,5 +1,5 @@
 import axios, {AxiosError} from "axios";
-import {AxiosConfig} from "../utils/interfaces.ts";
+import {AxiosConfig} from "../core/utils/interfaces.ts";
 
 const baseURL = import.meta.env.VITE_API_URL;
 

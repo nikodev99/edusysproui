@@ -1,4 +1,4 @@
-import {text} from "../../utils/text_display.ts";
+import {text} from "../../core/utils/text_display.ts";
 import {useEffect, useState, useTransition} from "react";
 import {TeacherAcademicForm} from "../../components/ui-kit-teacher";
 import {useForm} from "react-hook-form";
@@ -7,7 +7,7 @@ import AddressForm from "../../components/forms/AddressForm.tsx";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {ClasseSchemaMerge, CourseSchemaMerge, TeacherSchema, teacherSchema} from "../../schema";
 import {AddStepForm} from "../../components/custom/AddStepForm.tsx";
-import {CustomDot} from "../../utils/tsxUtils.tsx";
+import {CustomDot} from "../../core/utils/tsxUtils.tsx";
 import {redirectTo} from "../../context/RedirectContext.ts";
 import {TeacherForm} from "../../components/forms/TeacherForm.tsx";
 import {Gender} from "../../entity/enums/gender.tsx";

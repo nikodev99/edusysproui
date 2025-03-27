@@ -14,15 +14,15 @@ import {
     calculeMarkAverage, findPercent,
     getAssignmentBarData, getGoodAverageMedian,
     getUniqueness,
-} from "../../../utils/utils.ts";
+} from "../../../core/utils/utils.ts";
 import {BarChart} from "../../graph/BarChart.tsx";
 import {AssignmentType, AssignmentTypeLiteral, getAssignmentType} from "../../../entity/enums/assignmentType.ts";
 import {getClasseStudents} from "../../../data/repository/studentRepository.ts";
-import {ExamView, NestedExamView, TypedAssignment} from "../../../utils/interfaces.ts";
+import {ExamView, NestedExamView, TypedAssignment} from "../../../core/utils/interfaces.ts";
 import {Table} from "../../ui/layout/Table.tsx";
 import {AvatarTitle} from "../../ui/layout/AvatarTitle.tsx";
-import {InitMarkType} from "../../../utils/tsxUtils.tsx";
-import {text} from "../../../utils/text_display.ts";
+import {InitMarkType} from "../../../core/utils/tsxUtils.tsx";
+import {text} from "../../../core/utils/text_display.ts";
 
 const ExamDescription = (
     {classeId, academicYear, exam}: {classeId: number, academicYear: string, exam: Exam},

@@ -1,4 +1,4 @@
-import {IDS, InfoPageProps} from "../../../utils/interfaces.ts";
+import {IDS, InfoPageProps} from "../../../core/utils/interfaces.ts";
 import {Classe, Score, Assignment} from "../../../entity";
 import {useEffect, useState} from "react";
 import {
@@ -6,7 +6,7 @@ import {
     getAllClasseAssignmentsBySubject
 } from "../../../data/repository/assignmentRepository.ts";
 import {useFetch, useRawFetch} from "../../../hooks/useFetch.ts";
-import {SuperWord} from "../../../utils/tsxUtils.tsx";
+import {SuperWord} from "../../../core/utils/tsxUtils.tsx";
 import {Select} from "antd";
 import TabItem from "../../view/TabItem.tsx";
 import {AssignmentDesc} from "../../common/AssignmentDesc.tsx";

@@ -5,14 +5,14 @@ import {Enrollment, HealthCondition, Schedule} from "../../../entity";
 import {
     bloodLabel, convertToM, fDate, firstLetter, fullDay, getAge, getCountry,
     chooseColor, isNull, monthsBetween, setFirstName, currency
-} from "../../../utils/utils.ts";
+} from "../../../core/utils/utils.ts";
 import PanelStat from "../../ui/layout/PanelStat.tsx";
 import { Table as CustomTable } from "../../ui/layout/Table.tsx";
 import {Gender} from "../../../entity/enums/gender.tsx";
 import PanelTable from "../../ui/layout/PanelTable.tsx";
 import {SectionType} from "../../../entity/enums/section.ts";
 import {fetchStudentClassmatesRandomly} from "../../../data/action/studentAction.ts";
-import {text} from "../../../utils/text_display.ts";
+import {text} from "../../../core/utils/text_display.ts";
 import {BloodType} from "../../../entity/enums/bloodType.ts";
 import {MdHealthAndSafety} from "react-icons/md";
 import {GiAchievement, GiHealthDecrease} from "react-icons/gi";
@@ -22,7 +22,7 @@ import PieChart from "../../graph/PieChart.tsx";
 import {Reprimand} from "../../../entity/domain/reprimand.ts";
 import Section from "../../ui/layout/Section.tsx";
 import PanelSection from "../../ui/layout/PanelSection.tsx";
-import {ExamData, InfoPageProps} from "../../../utils/interfaces.ts";
+import {ExamData, InfoPageProps} from "../../../core/utils/interfaces.ts";
 import {initExamData} from "../../../entity/domain/score.ts";
 import {attendanceTag} from "../../../entity/enums/attendanceStatus.ts";
 import Tag from "../../ui/layout/Tag.tsx";

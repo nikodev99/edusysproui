@@ -1,7 +1,7 @@
 import {Enrollment, Score} from "../../../entity";
-import {fDate, getUniqueness, setFirstName, startsWithVowel} from "../../../utils/utils.ts";
+import {fDate, getUniqueness, setFirstName, startsWithVowel} from "../../../core/utils/utils.ts";
 import {Badge, Select, TableColumnsType, Typography} from "antd";
-import {ExamData} from "../../../utils/interfaces.ts";
+import {ExamData} from "../../../core/utils/interfaces.ts";
 import {fetchAllStudentScores} from "../../../data/action/scoreAction.ts";
 import LocalStorageManager from "../../../core/LocalStorageManager.ts";
 import {useEffect, useMemo, useState} from "react";

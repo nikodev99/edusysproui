@@ -1,9 +1,9 @@
 import {FieldValues, Path, PathValue} from "react-hook-form";
-import {FormContentProps} from "../../utils/interfaces.ts";
+import {FormContentProps} from "../../core/utils/interfaces.ts";
 import FormContent from "../ui/form/FormContent.tsx";
 import {InputTypeEnum} from "../../core/shared/sharedEnums.ts";
 import {HealthCondition} from "../../entity";
-import {FormUtils} from "../../utils/formUtils.ts";
+import {FormUtils} from "../../core/utils/formUtils.ts";
 import {FormConfig} from "../../config/FormConfig.ts";
 import {BloodType} from "../../entity/enums/bloodType.ts";
 import {Card} from "antd";

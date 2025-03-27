@@ -1,5 +1,5 @@
 import {redirectTo} from "../../../context/RedirectContext.ts";
-import {text} from "../../../utils/text_display.ts";
+import {text} from "../../../core/utils/text_display.ts";
 import {LuEye} from "react-icons/lu";
 import {TableColumnsType, Tag} from "antd";
 import {Course} from "../../../entity";
@@ -8,9 +8,9 @@ import ListViewer from "../../custom/ListViewer.tsx";
 import {getAllCoursesSearch} from "../../../data/repository/courseRepository.ts";
 import {getAllSchoolCourses} from "../../../data/action/courseAction.ts";
 import {AxiosResponse} from "axios";
-import {DataProps} from "../../../utils/interfaces.ts";
+import {DataProps} from "../../../core/utils/interfaces.ts";
 import {AiOutlineEllipsis} from "react-icons/ai";
-import {fDatetime} from "../../../utils/utils.ts";
+import {fDatetime} from "../../../core/utils/utils.ts";
 
 export const CourseList = ({condition}: {condition?: boolean}) => {
 

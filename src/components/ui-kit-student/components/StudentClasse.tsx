@@ -3,12 +3,12 @@ import {Button, List, Select, Skeleton} from "antd";
 import {useEffect, useMemo, useRef, useState} from "react";
 import TabItem from "../../view/TabItem.tsx";
 import {Enrollment} from "../../../entity";
-import {setFirstName} from "../../../utils/utils.ts";
+import {setFirstName} from "../../../core/utils/utils.ts";
 import {useFetch} from "../../../hooks/useFetch.ts";
 import {getAllStudentClassmate} from "../../../data/repository/studentRepository.ts";
 import {Avatar} from "../../ui/layout/Avatar.tsx";
 import {redirectTo} from "../../../context/RedirectContext.ts";
-import {text} from "../../../utils/text_display.ts";
+import {text} from "../../../core/utils/text_display.ts";
 import {LoadMoreList} from "../../ui/layout/LoadMoreList.tsx";
 
 

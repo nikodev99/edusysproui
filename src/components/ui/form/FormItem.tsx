@@ -1,5 +1,5 @@
 import {Form} from "antd";
-import {FormItemType} from "../../../utils/interfaces.ts";
+import {FormItemType} from "../../../core/utils/interfaces.ts";
 import FormControl from "./FormControl.tsx";
 import {FieldValues} from "react-hook-form";
 

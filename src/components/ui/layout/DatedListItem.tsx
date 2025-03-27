@@ -1,5 +1,5 @@
 import {List, ListProps} from "antd";
-import {IconText} from "../../../utils/tsxUtils.tsx";
+import {IconText} from "../../../core/utils/tsxUtils.tsx";
 import {LuCalendarDays, LuClock, LuClock9} from "react-icons/lu";
 import {ReactNode} from "react";
 

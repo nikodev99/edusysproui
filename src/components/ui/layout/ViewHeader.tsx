@@ -5,7 +5,7 @@ import {ReactNode, useEffect, useState} from "react";
 import {ItemType} from "antd/es/menu/interface";
 import {AvatarProps} from "../ui_interfaces.ts";
 import {AvatarTitle} from "./AvatarTitle.tsx";
-import {assignKeys} from "../../../utils/utils.ts";
+import {assignKeys} from "../../../core/utils/utils.ts";
 
 interface ViewProps {
     isLoading: boolean,

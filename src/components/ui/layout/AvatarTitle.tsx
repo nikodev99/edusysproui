@@ -1,8 +1,8 @@
 import {Avatar} from "./Avatar.tsx";
 import {Flex} from "antd";
-import {setFirstName} from "../../../utils/utils.ts";
+import {setFirstName} from "../../../core/utils/utils.ts";
 import {AvatarProps} from "../ui_interfaces.ts";
-import {SuperWord} from "../../../utils/tsxUtils.tsx";
+import {SuperWord} from "../../../core/utils/tsxUtils.tsx";
 import {redirectTo} from "../../../context/RedirectContext.ts";
 
 type AvatarTitleProps = AvatarProps & {

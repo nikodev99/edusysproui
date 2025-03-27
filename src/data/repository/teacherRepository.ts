@@ -1,6 +1,6 @@
 import {apiClient, request} from "../axiosConfig.ts";
 import {Schedule, Teacher} from "../../entity";
-import {Counted, CountType} from "../../utils/interfaces.ts";
+import {Counted, CountType} from "../../core/utils/interfaces.ts";
 import {AxiosResponse} from "axios";
 import {TeacherSchema} from "../../schema";
 

@@ -1,6 +1,6 @@
 import {Button, List, Skeleton} from "antd";
 import {Avatar} from "./Avatar.tsx";
-import {setFirstName} from "../../../utils/utils.ts";
+import {setFirstName} from "../../../core/utils/utils.ts";
 import {ReactNode} from "react";
 import {Individual} from "../../../entity/domain/individual.ts";
 

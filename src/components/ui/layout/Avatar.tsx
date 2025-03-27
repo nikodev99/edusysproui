@@ -1,5 +1,5 @@
 import {Avatar as AntAvatar} from "antd";
-import {chooseColor} from "../../../utils/utils.ts";
+import {chooseColor} from "../../../core/utils/utils.ts";
 import {useEffect} from "react";
 
 interface AvatarProps {

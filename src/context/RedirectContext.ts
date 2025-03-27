@@ -1,4 +1,4 @@
-import {RedirectFunction} from "../utils/interfaces.ts";
+import {RedirectFunction} from "../core/utils/interfaces.ts";
 
 let navigate: RedirectFunction = () => {
     throw Error('RedirectContext not implemented');

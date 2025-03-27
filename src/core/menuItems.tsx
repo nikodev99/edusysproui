@@ -11,7 +11,7 @@ import {
 } from "react-icons/lu";
 import {MenuProps} from "antd";
 import {PiNotebook, PiStudent} from "react-icons/pi";
-import {text} from "../utils/text_display.ts";
+import {text} from "./utils/text_display.ts";
 
 export const menuItems: Required<MenuProps>['items'][number][] = [
     {

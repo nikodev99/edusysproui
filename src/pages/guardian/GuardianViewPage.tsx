@@ -4,9 +4,9 @@ import {useParams} from "react-router-dom";
 import {fetchGuardianWithStudents} from "../../data";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {Guardian} from "../../entity";
-import {setLastName, setName} from "../../utils/utils.ts";
-import {setBreadcrumb} from "../../core/breadcrumb.tsx";
-import {text} from "../../utils/text_display.ts";
+import {setLastName, setName} from "../../core/utils/utils.ts";
+import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
+import {text} from "../../core/utils/text_display.ts";
 import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
 import ViewHeader from "../../components/ui/layout/ViewHeader.tsx";
 import {GuardianEditDrawer, GuardianStudentList} from "../../components/ui-kit-guardian";
@@ -31,7 +31,7 @@ const GuardianViewPage: React.FC = () => {
         description: "Guardian description",
     })
 
-    const pageHierarchy = setBreadcrumb([
+    const pageHierarchy = useBreadCrumb([
         {
             title: text.guardian.label,
             path: text.guardian.href

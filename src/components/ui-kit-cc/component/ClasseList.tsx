@@ -5,12 +5,12 @@ import {LuDot, LuEye} from "react-icons/lu";
 import ListViewer from "../../custom/ListViewer.tsx";
 import {getAllSearchClasses} from "../../../data/repository/classeRepository.ts";
 import {redirectTo} from "../../../context/RedirectContext.ts";
-import {text} from "../../../utils/text_display.ts";
+import {text} from "../../../core/utils/text_display.ts";
 import {AxiosResponse} from "axios";
 import {getAllSchoolClasses} from "../../../data/action/classeAction.ts";
-import {fDatetime} from "../../../utils/utils.ts";
-import {DataProps} from "../../../utils/interfaces.ts";
-import {SuperWord} from "../../../utils/tsxUtils.tsx";
+import {fDatetime} from "../../../core/utils/utils.ts";
+import {DataProps} from "../../../core/utils/interfaces.ts";
+import {SuperWord} from "../../../core/utils/tsxUtils.tsx";
 
 export const ClasseList = ({condition}: {condition?: boolean}) => {
 

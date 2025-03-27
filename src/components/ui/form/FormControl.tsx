@@ -1,5 +1,5 @@
 import {Controller, FieldValues} from "react-hook-form";
-import {Control, ZodControl, ZodControlRender} from "../../../utils/interfaces.ts";
+import {Control, ZodControl, ZodControlRender} from "../../../core/utils/interfaces.ts";
 
 type FormControlProps<T extends  FieldValues> = ZodControl<T> & Control<T> & ZodControlRender<T>
 

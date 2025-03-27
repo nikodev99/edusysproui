@@ -1,4 +1,4 @@
-import {FormUtils} from "../utils/formUtils.ts";
+import {FormUtils} from "../core/utils/formUtils.ts";
 import {FieldErrors, Path} from "react-hook-form";
 
 export class FormConfig<T extends FieldErrors> {

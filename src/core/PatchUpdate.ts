@@ -1,7 +1,7 @@
 import {updateStudent} from "../data";
 import {Individual} from "../entity/domain/individual.ts";
 import {UpdateType} from "./shared/sharedEnums.ts";
-import {ID} from "../utils/interfaces.ts";
+import {ID} from "./utils/interfaces.ts";
 
 export class PatchUpdate {
 

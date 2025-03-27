@@ -1,15 +1,15 @@
-import {DataProps, ListViewerProps, StudentListDataType} from "../../../utils/interfaces.ts";
+import {DataProps, ListViewerProps, StudentListDataType} from "../../../core/utils/interfaces.ts";
 import {AxiosError} from "axios";
 import ListViewer from "../../custom/ListViewer.tsx";
 import {TableColumnsType, Tag} from "antd";
 import {Avatar} from "../../ui/layout/Avatar.tsx";
-import {dateCompare, enumToObjectArrayForFiltering, fDatetime, setFirstName} from "../../../utils/utils.ts";
+import {dateCompare, enumToObjectArrayForFiltering, fDatetime, setFirstName} from "../../../core/utils/utils.ts";
 import {Gender} from "../../../entity/enums/gender.tsx";
 import Tagger from "../../ui/layout/Tagger.tsx";
 import {AiOutlineEllipsis} from "react-icons/ai";
 import {ActionButton} from "../../ui/layout/ActionButton.tsx";
 import {redirectTo} from "../../../context/RedirectContext.ts";
-import {text} from "../../../utils/text_display.ts";
+import {text} from "../../../core/utils/text_display.ts";
 import {LuEye} from "react-icons/lu";
 import {useColumnSearch} from "../../../hooks/useColumnSearch.tsx";
 

@@ -15,7 +15,7 @@ import {Organization} from "../../pages/setting/Organization.tsx";
 import ClasseSubjectListsPage from "../../pages/classe_subject/ClasseSubjectListsPage.tsx";
 import ClasseViewPage from "../../pages/classe_subject/ClasseViewPage.tsx";
 import SubjectViewPage from "../../pages/classe_subject/SubjectViewPage.tsx";
-import {text} from "../../utils/text_display.ts";
+import {text} from "../../core/utils/text_display.ts";
 import ExamListPage from "../../pages/exam/ExamListPage.tsx";
 import AddExamPage from "../../pages/exam/AddExamPage.tsx";
 import ExamViewPage from "../../pages/exam/ExamViewPage.tsx";

@@ -1,4 +1,4 @@
-import {ID, PutSchemaProps, SchemaProps} from "../../utils/interfaces.ts";
+import {ID, PutSchemaProps, SchemaProps} from "../../core/utils/interfaces.ts";
 import {FieldValues} from "react-hook-form";
 import {Alert, Button, Flex, Form, Modal, ModalProps} from "antd";
 import {PopConfirm} from "../ui/layout/PopConfirm.tsx";
@@ -37,7 +37,7 @@ export const UpdateSchema = <TData extends FieldValues>(
                     }
                 }
             },
-            onError: (error) => setErrorMessage(catchError(error))
+            onError: (error) => setErrorMessage(catchError(error) as string)
         })
         setOpenConfirm()
     }

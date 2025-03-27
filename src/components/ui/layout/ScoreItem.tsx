@@ -1,7 +1,7 @@
 import {Score} from "../../../entity";
 import {List, Skeleton} from "antd";
 import {Avatar} from "./Avatar.tsx";
-import {setFirstName} from "../../../utils/utils.ts";
+import {setFirstName} from "../../../core/utils/utils.ts";
 import {AutoScrollList} from "./AutoScrollList.tsx";
 
 interface ScoreItemProps {

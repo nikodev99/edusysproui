@@ -10,7 +10,7 @@ import {
     ResponsiveContainer,
 } from 'recharts';
 import {BarProps, ChartProps} from "../ui/ui_interfaces.ts";
-import {setGraphColor} from "../../utils/utils.ts";
+import {setGraphColor} from "../../core/utils/utils.ts";
 
 type BarChartProps<TData> = ChartProps<TData> & BarProps<TData>
 

@@ -1,7 +1,7 @@
 import {z} from "zod";
 import {useMutation} from "@tanstack/react-query";
 import {AxiosError, AxiosResponse} from "axios";
-import {ID} from "../utils/interfaces.ts";
+import {ID} from "../core/utils/interfaces.ts";
 import {Response} from "../data/action/response.ts";
 import {ErrorCatch} from "../data/action/error_catch.ts";
 

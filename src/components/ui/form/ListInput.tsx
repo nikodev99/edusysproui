@@ -1,7 +1,7 @@
 import {Button, Form, FormListFieldData, Input} from "antd";
 import {LuCircleMinus, LuPlus, LuSave} from "react-icons/lu";
 import {Controller, FieldValues, Path} from "react-hook-form";
-import {InputType, TypedInputType, ZodListControl} from "../../../utils/interfaces.ts";
+import {InputType, TypedInputType, ZodListControl} from "../../../core/utils/interfaces.ts";
 import Grid from "../layout/Grid.tsx";
 import {cloneElement, ReactElement} from "react";
 

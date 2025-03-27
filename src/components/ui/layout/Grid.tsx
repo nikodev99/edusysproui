@@ -1,5 +1,5 @@
 import {Col, ColProps} from "antd";
-import {fontFamily} from "../../../utils/utils.ts";
+import {fontFamily} from "../../../core/utils/utils.ts";
 
 const Grid = (gridProps: ColProps) => {
 

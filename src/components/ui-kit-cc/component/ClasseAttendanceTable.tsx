@@ -10,12 +10,12 @@ import {
     AttendanceSummary,
     Color,
     DataProps
-} from "../../../utils/interfaces.ts";
+} from "../../../core/utils/interfaces.ts";
 import {Individual} from "../../../entity/domain/individual.ts";
 import {AvatarTitle} from "../../ui/layout/AvatarTitle.tsx";
 import {AxiosResponse} from "axios";
 import {AttendanceStatus, countAll, getColors} from "../../../entity/enums/attendanceStatus.ts";
-import {ATTENDANCE_STATUS_COLORS, findPercent} from "../../../utils/utils.ts";
+import {ATTENDANCE_STATUS_COLORS, findPercent} from "../../../core/utils/utils.ts";
 import {Table} from "../../ui/layout/Table.tsx";
 
 type NestedType = {category: string} & AttendanceStatusCount

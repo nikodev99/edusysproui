@@ -3,7 +3,7 @@ import {FilterDropdownProps} from "antd/es/table/interface";
 import {Button, Input, InputRef, Space, TableColumnType} from "antd";
 import {AiOutlineSearch} from "react-icons/ai";
 import Highlighter from "react-highlight-words";
-import {DataIndex, DataType} from "../utils/interfaces.ts";
+import {DataIndex, DataType} from "../core/utils/interfaces.ts";
 
 export const useColumnSearch = <TData,>() => {
     const [searchText, setSearchText] = useState<string>('')

@@ -5,7 +5,7 @@ import {useGlobalStore} from "../../core/global/store.ts";
 import {catchError} from "../../data/action/error_catch.ts";
 import {Alert, Button, Flex, Form, Modal, ModalProps} from "antd";
 import {PopConfirm} from "../ui/layout/PopConfirm.tsx";
-import {PostSchemaProps, SchemaProps} from "../../utils/interfaces.ts";
+import {PostSchemaProps, SchemaProps} from "../../core/utils/interfaces.ts";
 
 type InsertSchemaType<TData extends FieldValues> = SchemaProps<TData> & ModalProps & PostSchemaProps<TData>
 

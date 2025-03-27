@@ -5,11 +5,11 @@ import {
     GenderCounted,
     InfoPageProps,
     WidgetItem
-} from "../../../utils/interfaces.ts";
+} from "../../../core/utils/interfaces.ts";
 import {Classe} from "../../../entity";
 import {useClasseAttendance} from "../../../hooks/useClasseAttendance.ts";
 import {useSchoolAttendance} from "../../../hooks/useSchoolAttendance.ts";
-import {text} from "../../../utils/text_display.ts";
+import {text} from "../../../core/utils/text_display.ts";
 import Responsive from "../../ui/layout/Responsive.tsx";
 import Grid from "../../ui/layout/Grid.tsx";
 import {Widgets} from "../../ui/layout/Widgets.tsx";
@@ -22,7 +22,7 @@ import {
     getClasseRecentAttendanceStatus,
     getClasseWorstStudentAttendanceRanking
 } from "../../../data/repository/attendanceRepository.ts";
-import {ATTENDANCE_STATUS_COLORS, findPercent, setFirstName} from "../../../utils/utils.ts";
+import {ATTENDANCE_STATUS_COLORS, findPercent, setFirstName} from "../../../core/utils/utils.ts";
 import {Card, List, Progress, Tooltip} from "antd";
 import {BarChart} from "../../graph/BarChart.tsx";
 import VoidData from "../../view/VoidData.tsx";

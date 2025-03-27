@@ -2,7 +2,7 @@ import { Button, Form, Select, Space } from "antd";
 import { FieldValues } from "react-hook-form";
 import Grid from "../layout/Grid.tsx";
 import { LuSave } from "react-icons/lu";
-import {SelectType, TypedInputType} from "../../../utils/interfaces.ts";
+import {SelectType, TypedInputType} from "../../../core/utils/interfaces.ts";
 import FormItem from "./FormItem.tsx";
 
 export const FormSelect = <T extends FieldValues>(selectProps: SelectType<T>) => {

@@ -1,5 +1,5 @@
 import {createContext, FC, ReactNode, useContext, useEffect} from "react";
-import {RedirectFunction} from "../utils/interfaces.ts";
+import {RedirectFunction} from "../core/utils/interfaces.ts";
 import {useNavigate} from "react-router-dom";
 import {setNavigate} from "../context/RedirectContext.ts";
 

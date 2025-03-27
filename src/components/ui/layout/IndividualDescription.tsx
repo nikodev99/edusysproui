@@ -1,15 +1,15 @@
 import PanelTable from "./PanelTable.tsx";
 import {Flex} from "antd";
 import {AvatarTitle} from "./AvatarTitle.tsx";
-import {fDate} from "../../../utils/utils.ts";
 import {SwitchTag} from "./SwitchTag.tsx";
 import PanelSection from "./PanelSection.tsx";
-import {Color} from "../../../utils/interfaces.ts";
+import {Color} from "../../../core/utils/interfaces.ts";
 import {ReactNode} from "react";
 import {Individual} from "../../../entity/domain/individual.ts";
+import Datetime from "../../../core/datetime.ts";
 
 interface IndividualProps {
-    personalInfo: Individual
+    personalInfo?: Individual
     show: boolean
     color?: Color
     titles?: Partial<{
@@ -39,7 +39,7 @@ export const IndividualDescription = (
                 </Flex>,
                 link: redirectLink
             },
-            {statement: 'Debut de mandat', response: <span>{fDate(period, 'DD/MM/YYYY')}</span>},
+            {statement: 'Debut de mandat', response: <span>{Datetime?.of(period as number[]).fDate('DD/MM/YYYY')}</span>},
             {
                 statement: 'Status',
                 response: <SwitchTag

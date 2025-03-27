@@ -1,7 +1,7 @@
 import {AxiosResponse} from "axios";
 import {Classe} from "../../entity";
 import {apiClient, request} from "../axiosConfig.ts";
-import {ID, Pageable} from "../../utils/interfaces.ts";
+import {ID, Pageable} from "../../core/utils/interfaces.ts";
 import {ClasseSchema} from "../../schema";
 
 export const addClasse = (data: ClasseSchema): Promise<AxiosResponse<ClasseSchema>> => {

@@ -1,6 +1,6 @@
 import TabItem from "../../view/TabItem.tsx";
 import {Attendance, Enrollment} from "../../../entity";
-import {fDate, firstLetter, setFirstName, startsWithVowel} from "../../../utils/utils.ts";
+import {fDate, firstLetter, setFirstName, startsWithVowel} from "../../../core/utils/utils.ts";
 import {Select, TableColumnsType} from "antd";
 import {useEffect, useState, useMemo, useRef} from "react";
 import {LuEye} from "react-icons/lu";
@@ -10,7 +10,7 @@ import {getStudentAttendances} from "../../../data/repository/attendanceReposito
 import PageError from "../../../pages/PageError.tsx";
 import Tag from "../../ui/layout/Tag.tsx";
 import {attendanceTag} from "../../../entity/enums/attendanceStatus.ts";
-import {AttendanceRecord} from "../../../utils/interfaces.ts";
+import {AttendanceRecord} from "../../../core/utils/interfaces.ts";
 import {AttendanceAnalysis} from "./AttendanceAnalysis.tsx";
 import {AutoScrollTable} from "../../ui/layout/AutoScrollTable.tsx";
 

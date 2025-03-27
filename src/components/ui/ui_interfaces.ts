@@ -1,5 +1,5 @@
 import {ActiveShape, Margin} from "recharts/types/util/types";
-import {Color} from "../../utils/interfaces.ts";
+import {Color} from "../../core/utils/interfaces.ts";
 import {PieSectorDataItem} from "recharts/types/polar/Pie";
 import {CurveType} from "recharts/types/shape/Curve";
 

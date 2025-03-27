@@ -1,4 +1,4 @@
-import {Moment} from "../../utils/interfaces.ts";
+import {Moment} from "../../core/utils/interfaces.ts";
 import {ReprimandType} from "../enums/reprimandType.ts";
 import {Punishment} from "./punishment.ts";
 import {Enrollment} from "./enrollment.ts";

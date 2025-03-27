@@ -2,11 +2,11 @@ import {Calendar, dayjsLocalizer, View, Event} from 'react-big-calendar'
 import dayjs from 'dayjs'
 import {Skeleton} from "antd";
 import 'react-big-calendar/lib/css/react-big-calendar.css'
-import {timeToCurrentDatetime} from "../../utils/utils.ts";
+import {timeToCurrentDatetime} from "../../core/utils/utils.ts";
 import 'dayjs/locale/fr'
-import {calendarMessages} from "../../utils/text_display.ts";
+import {calendarMessages} from "../../core/utils/text_display.ts";
 import {useState} from "react";
-import {BigCalendarProps} from "../../utils/interfaces.ts";
+import {BigCalendarProps} from "../../core/utils/interfaces.ts";
 
 dayjs.locale('fr')
 const localized = dayjsLocalizer(dayjs)

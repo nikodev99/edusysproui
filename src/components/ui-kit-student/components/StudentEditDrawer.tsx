@@ -1,6 +1,6 @@
 import RightSidePane from "../../ui/layout/RightSidePane.tsx";
 import {useForm} from "react-hook-form";
-import {EditProps} from "../../../utils/interfaces.ts";
+import {EditProps} from "../../../core/utils/interfaces.ts";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {healthSchema, HealthSchema, studentSchema, StudentSchema} from "../../../schema";
 import {HealthCondition, Student} from "../../../entity";
@@ -11,7 +11,7 @@ import {AddressOwner, IndividualType, UpdateType} from "../../../core/shared/sha
 import HealthConditionForm from "../../forms/HealthConditionForm.tsx";
 import FormSuccess from "../../ui/form/FormSuccess.tsx";
 import FormError from "../../ui/form/FormError.tsx";
-import {hasField} from "../../../utils/utils.ts";
+import {hasField} from "../../../core/utils/utils.ts";
 import {PatchUpdate} from "../../../core/PatchUpdate.ts";
 import {useToggle} from "../../../hooks/useToggle.ts";
 import {UpdateAddress} from "../../custom/UpdateAddress.tsx";

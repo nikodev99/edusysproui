@@ -1,6 +1,6 @@
 import Grid from "../layout/Grid.tsx";
 import {FieldValues} from "react-hook-form";
-import {TimeInputType, TypedInputType} from "../../../utils/interfaces.ts";
+import {TimeInputType, TypedInputType} from "../../../core/utils/interfaces.ts";
 import FormItem from "./FormItem.tsx";
 import {Button, Form, Space, TimePicker} from "antd";
 import dayjs from "dayjs";

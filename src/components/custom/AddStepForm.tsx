@@ -1,17 +1,17 @@
 import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
-import {Breadcrumb, setBreadcrumb} from "../../core/breadcrumb.tsx";
+import {Breadcrumb, useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
 import {Button, Flex, Form, Modal, Steps} from "antd";
 import {FieldValues, UseFormReturn} from "react-hook-form";
 import {ReactNode, useState} from "react";
 import {useLocation} from "react-router-dom";
 import queryString from 'query-string'
-import {Metadata} from "../../utils/interfaces.ts";
+import {Metadata} from "../../core/utils/interfaces.ts";
 import FormError from "../../components/ui/form/FormError.tsx";
 import FormSuccess from "../../components/ui/form/FormSuccess.tsx";
 import PageWrapper from "../view/PageWrapper.tsx";
 import {redirectTo} from "../../context/RedirectContext.ts";
-import {RequiredMark} from "../../utils/tsxUtils.tsx";
+import {RequiredMark} from "../../core/utils/tsxUtils.tsx";
 import {ValidationAlert} from "../ui/form/ValidationAlert.tsx";
 
 interface AddStepsProps<TFieldValues extends FieldValues> {
@@ -47,7 +47,7 @@ const AddStepForm = <TFieldValues extends FieldValues>(
 ) => {
 
     useDocumentTitle(docTitle)
-    const items = setBreadcrumb(breadCrumb);
+    const items = useBreadCrumb(breadCrumb);
 
     const [btnLoading, setBtnLoading] = useState<boolean[]>([])
     const [hasErrors, setHasErrors] = useState<boolean>(false);

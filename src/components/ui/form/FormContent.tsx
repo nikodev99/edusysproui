@@ -1,5 +1,5 @@
 import Responsive from "../layout/Responsive.tsx";
-import {TypedInputType} from "../../../utils/interfaces.ts";
+import {TypedInputType} from "../../../core/utils/interfaces.ts";
 import {FieldValues} from "react-hook-form";
 import TextInput from "./TextInput.tsx";
 import SelectInput from "./SelectInput.tsx";

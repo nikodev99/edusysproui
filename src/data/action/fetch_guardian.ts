@@ -6,7 +6,7 @@ import {
     getSearchedEnrolledStudentGuardian
 } from "../request";
 import {Guardian} from "../../entity";
-import {getShortSortOrder, setSortFieldName} from "../../utils/utils.ts";
+import {getShortSortOrder, setSortFieldName} from "../../core/utils/utils.ts";
 
 export const fetchEnrolledStudentsGuardians = async (page: number, size: number, sortField?: string, sortOrder?: string) => {
     if (sortField && sortOrder) {

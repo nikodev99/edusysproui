@@ -1,7 +1,7 @@
 import {AxiosResponse} from "axios";
 import {Attendance} from "../../entity";
 import {request} from "../axiosConfig.ts";
-import {Pageable} from "../../utils/interfaces.ts";
+import {Pageable} from "../../core/utils/interfaces.ts";
 
 export const getStudentAttendances = (studentId: number, pageable: Pageable, academicYearId: string): Promise<AxiosResponse<Attendance[]>> => {
     const {page, size} = pageable

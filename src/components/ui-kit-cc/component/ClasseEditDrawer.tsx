@@ -1,4 +1,4 @@
-import {EditProps} from "../../../utils/interfaces.ts";
+import {EditProps} from "../../../core/utils/interfaces.ts";
 import {Classe} from "../../../entity";
 import {UpdateSchema} from "../../custom/UpdateSchema.tsx";
 import {useForm} from "react-hook-form";

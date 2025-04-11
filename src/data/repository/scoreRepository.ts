@@ -57,6 +57,22 @@ export const getClassePoorStudents = (classeId: number, academicYear: string) =>
     })
 }
 
+export const getCourseBestStudentsByCourse = (courseId: number, academicYear: string) => {
+    return apiClient.get(`/score/course_best/${courseId}`, {
+        params: {
+            academicYear: academicYear,
+        }
+    })
+}
+
+export const getCoursePoorStudents = (courseId: number, academicYear: string) => {
+    return apiClient.get(`/score/course_poor/${courseId}`, {
+        params: {
+            academicYear: academicYear,
+        }
+    })
+}
+
 export const getAllTeacherMarks = (teacherId: string) => {
     return apiClient.get(`/score/all_teacher_marks/${teacherId}`)
 }

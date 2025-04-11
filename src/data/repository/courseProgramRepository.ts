@@ -1,5 +1,5 @@
 import {request} from "../axiosConfig.ts";
-import {IDS} from "../../utils/interfaces.ts";
+import {IDS} from "../../core/utils/interfaces.ts";
 
 export const getAllTeacherCourseProgram = (teacherId: string, ids: IDS) => {
     return request({

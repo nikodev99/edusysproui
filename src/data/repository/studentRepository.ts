@@ -130,6 +130,16 @@ export const countClasseStudents = (classeId: number, academicYearId: string) =>
     })
 }
 
+export const countSomeClasseStudents = (classeId: number[], academicYearId: string) => {
+    return request({
+        method: 'GET',
+        url: `/enroll/count/classe/${classeId?.join(',')}`,
+        params: {
+            academicYear: academicYearId,
+        }
+    })
+}
+
 export const countStudent = () => {
     return apiClient.get<Counted>('/enroll/count')
 }

@@ -47,3 +47,7 @@ export const getTeacherScheduleByDay = (teacherId: string, allDay: boolean): Pro
         }
     })
 }
+
+export const countAllTeachers = () => {
+    return apiClient.get(`/teachers/count`)
+}

@@ -1,7 +1,7 @@
 import {apiClient} from "../axiosConfig.ts";
 import {Course} from "../../entity";
 import {AxiosResponse} from "axios";
-import {Pageable} from "../../utils/interfaces.ts";
+import {Pageable} from "../../core/utils/interfaces.ts";
 import {CourseSchema} from "../../schema";
 
 export const addCourse = async (course: CourseSchema): Promise<AxiosResponse<CourseSchema>> => {
@@ -30,4 +30,8 @@ export const getAllCoursesSearch = async (courseName: string): Promise<AxiosResp
 
 export const getAllBasicCourses = () => {
     return apiClient.get<Course[]>("/courses")
+}
+
+export const getCourseById = (courseId: string): Promise<AxiosResponse<Course>> => {
+    return apiClient.get(`/courses/${courseId}`)
 }

@@ -1,4 +1,6 @@
-const VoidData = () => {
+import {ReactNode} from "react";
+
+const VoidData = ({title}: {title?: ReactNode}) => {
     return(
         <div className='void__wrapper'>
             <div className="empty">
@@ -16,7 +18,7 @@ const VoidData = () => {
                         </g>
                     </svg>
                 </div>
-                <div className='empty__desc'>Aucune Donnée Trouvé</div>
+                <div className='empty__desc'>{title ?? 'Aucune Donnée Trouvé'}</div>
             </div>
         </div>
     )

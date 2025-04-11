@@ -5,6 +5,8 @@ import {BigCalendar} from "../graph/BigCalendar.tsx";
 import {ReactNode} from "react";
 import {Descriptions, Popover} from "antd";
 import {DescriptionsItemType} from "antd/es/descriptions";
+import {Link} from "react-router-dom";
+import {text} from "../../core/utils/text_display.ts";
 
 export const ScheduleDayCalendar = (
     {eventSchedule, sectionTitle, seeMore, hasTeacher}: {
@@ -35,6 +37,7 @@ export const ScheduleDayCalendar = (
                 defaultView='day'
                 startDayTime={minStartTime}
                 endDayTime={[maxEndTime[0], maxEndTime[1]]}
+                onSelectSlot={(slot) => console.log(slot)}
             />
         </Section>
     )
@@ -51,12 +54,19 @@ const CustomPopover = (
 
     const items: DescriptionsItemType[] = [
         {key: 1, label: 'Matière', children: content?.course?.course, span: 3},
-        {key: 2, label: 'Prof', children: content?.teacher?.personalInfo?.lastName, span: 3},
+        {
+            key: 2,
+            label: 'Prof',
+            children: <Link to={text.teacher.group.view.href + content?.teacher?.id}>
+                {`${content?.teacher?.personalInfo?.lastName} ${content?.teacher?.personalInfo?.firstName}`}
+            </Link>,
+            span: 3
+        },
     ]
 
     return(
-        <Popover content={
-            <Descriptions title={title} items={items} />
+        <Popover style={{width: '100px'}} content={
+            <Descriptions size='small' title={title} items={items} />
         }>
             <span>{eventTitle}</span>
         </Popover>

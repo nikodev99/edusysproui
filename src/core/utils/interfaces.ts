@@ -17,7 +17,7 @@ import {Gender} from "../../entity/enums/gender.tsx";
 import {AttendanceStatus} from "../../entity/enums/attendanceStatus.ts";
 import {Employee} from "../../entity/domain/employee.ts";
 import {AddressOwner, IndividualType} from "../shared/sharedEnums.ts";
-import {CalendarProps, Event, View, ViewsProps} from "react-big-calendar";
+import {CalendarProps, Event, SlotInfo, View, ViewsProps} from "react-big-calendar";
 import {ReprimandType} from "../../entity/enums/reprimandType.ts";
 import {PunishmentType} from "../../entity/enums/punishmentType.ts";
 import {PunishmentStatus} from "../../entity/enums/punishmentStatus.ts";
@@ -414,9 +414,13 @@ export interface BigCalendarProps<TEvents extends object = Event> {
     end?: keyof TEvents
     showNavButton?: boolean
     height?: number
+    onSelectSlot?: (slotInfo: SlotInfo) => void
+    isLoading ?: boolean
 }
 
 export type TabFunction<T> = (teacherId: string, ids: IDS, pageable?: Pageable) => Promise<AxiosResponse<T>>
+
+export type ScheduleHoursBy = {name: string, totalHours: number}
 
 export type DateExplose = {
     day: number

@@ -90,7 +90,7 @@ export const calculateAverageAge = (students?: GenderCounted[] | null): number =
 }
 
 export const sumInArray = <T extends object | number>(arrayToSum: T[], arrayKey?: keyof T): number => {
-    return arrayToSum.reduce((sum, item) => {
+    return arrayToSum?.reduce((sum, item) => {
         if (arrayKey && typeof item === 'object' && item !== null) {
             const value = item[arrayKey] as unknown;
             return sum + (typeof value === 'number' ? value : 0);
@@ -684,5 +684,5 @@ export const getUniqueness = <T, K>(
             }
             return map;
         }, new Map<ID, K>()).values()
-    );
-};
+    )
+}

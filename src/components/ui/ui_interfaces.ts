@@ -33,6 +33,7 @@ export interface PieChartProps {
     labelLine?: boolean
     startAngle?: number
     endAngle?: number
+    isLoading?: boolean
 }
 
 export interface ChartProps<T>{

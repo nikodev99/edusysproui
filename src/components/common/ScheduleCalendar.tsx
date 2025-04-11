@@ -1,7 +1,7 @@
 import {isValidElement, ReactNode, useEffect, useState} from "react";
 import {Schedule} from "../../entity";
 import {useRawFetch} from "../../hooks/useFetch.ts";
-import {ApiEvent, EventProps} from "../../core/utils/interfaces.ts";
+import {ApiEvent, Color, EventProps} from "../../core/utils/interfaces.ts";
 import {Day} from "../../entity/enums/day.ts";
 import {fDate, getMinMaxTimes, setTime, transformEvents} from "../../core/utils/utils.ts";
 import {DescriptionsItemType} from "antd/es/descriptions";
@@ -9,34 +9,52 @@ import {text} from "../../core/utils/text_display.ts";
 import {IconText} from "../../core/utils/tsxUtils.tsx";
 import {LuCalendarDays, LuClock, LuClock9} from "react-icons/lu";
 import {AvatarTitle} from "../ui/layout/AvatarTitle.tsx";
-import PageWrapper from "../view/PageWrapper.tsx";
 import {BigCalendar} from "../graph/BigCalendar.tsx";
 import {Card, Descriptions, Modal, Tag} from "antd";
 import {AxiosResponse} from "axios";
 import {SectionType} from "../../entity/enums/section.ts";
+import {View} from "react-big-calendar";
+import Datetime from "../../core/datetime.ts";
+import VoidData from "../view/VoidData.tsx";
 
 type ScheduleCalendarProps = {
-    fetchFunc: (...args: unknown[]) =>  Promise<AxiosResponse<Schedule>>
-    funcParams: unknown[]
+    fetchFunc?: (...args: unknown[]) =>  Promise<AxiosResponse<Schedule>>
+    funcParams?: unknown[]
     eventTitle?: string | ReactNode | ((event: Schedule) => string)
     showClass?: boolean
     showTeacher?: boolean
+    hasTeacher?: boolean
+    eventSchedule?: Schedule[]
+    views?: View[]
+    height?: number
+    color?: Color
+    isLoading?: boolean
 }
 
-export const ScheduleCalendar = ({fetchFunc, funcParams, eventTitle, showClass, showTeacher = true}: ScheduleCalendarProps) => {
+export const ScheduleCalendar = (
+    {
+        fetchFunc, funcParams, eventTitle, showClass = true, showTeacher = true,
+        eventSchedule, views = ['week', 'day'], hasTeacher, height = 500, color, isLoading = false,
+    }: ScheduleCalendarProps
+) => {
     const [schedules, setSchedules] = useState<Schedule[] | null>(null)
     const [selectedSchedule, setSelectedSchedule] = useState<Schedule | null>(null)
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
     const fetch = useRawFetch()
 
     useEffect(() => {
-        fetch(fetchFunc, funcParams)
+        if (fetchFunc)
+            fetch(fetchFunc, funcParams)
             .then(resp => {
                 if (resp.isSuccess) {
                     setSchedules(resp.data as Schedule[])
                 }
             })
-    }, [fetch, fetchFunc, funcParams]);
+        
+        if (eventSchedule)
+            setSchedules(eventSchedule)
+
+    }, [fetch, fetchFunc, funcParams, eventSchedule]);
 
     const setTitle = (schedule: Schedule): string | ReactNode => {
         if (eventTitle) {
@@ -63,12 +81,12 @@ export const ScheduleCalendar = ({fetchFunc, funcParams, eventTitle, showClass, 
 
     const assignmentDesc = (a: Schedule, show?: boolean, plus?: boolean): DescriptionsItemType[] => {
         return [
-            ...(show ? [{key: 1, label: 'Matière', children: a?.course?.course, span: 3}] : []),
+            {key: 1, label: 'Matière', children: a?.course?.course ? a?.course?.course : a?.designation, span: 3},
             {key: 2, label: text.academicYear.name, children: a?.academicYear?.academicYear, span: 3},
             ...(a && plus ? [{key: 3, label: undefined, children: <IconText color='#8f96a3' icon={<LuCalendarDays />} text={'start' in a ? fDate(a.start as Date, 'DD/MM/YYYY') : undefined} key="1" />}]: []),
             ...(a && plus ? [{key: 4, label: undefined, children: <IconText color='#8f96a3' icon={<LuClock />} text={setTime(a?.startTime as []) as string} key="2" />}]: []),
             ...(a && plus ? [{key: 5, label: undefined, children: <IconText color='#8f96a3' icon={<LuClock9 />} text={setTime(a?.endTime as []) as string} key="3" />}]: []),
-            ...(showClass ? [{key: 6, label: 'Classe', children: <Tag color='#bd081c'>{a?.classe?.name}</Tag>, span: 2}] : []),
+            ...(showClass ? [{key: 6, label: 'Classe', children: <Tag color={color ?? '#bd081c'}>{a?.classe?.name}</Tag>, span: 2}] : []),
             ...(showClass ? [{key: 7, label: 'Grade', children: SectionType[a?.classe?.grade?.section as unknown as keyof typeof SectionType]}] : []),
             ...((showTeacher && show) ? [{key: 8, label: text.teacher.label, children: '', span: 3}] : []),
             ...((showTeacher && show) ? [{key: 9, children: <AvatarTitle
@@ -81,8 +99,10 @@ export const ScheduleCalendar = ({fetchFunc, funcParams, eventTitle, showClass, 
     }
 
     function onEventSelected(event: EventProps) {
-        setIsModalOpen(true)
-        setSelectedSchedule(event.resource as Schedule)
+        if (hasTeacher) {
+            setIsModalOpen(true)
+            setSelectedSchedule(event.resource as Schedule)
+        }
     }
 
     function onModalCancel() {
@@ -93,23 +113,31 @@ export const ScheduleCalendar = ({fetchFunc, funcParams, eventTitle, showClass, 
 
     return(
         <>
-            <PageWrapper>
-                <BigCalendar
-                    data={events as []}
-                    views={['week', 'day']}
-                    defaultView={'week'}
-                    className='agenda'
-                    onSelectEvent={onEventSelected}
-                    height={500}
-                    startDayTime={minStartTime}
-                    endDayTime={maxEndTime}
-                />
-            </PageWrapper>
+            {
+                eventSchedule && eventSchedule?.length > 0 ?
+                    (
+                        <BigCalendar
+                            data={events as []}
+                            views={views}
+                            defaultView={views ?  views[0] : 'week'}
+                            className='agenda'
+                            onSelectEvent={onEventSelected}
+                            height={height}
+                            startDayTime={minStartTime}
+                            endDayTime={[maxEndTime[0], maxEndTime[1] + 30]}
+                            isLoading={isLoading}
+                        />
+                    ) :
+                    (
+                        <VoidData title={<em>Pas de cours ce jour, {Datetime.now().format('dddd DD MMMM YYYY')}</em>} />
+                    )
+            }
+
             <Modal title={selectedSchedule?.designation} open={isModalOpen} footer={null} onCancel={onModalCancel} destroyOnClose>
                 <Card>
                     <Descriptions items={assignmentDesc(
                         selectedSchedule as Schedule,
-                        (selectedSchedule?.course?.course !== null && selectedSchedule?.teacher !== null),
+                        !!selectedSchedule?.teacher && !!selectedSchedule?.course?.course,
                         true)}
                     />
                 </Card>

@@ -1,32 +1,29 @@
 import {GenderCounted, InfoPageProps} from "../../../core/utils/interfaces.ts";
-import {Classe, Planning, Score, Student, Teacher, Individual} from "../../../entity";
+import {Classe, Planning, Teacher, Individual} from "../../../entity";
 import Block from "../../view/Block.tsx";
-import {ReactNode, useEffect, useState} from "react";
+import {ReactNode} from "react";
 import Section from "../../ui/layout/Section.tsx";
 import PanelStat from "../../ui/layout/PanelStat.tsx";
-import {calculateAverageAge, findPercent, firstWord, setFirstName, setGender} from "../../../core/utils/utils.ts";
+import {calculateAverageAge, findPercent, setFirstName, setGender} from "../../../core/utils/utils.ts";
 import {text} from "../../../core/utils/text_display.ts";
 import PanelTable from "../../ui/layout/PanelTable.tsx";
 import {SuperWord} from "../../../core/utils/tsxUtils.tsx";
 import {DatedListItem} from "../../ui/layout/DatedListItem.tsx";
-import {Avatar as AntAvatar, Progress, Statistic, TableColumnsType, Tag} from "antd";
+import {Avatar as AntAvatar, Progress} from "antd";
 import {IndividualDescription} from "../../ui/layout/IndividualDescription.tsx";
 import PanelSection from "../../ui/layout/PanelSection.tsx";
-import {ScheduleDayCalendar} from "../../common/ScheduleDayCalendar.tsx";
 import {AvatarTitle} from "../../ui/layout/AvatarTitle.tsx";
-import {redirectTo} from "../../../context/RedirectContext.ts";
 //import {StudentCarousel} from "../../common/StudentCarousel.tsx";
-import {useRawFetch} from "../../../hooks/useFetch.ts";
-import {getClasseBestStudents, getClassePoorStudents} from "../../../data/repository/scoreRepository.ts";
-import {LoadMoreList} from "../../ui/layout/LoadMoreList.tsx";
-import {AvatarListItem} from "../../ui/layout/AvatarListItem.tsx";
 import {AttendanceStatus, getColors} from "../../../entity/enums/attendanceStatus.ts";
 import {ShapePieChart} from "../../graph/ShapePieChart.tsx";
 import VoidData from "../../view/VoidData.tsx";
-import {Table} from "../../ui/layout/Table.tsx";
-import {AiOutlineArrowDown, AiOutlineArrowUp} from "react-icons/ai";
+import {AiOutlineArrowDown} from "react-icons/ai";
 import {useClasseAttendance} from "../../../hooks/useClasseAttendance.ts";
 import Datetime from "../../../core/datetime.ts";
+import {TeacherList} from "../../common/TeacherList.tsx";
+import {BestScoredTable} from "../../common/BestScoredTable.tsx";
+import {ScheduleCalendar} from "../../common/ScheduleCalendar.tsx";
+import {useScoreRepo} from "../../../hooks/useScoreRepo.ts";
 
 type ClasseInfoProps = InfoPageProps<Classe> & {
     studentCount?: GenderCounted[] | null
@@ -167,12 +164,14 @@ const ClasseSchedule = ({infoData, seeMore}: ClasseInfoProps) => {
     }
 
     return(
-        <ScheduleDayCalendar
-            eventSchedule={schedule}
-            sectionTitle={'Schedule'}
-            seeMore={handleSeeMore}
-            //TODO adding the hasTeacher={true}
-        />
+        <Section title="Emploi du temps" seeMore={handleSeeMore} more={true}>
+            <ScheduleCalendar
+                eventSchedule={schedule}
+                views={['day']}
+                height={400}
+            />
+        </Section>
+
     )
 }
 
@@ -201,107 +200,29 @@ const ClasseSchedule = ({infoData, seeMore}: ClasseInfoProps) => {
 }*/
 
 const ClasseBestStudent = ({infoData, academicYear, color}: ClasseInfoProps) => {
-
-    const [scores, setScores] = useState<Score[] | null>(null)
-    const classeId = infoData?.id
-    const fetch = useRawFetch<Score>();
-
-    useEffect(() => {
-        fetch(getClasseBestStudents, [{classId: classeId}, academicYear])
-            .then(resp => {
-                if(resp.isSuccess) {
-                    setScores(resp?.data as Score[])
-                }
-            })
-    }, [academicYear, classeId, fetch]);
-
-    const columns: TableColumnsType<Score> = [
-        {
-            title: 'Nom, Prénom',
-            dataIndex: 'student',
-            width: '80%',
-            render: (text: Student) => <AvatarTitle
-                lastName={firstWord(text?.personalInfo?.lastName)}
-                firstName={firstWord(text?.personalInfo?.firstName)}
-                image={firstWord(text?.personalInfo?.image)}
-                size={35}
-            />
-        },
-        {
-            dataIndex: 'obtainedMark',
-            width: '20%',
-            render: text => <Statistic
-                value={text} precision={0} prefix={<AiOutlineArrowUp />}
-                valueStyle={{color: '#10b915', fontSize: '16px'}}
-            />
-        }
-    ]
-
+    const {useGetClasseBestStudents} = useScoreRepo()
+    const bestStudents = useGetClasseBestStudents(infoData?.id, academicYear as string)
     return(
         <Section title='Meilleurs élèves de la classe'>
-            {scores && scores?.length > 0 ? <Table
-                tableProps={{
-                    rowKey: (record) => record?.student?.personalInfo?.id as bigint,
-                    dataSource: scores?.sort((a, b) => b.obtainedMark - a.obtainedMark),
-                    columns: columns as [],
-                    size: 'small',
-                    pagination: false
-                }}
+            <BestScoredTable
+                providedData={bestStudents}
                 color={color}
-            /> : <VoidData />}
+            />
         </Section>
     )
 }
 
 const ClassePoorStudent = ({infoData, academicYear, color}: ClasseInfoProps) => {
-
-    const [scores, setScores] = useState<Score[] | null>(null)
-    const classeId = infoData?.id
-    const fetch = useRawFetch<Score>();
-
-    useEffect(() => {
-        fetch(getClassePoorStudents, [classeId, academicYear])
-            .then(resp => {
-                if(resp.isSuccess) {
-                    setScores(resp?.data as Score[])
-                }
-            })
-    }, [academicYear, classeId, fetch]);
-
-    const columns: TableColumnsType<Score> = [
-        {
-            title: 'Nom, Prénom',
-            dataIndex: 'student',
-            width: '80%',
-            render: (text: Student) => <AvatarTitle
-                lastName={firstWord(text?.personalInfo?.lastName)}
-                firstName={firstWord(text?.personalInfo?.firstName)}
-                image={firstWord(text?.personalInfo?.image)}
-                size={35}
-            />
-        },
-        {
-            dataIndex: 'obtainedMark',
-            width: '20%',
-            render: text => <Statistic
-                value={text} precision={0} prefix={<AiOutlineArrowDown />}
-                valueStyle={{color: '#cf1322', fontSize: '16px'}}
-            />
-        }
-    ]
-
+    const {useGetClassePoorStudents} = useScoreRepo()
+    const poorStudents = useGetClassePoorStudents(infoData?.id, academicYear as string)
     return(
         <Section title='Elèves necessitant une suivie'>
-            {scores && scores?.length > 0 ? <Table
-                tableProps={{
-                    rowKey: (record) => record?.student?.personalInfo?.id as bigint,
-                    dataSource: scores?.sort((a, b) => b.obtainedMark - a.obtainedMark),
-                    columns: columns as [],
-                    size: 'small',
-                    pagination: false
-                }}
+            <BestScoredTable
+                providedData={poorStudents}
                 color={color}
-            /> : <VoidData />}
+                icon={<AiOutlineArrowDown />}
+                goodToPoor={true}
+            />
         </Section>
     )
 }
@@ -314,27 +235,11 @@ const ClasseTeachers = ({infoData, seeMore}: ClasseInfoProps) => {
     }
 
     return(
-        <Section title='Les profs de la classe' more={true} seeMore={handleClick}>
-            <LoadMoreList
-                listProps={{
-                    dataSource: classeTeachers,
-                    rowKey: 'id',
-                    renderItem: (teacher) => (<AvatarListItem
-                        item={teacher?.personalInfo}
-                        showBtnText='Voir'
-                        isLoading={classeTeachers === null}
-                        onBtnClick={() => redirectTo(text.teacher.group.view.href + teacher?.id)}
-                        description={teacher?.courses && teacher?.courses[0]?.course !== null
-                            ? teacher?.courses?.map(c => (<Tag key={c?.id}>{c.course}</Tag>))
-                            : undefined
-                        }
-                    />)
-                }}
-                isLoading={false}
-                size={10}
-                allItems={classeTeachers?.length}
-            />
-        </Section>
+        <TeacherList
+            title='Les profs de la classe'
+            seeMore={handleClick}
+            teachers={classeTeachers}
+        />
     )
 }
 

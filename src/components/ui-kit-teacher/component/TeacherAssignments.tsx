@@ -1,13 +1,13 @@
 import {InfoPageProps} from "../../../core/utils/interfaces.ts";
-import {Score, Teacher} from "../../../entity";
+import {Score, Teacher, Assignment} from "../../../entity";
 import TabItem from "../../view/TabItem.tsx";
 import {Select} from "antd";
 import {useEffect, useMemo, useState} from "react";
 import {getAllTeacherAssignments, getAllTeacherCourseAssignments} from "../../../data/request";
 import {useFetch} from "../../../hooks/useFetch.ts";
-import {Assignment} from "../../../entity/domain/assignment.ts";
 import {getBestStudentByScore, getBestStudentBySubjectScore} from "../../../data/repository/scoreRepository.ts";
 import {AssignmentDesc} from "../../common/AssignmentDesc.tsx";
+import {AxiosResponse} from "axios";
 
 export const TeacherAssignments = ({infoData}: InfoPageProps<Teacher>) => {
     const {personalInfo, courses, classes} = infoData
@@ -22,15 +22,23 @@ export const TeacherAssignments = ({infoData}: InfoPageProps<Teacher>) => {
     const dataFetchFnc = courseExists ? getAllTeacherCourseAssignments : getAllTeacherAssignments
     const bestScoreFnc = courseExists ? getBestStudentBySubjectScore : getBestStudentByScore
 
-    const {data, isSuccess, refetch} = useFetch<Assignment, unknown>('assignment-list', dataFetchFnc, [personalInfo.id, {
-        classId: classeValue,
-        courseId: subjectValue
-    }])
+    const {data, isSuccess, refetch} = useFetch<Assignment, unknown>(
+        'assignment-list',
+        dataFetchFnc as (...args: unknown[]) => Promise<AxiosResponse<Assignment, unknown>>,
+        [personalInfo.id, {
+            classId: classeValue,
+            courseId: subjectValue
+        }]
+    )
 
-    const {data: scoreData, isSuccess: scoreFetched, isLoading: scoreLoading} = useFetch<Score, unknown>('student-score', bestScoreFnc, [personalInfo?.id, subjectValue], {
-        queryKey: ['student-score'],
-        enabled: assignments !== null && assignments.length > 0
-    })
+    const {data: scoreData, isSuccess: scoreFetched, isLoading: scoreLoading} = useFetch<Score[], unknown>(
+        'student-score',
+        bestScoreFnc as (...args: unknown[]) => Promise<AxiosResponse<Score[], unknown>>,
+        [personalInfo?.id, subjectValue], {
+            queryKey: ['student-score'],
+            enabled: assignments !== null && assignments.length > 0
+        }
+    )
 
     const subjects = useMemo(() => {
         return courses?.map(c => ({

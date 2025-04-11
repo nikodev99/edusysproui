@@ -1,10 +1,9 @@
 import {useParams} from "react-router-dom";
 import {ReactNode, useEffect, useRef, useState} from "react";
-import {AcademicYear, Classe} from "../../entity";
+import {Classe} from "../../entity";
 import {Color, GenderCounted} from "../../core/utils/interfaces.ts";
 import {useFetch, useRawFetch} from "../../hooks/useFetch.ts";
 import {getClasse} from "../../data/repository/classeRepository.ts";
-import {initAcademicYears, initCurrentAcademicYear, useGlobalStore} from "../../core/global/store.ts";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
 import {text} from "../../core/utils/text_display.ts";
@@ -15,7 +14,6 @@ import {
     LuBookOpenCheck, LuBookPlus, LuCalendarCheck, LuCalendarPlus, LuUserCheck,
     LuUserPlus, LuUserRoundCheck, LuUserRoundPlus,
 } from "react-icons/lu";
-import {datetimeExpose, isObjectEmpty} from "../../core/utils/utils.ts";
 import {ViewRoot} from "../../components/custom/ViewRoot.tsx";
 import {
     ClasseAttendance,
@@ -29,19 +27,19 @@ import {
 import {countClasseStudents} from "../../data/repository/studentRepository.ts";
 import {SuperWord} from "../../core/utils/tsxUtils.tsx";
 import {useToggle} from "../../hooks/useToggle.ts";
+import {useAcademicYear} from "../../hooks/useAcademicYear.ts";
 
 const ClasseViewPage = () => {
 
     const {id} = useParams();
-    const currentAcademicYear: AcademicYear = useGlobalStore.use.currentAcademicYear()
-    const academicYears: AcademicYear[] = useGlobalStore.use.academicYears()
 
     const [classe, setClasse] = useState<Classe | null>(null)
     const [color, setColor] = useState<Color>('')
     const [studentCount, setStudentCount] = useState<GenderCounted[] | null>(null)
-    const [usedAcademicYearId, setUsedAcademicYearId] = useState<string | null>(null)
     const [open, setOpen] = useToggle(false)
     const countStudent = useRef<number>(0)
+
+    const {usedAcademicYearId, currentAcademicYear, academicYearOptions, handleAcademicYearIdValue} = useAcademicYear(classe?.createdAt as number)
 
     const {data, isSuccess, error, isLoading, refetch} = useFetch(['classe-id', id], getClasse, [id, usedAcademicYearId], {
         queryKey: ['classe-id', id],
@@ -79,37 +77,16 @@ const ClasseViewPage = () => {
     }, [fetch, id, isSuccess, usedAcademicYearId]);
 
     useEffect(() => {
-        if (!isObjectEmpty(currentAcademicYear))
-            setUsedAcademicYearId(currentAcademicYear.id)
-    }, [currentAcademicYear]);
-
-    useEffect(() => {
         if (usedAcademicYearId) {
             refetch().then(r => r.data)
         }
     }, [refetch, usedAcademicYearId]);
 
     useEffect(() => {
-        if(isObjectEmpty(currentAcademicYear)) {
-            initCurrentAcademicYear()
-        }
-        if (academicYears.length === 0 && classe?.createdAt) {
-            const date = datetimeExpose(classe?.createdAt as number)
-            initAcademicYears(date?.year as number)
-        }
         if(isSuccess && data) {
             setClasse(data as Classe);
         }
-    }, [academicYears.length, classe?.createdAt, currentAcademicYear, data, isSuccess]);
-
-    const academicYearOptions = academicYears?.map(a => ({
-        value: a.id,
-        label: a.academicYear
-    }))
-
-    const handleAcademicYearIdValue = (value: string) =>  {
-        setUsedAcademicYearId(value)
-    }
+    }, [classe?.createdAt, currentAcademicYear, data, isSuccess]);
 
     const handleCloseDrawer = () => {
         setOpen()

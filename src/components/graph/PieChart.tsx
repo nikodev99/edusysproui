@@ -19,7 +19,7 @@ const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, per
 
 const PieChart = (pieProps: PieChartProps) => {
     const {
-        colors, width, height, data, outerRadius, innerRadius, defaultColor, activeIndex, hasLabel,
+        colors, width, height, data, outerRadius = 80, innerRadius = 40, defaultColor, activeIndex, hasLabel,
         activeShape, labelLine, onMouseEnter, minHeight, startAngle, endAngle, hasLegend
     } = pieProps
 

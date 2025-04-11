@@ -4,6 +4,7 @@ import {PieChartDataEntry, PieChartProps} from "../ui/ui_interfaces.ts";
 import PieChart from "./PieChart.tsx";
 import {ActiveShape} from "recharts/types/util/types";
 import {PieSectorDataItem} from "recharts/types/polar/Pie";
+import {Skeleton} from "antd";
 
 const renderActiveShape: FC<{
     cx: number;
@@ -74,11 +75,21 @@ export const ShapePieChart = (pieProps: PieChartProps) => {
     };
 
     return (
-        <PieChart
-            {...pieProps}
-            activeIndex={activeIndex}
-            activeShape={renderActiveShape as ActiveShape<PieSectorDataItem>}
-            onMouseEnter={onPieEnter}
-        />
+        <>
+            {
+                pieProps.isLoading ?
+                    (
+                        <Skeleton active={true} loading={true}/>
+                    ):
+                    (
+                        <PieChart
+                            {...pieProps}
+                            activeIndex={activeIndex}
+                            activeShape={renderActiveShape as ActiveShape<PieSectorDataItem>}
+                            onMouseEnter={onPieEnter}
+                        />
+                    )
+            }
+        </>
     )
 }

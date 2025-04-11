@@ -5,7 +5,7 @@ import {SwitchTag} from "./SwitchTag.tsx";
 import PanelSection from "./PanelSection.tsx";
 import {Color} from "../../../core/utils/interfaces.ts";
 import {ReactNode} from "react";
-import {Individual} from "../../../entity/domain/individual.ts";
+import {Individual} from "../../../entity";
 import Datetime from "../../../core/datetime.ts";
 
 interface IndividualProps {

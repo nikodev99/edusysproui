@@ -1,5 +1,4 @@
 import {useParams} from "react-router-dom";
-import {fetchStudentById} from "../../data";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {text} from "../../core/utils/text_display.ts";
 import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
@@ -8,7 +7,6 @@ import {Enrollment, Student} from "../../entity";
 import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
 import ViewHeader from "../../components/ui/layout/ViewHeader.tsx";
 import {setName} from "../../core/utils/utils.ts";
-import {useFetch} from "../../hooks/useFetch.ts";
 import {
     StudentAttendance,
     StudentClasse, StudentEditDrawer,
@@ -19,6 +17,7 @@ import {
 import {LuCircleUser, LuTrash, LuUserPlus} from "react-icons/lu";
 import {redirectTo} from "../../context/RedirectContext.ts";
 import {ViewRoot} from "../../components/custom/ViewRoot.tsx";
+import {useStudentRepo} from "../../hooks/useStudentRepo.ts";
 
 const StudentViewPage = () => {
 
@@ -27,8 +26,9 @@ const StudentViewPage = () => {
     const [enrolledStudent, setEnrolledStudent] = useState<Enrollment | null>(null);
     const [openDrawer, setOpenDrawer] = useState(false)
     const [color, setColor] = useState('')
+    const {useGetStudent} = useStudentRepo()
 
-    const {data, isLoading, isSuccess, error, refetch} = useFetch<Enrollment, unknown>(['student-id', id as string], fetchStudentById, [id])
+    const {data, isLoading, isSuccess, error, refetch} = useGetStudent(id as string)
 
     const studentName = enrolledStudent ? setName(
         enrolledStudent?.student.personalInfo?.lastName,

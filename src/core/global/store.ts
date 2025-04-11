@@ -2,13 +2,17 @@ import {create, StoreApi, UseBoundStore} from "zustand";
 import {combine} from "zustand/middleware";
 import {fetchFunc} from "../../hooks/useFetch.ts";
 import {getDepartmentBasics} from "../../data/repository/departmentRepository.ts";
-import {AcademicYear, Department} from "../../entity";
+import {AcademicYear, Classe, Department} from "../../entity";
 import {getAcademicYearFromYear, getCurrentAcademicYear} from "../../data/repository/academicYearRepository.ts";
 import {
     getClasseAttendanceStatusCount,
     getSchoolAttendanceStatusCount
 } from "../../data/repository/attendanceRepository.ts";
 import {AttendanceStatus} from "../../entity/enums/attendanceStatus.ts";
+import {getClassesBasicValues} from "../../data/repository/classeRepository.ts";
+import {countStudent} from "../../data/repository/studentRepository.ts";
+import {GenderCounted} from "../utils/interfaces.ts";
+import {countAllTeachers} from "../../data/repository/teacherRepository.ts";
 
 type WithSelectors<S> = S extends { getState: () => infer T }
     ? S & { use: { [K in keyof T]: () => T[K] } }
@@ -41,7 +45,13 @@ export const useGlobalStore = createSelectors(create(combine({
     },
     departments: [] as Department[],
     classeAttendance: [] as {status: AttendanceStatus, count: number}[],
-    schoolAttendance: [] as {status: AttendanceStatus, count: number}[]
+    schoolAttendance: [] as {status: AttendanceStatus, count: number}[],
+    allClasses: [] as Classe[],
+    allTeachers: [] as GenderCounted[],
+    countAllClasse: 0 as number,
+    countAllStudent: 0,
+    countClasseStudent: 0,
+    countGradeStudent: 0
 }, (set) => ({
     updateAcademicYear (academicYear: string) {
         set({academicYear: academicYear});
@@ -89,6 +99,35 @@ export const useGlobalStore = createSelectors(create(combine({
                     set({schoolAttendance: resp.data as {status: AttendanceStatus, count: number}[]})
                 }
             })
+    },
+
+    setCountAllClasse (): void {
+        fetchFunc(getClassesBasicValues, [])
+            .then(resp => {
+                if (resp.isSuccess) {
+                    const allClasses = resp.data as Classe[] || []
+                    set({allClasses: allClasses})
+                    set({countAllClasse: allClasses.length as number})
+                }
+            })
+    },
+
+    setCountAllStudent (): void {
+        fetchFunc(countStudent, [])
+            .then(resp => {
+                if (resp.isSuccess && resp.data && 'count' in resp.data) {
+                    set({countAllStudent: resp.data.count as number})
+                }
+            })
+    },
+
+    setCountAllTeacher (): void {
+        fetchFunc(countAllTeachers, [])
+            .then(resp => {
+                if (resp.isSuccess) {
+                    set({allTeachers: resp.data})
+                }
+            })
     }
 }))))
 
@@ -120,4 +159,10 @@ export const initSchoolAttendance = (schoolId: string, academicYear: string) => 
     const store = useGlobalStore.getState()
     store.setSchoolAttendance(schoolId, academicYear)
     return store.schoolAttendance
+}
+
+export const initCountAllClasse = ()  => {
+    const store = useGlobalStore.getState()
+    store.setCountAllClasse();
+    return [store.countAllClasse, store.allClasses];
 }

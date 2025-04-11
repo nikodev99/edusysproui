@@ -11,9 +11,13 @@ import {BigCalendarProps} from "../../core/utils/interfaces.ts";
 dayjs.locale('fr')
 const localized = dayjsLocalizer(dayjs)
 
-export const BigCalendar = <T extends object = Event>({
-    data, views, defaultView, startDayTime, endDayTime, className, styles, onSelectEvent, start, end, showNavButton, height
-}: BigCalendarProps<T>) => {
+export const BigCalendar = <T extends object = Event>(
+    {
+        data, views, defaultView, startDayTime, endDayTime,
+        className, styles, onSelectEvent, start, end,
+        showNavButton, height, onSelectSlot, isLoading = false,
+    }: BigCalendarProps<T>
+) => {
 
     const [view, setView] = useState<View>(defaultView)
 
@@ -22,9 +26,9 @@ export const BigCalendar = <T extends object = Event>({
     }
 
     return (
-        <div>
+        <>
         {
-            data === undefined ? <Skeleton active={true} loading={true}/> :
+            isLoading ? <Skeleton active={true} loading={true}/> :
                 <Calendar
                     localizer={localized}
                     events={data}
@@ -39,8 +43,9 @@ export const BigCalendar = <T extends object = Event>({
                     onView={handleOnChangeView}
                     className={!showNavButton ? `big-calendar ${className}` : className}
                     onSelectEvent={onSelectEvent}
+                    onSelectSlot={onSelectSlot}
                 />
         }
-        </div>
+        </>
     )
 }

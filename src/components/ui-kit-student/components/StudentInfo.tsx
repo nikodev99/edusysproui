@@ -1,7 +1,7 @@
 import Block from "../../view/Block.tsx";
 import {Divider, Table, TableColumnsType, Avatar as AntAvatar, Typography, Badge} from "antd";
 import {HTMLProps, ReactNode, useEffect, useState} from "react";
-import {Enrollment, HealthCondition, Schedule} from "../../../entity";
+import {Enrollment, HealthCondition, Schedule, Reprimand} from "../../../entity";
 import {
     bloodLabel, convertToM, fDate, firstLetter, fullDay, getAge, getCountry,
     chooseColor, isNull, monthsBetween, setFirstName, currency
@@ -19,7 +19,6 @@ import {GiAchievement, GiHealthDecrease} from "react-icons/gi";
 import {redirectTo} from "../../../context/RedirectContext.ts";
 import RadarChart from "../../graph/RadarChart.tsx";
 import PieChart from "../../graph/PieChart.tsx";
-import {Reprimand} from "../../../entity/domain/reprimand.ts";
 import Section from "../../ui/layout/Section.tsx";
 import PanelSection from "../../ui/layout/PanelSection.tsx";
 import {ExamData, InfoPageProps} from "../../../core/utils/interfaces.ts";
@@ -27,8 +26,9 @@ import {initExamData} from "../../../entity/domain/score.ts";
 import {attendanceTag} from "../../../entity/enums/attendanceStatus.ts";
 import Tag from "../../ui/layout/Tag.tsx";
 import {LuBan} from "react-icons/lu";
-import {ScheduleDayCalendar} from "../../common/ScheduleDayCalendar.tsx";
 import {StudentCarousel} from "../../common/StudentCarousel.tsx";
+import {ScheduleCalendar} from "../../common/ScheduleCalendar.tsx";
+import Datetime from "../../../core/datetime.ts";
 
 type StudentInfoProps = InfoPageProps<Enrollment>
 
@@ -359,9 +359,13 @@ const CourseSchedule = ({infoData}: StudentInfoProps) => {
     const schedules: Schedule[] = classe.schedule !== null ? classe.schedule : []
 
     return(
-        <ScheduleDayCalendar
+        <ScheduleCalendar
+            isSection={true}
+            views={['day']}
             eventSchedule={schedules}
-            sectionTitle={`Emploi du temps: ${setFirstName(fullDay(new Date()))}`}
+            sectionTitle={`Emploi du temps: ${Datetime.now().fullDay()}`}
+            height={300}
+            hasTeacher
         />
     )
 }
@@ -411,15 +415,15 @@ const DisciplinaryRecords = ({infoData, seeMore, color}: StudentInfoProps) => {
 
 export const StudentInfo = ({enrollment, seeMore, color}: { enrollment: Enrollment, color?: string, seeMore?: (key: string) => void }) => {
 
-    const {classe: {grade}} = enrollment
+    const {classe} = enrollment
 
     const items: ReactNode[] = [
         <IndividualInfo infoData={enrollment} dataKey='individual-block' color={color}/>,
-        ...(grade?.section != SectionType.MATERNELLE && grade?.section != SectionType.PRIMAIRE ? [
+        ...(classe?.grade?.section != SectionType.MATERNELLE && classe?.grade?.section != SectionType.PRIMAIRE ? [
             <GraphSection infoData={enrollment} dataKey='graph-block' color={color}/>
         ] : []),
         <GuardianBlock infoData={enrollment} dataKey='guardian-section' color={color} />,
-        ...(grade?.section != SectionType.MATERNELLE && grade?.section != SectionType.PRIMAIRE ? [
+        ...(classe?.grade?.section != SectionType.MATERNELLE && classe?.grade?.section != SectionType.PRIMAIRE ? [
             <ExamList infoData={enrollment} seeMore={seeMore} dataKey='exam-block' color={color}/>
         ] : []),
         <SchoolHistory infoData={enrollment} seeMore={seeMore} dataKey='school-history-block' color={color}/>,

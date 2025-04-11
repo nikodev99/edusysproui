@@ -41,7 +41,7 @@ const InsertSchema = <TData extends FieldValues>(
                     handleForm.reset()
                 }
             },
-            onError: error => setErrorMessage(catchError(error))
+            onError: error => setErrorMessage(catchError(error) as string)
         })
         setOpenConfirm(false)
     }

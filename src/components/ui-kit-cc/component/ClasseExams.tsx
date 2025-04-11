@@ -30,9 +30,14 @@ export const ClasseExams = ({infoData, academicYear}: InfoPageProps<Classe>) => 
     const subjectFilter = subjectValue !== 0 ? getAllClasseAssignmentsBySubject : getAllClasseAssignments
     const bestStudentFilter = subjectValue !== 0 ? getClasseBestStudentsByCourse : getClasseBestStudents
 
-    const {data, isSuccess, refetch, isFetching, isRefetching, isFetched, isLoading: isFetchLoading, isPending} = useFetch<Assignment, unknown>(['classe-assignments', id], subjectFilter, [{
-        classeId: id, subjectId: subjectValue,
-    }, academicYear])
+    const {data, isSuccess, refetch, isFetching, isRefetching, isFetched, isLoading: isFetchLoading, isPending} = useFetch<Assignment, unknown>(
+        ['classe-assignments', id],
+        subjectFilter,
+        [{
+            classeId: id,
+            subjectId: subjectValue,
+        }, academicYear]
+    )
 
     useEffect(() => {
         if(id || academicYear || subjectValue || toRefetch) {
@@ -92,6 +97,8 @@ export const ClasseExams = ({infoData, academicYear}: InfoPageProps<Classe>) => 
     const changeTab = (activeKey: string) => {
         if (activeKey === 'exam-list')
             setDisabledSelect(true)
+        else
+            setDisabledSelect(false)
     }
 
     return (

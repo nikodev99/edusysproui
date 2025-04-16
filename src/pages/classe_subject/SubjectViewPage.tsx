@@ -30,10 +30,7 @@ const SubjectViewPage = () => {
     const [color, setColor] = useState<Color>('')
 
     const fetch = useRawFetch<Course>()
-    const {data, isSuccess} = useFetch<Schedule[], unknown>(['course-schedule-list'], getAllCourseSchedule, [course?.id, false], {
-        queryKey: ['course-schedule-list'],
-        enabled: course !== null
-    })
+    const {data, isSuccess} = useFetch<Schedule[], unknown>(['course-schedule-list'], getAllCourseSchedule, [course?.id, false], course !== null)
 
     useDocumentTitle({
         title: cutStatement(course?.course as string, 10, course?.abbr) as string,

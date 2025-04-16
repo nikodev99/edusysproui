@@ -1,4 +1,10 @@
-import {keepPreviousData, QueryKey, useQuery, UseQueryOptions, UseQueryResult} from "@tanstack/react-query";
+import {
+    keepPreviousData,
+    QueryKey,
+    useQuery,
+    UseQueryOptions,
+    UseQueryResult
+} from "@tanstack/react-query";
 import {AxiosResponse} from "axios";
 import {Response} from "../data/action/response.ts"
 import {ErrorCatch} from "../data/action/error_catch.ts";
@@ -9,12 +15,14 @@ export const useFetch = <TData, TError>(
     key: unknown | unknown[],
     callback: (...args: any[]) => Promise<AxiosResponse<TData, TError>>,
     params: any[] = [],
+    enabled: boolean = false,
     options?: UseQueryOptions<TData, TError, TData, QueryKey>
 ): UseQueryResult<TData, TError> => {
     return  useQuery<TData, TError>({
         queryKey: Array.isArray(key) ? key : [key],
         queryFn: async () => await callback(...params).then(res => res.data),
         placeholderData: keepPreviousData,
+        enabled: enabled,
         ...options,
     })
 }

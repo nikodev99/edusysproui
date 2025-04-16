@@ -4,7 +4,7 @@ import Block from "../../view/Block.tsx";
 import {ReactNode} from "react";
 import Section from "../../ui/layout/Section.tsx";
 import PanelStat from "../../ui/layout/PanelStat.tsx";
-import {calculateAverageAge, findPercent, setFirstName, setGender} from "../../../core/utils/utils.ts";
+import {findPercent, setFirstName, setGender} from "../../../core/utils/utils.ts";
 import {text} from "../../../core/utils/text_display.ts";
 import PanelTable from "../../ui/layout/PanelTable.tsx";
 import {SuperWord} from "../../../core/utils/tsxUtils.tsx";
@@ -26,15 +26,15 @@ import {ScheduleCalendar} from "../../common/ScheduleCalendar.tsx";
 import {useScoreRepo} from "../../../hooks/useScoreRepo.ts";
 
 type ClasseInfoProps = InfoPageProps<Classe> & {
-    studentCount?: GenderCounted[] | null
+    studentCount?: GenderCounted | null
     totalStudents?: number
 };
 
 const ClasseInfoData = ({infoData, color, studentCount, totalStudents, seeMore}: ClasseInfoProps) => {
     const {principalTeacher, principalStudent, principalCourse, classeTeachers} = infoData
 
-    const studentAverageAge = calculateAverageAge(studentCount)
-    const maxAge = studentCount ? Math.max(...studentCount.map(group => group.ageAverage)) : 1
+    const studentAverageAge = studentCount?.totalAverageAge
+    const maxAge = studentCount?.genders ? Math.max(...studentCount.genders.map(group => group.ageAverage)) : 1
     const teacher: Teacher | null = (Array.isArray(classeTeachers) && classeTeachers.length > 0)
         ? classeTeachers.filter(t => t?.courses?.[0]?.id === principalCourse?.id)[0]
         : null;
@@ -50,7 +50,7 @@ const ClasseInfoData = ({infoData, color, studentCount, totalStudents, seeMore}:
     return(
         <Section title={<SuperWord input={`Profile de ${infoData?.name}`} />} more={true} seeMore={handleClick}>
             <div className='panel'>
-                {studentCount && studentCount?.map((s, i) => (
+                {studentCount && studentCount?.genders?.map((s, i) => (
                     <PanelStat
                         key={i}
                         title={s.count}
@@ -235,11 +235,11 @@ const ClasseTeachers = ({infoData, seeMore}: ClasseInfoProps) => {
     }
 
     return(
-        <TeacherList
-            title='Les profs de la classe'
-            seeMore={handleClick}
-            teachers={classeTeachers}
-        />
+        <Section title={'Les profs de la classe'} more={true} seeMore={handleClick}>
+            <TeacherList
+                teachers={classeTeachers}
+            />
+        </Section>
     )
 }
 

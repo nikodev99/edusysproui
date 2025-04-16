@@ -1,9 +1,8 @@
 import {useParams} from "react-router-dom";
 import {ReactNode, useEffect, useLayoutEffect, useState} from "react";
 import {Teacher} from "../../entity";
-import {useFetch} from "../../hooks/useFetch.ts";
 import {chooseColor, setLastName, setName} from "../../core/utils/utils.ts";
-import {count, countStudents, fetchTeacherById} from "../../data";
+import {count, countStudents} from "../../data";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
 import {text} from "../../core/utils/text_display.ts";
@@ -29,6 +28,7 @@ import {
 } from "../../components/ui-kit-teacher";
 import {useToggle} from "../../hooks/useToggle.ts";
 import {ViewRoot} from "../../components/custom/ViewRoot.tsx";
+import {useTeacherRepo} from "../../hooks/useTeacherRepo.ts";
 
 const TeacherViewPage = () => {
 
@@ -38,11 +38,14 @@ const TeacherViewPage = () => {
     const [studentTaughtCount, setStudentTaughtCount] = useState<number>(0)
     const [studentCount, setStudentCount] = useState<number>(0)
     const [openDrawer, setOpenDrawer] = useToggle(false)
+    const {useGetTeacher} = useTeacherRepo()
 
-    const {data, isLoading, isSuccess, refetch} = useFetch(['student-id', id!], fetchTeacherById, [id])
+    const {data, isLoading, isSuccess, refetch} = useGetTeacher(id as string)
 
     const teacherName = setName(teacher?.personalInfo?.lastName, teacher?.personalInfo?.firstName)
     const color: string = teacher?.personalInfo?.firstName ? chooseColor(teacher.personalInfo?.firstName) as string  : '#7615c4'
+
+    console.log("DATA: ", data)
 
     useDocumentTitle({
         title: teacherName,

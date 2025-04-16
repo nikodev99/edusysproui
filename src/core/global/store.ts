@@ -47,7 +47,7 @@ export const useGlobalStore = createSelectors(create(combine({
     classeAttendance: [] as {status: AttendanceStatus, count: number}[],
     schoolAttendance: [] as {status: AttendanceStatus, count: number}[],
     allClasses: [] as Classe[],
-    allTeachers: [] as GenderCounted[],
+    allTeachers: {} as GenderCounted,
     countAllClasse: 0 as number,
     countAllStudent: 0,
     countClasseStudent: 0,

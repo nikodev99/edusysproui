@@ -123,7 +123,7 @@ export const updateStudentByField = <T>(field: keyof T, value: unknown, studentI
 }
 
 export const countClasseStudents = (classeId: number, academicYearId: string) => {
-    return apiClient.get<GenderCounted[]>(`/enroll/count/${classeId}`, {
+    return apiClient.get<GenderCounted>(`/enroll/count/${classeId}`, {
         params: {
             academicYear: academicYearId
         }

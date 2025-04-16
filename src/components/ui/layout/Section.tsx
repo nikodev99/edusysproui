@@ -9,7 +9,7 @@ export interface SectionProps {
     seeMore?: () => void;
 }
 
-const Section = ({title, children, more, seeMore}: SectionProps) => {
+const Section = ({title, children, more = false, seeMore}: SectionProps) => {
 
     const extra = more ? (
         <p onClick={seeMore} className="btn-toggle">

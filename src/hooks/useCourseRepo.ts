@@ -4,7 +4,7 @@ import {getAllSchoolCourses} from "../data/action/courseAction.ts";
 import {UseQueryResult} from "@tanstack/react-query";
 import {Course} from "../entity";
 import {getAllBasicCourses, getAllCoursesSearch, getCourseById} from "../data/repository/courseRepository.ts";
-import {Response} from "../data/action/response.ts";
+import {useEffect, useState} from "react";
 
 export const useCourseRepo = () => {
     const useGetAllCourses = (
@@ -12,29 +12,31 @@ export const useCourseRepo = () => {
         sortField?: string,
         sortOrder?: string
     ): UseQueryResult<Course[], unknown> => {
-        return useFetch(['course-list'], getAllSchoolCourses, [pageable.page, pageable.size, sortField, sortOrder], {
-            queryKey: ['course-list'],
-            enabled: !!pageable.size
-        });
+        return useFetch(['course-list'], getAllSchoolCourses, [pageable.page, pageable.size, sortField, sortOrder], !!pageable.size);
     }
 
     const useGetAllCourseSearched = (courseName: string): UseQueryResult<Course[], unknown> => {
-        return useFetch(['course-list', courseName], getAllCoursesSearch, [courseName], {
-            queryKey: ['course-list', courseName],
-            enabled: !!courseName
-        });
+        return useFetch(['course-list', courseName], getAllCoursesSearch, [courseName], !!courseName);
     }
 
     const useGetCourse = (courseId: number): UseQueryResult<Course, unknown> => {
-        return useFetch(['course', courseId], getCourseById, [courseId], {
-            queryKey: ['course', courseId],
-            enabled: !!courseId
-        })
+        return useFetch(['course', courseId], getCourseById, [courseId], !!courseId)
     }
 
-    const useGetBasicCourses = (): Promise<Response<Course>> => {
+    const useGetBasicCourses = (): Course[] => {
+        const [courses, setCourses] = useState<Course[]>([])
         const fetch = useRawFetch()
-        return fetch(getAllBasicCourses, [])
+
+        useEffect(() => {
+            fetch(getAllBasicCourses, [])
+                .then(resp => {
+                    if (resp) {
+                        setCourses(resp.data as Course[])
+                    }
+                })
+        }, [fetch]);
+
+        return courses
     }
 
     return {

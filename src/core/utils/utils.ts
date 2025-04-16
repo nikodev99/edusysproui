@@ -1,4 +1,4 @@
-import {ApiEvent, Color, DateExplose, EnumType, ExamView, GenderCounted, ID} from "./interfaces.ts"
+import {ApiEvent, Color, DateExplose, EnumType, ExamView, ID} from "./interfaces.ts"
 import countries from 'world-countries'
 import dayjs from "dayjs";
 import 'dayjs/locale/fr.js'
@@ -81,12 +81,6 @@ export const getStringAcademicYear = (startDate?: Date | [number, number, number
         return `${arrayToDate(startDate).getFullYear()} - ${arrayToDate(endDate).getFullYear()}`
     }
     return undefined
-}
-
-export const calculateAverageAge = (students?: GenderCounted[] | null): number => {
-    const totalStudents = students?.reduce((sum, group) => sum + group.count, 0)
-    const totalAge = students?.reduce((sum, group) => sum + group.count * group.ageAverage, 0)
-    return totalStudents && totalAge && totalStudents > 0 ? totalAge / totalStudents : 0
 }
 
 export const sumInArray = <T extends object | number>(arrayToSum: T[], arrayKey?: keyof T): number => {

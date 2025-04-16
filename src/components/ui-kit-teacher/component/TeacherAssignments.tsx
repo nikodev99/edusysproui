@@ -34,10 +34,7 @@ export const TeacherAssignments = ({infoData}: InfoPageProps<Teacher>) => {
     const {data: scoreData, isSuccess: scoreFetched, isLoading: scoreLoading} = useFetch<Score[], unknown>(
         'student-score',
         bestScoreFnc as (...args: unknown[]) => Promise<AxiosResponse<Score[], unknown>>,
-        [personalInfo?.id, subjectValue], {
-            queryKey: ['student-score'],
-            enabled: assignments !== null && assignments.length > 0
-        }
+        [personalInfo?.id, subjectValue], assignments !== null && assignments.length > 0
     )
 
     const subjects = useMemo(() => {

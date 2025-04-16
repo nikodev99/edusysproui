@@ -1,30 +1,30 @@
-import {useGlobalStore} from "../core/global/store.ts";
-import {useEffect} from "react";
-import {GenderCounted} from "../core/utils/interfaces.ts";
+import {useCallback, useEffect, useMemo, useState} from "react";
+import {AxiosResponse} from "axios";
+import {useRawFetch} from "./useFetch.ts";
 
-interface Counted {
-    all?: boolean
-    student?: boolean
-    teacher?: boolean
-}
-
-export const useCount = ({all, student, teacher}: Counted) => {
-    const countAllStudent: number = useGlobalStore(state => state.countAllStudent)
-    const setCountStudent = useGlobalStore(state => state.setCountAllStudent)
-    const countAllTeachers: GenderCounted[] = useGlobalStore(state => state.allTeachers)
-    const setCountTeachers = useGlobalStore(state => state.setCountAllTeacher)
+export const useCount = <T extends object>(
+    func: (...args: unknown[]) => Promise<AxiosResponse<T, unknown>>,
+    params?: unknown[],
+    hasNoParam: boolean = false
+): T | undefined => {
+    const [count, setCount] = useState<T>();
+    const rawFetch = useRawFetch();
+    
+    const customParams = useMemo(() => params, [params]);
+    const customFetch = useCallback(() => {
+        return hasNoParam ? rawFetch(func, []) : rawFetch(func, customParams);
+    }, [customParams, func, hasNoParam, rawFetch])
 
     useEffect(() => {
-        if (all || student) {
-            setCountStudent();
+        if ((params && params?.length > 0) || hasNoParam) {
+            customFetch()
+                .then(resp => {
+                    if (resp.isSuccess) {
+                        setCount(resp.data as T);
+                    }
+                });
         }
-        if (all || teacher) {
-            setCountTeachers();
-        }
-    }, [all, setCountStudent, setCountTeachers, student, teacher])
+    }, [customFetch, hasNoParam, params]);
 
-    return {
-        countAllStudent,
-        countAllTeachers
-    }
+    return count;
 }

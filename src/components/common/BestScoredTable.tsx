@@ -28,20 +28,31 @@ export const BestScoredTable = (
     const fetch = useRawFetch<Score>();
 
     useEffect(() => {
+        if (!fetchFunc) return
+
+        let cancelled = false;
+
         if (fetchFunc) {
             fetch(fetchFunc, funcParams)
                 .then(resp => {
+                    if (cancelled) return
                     if(resp.isSuccess) {
                         setScores(resp?.data as Score[])
                     }
                 })
         }
-        
-        if (providedData) {
+
+        return () => {
+            cancelled = true;
+        }
+
+    }, [fetch, fetchFunc, funcParams]);
+
+    useEffect(() => {
+        if (providedData && providedData.length) {
             setScores(providedData)
         }
-        
-    }, [fetch, fetchFunc, funcParams, providedData]);
+    }, [providedData]);
 
     const columns: TableColumnsType<Score> = [
         {

@@ -1,14 +1,21 @@
-import {GenderCounted, Pageable} from "../core/utils/interfaces.ts";
+import {Counted, GenderCounted, Pageable} from "../core/utils/interfaces.ts";
 import {useFetch, useRawFetch} from "./useFetch.ts";
 import {UseQueryResult} from "@tanstack/react-query";
 import {Enrollment} from "../entity";
 import {fetchEnrolledStudents} from "../data";
 import {
-    countClasseStudents, countSomeClasseStudents, countStudent, getAllStudentClassmate, getClasseEnrolledStudentsSearch,
-    getClasseStudents, getRandomStudentClassmate, getStudentById, searchEnrolledStudents
+    countClasseStudents,
+    countSomeClasseStudents,
+    countStudent,
+    getAllStudentClassmate,
+    getClasseEnrolledStudentsSearch,
+    getClasseStudents,
+    getRandomStudentClassmate,
+    getStudentById,
+    searchEnrolledStudents
 } from "../data/repository/studentRepository.ts";
 import {fetchEnrolledClasseStudents} from "../data/action/studentAction.ts";
-import {Response} from "../data/action/response.ts";
+import {useEffect, useState} from "react";
 
 export const useStudentRepo = () => {
 
@@ -29,7 +36,7 @@ export const useStudentRepo = () => {
             ['students-list'],
             fetchEnrolledStudents,
             [pageable.page, pageable.size, sortField, sortOrder],
-            {queryKey: ['students-list'], enabled: !!pageable.size }
+            !!pageable.size
         );
     };
 
@@ -46,7 +53,7 @@ export const useStudentRepo = () => {
             ['students-search', searchInput],
             searchEnrolledStudents,
             [searchInput],
-            { queryKey: ['students-search', searchInput], enabled: !!searchInput }
+            !!searchInput
         );
     };
 
@@ -63,7 +70,7 @@ export const useStudentRepo = () => {
             ['student', studentId],
             getStudentById,
             [studentId],
-            { queryKey: ['student', studentId], enabled: !!studentId }
+            !!studentId
         );
     };
 
@@ -88,7 +95,7 @@ export const useStudentRepo = () => {
             ['classe-students', classeId, academicYear],
             fetchEnrolledClasseStudents,
             [classeId, academicYear, pageable.page, pageable.size, sortField, sortOrder],
-            { queryKey: ['classe-students', classeId, academicYear], enabled: !!classeId && !!academicYear }
+            !!classeId && !!academicYear
         );
     };
 
@@ -109,10 +116,7 @@ export const useStudentRepo = () => {
             ['classe-students-search', classeId, academicYear, searchName],
             getClasseEnrolledStudentsSearch,
             [classeId, academicYear, searchName],
-            {
-                queryKey: ['classe-students-search', classeId, academicYear, searchName],
-                enabled: !!classeId && !!academicYear && !!searchName
-            }
+            !!academicYear && !!searchName
         );
     };
 
@@ -131,7 +135,7 @@ export const useStudentRepo = () => {
             ['classe-students-all', classeId, academicYear],
             getClasseStudents,
             [classeId, academicYear],
-            { queryKey: ['classe-students-all', classeId, academicYear], enabled: !!classeId && !!academicYear }
+            !!classeId && !!academicYear
         );
     };
 
@@ -150,7 +154,7 @@ export const useStudentRepo = () => {
             ['random-classmate', studentId, classeId],
             getRandomStudentClassmate,
             [studentId, classeId],
-            { queryKey: ['random-classmate', studentId, classeId], enabled: !!studentId && !!classeId }
+            !!studentId && !!classeId
         );
     };
 
@@ -173,10 +177,7 @@ export const useStudentRepo = () => {
             ['classmates', studentId, classeId, academicYearId],
             getAllStudentClassmate,
             [studentId, classeId, academicYearId, pageable],
-            {
-                queryKey: ['classmates', studentId, classeId, academicYearId],
-                enabled: !!studentId && !!classeId && !!academicYearId && !!pageable.size,
-            }
+            !!academicYearId && !!pageable.size
         );
     };
 
@@ -190,12 +191,12 @@ export const useStudentRepo = () => {
     const useCountClasseStudents = (
         classeId: number,
         academicYearId: string
-    ): UseQueryResult<GenderCounted[], unknown> => {
+    ): UseQueryResult<GenderCounted, unknown> => {
         return useFetch(
             ['classe-count', classeId],
             countClasseStudents,
             [classeId, academicYearId],
-            { queryKey: ['classe-count', classeId], enabled: !!classeId && !!academicYearId }
+           !!classeId && !!academicYearId
         );
     };
 
@@ -209,15 +210,12 @@ export const useStudentRepo = () => {
     const useCountSomeClasseStudents = (
         classeIds: number[],
         academicYearId: string
-    ): UseQueryResult<GenderCounted[], unknown> => {
+    ): UseQueryResult<GenderCounted, unknown> => {
         return useFetch(
             ['multi-classe-count', ...classeIds],
             countSomeClasseStudents,
             [classeIds, academicYearId],
-            {
-                queryKey: ['multi-classe-count', ...classeIds],
-                enabled: Array.isArray(classeIds) && classeIds.length > 0 && !!academicYearId
-            }
+            Array.isArray(classeIds) && classeIds.length > 0 && !!academicYearId
         );
     };
 
@@ -226,9 +224,19 @@ export const useStudentRepo = () => {
      *
      * @returns {UseQueryResult<number, unknown>}
      */
-    const useCountStudent = (): Promise<Response<object>> => {
+    const useCountStudent = (): Counted | undefined => {
+        const [count, setCount] = useState<Counted>()
         const fetch = useRawFetch();
-        return fetch(countStudent, []);
+        useEffect(() => {
+            fetch(countStudent, [])
+                .then(resp => {
+                    if (resp.isSuccess) {
+                        setCount(resp.data as Counted)
+                    }
+                })
+        }, [fetch]);
+        
+        return count
     };
 
     return {

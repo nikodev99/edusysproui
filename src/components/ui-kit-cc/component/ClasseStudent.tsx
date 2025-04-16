@@ -15,7 +15,7 @@ import {SuperWord} from "../../../core/utils/tsxUtils.tsx";
 //import {Gender} from "../../../entity/enums/gender.tsx";
 
 type ClasseStudentProps = InfoPageProps<Classe> & {
-    studentCount?: GenderCounted[] | null
+    studentCount?: GenderCounted | null
     totalStudents?: number
 };
 

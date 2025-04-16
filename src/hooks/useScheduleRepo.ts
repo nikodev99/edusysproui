@@ -10,31 +10,19 @@ import {ScheduleHoursBy} from "../core/utils/interfaces.ts";
 
 export const useScheduleRepo = () => {
     const useGetAllClasseSchedule = (classeId: number): UseQueryResult<Schedule[], unknown> => {
-        return useFetch(['classe-schedule', classeId], getAllClasseSchedule, [classeId], {
-            queryKey: ['classe-schedule', classeId],
-            enabled: !!classeId
-        })
+        return useFetch(['classe-schedule', classeId], getAllClasseSchedule, [classeId], !!classeId)
     }
 
     const useGetAllCourseSchedule = (courseId: number, byDay: boolean): UseQueryResult<Schedule[], unknown> => {
-        return useFetch(['course-schedule', courseId], getAllCourseSchedule, [courseId, byDay], {
-            queryKey: ['course-schedule', courseId],
-            enabled: !!courseId
-        })
+        return useFetch(['course-schedule', courseId], getAllCourseSchedule, [courseId, byDay], !!courseId)
     }
 
     const useGetCourseHourByClasse = (courseId: number): UseQueryResult<ScheduleHoursBy[], unknown> => {
-        return useFetch(['course-hour-classe', courseId], getCourseHoursByClasse, [courseId], {
-            queryKey: ['course-hour-classe', courseId],
-            enabled: !!courseId
-        })
+        return useFetch(['course-hour-classe', courseId], getCourseHoursByClasse, [courseId], !!courseId)
     }
 
     const useGetCourseHourByTeacher = (courseId: number): UseQueryResult<ScheduleHoursBy[], unknown> => {
-        return useFetch(['course-hour-teacher', courseId], getCourseHoursByTeacher, [courseId], {
-            queryKey: ['course-hour-teacher', courseId],
-            enabled: !!courseId
-        })
+        return useFetch(['course-hour-teacher', courseId], getCourseHoursByTeacher, [courseId], !!courseId)
     }
 
     return {

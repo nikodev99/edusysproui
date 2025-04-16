@@ -1,8 +1,8 @@
 import {useParams} from "react-router-dom";
-import {ReactNode, useEffect, useRef, useState} from "react";
+import {ReactNode, useEffect, useState} from "react";
 import {Classe} from "../../entity";
 import {Color, GenderCounted} from "../../core/utils/interfaces.ts";
-import {useFetch, useRawFetch} from "../../hooks/useFetch.ts";
+import {useFetch} from "../../hooks/useFetch.ts";
 import {getClasse} from "../../data/repository/classeRepository.ts";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
@@ -24,10 +24,10 @@ import {
     ClasseReport,
     ClasseEditDrawer
 } from "../../components/ui-kit-cc";
-import {countClasseStudents} from "../../data/repository/studentRepository.ts";
 import {SuperWord} from "../../core/utils/tsxUtils.tsx";
 import {useToggle} from "../../hooks/useToggle.ts";
 import {useAcademicYear} from "../../hooks/useAcademicYear.ts";
+import {useStudentRepo} from "../../hooks/useStudentRepo.ts";
 
 const ClasseViewPage = () => {
 
@@ -35,20 +35,16 @@ const ClasseViewPage = () => {
 
     const [classe, setClasse] = useState<Classe | null>(null)
     const [color, setColor] = useState<Color>('')
-    const [studentCount, setStudentCount] = useState<GenderCounted[] | null>(null)
+    const [studentCount, setStudentCount] = useState<GenderCounted | null>(null)
     const [open, setOpen] = useToggle(false)
-    const countStudent = useRef<number>(0)
+    const {useCountClasseStudents} = useStudentRepo()
 
     const {usedAcademicYearId, currentAcademicYear, academicYearOptions, handleAcademicYearIdValue} = useAcademicYear(classe?.createdAt as number)
 
-    const {data, isSuccess, error, isLoading, refetch} = useFetch(['classe-id', id], getClasse, [id, usedAcademicYearId], {
-        queryKey: ['classe-id', id],
-        enabled: usedAcademicYearId !== null
-    })
+    const {data, isSuccess, error, isLoading, refetch} = useFetch(['classe-id', id], getClasse, [id, usedAcademicYearId], usedAcademicYearId !== null)
 
     console.log('Error: ', error);
-    
-    const fetch = useRawFetch<GenderCounted[]>()
+    const {data: countData, isSuccess: isCountSuccess} = useCountClasseStudents(Number.parseInt(id ?? '0'), usedAcademicYearId as string)
 
     useDocumentTitle({
         title: classe?.name as string,
@@ -61,20 +57,9 @@ const ClasseViewPage = () => {
     ])
 
     useEffect(() => {
-        if (id && usedAcademicYearId) {
-            fetch(countClasseStudents, [id, usedAcademicYearId])
-                .then(resp => {
-                    if (resp.isSuccess) {
-                        const count = resp.data as GenderCounted[]
-                        setStudentCount(count)
-                        countStudent.current = count?.reduce((sum, current) => sum + current.count, 0)
-                    }
-                })
-                .catch(error => {
-                    console.error("Failed to fetch student count: ", error)
-                })
-        }
-    }, [fetch, id, isSuccess, usedAcademicYearId]);
+        if (isCountSuccess)
+            setStudentCount(countData)
+    }, [countData, isCountSuccess]);
 
     useEffect(() => {
         if (usedAcademicYearId) {
@@ -129,7 +114,7 @@ const ClasseViewPage = () => {
                 }}
                 blockProps={[
                     {title: 'Niveau', mention: <Tag>{classe?.grade.section}</Tag>},
-                    {title: "Nombre d'élève", mention: countStudent.current},
+                    {title: "Nombre " + text.student.label + 's', mention: studentCount?.total},
                     {
                         title: "Année Académique",
                         mention: <Select
@@ -154,7 +139,7 @@ const ClasseViewPage = () => {
                             color={color}
                             dataKey='Info'
                             studentCount={studentCount}
-                            totalStudents={countStudent.current}
+                            totalStudents={studentCount?.total}
                             academicYear={usedAcademicYearId as string}
                         />
                     },

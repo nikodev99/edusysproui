@@ -4,17 +4,11 @@ import {getAllTeacherCourseProgram, getAllTeacherProgram} from "../data/reposito
 
 export const useCourseProgramRepo = () => {
     const useGetTeacherCourseAllProgram = (teacherId: string, ids: IDS) => {
-        return useFetch(['teacher-course-all-program', teacherId], getAllTeacherCourseProgram, [teacherId, ids], {
-            queryKey: ['teacher-course-program', teacherId],
-            enabled: !!teacherId && !!ids.courseId && !!ids.classId
-        });
+        return useFetch(['teacher-course-all-program', teacherId], getAllTeacherCourseProgram, [teacherId, ids], !!teacherId && !!ids.courseId && !!ids.classId)
     }
 
     const useGetTeacherCourseProgram  = (teacherId: string, ids: IDS) => {
-        return useFetch(['teacher-course-program', teacherId], getAllTeacherProgram, [teacherId, ids], {
-            queryKey: ['teacher-course-program', teacherId],
-            enabled: !!teacherId && !!ids.classId
-        })
+        return useFetch(['teacher-course-program', teacherId], getAllTeacherProgram, [teacherId, ids], !!teacherId && !!ids.classId)
     }
 
     return {

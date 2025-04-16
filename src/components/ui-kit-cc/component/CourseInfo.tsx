@@ -5,14 +5,11 @@ import {ReactNode, useEffect, useMemo, useRef, useState} from "react";
 import {DepartmentDesc} from "../../common/DepartmentDesc.tsx";
 import Section from "../../ui/layout/Section.tsx";
 import {SuperWord} from "../../../core/utils/tsxUtils.tsx";
-import {useRawFetch} from "../../../hooks/useFetch.ts";
-import {countSomeClasseStudents} from "../../../data/repository/studentRepository.ts";
 import {findPercent, getUniqueness, setFirstName, sumInArray} from "../../../core/utils/utils.ts";
 import PanelStat from "../../ui/layout/PanelStat.tsx";
 import {Progress, TableColumnsType} from "antd";
 import {useClasse} from "../../../hooks/useClasse.tsx";
 import {text} from "../../../core/utils/text_display.ts";
-import {useCount} from "../../../hooks/useCount.ts";
 import {TeacherList} from "../../common/TeacherList.tsx";
 import {useScheduleRepo} from "../../../hooks/useScheduleRepo.ts";
 import Datetime from "../../../core/datetime.ts";
@@ -22,65 +19,83 @@ import {Table} from "../../ui/layout/Table.tsx";
 import {useScoreRepo} from "../../../hooks/useScoreRepo.ts";
 import {BestScoredTable} from "../../common/BestScoredTable.tsx";
 import {AiOutlineArrowDown} from "react-icons/ai";
+import {useStudentRepo} from "../../../hooks/useStudentRepo.ts";
+import {Gender} from "../../../entity/enums/gender.tsx";
+import PanelTable from "../../ui/layout/PanelTable.tsx";
+import {useTeacherRepo} from "../../../hooks/useTeacherRepo.ts";
 
 type CourseInfoType = InfoPageProps<Course> & {
     classes?: Classe[]
     teachers?: Teacher[]
     academicYear?: string
+    hours?: ScheduleHoursBy[]
 }
 
-const CourseInfoData = ({infoData, color, classes, teachers, academicYear}: CourseInfoType) => {
-    const [studentCount, setStudentCount] = useState<GenderCounted[]>()
-    const fetch = useRawFetch()
+const CourseInfoData = ({infoData, color, classes, teachers, academicYear, hours}: CourseInfoType) => {
+    const [studentCount, setStudentCount] = useState<GenderCounted>()
     const totalClasses = useRef<number>(0)
-    const totalTeachers = useRef<number>(0)
     const {classeCount} = useClasse()
 
-    const {countAllStudent, countAllTeachers} = useCount({all: true})
+    const {useCountStudent, useCountSomeClasseStudents} = useStudentRepo()
 
     const classeIds = useMemo(() => {
         return classes && classes.length ? getUniqueness(classes, c => c?.id, id => id) : []
     }, [classes])
 
-    const courseStudents = sumInArray(studentCount as [], 'count')
-    const allTeachers = sumInArray(countAllTeachers as [], 'count')
+    const maxAge = studentCount?.genders ? Math.max(...studentCount.genders.map(group => group.ageAverage)) : 1
+    const totalWeekHour = sumInArray(hours?? [], 'totalHours')
+    const allStudents = useCountStudent()
+    const {data, isSuccess} = useCountSomeClasseStudents(classeIds, academicYear ?? '')
+
+    const studentConcerned = findPercent(studentCount?.total as number, allStudents?.count as number)
 
     useEffect(() => {
-        fetch(countSomeClasseStudents, [classeIds, academicYear])
-            .then(resp => {
-                const data = resp?.data as GenderCounted[]
-                setStudentCount(data)
-            })
+        if (isSuccess)
+            setStudentCount(data as GenderCounted)
         
         totalClasses.current = classes && classes.length ? classes.length : 0
-        totalTeachers.current = teachers && teachers.length ? teachers.length : 0
         
-    }, [academicYear, classeIds, classes, fetch, teachers]);
+    }, [classes, data, isSuccess, teachers]);
 
     return (
         <Section title={<SuperWord input={`Profile ${infoData?.course}`} />}>
             <div className='panel'>
-                <PanelStat
-                    title={courseStudents}
-                    subTitle={text.student.label}
-                    round={<Progress percent={findPercent(courseStudents, countAllStudent) as number} type='circle' size={35} strokeColor={color} />}
-                    desc='Concernés'
-                />
+                {studentCount?.genders && studentCount?.genders.length > 0 && studentCount?.genders?.map(g => (
+                    <PanelStat
+                        key={g.count}
+                        title={g.count}
+                        subTitle={`${text.student.label}${g.gender === Gender.FEMME ? 'e' : ''}s `}
+                        round={<Progress percent={findPercent(g.count, studentCount.total) as number} type='circle' size={35} strokeColor={color} />}
+                        desc={`Concerné${g.gender === Gender.FEMME ? 'e' : ''}s`}
+                    />
+                ))}
                 <PanelStat
                     title={totalClasses.current}
                     subTitle={`Classe${totalClasses.current > 1 ? 's' : ''}`}
                     round={<Progress percent={findPercent(totalClasses.current, classeCount) as number} type='circle' size={35} strokeColor={color} />}
                     desc='Concernés'
                 />
-                <PanelStat
-                    title={totalTeachers.current}
-                    subTitle={`Enseignant${totalTeachers.current > 1 ? 's' : ''}`}
-                    round={<Progress percent={findPercent(totalTeachers.current, allTeachers) as number} type='circle' size={35} strokeColor={color} />}
-                    desc='Assignés'
-                />
             </div>
-            <div className='panel-table'>
-
+            <div className='panel'>
+                <PanelStat
+                    title={studentConcerned}
+                    subTitle='%'
+                    round={<Progress percent={studentConcerned as number} type='dashboard' size={35} strokeColor={color} />}
+                    desc='Concernés'
+                />
+                <PanelStat
+                    title={studentCount?.totalAverageAge?.toFixed(1)}
+                    subTitle='ans'
+                    round={<Progress percent={findPercent(studentCount?.totalAverageAge as number, maxAge) as number} type='dashboard' size={35} strokeColor={color} />}
+                    desc='Age Moyen'
+                />
+                <PanelStat
+                    title={totalWeekHour}
+                    subTitle='Heures'
+                    //TODO find the total hour of the week for the school will replace 5*7
+                    round={<Progress percent={findPercent(totalWeekHour, 6*7) as number} type='dashboard' size={35} strokeColor={color} />}
+                    desc='Par Semaine'
+                />
             </div>
         </Section>
     )
@@ -93,14 +108,45 @@ const CourseDepartment = ({infoData, color}: CourseInfoType) => {
     )
 }
 
-const CourseTeachers = ({teachers}: CourseInfoType) => {
+const CourseTeachers = ({teachers, infoData, color}: CourseInfoType) => {
+    const {useCountAllTeachers} = useTeacherRepo()
+    const countTeachers = useCountAllTeachers()
+    const maxAge = countTeachers?.genders ? Math.max(...countTeachers.genders.map(group => group.ageAverage)) : 1
+
+    console.log("GRADE: ", )
+
     return (
-        <TeacherList
-            teachers={teachers}
-            more={false}
-            title={text.teacher.label + ' assignés'}
-            showCourse={true}
-        />
+        <Section title={text.teacher.label + 's assignés'}>
+            <div className='panel'>
+                <PanelStat
+                    title={teachers?.length}
+                    subTitle={text.teacher.label + 's'}
+                    round={<Progress percent={findPercent(teachers?.length as number, countTeachers?.total as number) as number} type='circle' size={35} strokeColor={color} />}
+                    desc={`Assignés`}
+                />
+                <PanelStat
+                    title={10}
+                    subTitle={'Note'}
+                    round={<Progress percent={(100*10)/20} type='circle' size={35} strokeColor={color} />}
+                    desc='Moyen'
+                />
+                <PanelStat
+                    title={countTeachers?.totalAverageAge?.toFixed(1)}
+                    subTitle='ans'
+                    round={<Progress percent={findPercent(countTeachers?.totalAverageAge as number, maxAge) as number} type='circle' size={35} strokeColor={color} />}
+                    desc='Age Moyen'
+                />
+            </div>
+            <div className="panel-table">
+                <PanelTable title={text.teacher.label + ' ' + infoData?.course} panelColor={color} data={[{
+                    tableRow: true,
+                    response: <TeacherList
+                        teachers={teachers}
+                        showCourse={true}
+                    />
+                }]}/>
+            </div>
+        </Section>
     )
 }
 
@@ -157,18 +203,9 @@ const CourseHoursByClasse = ({infoData}: CourseInfoType) => {
     )
 }
 
-const CourseHoursByTeacher = ({infoData, color}: CourseInfoType) => {
-    const [courseHour, setCourseHour] = useState<ScheduleHoursBy[]>([])
-    const {useGetCourseHourByTeacher} = useScheduleRepo()
+const CourseHoursByTeacher = ({hours, color}: CourseInfoType) => {
 
-    const {data, isSuccess} = useGetCourseHourByTeacher(infoData.id as number)
-
-    useEffect(() => {
-        if(isSuccess)
-            setCourseHour(data)
-    }, [data, isSuccess]);
-
-    const totalWeekHour = sumInArray(courseHour, 'totalHours')
+    const totalWeekHour = sumInArray(hours ?? [], 'totalHours')
 
     const columns: TableColumnsType<ScheduleHoursBy> = [
         {
@@ -196,7 +233,7 @@ const CourseHoursByTeacher = ({infoData, color}: CourseInfoType) => {
             <Table
                 color={color}
                 tableProps={{
-                    dataSource: courseHour,
+                    dataSource: hours,
                     columns: columns,
                     pagination: false,
                     size: 'small',
@@ -235,16 +272,27 @@ const CoursePoorStudents = ({infoData, color, academicYear}: CourseInfoType) => 
     )
 }
 
-export const CourseInfo = (infoProps: CourseInfoType) => {
+export const CourseInfo = (courseType: CourseInfoType) => {
+    const {infoData} = courseType
+    const [courseHour, setCourseHour] = useState<ScheduleHoursBy[]>([])
+    const {useGetCourseHourByTeacher} = useScheduleRepo()
+
+    const {data, isSuccess} = useGetCourseHourByTeacher(infoData?.id as number)
+
+    useEffect(() => {
+        if(isSuccess)
+            setCourseHour(data)
+    }, [data, isSuccess]);
+
     const coursesComponents: ReactNode[] = [
-        <CourseInfoData {...infoProps} />,
-        <CourseDepartment {...infoProps} />,
-        <CourseTeachers {...infoProps} />,
-        <CourseSchedule {...infoProps} />,
-        <CourseHoursByClasse {...infoProps} />,
-        <CourseHoursByTeacher {...infoProps} />,
-        <CourseBestStudents {...infoProps} />,
-        <CoursePoorStudents {...infoProps} />
+        <CourseInfoData {...courseType} hours={courseHour} />,
+        <CourseDepartment {...courseType} />,
+        <CourseTeachers {...courseType} />,
+        <CourseSchedule {...courseType} />,
+        <CourseHoursByClasse {...courseType} hours={courseHour} />,
+        <CourseHoursByTeacher {...courseType} hours={courseHour} />,
+        <CourseBestStudents {...courseType} />,
+        <CoursePoorStudents {...courseType} />
     ]
 
     return(

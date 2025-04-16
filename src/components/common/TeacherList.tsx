@@ -3,17 +3,13 @@ import {AvatarListItem} from "../ui/layout/AvatarListItem.tsx";
 import {redirectTo} from "../../context/RedirectContext.ts";
 import {text} from "../../core/utils/text_display.ts";
 import {Tag} from "antd";
-import Section from "../ui/layout/Section.tsx";
 import {Teacher} from "../../entity";
 import {ReactNode} from "react";
 
 export const TeacherList = (
-    {seeMore, teachers, showBtn = 'Voir', title, more = true, showCourse = false}: {
+    {teachers, showBtn = 'Voir', showCourse = false}: {
         showBtn?: ReactNode
         teachers?: Teacher[]
-        seeMore?: () => void
-        title?: ReactNode
-        more?: boolean
         showCourse?: boolean
     }
 ) => {
@@ -30,23 +26,21 @@ export const TeacherList = (
         </div>
 
     return (
-        <Section title={title} more={more} seeMore={seeMore}>
-            <LoadMoreList
-                listProps={{
-                    dataSource: teachers,
-                    rowKey: 'id',
-                    renderItem: (teacher) => (<AvatarListItem
-                        item={teacher?.personalInfo}
-                        showBtnText={showBtn}
-                        isLoading={teachers === null}
-                        onBtnClick={() => redirectTo(text.teacher.group.view.href + teacher?.id)}
-                        description={descriptions(teacher)}
-                    />)
-                }}
-                isLoading={false}
-                size={10}
-                allItems={teachers?.length || 0}
-            />
-        </Section>
+        <LoadMoreList
+            listProps={{
+                dataSource: teachers,
+                rowKey: 'id',
+                renderItem: (teacher) => (<AvatarListItem
+                    item={teacher?.personalInfo}
+                    showBtnText={showBtn}
+                    isLoading={teachers === null}
+                    onBtnClick={() => redirectTo(text.teacher.group.view.href + teacher?.id)}
+                    description={descriptions(teacher)}
+                />)
+            }}
+            isLoading={false}
+            size={10}
+            allItems={teachers?.length || 0}
+        />
     )
 }

@@ -228,8 +228,10 @@ const DepartmentInfo = ({infoData, color}: TeacherInfo) => {
 
     return(
         <>
-            {departments?.map((department: Department, index) => (
-                <DepartmentDesc department={department} key={index} color={color} />
+            {departments?.map((department: Department) => (
+                <div key={department.id}>
+                    <DepartmentDesc department={department} color={color} />
+                </div>
             ))}
         </>
     )

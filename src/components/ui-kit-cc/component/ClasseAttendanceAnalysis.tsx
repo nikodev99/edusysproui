@@ -30,7 +30,7 @@ import {Avatar} from "../../ui/layout/Avatar.tsx";
 import {ClasseAttendanceTable} from "./ClasseAttendanceTable.tsx";
 import {StickyTabs} from "../../ui/layout/StickyTabs.tsx";
 
-type AnalysisProps = InfoPageProps<Classe> & {studentCount?: GenderCounted[] | null}
+type AnalysisProps = InfoPageProps<Classe> & {studentCount: GenderCounted | null}
 
 const ClasseAttendanceAnalysis = ({infoData, academicYear, studentCount, color}: AnalysisProps) => {
 
@@ -40,13 +40,13 @@ const ClasseAttendanceAnalysis = ({infoData, academicYear, studentCount, color}:
     const {classeAttendances} = useClasseAttendance(infoData?.id, academicYear as string)
     const {schoolAttendances} = useSchoolAttendance(text.schoolID, academicYear as string)
     
-    const {data, isSuccess} = useFetch<AttendanceRecentCount, unknown>(['attendance-stat'], getClasseRecentAttendanceStatus, [infoData?.id, academicYear as string])
+    const {data, isSuccess} = useFetch<AttendanceRecentCount[], unknown>(['attendance-stat'], getClasseRecentAttendanceStatus, [infoData?.id, academicYear as string])
     const fetchWorstStudents = useRawFetch()
     const fetchGoodStudents = useRawFetch()
 
     const allClasse = classeAttendances?.reduce((sum, record) => sum + record.count, 0)
     const allSchool = schoolAttendances?.reduce((sum, record) => sum + record.count, 0)
-    const allStudents = studentCount?.reduce((sum, record) => sum + record.count, 0)
+    const allStudents = studentCount?.total
 
     const totalDays = allStudents && allClasse ? Math.round(allClasse/allStudents) : 0
 

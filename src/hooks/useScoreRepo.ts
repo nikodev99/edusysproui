@@ -14,28 +14,19 @@ import {useEffect, useState} from "react";
 
 export const useScoreRepo = () => {
     const useGetAllAssignmentMarks = (assignmentId: string, size: number) => useFetch(
-        ['assignment-marks', assignmentId], getAllAssignmentMarks, [assignmentId, size], {
-            queryKey: ['assignment-marks', assignmentId],
-            enabled: !!assignmentId && !!size
-        }
+        ['assignment-marks', assignmentId], getAllAssignmentMarks, [assignmentId, size], !!assignmentId && !!size
     )
     
     const useGetAllStudentScores = (pageable: Pageable, studentId: string, academicYearId: string) => useFetch(
         ['marks-list', studentId],
         getAllStudentScores,
-        [pageable.page, pageable.size, studentId, academicYearId], {
-            queryKey: ['marks-list', studentId],
-            enabled: !!studentId && !!academicYearId
-        }
+        [pageable.page, pageable.size, studentId, academicYearId], !!studentId && !!academicYearId
     )
     
     const useGetAllStudentSubjectScores = (studentId: string, academicYearId: string, subjectId: number) => useFetch(
         ['subject-mark-list', subjectId, studentId],
         getAllStudentScoresBySubject,
-        [studentId, academicYearId, subjectId], {
-            queryKey: ['subject-mark-list', subjectId, studentId],
-            enabled: !!studentId && !!academicYearId && !!subjectId
-        }
+        [studentId, academicYearId, subjectId], !!studentId && !!academicYearId && !!subjectId
     )
     
     const useGetClasseBestStudents = (classId: number, academicYear: string): Score[] => {
@@ -131,28 +122,22 @@ export const useScoreRepo = () => {
     const useGetAllTeacherMarks = (teacherId: string) => useFetch(
         ['teacher-marks', teacherId],
         getAllTeacherMarks,
-        [teacherId], {
-            queryKey: ['teacher-marks', teacherId],
-            enabled: !!teacherId,
-        }
+        [teacherId],
+        !!teacherId
     )
 
     const useGetBestTeacherSubjectStudents = (teacherPersonalInfoId: number, subjectId: number) => useFetch(
         ['teacher-student-marks', teacherPersonalInfoId],
         getBestStudentBySubjectScore,
-        [teacherPersonalInfoId, subjectId], {
-            queryKey: ['teacher-student-marks', teacherPersonalInfoId],
-            enabled: !!teacherPersonalInfoId && !!subjectId
-        }
+        [teacherPersonalInfoId, subjectId],
+        !!teacherPersonalInfoId && !!subjectId
     )
 
     const useGetBestTeacherStudents = (teacherPersonalInfoId: number) => useFetch(
         ['teacher-students', teacherPersonalInfoId],
         getBestStudentByScore,
-        [teacherPersonalInfoId], {
-            queryKey: ['teacher-students', teacherPersonalInfoId],
-            enabled: !!teacherPersonalInfoId
-        }
+        [teacherPersonalInfoId],
+        !!teacherPersonalInfoId
     )
     
     return{

@@ -324,7 +324,15 @@ export type RedirectFunction = (link: string) => void;
 export type Moment = Date | number[] | string
 export type Color = string
 export type Counted = Record<string, number>
-export type GenderCounted = {gender: Gender, count: number, ageAverage: number}
+export type GenderCounted = {
+    total: number,
+    totalAverageAge: number
+    genders: {
+        gender: Gender,
+        count: number,
+        ageAverage: number
+    }[]
+}
 export type CountType = {classe?: string, count?: number};
 export type AttendanceCount = {status: AttendanceStatus, count: number}
 export type AttendanceSummary = {individual: Individual, statusCount: AttendanceCount[]}

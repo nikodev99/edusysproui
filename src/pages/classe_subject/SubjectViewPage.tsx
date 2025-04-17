@@ -116,7 +116,14 @@ const SubjectViewPage = () => {
                             academicYear={usedAcademicYearId as string}
                         />
                     },
-                    {label: 'Progarmme', children: <CourseSchedule />},
+                    {
+                        label: 'Progarmme',
+                        children: <CourseSchedule
+                            infoData={course as Course}
+                            academicYear={usedAcademicYearId as string}
+                            dataKey='course-schedule'
+                        />
+                    },
                     {label: 'Evaluation', children: <CourseExam />}
                 ]}
                 exists={course !== null}

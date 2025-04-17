@@ -174,6 +174,7 @@ const CourseSchedule = ({infoData, color}: CourseInfoType) => {
                 height={380}
                 color={color}
                 isLoading={isLoading}
+                eventTitle={e => `${e?.classe?.name} - ${e?.course?.course}`}
             />
         </Section>
     )

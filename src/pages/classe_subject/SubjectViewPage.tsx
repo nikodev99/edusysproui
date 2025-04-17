@@ -1,8 +1,6 @@
 import {useParams} from "react-router-dom";
 import {ReactNode, useEffect, useMemo, useState} from "react";
 import {Classe, Course, Schedule, Teacher} from "../../entity";
-import {useFetch, useRawFetch} from "../../hooks/useFetch.ts";
-import {getCourseById} from "../../data/repository/courseRepository.ts";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {cutStatement, getUniqueness} from "../../core/utils/utils.ts";
 import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
@@ -16,8 +14,9 @@ import {LuFileArchive} from "react-icons/lu";
 import {ViewRoot} from "../../components/custom/ViewRoot.tsx";
 import {CourseExam, CourseInfo, CourseSchedule} from "../../components/ui-kit-cc";
 import {Color} from "../../core/utils/interfaces.ts";
-import {getAllCourseSchedule} from "../../data/repository/scheduleRepository.tsx";
 import {useAcademicYear} from "../../hooks/useAcademicYear.ts";
+import {useScheduleRepo} from "../../hooks/useScheduleRepo.ts";
+import {useCourseRepo} from "../../hooks/useCourseRepo.ts";
 
 const SubjectViewPage = () => {
 
@@ -29,8 +28,11 @@ const SubjectViewPage = () => {
     const [schedules, setSchedules] = useState<Schedule[]>([])
     const [color, setColor] = useState<Color>('')
 
-    const fetch = useRawFetch<Course>()
-    const {data, isSuccess} = useFetch<Schedule[], unknown>(['course-schedule-list'], getAllCourseSchedule, [course?.id, false], course !== null)
+    const {useGetAllCourseSchedule}= useScheduleRepo()
+    const {useGetCourse} = useCourseRepo()
+
+    const {data, isSuccess} = useGetAllCourseSchedule(course?.id as number, false)
+    const {data: courseData, isSuccess: isCourseFetched} = useGetCourse(Number.parseInt(id as string))
 
     useDocumentTitle({
         title: cutStatement(course?.course as string, 10, course?.abbr) as string,
@@ -71,17 +73,13 @@ const SubjectViewPage = () => {
     }, [schedules, uniqueClasses])
 
     useEffect(() => {
-        fetch(getCourseById, [id])
-            .then(response => {
-                if (response.isSuccess) {
-                    setCourse(response.data as Course)
-                }
-            })
+        if (isCourseFetched)
+            setCourse(courseData as Course)
         
-        if (isSuccess) {
+        if (isSuccess)
             setSchedules(data)
-        }
-    }, [data, fetch, id, isSuccess])
+
+    }, [courseData, data, isCourseFetched, isSuccess])
 
     const manageItems: ItemType[] = [
         {key: 0, label: 'Archive', icon: <LuFileArchive />, danger: true}

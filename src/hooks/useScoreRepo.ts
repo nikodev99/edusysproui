@@ -119,7 +119,7 @@ export const useScoreRepo = () => {
         return scores
     }
 
-    const useGetAllTeacherMarks = (teacherId: string) => useFetch(
+    const useGetAllTeacherMarks = (teacherId: bigint | bigint[]) => useFetch(
         ['teacher-marks', teacherId],
         getAllTeacherMarks,
         [teacherId],

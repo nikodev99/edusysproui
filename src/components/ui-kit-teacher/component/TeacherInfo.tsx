@@ -3,7 +3,7 @@ import Block from "../../view/Block.tsx";
 import PanelSection from "../../ui/layout/PanelSection.tsx";
 import PanelTable from "../../ui/layout/PanelTable.tsx";
 import {CalendarEvent, CountType, InfoPageProps, ReprimandData} from "../../../core/utils/interfaces.ts";
-import {Classe, Course, Department, Schedule, Score, Teacher} from "../../../entity";
+import {Classe, Course, Department, Schedule, Teacher} from "../../../entity";
 import {
     firstLetter,
     getAge,
@@ -17,13 +17,11 @@ import {
 import {useEffect, useRef, useState} from "react";
 import {Gender} from "../../../entity/enums/gender.tsx";
 import {Flag} from "../../ui/layout/Flag.tsx";
-import {Flex, Skeleton, TableColumnsType, Tag, TimelineProps} from "antd";
-import {useFetch, useRawFetch} from "../../../hooks/useFetch.ts";
+import {Flex, TableColumnsType, Tag, TimelineProps} from "antd";
+import {useRawFetch} from "../../../hooks/useFetch.ts";
 import {getNumberOfStudentTaughtByClasse, getTeacherScheduleByDay} from "../../../data/repository/teacherRepository.ts";
 import {BigCalendar} from "../../graph/BigCalendar.tsx";
 import {getPrimaryDepartment} from "../../../data/repository/departmentRepository.ts";
-import {BarChart} from "../../graph/BarChart.tsx";
-import {getAllTeacherMarks} from "../../../data/repository/scoreRepository.ts";
 import {Timeline} from "../../graph/Timeline.tsx";
 import {AiFillClockCircle} from "react-icons/ai";
 import {getSomeStudentReprimandedByTeacher} from "../../../data/repository/reprimandRepository.ts";
@@ -37,6 +35,8 @@ import {useGlobalStore} from "../../../core/global/store.ts";
 import {DatedListItem} from "../../ui/layout/DatedListItem.tsx";
 import {DepartmentDesc} from "../../common/DepartmentDesc.tsx";
 import Datetime from "../../../core/datetime.ts";
+import {useScoreRepo} from "../../../hooks/useScoreRepo.ts";
+import {MarksHistogram} from "../../common/MarksHistogram.tsx";
 
 type TeacherInfo = InfoPageProps<Teacher>
 
@@ -163,44 +163,15 @@ const CalendarSection = ({infoData, seeMore}: TeacherInfo) => {
 }
 
 const MarkMean = ({infoData, color}: TeacherInfo) => {
-    const [marks, setMarks] = useState<number[]>([])
-    const {data: fetchedMarks, isLoading} = useFetch(['teacher-marks'], getAllTeacherMarks, [infoData?.personalInfo?.id])
-
-    useEffect(() => {
-        if (fetchedMarks) {
-            const newMarks = fetchedMarks?.map((s: Score) => s.obtainedMark)
-            setMarks(newMarks)
-        }
-    }, [fetchedMarks]);
-
-    if (marks.length === 0) {
-        setMarks([10, 6, 8, 16, 8,5,3,1, 0,9, 19, 13, 16, 15, 20,9, 20,10, 10, 8, 12, 13, 12, 10, 7, 10, 11, 14, 15,12, 17])
-    }
-
-    const filter = (min: number, max: number) => {
-        const count = marks.filter((mark, index) =>
-            index === 0 ? mark >= min && mark <= max : mark > min && mark <= max
-        ).length;
-        return Math.round(((count / marks.length) * 100))
-    }
-
-    const histogramData = [
-        { range: "0-5", pourcentage: filter(0, 5) },
-        { range: "6-10", pourcentage: filter(5, 10) },
-        { range: "11-15", pourcentage: filter(10, 15) },
-        { range: "16-20", pourcentage: filter(15, 20) },
-    ];
+    const {useGetAllTeacherMarks} = useScoreRepo()
+    const {data: fetchedMarks, isLoading} = useGetAllTeacherMarks(infoData?.personalInfo?.id)
 
     return(
         <Section title='Moyenne des notes'>
-            {isLoading && <Skeleton active={isLoading} />}
-            <BarChart
-                data={histogramData}
-                dataKey={['pourcentage']}
-                legend='range'
-                color={color}
-                minHeight={300}
-                isPercent
+            <MarksHistogram
+                scores={fetchedMarks}
+                isLoading={isLoading}
+                color={color as string}
             />
         </Section>
     )

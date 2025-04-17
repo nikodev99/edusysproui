@@ -73,8 +73,9 @@ export const getCoursePoorStudents = (courseId: number, academicYear: string) =>
     })
 }
 
-export const getAllTeacherMarks = (teacherId: string) => {
-    return apiClient.get(`/score/all_teacher_marks/${teacherId}`)
+export const getAllTeacherMarks = (teacherId: bigint | bigint[]) => {
+    const requestParam: string = Array.isArray(teacherId) ? teacherId?.join(',') : `${teacherId}`
+    return apiClient.get(`/score/all_teacher_marks/${requestParam}`)
 }
 
 export const getBestStudentBySubjectScore = (personalInfoId: number, subjectId: number) => {

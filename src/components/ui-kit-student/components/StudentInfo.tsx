@@ -359,14 +359,14 @@ const CourseSchedule = ({infoData}: StudentInfoProps) => {
     const schedules: Schedule[] = classe.schedule !== null ? classe.schedule : []
 
     return(
-        <ScheduleCalendar
-            isSection={true}
-            views={['day']}
-            eventSchedule={schedules}
-            sectionTitle={`Emploi du temps: ${Datetime.now().fullDay()}`}
-            height={300}
-            hasTeacher
-        />
+        <Section title={`Emploi du temps: ${Datetime.now().fullDay()}`}>
+            <ScheduleCalendar
+                views={['day']}
+                eventSchedule={schedules}
+                height={300}
+                hasTeacher
+            />
+        </Section>
     )
 }
 

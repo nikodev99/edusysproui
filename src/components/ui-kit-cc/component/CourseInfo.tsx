@@ -1,5 +1,5 @@
 import {GenderCounted, InfoPageProps, ScheduleHoursBy} from "../../../core/utils/interfaces.ts";
-import {Classe, Course, Department, Schedule, Teacher} from "../../../entity";
+import {Classe, Course, Department, Schedule, Score, Teacher} from "../../../entity";
 import Block from "../../view/Block.tsx";
 import {ReactNode, useEffect, useMemo, useRef, useState} from "react";
 import {DepartmentDesc} from "../../common/DepartmentDesc.tsx";
@@ -23,15 +23,18 @@ import {useStudentRepo} from "../../../hooks/useStudentRepo.ts";
 import {Gender} from "../../../entity/enums/gender.tsx";
 import PanelTable from "../../ui/layout/PanelTable.tsx";
 import {useTeacherRepo} from "../../../hooks/useTeacherRepo.ts";
+import {MarksHistogram} from "../../common/MarksHistogram.tsx";
 
 type CourseInfoType = InfoPageProps<Course> & {
     classes?: Classe[]
     teachers?: Teacher[]
     academicYear?: string
     hours?: ScheduleHoursBy[]
+    marks?: {scores: Score[], isLoading: boolean}
+    meanMark?: number
 }
 
-const CourseInfoData = ({infoData, color, classes, teachers, academicYear, hours}: CourseInfoType) => {
+const CourseInfoData = ({infoData, color, classes, academicYear, hours}: CourseInfoType) => {
     const [studentCount, setStudentCount] = useState<GenderCounted>()
     const totalClasses = useRef<number>(0)
     const {classeCount} = useClasse()
@@ -55,7 +58,7 @@ const CourseInfoData = ({infoData, color, classes, teachers, academicYear, hours
         
         totalClasses.current = classes && classes.length ? classes.length : 0
         
-    }, [classes, data, isSuccess, teachers]);
+    }, [classes, data, isSuccess]);
 
     return (
         <Section title={<SuperWord input={`Profile ${infoData?.course}`} />}>
@@ -108,12 +111,12 @@ const CourseDepartment = ({infoData, color}: CourseInfoType) => {
     )
 }
 
-const CourseTeachers = ({teachers, infoData, color}: CourseInfoType) => {
+const CourseTeachers = ({teachers, infoData, color, meanMark}: CourseInfoType) => {
     const {useCountAllTeachers} = useTeacherRepo()
     const countTeachers = useCountAllTeachers()
     const maxAge = countTeachers?.genders ? Math.max(...countTeachers.genders.map(group => group.ageAverage)) : 1
 
-    console.log("GRADE: ", )
+    console.log("Teachers: ", teachers)
 
     return (
         <Section title={text.teacher.label + 's assignés'}>
@@ -125,9 +128,9 @@ const CourseTeachers = ({teachers, infoData, color}: CourseInfoType) => {
                     desc={`Assignés`}
                 />
                 <PanelStat
-                    title={10}
+                    title={meanMark?.toFixed(1)}
                     subTitle={'Note'}
-                    round={<Progress percent={(100*10)/20} type='circle' size={35} strokeColor={color} />}
+                    round={<Progress percent={findPercent(meanMark as number, 20) as number} type='circle' size={35} strokeColor={color} />}
                     desc='Moyen'
                 />
                 <PanelStat
@@ -272,27 +275,51 @@ const CoursePoorStudents = ({infoData, color, academicYear}: CourseInfoType) => 
     )
 }
 
+const CourseMarkHistogram = ({marks, color}: CourseInfoType) => {
+    console.log("Marks: ", marks)
+    return(
+        <Section title='Distribution des Notes'>
+            <MarksHistogram
+                scores={marks?.scores as Score[]}
+                isLoading={marks?.isLoading as boolean}
+                color={color as string}
+            />
+        </Section>
+    )
+}
+
 export const CourseInfo = (courseType: CourseInfoType) => {
-    const {infoData} = courseType
+    const {infoData, teachers} = courseType
     const [courseHour, setCourseHour] = useState<ScheduleHoursBy[]>([])
+    const [scores, setScores] = useState<Score[]>([])
     const {useGetCourseHourByTeacher} = useScheduleRepo()
+    const {useGetAllTeacherMarks} = useScoreRepo()
+    
+    const teacherIds = teachers?.length ? teachers.map(t => t.personalInfo.id) : []
 
     const {data, isSuccess} = useGetCourseHourByTeacher(infoData?.id as number)
+    const {data: fetchedScores, isLoading, isSuccess: isFetched} = useGetAllTeacherMarks(teacherIds)
 
     useEffect(() => {
+        if (isFetched)
+            setScores(fetchedScores)
+        
         if(isSuccess)
             setCourseHour(data)
-    }, [data, isSuccess]);
+    }, [data, fetchedScores, isFetched, isSuccess]);
+
+    const meanMark = scores?.length ? (sumInArray(scores, 'obtainedMark')/scores?.length) : 0
 
     const coursesComponents: ReactNode[] = [
         <CourseInfoData {...courseType} hours={courseHour} />,
         <CourseDepartment {...courseType} />,
-        <CourseTeachers {...courseType} />,
+        <CourseTeachers {...courseType} meanMark={meanMark} />,
         <CourseSchedule {...courseType} />,
         <CourseHoursByClasse {...courseType} hours={courseHour} />,
         <CourseHoursByTeacher {...courseType} hours={courseHour} />,
         <CourseBestStudents {...courseType} />,
-        <CoursePoorStudents {...courseType} />
+        <CoursePoorStudents {...courseType} />,
+        <CourseMarkHistogram {...courseType} marks={{scores: scores, isLoading: isLoading}} />
     ]
 
     return(

@@ -1,66 +1,54 @@
 import {
     getAllAssignmentMarks,
     getAllStudentScores,
-    getAllStudentScoresBySubject, getAllTeacherMarks, getBestStudentByScore, getBestStudentBySubjectScore,
+    getAllStudentScoresBySubject,
+    getAllTeacherMarks,
+    getBestTeacherStudentByScore,
+    getBestTeacherStudentBySubject,
     getClasseBestStudents,
     getClasseBestStudentsByCourse,
-    getClassePoorStudents, getCourseBestStudentsByCourse,
+    getClassePoorStudents,
+    getCourseBestStudentsByCourse,
     getCoursePoorStudents
 } from "../data/repository/scoreRepository.ts";
 import {useFetch, useRawFetch} from "./useFetch.ts";
-import {IDS, Pageable} from "../core/utils/interfaces.ts";
+import {Pageable} from "../core/utils/interfaces.ts";
 import {Score} from "../entity";
 import {useEffect, useState} from "react";
+import {AxiosResponse} from "axios";
 
 export const useScoreRepo = () => {
-    const useGetAllAssignmentMarks = (assignmentId: string, size: number) => useFetch(
+    const useGetAllAssignmentMarks = (assignmentId: bigint, size: number) => useFetch(
         ['assignment-marks', assignmentId], getAllAssignmentMarks, [assignmentId, size], !!assignmentId && !!size
     )
     
-    const useGetAllStudentScores = (pageable: Pageable, studentId: string, academicYearId: string) => useFetch(
-        ['marks-list', studentId],
-        getAllStudentScores,
-        [pageable.page, pageable.size, studentId, academicYearId], !!studentId && !!academicYearId
-    )
+    const useGetAllStudentScores = (studentId: string, academicYearId: string, pageable?: Pageable, subjectId?: number) => {
+        console.log('PARAMS: ', pageable ? [pageable.page, pageable.size, studentId, academicYearId] : [studentId, academicYearId, subjectId],)
+
+        return useFetch(
+            subjectId ? ['subject-mark-list', subjectId, studentId] : ['marks-list', studentId],
+            subjectId ? getAllStudentScoresBySubject : getAllStudentScores,
+            pageable ? [pageable.page, pageable.size, studentId, academicYearId] : [studentId, academicYearId, subjectId],
+            subjectId ? !!studentId && !!academicYearId && !!subjectId : !!studentId && !!academicYearId
+        )
+    }
     
-    const useGetAllStudentSubjectScores = (studentId: string, academicYearId: string, subjectId: number) => useFetch(
-        ['subject-mark-list', subjectId, studentId],
-        getAllStudentScoresBySubject,
-        [studentId, academicYearId, subjectId], !!studentId && !!academicYearId && !!subjectId
-    )
-    
-    const useGetClasseBestStudents = (classId: number, academicYear: string): Score[] => {
+    const useGetClasseBestStudents = (classId: number, academicYear: string, courseId?: number): Score[] => {
         const [scores, setScores] = useState<Score[]>([])
         const fetch = useRawFetch()
-
+        const func = courseId ? getClasseBestStudentsByCourse : getClasseBestStudents
+        console.log('Function: ', func)
         useEffect(() => {
             if (classId && academicYear) {
-                fetch(getClasseBestStudents, [{classId: classId}, academicYear])
+                fetch(func as (...args: unknown[]) => Promise<AxiosResponse<Score[], unknown>>, [{classId: classId, courseId: courseId}, academicYear])
                     .then(resp => {
                         if (resp.isSuccess) {
                             setScores(resp.data as Score[])
                         }
                     })
             }
-        }, [academicYear, classId, fetch]);
-        
-        return scores
-    }
-
-    const useGetClasseBestSubjectStudent = ({classId, courseId}: IDS, academicYear: string): Score[] => {
-        const [scores, setScores] = useState<Score[]>([])
-        const fetch = useRawFetch()
-
-        useEffect(() => {
-            if (classId && academicYear && courseId) {
-                fetch(getClasseBestStudentsByCourse, [classId, courseId, academicYear])
-                    .then(resp => {
-                        if (resp.isSuccess) {
-                            setScores(resp.data as Score[])
-                        }
-                    })
-            }
-        }, [academicYear, classId, courseId, fetch]);
+        }, [academicYear, classId, courseId, fetch, func]);
+        console.log('Scores: ', scores)
         
         return scores
     }
@@ -126,31 +114,21 @@ export const useScoreRepo = () => {
         !!teacherId
     )
 
-    const useGetBestTeacherSubjectStudents = (teacherPersonalInfoId: number, subjectId: number) => useFetch(
-        ['teacher-student-marks', teacherPersonalInfoId],
-        getBestStudentBySubjectScore,
+    const useGetBestTeacherStudents = (teacherPersonalInfoId: bigint, subjectId?: number) => useFetch(
+        subjectId ? ['teacher-student-marks', teacherPersonalInfoId] : ['teacher-students', teacherPersonalInfoId],
+        subjectId ? getBestTeacherStudentBySubject : getBestTeacherStudentByScore,
         [teacherPersonalInfoId, subjectId],
-        !!teacherPersonalInfoId && !!subjectId
-    )
-
-    const useGetBestTeacherStudents = (teacherPersonalInfoId: number) => useFetch(
-        ['teacher-students', teacherPersonalInfoId],
-        getBestStudentByScore,
-        [teacherPersonalInfoId],
-        !!teacherPersonalInfoId
+        subjectId ? !!teacherPersonalInfoId && !!subjectId : !!teacherPersonalInfoId
     )
     
     return{
         useGetAllAssignmentMarks,
         useGetAllStudentScores,
-        useGetAllStudentSubjectScores,
         useGetClasseBestStudents,
         useGetClassePoorStudents,
-        useGetClasseBestSubjectStudent,
         useGetCourseBestStudents,
         useGetCoursePoorStudents,
         useGetAllTeacherMarks,
-        useGetBestTeacherSubjectStudents,
         useGetBestTeacherStudents
     }
 }

@@ -63,9 +63,9 @@ const CourseInfoData = ({infoData, color, classes, academicYear, hours}: CourseI
     return (
         <Section title={<SuperWord input={`Profile ${infoData?.course}`} />}>
             <div className='panel'>
-                {studentCount?.genders && studentCount?.genders.length > 0 && studentCount?.genders?.map(g => (
+                {studentCount?.genders && studentCount?.genders.length > 0 && studentCount?.genders?.map((g, i) => (
                     <PanelStat
-                        key={g.count}
+                        key={i}
                         title={g.count}
                         subTitle={`${text.student.label}${g.gender === Gender.FEMME ? 'e' : ''}s `}
                         round={<Progress percent={findPercent(g.count, studentCount.total) as number} type='circle' size={35} strokeColor={color} />}
@@ -81,8 +81,8 @@ const CourseInfoData = ({infoData, color, classes, academicYear, hours}: CourseI
             </div>
             <div className='panel'>
                 <PanelStat
-                    title={studentConcerned}
-                    subTitle='%'
+                    title={studentConcerned + '%'}
+                    subTitle={text.student.label + 's'}
                     round={<Progress percent={studentConcerned as number} type='dashboard' size={35} strokeColor={color} />}
                     desc='Concernés'
                 />
@@ -153,7 +153,7 @@ const CourseTeachers = ({teachers, infoData, color, meanMark}: CourseInfoType) =
     )
 }
 
-const CourseSchedule = ({infoData, color}: CourseInfoType) => {
+const CourseSchedule = ({infoData, color, seeMore}: CourseInfoType) => {
     const [courseSchedules, setCourseSchedules] = useState<Schedule[]>([])
     const {useGetAllCourseSchedule} = useScheduleRepo()
 
@@ -164,9 +164,14 @@ const CourseSchedule = ({infoData, color}: CourseInfoType) => {
             setCourseSchedules(data)
         }
     }, [data, isSuccess]);
+
+    const handleSeeMore = () => {
+        if (seeMore)
+            seeMore('1')
+    }
     
     return (
-        <Section title={`Emploie du temps du ${Datetime.now().format('dddd DD MMMM')}`} more={true} seeMore={() => alert('You clicked')}>
+        <Section title={`Emploie du temps du ${Datetime.now().format('dddd DD MMMM')}`} more={true} seeMore={handleSeeMore}>
             <ScheduleCalendar
                 eventSchedule={courseSchedules}
                 hasTeacher={true}

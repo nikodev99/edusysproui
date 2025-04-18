@@ -40,6 +40,8 @@ interface AssignmentDescProps {
     barLayout?: 'horizontal' | 'vertical'
     setRefetch?: (refetch: boolean) => void
     refetch?: boolean
+    showBest?: boolean
+    onlyMark?: string
 }
 
 const getNextAssignment = (assignments: Assignment[] | null): Assignment | null => {
@@ -62,7 +64,8 @@ const getLastPassedAssignment = (assignments: Assignment[] | null): Assignment |
 }
 
 export const AssignmentDesc = (
-    {assignments, listTitle, isLoading, studentAllScore, setRefetch, refetch, scoreLoading, hasLegend = true, showBarChart = false, barLayout = 'vertical'}: AssignmentDescProps
+    {assignments, listTitle, isLoading, studentAllScore, setRefetch, refetch, scoreLoading, hasLegend = true, showBarChart = false,
+    showBest = true, barLayout = 'vertical', onlyMark}: AssignmentDescProps
 ) => {
 
     const [selectedAssignment, setSelectedAssignment] = useState<Assignment | null>(null)
@@ -104,6 +107,7 @@ export const AssignmentDesc = (
         return [
             ...(show ? [{key: 1, label: 'Titre', children: a?.examName, span: 3}] : []),
             ...(a?.semester?.semester ? [{key: 2, label: 'Semestre', children: a?.semester?.semester?.semesterName, span: 3}] : []),
+            ...(a?.classe ? [{key: 12, label: 'Classe', children: a?.classe?.name, span: 3}] : []),
             ...(a?.exam?.examType ? [{key: 3, label: 'Examen', children: a?.exam?.examType?.name, span: 3}] : []),
             ...(a && plus ? [{key: 5, label: undefined, children: <IconText color='#8f96a3' icon={<LuCalendarDays />} text={Datetime.of(a?.examDate as number[]).fDate('D MMM YYYY') as string} key="1" />}]: []),
             ...(a && plus ? [{key: 6, label: undefined, children: <IconText color='#8f96a3' icon={<LuClock />} text={setTime(a?.startTime as []) as string} key="2" />}]: []),
@@ -118,12 +122,12 @@ export const AssignmentDesc = (
             ] : []),
 
             ...(
-                a?.passed ? [] : dateCompare(a?.examDate as Date) ? [] : [{key: 11, children: <Space.Compact block>
+                a?.passed ? [] : dateCompare(a?.examDate as Date) ? [] : showBest ? [{key: 11, children: <Space.Compact block>
                         <ModalConfirmButton handleFunc={handleRemoveAssignment} funcParam={a?.id} btnTxt={<LuX />} />
                         <Tooltip title="Changer de date"> {/* TODO Gérer les boutons supprimer et changer de date */}
                             <Button onClick={setUpdater} icon={<LuRefreshCcw />} />
                         </Tooltip>
-                </Space.Compact>}]
+                </Space.Compact>}]: []
             )
         ]
     }
@@ -167,8 +171,8 @@ export const AssignmentDesc = (
 
     return(
         <>
-            {wasDeleted?.status && <FormSuccess message='Evaluation Supprimer avec succès' />}
-            <Responsive gutter={[16, 16]} style={{padding: '0 20px 20px 20px'}}>
+        {wasDeleted?.status && <FormSuccess message='Evaluation Supprimer avec succès' />}
+        <Responsive gutter={[16, 16]} style={{padding: '0 20px 20px 20px'}}>
             <Grid xs={24} md={24} lg={24}>
                 {!isLoading
                     ? assignments && assignments?.length > 0
@@ -186,7 +190,8 @@ export const AssignmentDesc = (
                     : <CardSkeleton />
                 }
             </Grid>
-            <Grid xs={24} md={12} lg={12}>
+
+            {showBest  && <Grid xs={24} md={12} lg={12}>
                 <Responsive gutter={[16, 16]}>
                     <Grid xs={24} md={24} lg={showBarChart ? 12 : 24}>
                         {!isLoading
@@ -220,7 +225,7 @@ export const AssignmentDesc = (
                             <CardSkeleton title='Status des matières' />
                         </Grid>)
                     }
-                    {assignments && assignments?.length > 0 && studentAllScore && <Grid xs={24} md={24} lg={24}>
+                    {studentAllScore && <Grid xs={24} md={24} lg={24}>
                         <Card size='small' title={listTitle} bordered={false}>
                             {<ScoreItem
                                 scores={studentAllScore as Score[]}
@@ -229,14 +234,16 @@ export const AssignmentDesc = (
                                 allScores={5}
                                 infinite={false}
                                 height={300}
+                                isTable={true}
                             />}
                         </Card>
                     </Grid>}
                 </Responsive>
-            </Grid>
-            <Grid xs={24} md={12} lg={12}>
+            </Grid>}
+
+            <Grid xs={24} md={!showBest ? 24 : 12} lg={!showBest ? 24 : 12}>
                 <Responsive gutter={[16, 16]}>
-                    {assignment.current && <Grid xs={24} md={24} lg={24}>
+                    {assignment.current && <Grid xs={24} md={!showBest ? 12 : 24} lg={!showBest ? 12 : 24}>
                         <Card>
                             <Descriptions
                                 title={`Prochain devoirs ${timeDiff}`}
@@ -244,26 +251,26 @@ export const AssignmentDesc = (
                             />
                         </Card>
                     </Grid>}
-                    {passedAssignment.current && <Grid xs={24} md={24} lg={24}>
+                    {passedAssignment.current && <Grid xs={24} md={!showBest ? 12 : 24} lg={!showBest ? 12 : 24}>
                         <Card>
                             <Descriptions
                                 title={`Dernier devoir terminé`}
                                 items={assignmentDesc(passedAssignment.current as Assignment, true)}
                             />
-                            <AssignmentScores assignmentId={passedAssignment.current?.id} />
+                            {<AssignmentScores assignmentId={passedAssignment.current?.id} markId={onlyMark} />}
                         </Card>
                     </Grid>}
                 </Responsive>
             </Grid>
         </Responsive>
-            {/* TODO Adding the link to assignment view on the title */}
-            <Modal title={selectedAssignment?.examName} open={isModalOpen} footer={null} onCancel={onModalCancel} destroyOnClose>
-                <Card>
-                    <Descriptions items={assignmentDesc(selectedAssignment as Assignment, false, true)} />
-                    {selectedAssignment?.passed ? <AssignmentScores assignmentId={selectedAssignment?.id} size={scoreSize} /> : undefined}
-                </Card>
-            </Modal>
-            <UpdateAssignmentDates assignment={selectedAssignment} open={openUpdater} onCancel={setUpdater} resp={setWasUpdated} />
+        {/* TODO Adding the link to assignment view on the title */}
+        <Modal title={selectedAssignment?.examName} open={isModalOpen} footer={null} onCancel={onModalCancel} destroyOnClose>
+            <Card>
+                <Descriptions items={assignmentDesc(selectedAssignment as Assignment, false, true)} />
+                {selectedAssignment?.passed && <AssignmentScores assignmentId={selectedAssignment?.id} size={scoreSize} markId={onlyMark} />}
+            </Card>
+        </Modal>
+        <UpdateAssignmentDates assignment={selectedAssignment} open={openUpdater} onCancel={setUpdater} resp={setWasUpdated} />
         </>
     )
 }

@@ -1,12 +1,12 @@
 import {apiClient} from "../axiosConfig.ts";
-import {Assignment} from "../../entity/domain/assignment.ts";
+import {Assignment} from "../../entity";
 import {ID, IDS} from "../../core/utils/interfaces.ts";
 
 export const getAllClasseAssignments = (
     {classeId}: {classeId: number, subjectId?: number},
     academicYear: string
 ) => {
-    return apiClient.get(`/assignment/classe/${classeId}`, {
+    return apiClient.get<Assignment[]>(`/assignment/classe/${classeId}`, {
         params: {
             academicYear: academicYear
         }
@@ -17,22 +17,30 @@ export const getAllClasseAssignmentsBySubject = (
     {classeId, subjectId}: {classeId: number, subjectId?: number},
     academicYear: string
 ) => {
-    return apiClient.get(`/assignment/classe/${classeId}/${subjectId}`, {
+    return apiClient.get<Assignment[]>(`/assignment/classe/${classeId}/${subjectId}`, {
         params: {
             academicYear: academicYear
         }
     })
 }
 
-export const getSomeTeacherAssignments = (personalInfoId: number) => {
+export const getAllCourseAssignments = (courseId: number, academicYear: string) => {
+    return apiClient.get<Assignment[]>(`/assignment/course/${courseId}`, {
+        params: {
+            academicYear: academicYear
+        }
+    })
+}
+
+export const getSomeTeacherAssignments = (personalInfoId: bigint) => {
     return apiClient.get<Assignment[]>(`/assignment/teacher_some_${personalInfoId}`)
 }
 
-export const getTeacherAssignments = (personalInfoId: number) => {
+export const getTeacherAssignments = (personalInfoId: bigint) => {
     return apiClient.get<Assignment[]>(`/assignment/teacher_all/${personalInfoId}`)
 }
 
-export const getAllTeacherCourseAssignments = (personalInfoId: number, ids: IDS) => {
+export const getAllTeacherCourseAssignments = (personalInfoId: bigint, ids: IDS) => {
     return apiClient.get<Assignment[]>(`/assignment/teacher_all_course_${personalInfoId}`, {
         params: {
             classe: ids.classId,
@@ -41,7 +49,7 @@ export const getAllTeacherCourseAssignments = (personalInfoId: number, ids: IDS)
     })
 }
 
-export const getAllTeacherAssignments = (personalInfoId: number, ids: IDS) => {
+export const getAllTeacherAssignments = (personalInfoId: bigint, ids: IDS) => {
     return apiClient.get<Assignment[]>(`/assignment/teacher_all_${personalInfoId}`, {
         params: {
             classe: ids.classId

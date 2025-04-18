@@ -15,6 +15,7 @@ export const initExamData = (scores: Score[]) => {
         examName: s?.assignment?.examName ?? '',
         classe: s?.assignment?.classe?.name ?? '',
         subject: s?.assignment?.subject?.course ?? undefined,
-        obtainedMark: s?.obtainedMark ?? 0
+        obtainedMark: s?.obtainedMark ?? 0,
+        coefficient: s?.assignment?.coefficient ?? 1,
     })) ?? []
 }

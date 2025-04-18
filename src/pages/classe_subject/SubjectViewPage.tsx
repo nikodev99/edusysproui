@@ -124,7 +124,14 @@ const SubjectViewPage = () => {
                             dataKey='course-schedule'
                         />
                     },
-                    {label: 'Evaluation', children: <CourseExam />}
+                    {
+                        label: 'Evaluation',
+                        children: <CourseExam
+                            infoData={course as Course}
+                            dataKey='course-exams'
+                            academicYear={usedAcademicYearId as string}
+                        />
+                    }
                 ]}
                 exists={course !== null}
                 memorizedTabKey='courseTabKey'

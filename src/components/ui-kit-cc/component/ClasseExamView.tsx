@@ -37,19 +37,23 @@ const ExamDescription = (
     const studentLink = useRef<string>(text.student.group.view.href);
 
     const fetch = useRawFetch()
-    const {data, isSuccess, isPending, isFetching, isRefetching, isLoading, error} = useFetch(
+    const {data, isSuccess, isPending, isFetching, isRefetching, isLoading, error, refetch} = useFetch(
         ['assignments-list-per-exam', examId],
         getClasseExamAssignments,
-        [examId, classeId, academicYear]
+        [examId, classeId, academicYear],
+        !!examId && !!classeId && !!academicYear
     )
 
     console.log('fetching assignments per examId errors: ', error)
 
     useEffect(() => {
+        if (examId || academicYear || classeId)
+            refetch().then()
+        
         if (isSuccess) {
             setAssignments('assignments' in data ? data.assignments as Assignment[] : null)
         }
-    }, [data, isSuccess])
+    }, [academicYear, classeId, data, examId, isSuccess, refetch])
 
     useEffect(() => {
         fetch(getClasseStudents, [classeId, academicYear])
@@ -229,10 +233,20 @@ const ExamDescription = (
     ]
 
     const getMaxAssignmentsForType = (type: AssignmentTypeLiteral): number => {
-        return Math.max(
-            ...examView[0].nested.map((row) => (row.assignments?.filter((a) => a.type === type) || []).length),
-            0
-        )
+        if (!examView || !examView[0] || !examView[0].nested) {
+            return 0;
+        }
+        const counts = examView[0].nested.map(row => {
+            if (!row || !row.assignments) {
+                return 0;
+            }
+            return row.assignments.filter(a => a?.type === type).length;
+        });
+        if (!counts.length) {
+            return 0;
+        }
+
+        return Math.max(...counts);
     }
 
     const nestedTableColumns: TableColumnsType<NestedExamView> = [
@@ -341,8 +355,7 @@ export const ClasseExamView = ({classeId, academicYear}: {classeId: number, acad
     const [classeExams, setClasseExams] = useState<Exam[]>([])
     const [activeExam, setActiveExam] = useState<number>(0)
 
-    const {data: examData, isSuccess: examFetchSuccess} = useFetch(['classe-exam-list'], getClasseExams, [classeId, academicYear])
-    
+    const {data: examData, isSuccess: examFetchSuccess} = useFetch(['classe-exam-list'], getClasseExams, [classeId, academicYear], !!classeId && !!academicYear)
     useEffect(() => {
         if (examFetchSuccess) {
             setClasseExams(examData as Exam[])

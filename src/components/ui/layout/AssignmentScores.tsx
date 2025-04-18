@@ -1,17 +1,18 @@
 import {Collapse, Skeleton} from "antd";
 import {Score} from "../../../entity";
-import {useFetch} from "../../../hooks/useFetch.ts";
-import {getAllAssignmentMarks} from "../../../data/repository/scoreRepository.ts";
 import {useEffect, useRef, useState} from "react";
 import {ScoreItem} from "./ScoreItem.tsx";
+import {useScoreRepo} from "../../../hooks/useScoreRepo.ts";
 
 interface AssignmentScoresProps {
     assignmentId: bigint | undefined
-    size?: number
+    size?: number,
+    markId?: string
+    isTable?: boolean
 }
 
 const AssignmentScores = (
-    {assignmentId, size}: AssignmentScoresProps
+    {assignmentId, size, markId, isTable}: AssignmentScoresProps
 ) => {
 
     const [scores, setScores] = useState<Score[] | null>(null)
@@ -19,10 +20,9 @@ const AssignmentScores = (
     const [scoreSize, setScoreSize] = useState<number>(size ?? 5)
     const prevScoreSizeRef = useRef<number>(scoreSize);
 
-    const {data, isLoading, isRefetching, isLoadingError, isSuccess, refetch} = useFetch<Score, unknown>('all-scores', getAllAssignmentMarks, [assignmentId, scoreSize],{
-        enabled: assignmentId !== undefined && assignmentId > 0,
-        queryKey: ['all-scores']
-    })
+    const {useGetAllAssignmentMarks} = useScoreRepo()
+
+    const {data, isLoading, isRefetching, isLoadingError, isSuccess, refetch} = useGetAllAssignmentMarks(assignmentId as bigint, scoreSize)
     
     const scorePending: boolean = isLoading || isRefetching || isLoadingError
 
@@ -44,8 +44,12 @@ const AssignmentScores = (
         )
     }
 
-    console.log(scoreSize)
-    
+    const scoresToShow: Score[] | null = scores && scores.length > 0 && markId ?
+        scores.filter(s => s.student.id === markId) :
+        scores
+
+    console.log('Assign data: ', scoresToShow)
+
     return(
         !scorePending || scores && scores?.length > 0 ? (<Collapse
         style={{marginTop: '10px'}}
@@ -56,11 +60,13 @@ const AssignmentScores = (
                 key: 1,
                 label: 'Afficher les notes',
                 children: <ScoreItem
-                    scores={scores as Score[]}
+                    scores={scoresToShow as Score[]}
                     isLoading={scorePending}
                     scoreSize={scoreSize}
                     allScores={allScores}
                     onLoadMore={onLoadMore}
+                    height={markId ? 110 : undefined}
+                    isTable={isTable}
                 />
             },
         ]}

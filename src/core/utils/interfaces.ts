@@ -11,11 +11,10 @@ import {
 } from "react-hook-form";
 import {ValidateStatus} from "antd/es/form/FormItem";
 import React, {CSSProperties, ReactNode} from "react";
-import {AcademicYear, Assignment, Course, Guardian, Student, Teacher} from "../../entity";
+import {AcademicYear, Assignment, Course, Guardian, Student, Teacher, Employee, Individual} from "../../entity";
 import {SectionType} from "../../entity/enums/section.ts";
 import {Gender} from "../../entity/enums/gender.tsx";
 import {AttendanceStatus} from "../../entity/enums/attendanceStatus.ts";
-import {Employee} from "../../entity/domain/employee.ts";
 import {AddressOwner, IndividualType} from "../shared/sharedEnums.ts";
 import {CalendarProps, Event, SlotInfo, View, ViewsProps} from "react-big-calendar";
 import {ReprimandType} from "../../entity/enums/reprimandType.ts";
@@ -27,7 +26,6 @@ import IntrinsicElements = React.JSX.IntrinsicElements;
 import {PercentPositionType, ProgressSize} from "antd/es/progress/progress";
 import {TableColumnsType, TableProps} from "antd";
 import {ItemType} from "antd/es/menu/interface";
-import {Individual} from "../../entity/domain/individual.ts";
 import {z} from "zod";
 import {AssignmentTypeLiteral} from "../../entity/enums/assignmentType.ts";
 
@@ -232,6 +230,7 @@ export interface ExamData {
     classe: string;
     subject: string
     obtainedMark: number;
+    coefficient: number
 }
 
 export interface ExamView {

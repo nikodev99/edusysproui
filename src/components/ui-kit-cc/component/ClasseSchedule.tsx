@@ -11,6 +11,7 @@ export const ClasseSchedule = ({infoData}: InfoPageProps<Classe>) => {
             <ScheduleCalendar
                 fetchFunc={getAllClasseSchedule as (...args: unknown[]) =>  Promise<AxiosResponse<Schedule>>}
                 funcParams={[infoData?.id]}
+                hasTeacher
             />
         </PageWrapper>
     )

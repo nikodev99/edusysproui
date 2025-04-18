@@ -114,7 +114,7 @@ export const ScheduleCalendar = (
     return(
         <>
             {
-                eventSchedule && eventSchedule?.length > 0 ?
+                events && events?.length > 0 ?
                     (
                         <BigCalendar
                             data={events as []}

@@ -6,7 +6,7 @@ import {Day} from "../../entity/enums/day.ts";
 import {fDate, getMinMaxTimes, setTime, transformEvents} from "../../core/utils/utils.ts";
 import {DescriptionsItemType} from "antd/es/descriptions";
 import {text} from "../../core/utils/text_display.ts";
-import {IconText} from "../../core/utils/tsxUtils.tsx";
+import {IconText, SuperWord} from "../../core/utils/tsxUtils.tsx";
 import {LuCalendarDays, LuClock, LuClock9} from "react-icons/lu";
 import {AvatarTitle} from "../ui/layout/AvatarTitle.tsx";
 import {BigCalendar} from "../graph/BigCalendar.tsx";
@@ -58,12 +58,15 @@ export const ScheduleCalendar = (
 
     const setTitle = (schedule: Schedule): string | ReactNode => {
         if (eventTitle) {
-            if (typeof eventTitle === "function") {
-                return eventTitle(schedule);
-            }
-            if(isValidElement(eventTitle) || typeof eventTitle === "string") {
+            if (typeof eventTitle === "function")
+                return <SuperWord input={eventTitle(schedule)} />
+
+            if (typeof eventTitle === "string")
+                return <SuperWord input={eventTitle} />
+
+            if(isValidElement(eventTitle))
                 return eventTitle;
-            }
+
         }
         return `${schedule?.course.course ? schedule.course.course : schedule.designation}`
     }

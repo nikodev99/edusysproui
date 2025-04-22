@@ -17,6 +17,8 @@ import {Color} from "../../core/utils/interfaces.ts";
 import {useAcademicYear} from "../../hooks/useAcademicYear.ts";
 import {useScheduleRepo} from "../../hooks/useScheduleRepo.ts";
 import {useCourseRepo} from "../../hooks/useCourseRepo.ts";
+import {CourseEditDrawer} from "../../components/ui-kit-cc/component/CourseEditDrawer.tsx";
+import {useToggle} from "../../hooks/useToggle.ts";
 
 const SubjectViewPage = () => {
 
@@ -27,12 +29,13 @@ const SubjectViewPage = () => {
     const [course, setCourse] = useState<Course | null>(null)
     const [schedules, setSchedules] = useState<Schedule[]>([])
     const [color, setColor] = useState<Color>('')
+    const [open, setOpen] = useToggle(false)
 
     const {useGetAllCourseSchedule}= useScheduleRepo()
     const {useGetCourse} = useCourseRepo()
 
     const {data, isSuccess} = useGetAllCourseSchedule(course?.id as number, false)
-    const {data: courseData, isSuccess: isCourseFetched} = useGetCourse(Number.parseInt(id as string))
+    const {data: courseData, isSuccess: isCourseFetched, refetch} = useGetCourse(Number.parseInt(id as string))
 
     useDocumentTitle({
         title: cutStatement(course?.course as string, 10, course?.abbr) as string,
@@ -85,12 +88,17 @@ const SubjectViewPage = () => {
         {key: 0, label: 'Archive', icon: <LuFileArchive />, danger: true}
     ]
 
+    const handleCloseDrawer = () => {
+        setOpen()
+        refetch().then(r => r.data)
+    }
+
     return(
         <>
             <PageHierarchy items={pageHierarchy as [{ title: string | ReactNode, path?: string }]} />
             <ViewHeader
                 isLoading={course === null}
-                setEdit={() => alert('You clicked')}
+                setEdit={setOpen}
                 closeState={false}
                 avatarProps={{
                     firstName: course?.course,
@@ -117,7 +125,7 @@ const SubjectViewPage = () => {
                         />
                     },
                     {
-                        label: 'Progarmme',
+                        label: 'Programme',
                         children: <CourseSchedule
                             infoData={course as Course}
                             academicYear={usedAcademicYearId as string}
@@ -136,6 +144,7 @@ const SubjectViewPage = () => {
                 exists={course !== null}
                 memorizedTabKey='courseTabKey'
             />
+            <CourseEditDrawer open={open} close={handleCloseDrawer} data={course as Course} />
         </>
     )
 }

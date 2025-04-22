@@ -34,7 +34,7 @@ type CourseInfoType = InfoPageProps<Course> & {
     meanMark?: number
 }
 
-const CourseInfoData = ({infoData, color, classes, academicYear, hours}: CourseInfoType) => {
+const CourseInfoData = ({infoData, color, classes, academicYear}: CourseInfoType) => {
     const [studentCount, setStudentCount] = useState<GenderCounted>()
     const totalClasses = useRef<number>(0)
     const {classeCount} = useClasse()
@@ -46,7 +46,6 @@ const CourseInfoData = ({infoData, color, classes, academicYear, hours}: CourseI
     }, [classes])
 
     const maxAge = studentCount?.genders ? Math.max(...studentCount.genders.map(group => group.ageAverage)) : 1
-    const totalWeekHour = sumInArray(hours?? [], 'totalHours')
     const allStudents = useCountStudent()
     const {data, isSuccess} = useCountSomeClasseStudents(classeIds, academicYear ?? '')
 
@@ -81,24 +80,17 @@ const CourseInfoData = ({infoData, color, classes, academicYear, hours}: CourseI
             </div>
             <div className='panel'>
                 <PanelStat
-                    title={studentConcerned + '%'}
+                    title={`${studentConcerned ?? 0}%`}
                     subTitle={text.student.label + 's'}
                     round={<Progress percent={studentConcerned as number} type='dashboard' size={35} strokeColor={color} />}
                     desc='Concernés'
                 />
-                <PanelStat
-                    title={studentCount?.totalAverageAge?.toFixed(1)}
-                    subTitle='ans'
-                    round={<Progress percent={findPercent(studentCount?.totalAverageAge as number, maxAge) as number} type='dashboard' size={35} strokeColor={color} />}
+                {studentCount?.genders && studentCount?.genders.length > 0 && studentCount?.genders?.map(s => (<PanelStat
+                    title={s?.ageAverage?.toFixed(1)}
+                    subTitle={s.gender === Gender.FEMME ? 'Filles' : 'Garçons'}
+                    round={<Progress percent={findPercent(s?.ageAverage as number, maxAge) as number} type='dashboard' size={35} strokeColor={color} />}
                     desc='Age Moyen'
-                />
-                <PanelStat
-                    title={totalWeekHour}
-                    subTitle='Heures'
-                    //TODO find the total hour of the week for the school will replace 5*7
-                    round={<Progress percent={findPercent(totalWeekHour, 6*7) as number} type='dashboard' size={35} strokeColor={color} />}
-                    desc='Par Semaine'
-                />
+                />))}
             </div>
         </Section>
     )
@@ -111,12 +103,10 @@ const CourseDepartment = ({infoData, color}: CourseInfoType) => {
     )
 }
 
-const CourseTeachers = ({teachers, infoData, color, meanMark}: CourseInfoType) => {
+const CourseTeachers = ({teachers, infoData, color, meanMark, hours}: CourseInfoType) => {
     const {useCountAllTeachers} = useTeacherRepo()
     const countTeachers = useCountAllTeachers()
-    const maxAge = countTeachers?.genders ? Math.max(...countTeachers.genders.map(group => group.ageAverage)) : 1
-
-    console.log("Teachers: ", teachers)
+    const totalWeekHour = sumInArray(hours?? [], 'totalHours')
 
     return (
         <Section title={text.teacher.label + 's assignés'}>
@@ -134,10 +124,11 @@ const CourseTeachers = ({teachers, infoData, color, meanMark}: CourseInfoType) =
                     desc='Moyen'
                 />
                 <PanelStat
-                    title={countTeachers?.totalAverageAge?.toFixed(1)}
-                    subTitle='ans'
-                    round={<Progress percent={findPercent(countTeachers?.totalAverageAge as number, maxAge) as number} type='circle' size={35} strokeColor={color} />}
-                    desc='Age Moyen'
+                    title={totalWeekHour}
+                    subTitle='Heures'
+                    //TODO find the total hour of the week for the school will replace 5*7
+                    round={<Progress percent={findPercent(totalWeekHour, 6*7) as number} type='dashboard' size={35} strokeColor={color} />}
+                    desc='Par Semaine'
                 />
             </div>
             <div className="panel-table">
@@ -312,14 +303,14 @@ export const CourseInfo = (courseType: CourseInfoType) => {
         
         if(isSuccess)
             setCourseHour(data)
-    }, [data, fetchedScores, isFetched, isSuccess]);
+    }, [data, fetchedScores, isFetched, isSuccess])
 
     const meanMark = scores?.length ? (sumInArray(scores, 'obtainedMark')/scores?.length) : 0
 
     const coursesComponents: ReactNode[] = [
-        <CourseInfoData {...courseType} hours={courseHour} />,
+        <CourseInfoData {...courseType} />,
         <CourseDepartment {...courseType} />,
-        <CourseTeachers {...courseType} meanMark={meanMark} />,
+        <CourseTeachers {...courseType} meanMark={meanMark} hours={courseHour} />,
         <CourseSchedule {...courseType} />,
         <CourseHoursByClasse {...courseType} hours={courseHour} />,
         <CourseHoursByTeacher {...courseType} hours={courseHour} />,

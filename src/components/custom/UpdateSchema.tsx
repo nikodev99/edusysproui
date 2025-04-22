@@ -51,7 +51,7 @@ export const UpdateSchema = <TData extends FieldValues>(
     }
 
     return(
-        <Modal title={title} open={open} onCancel={handleModalClose} width={breakpoints} footer={null}>
+        <Modal title={title ?? 'Modification'} open={open} onCancel={handleModalClose} width={breakpoints} footer={null}>
             {successMessage && (<Alert message={successMessage} type="success" showIcon/>)}
             {errorMessage && (<Alert message={errorMessage} type="error" showIcon/>)}
             <Form layout='vertical' style={{marginTop: '15px'}}>
@@ -62,11 +62,11 @@ export const UpdateSchema = <TData extends FieldValues>(
                         title='Confirmation'
                         open={openConfirm}
                         onCancel={setOpenConfirm}
-                        description={description}
+                        description={description ?? 'Veuillez confirmer'}
                         okText={confirmBtnText ?? "Confirmer"}
                         onConfirm={handleForm.handleSubmit(onSubmit)}
                     >
-                        <Button disabled={isPending} type='primary' onClick={setOpenConfirm}>{okText}</Button>
+                        <Button disabled={isPending} type='primary' onClick={setOpenConfirm}>{'Modifier' ?? okText}</Button>
                     </PopConfirm>
                 </Flex>
             </Form>

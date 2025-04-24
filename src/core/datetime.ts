@@ -14,7 +14,7 @@ class Datetime {
     private date: Dayjs
     private timezone: string
     private readonly locale: string
-    private static DEFAULT_TIMEZONE = 'Europe/Paris'
+    private static DEFAULT_TIMEZONE = 'Africa/Brazzaville'
     private static DEFAULT_LOCALE = 'fr'
     private static DEFAULT_FORMAT = 'YYYY-MM-DD'
 

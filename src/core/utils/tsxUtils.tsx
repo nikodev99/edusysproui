@@ -1,9 +1,16 @@
 import {getStatusKey, Status} from "../../entity/enums/status.ts";
 import {ReactNode} from "react";
 import Tag from "../../components/ui/layout/Tag.tsx";
-import {Card, Flex, Popover, Skeleton, Space, StepsProps} from "antd";
+import {Button, Card, Descriptions, Flex, Popover, Skeleton, Space, StepsProps, Tooltip, Typography} from "antd";
 import {Color} from "./interfaces.ts";
 import {MarkType} from "../../entity/enums/MarkType.ts";
+import {Assignment} from "../../entity";
+import {LuCalendarDays, LuClock, LuClock9, LuRefreshCcw, LuX} from "react-icons/lu";
+import Datetime from "../datetime.ts";
+import {dateCompare, setName, setTime} from "./utils.ts";
+import {ModalConfirmButton} from "../../components/ui/layout/ModalConfirmButton.tsx";
+import {redirectTo} from "../../context/RedirectContext.ts";
+import {text} from "./text_display.ts";
 
 export const StatusTags = ({status, female}: {status: Status, female?: boolean}): ReactNode => {
     const label = getStatusKey(status, female)
@@ -71,12 +78,13 @@ export const SuperWord = ({ input, isUpper, textSize = .6 }: { input: string; is
         }
 
         parts.push(
-            <span key={matchIndex}>
+            <span key={matchIndex} style={{padding: 0, margin: 0}}>
                 {digit}
                 <span style={{
                     ...(isUpper ? {textTransform: 'uppercase'}: {}),
                     fontSize: `${textSize}em`,
-                    verticalAlign: 'super'
+                    verticalAlign: 'super',
+                    padding: 0, margin: 0
                 }}>
                     {letters}
                 </span>
@@ -90,7 +98,7 @@ export const SuperWord = ({ input, isUpper, textSize = .6 }: { input: string; is
     }
 
     return (
-        <p style={isUpper ? { textTransform: 'uppercase' } : {}}>
+        <p style={isUpper ? { textTransform: 'uppercase', padding: 0, margin: 0 } : { padding: 0, margin: 0 }}>
             {parts}
         </p>
     );
@@ -100,6 +108,50 @@ export const CardSkeleton = ({title}: {title?: ReactNode}) => {
     return <Card title={title} style={{ width: '100%', height: '100%' }}>
         <Skeleton active />
     </Card>
+}
+
+export const AssignmentDescription = (
+    {a, show, plus, remove, showBest, openUpdater, link}: {
+        a: Assignment, title?: ReactNode, show?: boolean,
+        plus?: boolean, remove?: (id?: bigint) => void, showBest?: boolean,
+        openUpdater?: () => void
+        link?: string
+    }
+) => {
+
+    const {Link, Text} = Typography
+
+    return <Descriptions items={[
+        ...(show ? [{key: 1, label: 'Titre', children: link ? <Link strong onClick={() => redirectTo(link)}>{a?.examName}</Link> : a?.examName, span: 3}] : []),
+        ...(a?.semester?.semester ? [{key: 2, label: 'Semestre', children: a?.semester?.semester?.semesterName, span: 3}] : []),
+        ...(a?.exam?.examType ? [{key: 3, label: 'Examen', children: a?.exam?.examType?.name, span: 3}] : []),
+        ...(a?.subject ? [{key: 4, label: 'Matière', children: <Text onClick={() => redirectTo(text.cc.group.course.view.href + a?.subject?.id)} className='course-Link'>
+                {a?.subject?.course}
+        </Text>, span: 3}] : []),
+        ...(a?.classe ? [{key: 12, label: 'Classe', children: <Text onClick={() => redirectTo(text.cc.group.classe.view.href + a?.classe?.id)} className='course-Link'>
+                <SuperWord input={a?.classe?.name} />
+        </Text>, span: 3}] : []),
+        ...(a && plus ? [{key: 5, label: undefined, children: <IconText color='#8f96a3' icon={<LuCalendarDays />} text={Datetime.of(a?.examDate as number[]).fDate('D MMM YYYY') as string} key="1" />}]: []),
+        ...(a && plus ? [{key: 6, label: undefined, children: <IconText color='#8f96a3' icon={<LuClock />} text={setTime(a?.startTime as []) as string} key="2" />}]: []),
+        ...(a && plus ? [{key: 7, label: undefined, children: <IconText color='#8f96a3' icon={<LuClock9 />} text={setTime(a?.endTime as []) as string} key="3" />}]: []),
+        {key: 8, label: 'Status', children: <Space>
+                <Tag color={!a?.passed ? 'warning': 'success'}>{!a?.passed ? 'Programmé' : 'Traité'}</Tag>
+                {a?.passed ? undefined : !dateCompare(a?.examDate as Date) ? <Tag color='danger'>Date Dépassée</Tag> : undefined}
+            </Space>, span: 3},
+        ...(a?.preparedBy ? [
+            {key: 9, label: 'Préparer par', children: <span>{setName(a?.preparedBy?.lastName, a?.preparedBy?.firstName)}</span>, span: 3},
+            {key: 10, label: 'Mise à jour', children: <span>{Datetime.of(a?.updatedDate as number).fDatetime()}</span>, span: 3}
+        ] : []),
+
+        ...(
+            a?.passed ? [] : dateCompare(a?.examDate as Date) ? [] : showBest ? [{key: 11, children: <Space.Compact block>
+                    <ModalConfirmButton handleFunc={remove ? remove : () => 'forbidden'} funcParam={a?.id} btnTxt={<LuX />} />
+                    <Tooltip title="Changer de date"> {/* TODO Gérer les boutons supprimer et changer de date */}
+                        <Button onClick={openUpdater} icon={<LuRefreshCcw />} />
+                    </Tooltip>
+                </Space.Compact>}]: []
+        )
+    ]} />
 }
 
 export const InitMarkType = ({av}: {av: number}) => {

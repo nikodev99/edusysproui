@@ -200,8 +200,9 @@ export interface DataProps {
 
 export interface ListViewerProps<TData extends object, TError> {
     callback: () => Promise<AxiosResponse<TData | TData[], TError>>
-    searchCallback: (...args: unknown[]) => Promise<AxiosResponse<TData[]>>
+    searchCallback?: (...args: unknown[]) => Promise<AxiosResponse<TData[]>>
     tableColumns?: TableColumnsType<TData>
+    displayItem?: 1 | 2 | 3 | 4,
     dropdownItems?: (url: string) => ItemType[]
     throughDetails?: (id: string) => void
     hasCount?: boolean,
@@ -217,6 +218,7 @@ export interface ListViewerProps<TData extends object, TError> {
     infinite?: boolean
     uuidKey?: keyof TData | string[]
     tableProps?: TableProps
+    itemSize?: number
     descMargin?: {
         position?: "top" | "bottom" | "left" | "right",
         size?: number | string

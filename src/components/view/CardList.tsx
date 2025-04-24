@@ -17,10 +17,11 @@ interface CardListProps {
     throughDetails: (id: string) => void
     avatarLess?: boolean
     titleLevel?: 1 | 4 | 5 | 2 | 3 | undefined
+    displayItem?: 1 | 2 | 3 | 4
 }
 
 const CardList = (
-    {content, isActive, isLoading, dropdownItems, throughDetails, avatarLess, titleLevel}: CardListProps
+    {content, isActive, isLoading, dropdownItems, throughDetails, avatarLess, titleLevel, displayItem = 4}: CardListProps
 ) => {
 
     const selectedGender = (gender?: Gender) => {
@@ -30,12 +31,16 @@ const CardList = (
     const {Title, Text} = Typography
     //TODO Adding the filter by name or whatever
 
+    const xl = displayItem === 1 ? 24 : displayItem === 2 ? 12 : displayItem === 3 ? 8 : 6
+    const lg = displayItem === 1 ? 24 : displayItem === 2 ? 12 : 8
+    const md = displayItem === 1 ? 24 : 12
+
     return(
         <>
             {
                 isActive && (<Skeleton loading={isLoading} active={isLoading} avatar={isLoading}>
                     {content && content?.map(c => (
-                        <Grid key={c?.id} xs={24} md={12} lg={8} xl={6}>
+                        <Grid key={c?.id} xs={24} md={md} lg={lg} xl={xl}>
                             <Card loading={!content || isLoading} className='card__list'>
                                 {dropdownItems && <ActionButton
                                     icon={<AiOutlineMore className='cardIcon' size={30} />}
@@ -53,13 +58,13 @@ const CardList = (
                                         />
                                     </div>}
                                     <div className='col__name'>
-                                        <Title level={titleLevel ?? 4} onClick={() => throughDetails(c?.id as string)}>
+                                        {c.lastName || c.firstName && <Title level={titleLevel ?? 4} onClick={() => throughDetails(c?.id as string)}>
                                             <SuperWord input={c.firstName ? `${c?.lastName?.toUpperCase()}, ${setFirstName(c?.firstName)}`: c.lastName as string} />
-                                        </Title>
-                                        <Text className='st__ref'>{c?.reference}</Text>
+                                        </Title>}
+                                        {c.reference && <Text className='st__ref'>{c?.reference}</Text>}
                                         {c?.tag && <div className='card__tag'>{c?.tag}</div>}
-                                        <Divider />
-                                        <Text>{selectedGender(c.gender)} {c?.gender}</Text>
+                                        {!c.lastName && !c.firstName ? undefined : <Divider />}
+                                        {c.gender && <Text>{selectedGender(c.gender)} {c?.gender}</Text>}
                                         <Text>
                                             {c?.description && Array.isArray(c.description) ? c.description.map((d, i) => (
                                             <div className='desc' key={i}>{d}</div>

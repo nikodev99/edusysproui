@@ -34,12 +34,14 @@ const ListViewer = <TData extends object, TError>(
         infinite,
         uuidKey,
         tableProps,
-        descMargin
+        descMargin,
+        itemSize,
+        displayItem
     }: ListViewerProps<TData, TError>
 ) => {
 
     const iconActive = localStorage?.activeIcon ? LocalStorageManager.get<number>(localStorage?.activeIcon) ?? 1 : 1
-    const pageSizeCount = !infinite && localStorage?.pageSize ? LocalStorageManager.get<number>(localStorage?.pageSize) ?? 10 : 10
+    const pageSizeCount = !infinite && localStorage?.pageSize ? LocalStorageManager.get<number>(localStorage?.pageSize) ?? itemSize ?? 10 : itemSize ? itemSize : 10
     const paginationPage = !infinite && localStorage?.page ? LocalStorageManager.get<number>(localStorage?.page) ?? 1 : 1
     const count = !infinite && localStorage?.pageCount ? LocalStorageManager.get<number>(localStorage?.pageCount) ?? 0 : 0
 
@@ -60,7 +62,7 @@ const ListViewer = <TData extends object, TError>(
     )
     
     useEffect( () => {
-        if (searchQuery) {
+        if (searchCallback && searchQuery) {
             fetchFunc(searchCallback, searchCallbackParams ? [...searchCallbackParams, searchQuery] : [searchQuery])
                 .then((resp) => {
                     if (resp.isSuccess) {
@@ -82,7 +84,8 @@ const ListViewer = <TData extends object, TError>(
     }, [data, isLoading, pageCount, refetch, searchCallback, searchCallbackParams, searchQuery, size, sortField, sortOrder]);
 
     useLayoutEffect(() => {
-        if(refetchCondition) refetch()
+        if(refetchCondition)
+            refetch().then(r => r.data)
     }, [refetch, refetchCondition]);
     
     if (error) {
@@ -172,7 +175,13 @@ const ListViewer = <TData extends object, TError>(
             <div className='header__area'>
                 <PageDescription
                     count={dataCount}
-                    title={countTitle ? `${countTitle}${dataCount > 1 ? 's' : ''}` : undefined}
+                    title={
+                        countTitle
+                            ? (countTitle.endsWith('s')
+                                ? countTitle
+                                : `${countTitle}${dataCount > 1 ? 's' : ''}`)
+                            : undefined
+                    }
                     isCount={hasCount !== undefined ? hasCount : true}
                     addMargin={descMargin}
                 />
@@ -202,6 +211,7 @@ const ListViewer = <TData extends object, TError>(
                         throughDetails={throughDetails!}
                         avatarLess={cardNotAvatar}
                         titleLevel={level as 1}
+                        displayItem={displayItem}
                     />
                         : <Grid xs={24} md={24} lg={24}>
                             {infinite ? <AutoScrollTable

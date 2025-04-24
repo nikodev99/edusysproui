@@ -509,3 +509,12 @@
   }
 }
 
+.course-Link {
+  color: inherit!important;
+  cursor: pointer;
+  transition: .3s;
+  &:hover {
+    color: lighten($primary_color, 20%)!important;
+  }
+}
+

@@ -1,6 +1,45 @@
 import {apiClient} from "../axiosConfig.ts";
 import {Assignment} from "../../entity";
 import {ID, IDS} from "../../core/utils/interfaces.ts";
+import {getShortSortOrder} from "../../core/utils/utils.ts";
+
+export interface AssignmentFilter {
+    academicYearId: string
+    planningId?: number
+    gradeId?: number
+    semesterId?: number
+    classeId?: number
+    courseId?: number
+    search?: string
+}
+
+export const getAllAssignments = (
+    filter: AssignmentFilter,
+    page: number,
+    size: number,
+    sortField?: string,
+    sortOrder?: string
+) => {
+    if (sortField && sortOrder) {
+        sortOrder = getShortSortOrder(sortOrder)
+        sortField = sortedField(sortField)
+    }
+
+    return apiClient.get<Assignment[]>(`/assignment/all`, {
+        params: {
+            academicYear: filter.academicYearId,
+            page: page,
+            size: size,
+            ...(sortField && sortOrder ? {sortCriteria: `${sortField}:${sortOrder}`} : {}),
+            ...(filter.planningId ? {planning: filter.planningId} : {}),
+            ...(filter.gradeId ? {grade: filter.gradeId} : {}),
+            ...(filter.semesterId ? {semester: filter.semesterId} : {}),
+            ...(filter.classeId ? {classe: filter.classeId} : {}),
+            ...(filter.courseId ? {course: filter.courseId} : {}),
+            ...(filter.search ? {String: filter.search} : {})
+        }
+    })
+}
 
 export const getAllClasseAssignments = (
     {classeId}: {classeId: number, subjectId?: number},
@@ -63,4 +102,11 @@ export const changeAssignmentDate = (assignment: Assignment, assignmentId: ID)=>
 
 export const removeAssignment = (assignmentId: bigint) => {
     return apiClient.delete(`/assignment/${assignmentId}`)
+}
+
+const sortedField = (sortField: string) => {
+    switch (sortField) {
+        case 'examName':
+            return 'assignment.examName'
+    }
 }

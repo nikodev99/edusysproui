@@ -1,30 +1,22 @@
 import Responsive from "../ui/layout/Responsive.tsx";
 import Grid from "../ui/layout/Grid.tsx";
-import {Button, Card, Descriptions, Modal, Space, Tag, Tooltip} from "antd";
+import {Card, Modal} from "antd";
 import {BigCalendar} from "../graph/BigCalendar.tsx";
 import VoidData from "../view/VoidData.tsx";
 import {ShapePieChart} from "../graph/ShapePieChart.tsx";
 import {Assignment} from "../../entity";
 import {AssignmentScores} from "../ui/layout/AssignmentScores.tsx";
 import {CalendarEvent, EventProps} from "../../core/utils/interfaces.ts";
-import {
-    dateCompare, getAssignmentBarData,
-    getDiffFromNow,
-    setName,
-    setTime
-} from "../../core/utils/utils.ts";
+import {dateCompare, getAssignmentBarData, getDiffFromNow} from "../../core/utils/utils.ts";
 import {ReactNode, useEffect, useLayoutEffect, useRef, useState} from "react";
 import {Score} from "../../entity";
-import {DescriptionsItemType} from "antd/es/descriptions";
-import {CardSkeleton, IconText} from "../../core/utils/tsxUtils.tsx";
-import {LuCalendarDays, LuClock, LuClock9, LuRefreshCcw, LuX} from "react-icons/lu";
+import {AssignmentDescription, CardSkeleton} from "../../core/utils/tsxUtils.tsx";
 import dayjs from "dayjs";
 import {ScoreItem} from "../ui/layout/ScoreItem.tsx";
 import {BarChart} from "../graph/BarChart.tsx";
 import {useRawFetch} from "../../hooks/useFetch.ts";
 import {removeAssignment} from "../../data/repository/assignmentRepository.ts";
 import FormSuccess from "../ui/form/FormSuccess.tsx";
-import {ModalConfirmButton} from "../ui/layout/ModalConfirmButton.tsx";
 import {useToggle} from "../../hooks/useToggle.ts";
 import {UpdateAssignmentDates} from "../ui-kit-exam";
 import Datetime from "../../core/datetime.ts";
@@ -102,35 +94,6 @@ export const AssignmentDesc = (
             setRefetch && setRefetch(refetch)
         }
     }, [refetch, setRefetch])
-
-    const assignmentDesc = (a: Assignment, show?: boolean, plus?: boolean): DescriptionsItemType[] => {
-        return [
-            ...(show ? [{key: 1, label: 'Titre', children: a?.examName, span: 3}] : []),
-            ...(a?.semester?.semester ? [{key: 2, label: 'Semestre', children: a?.semester?.semester?.semesterName, span: 3}] : []),
-            ...(a?.classe ? [{key: 12, label: 'Classe', children: a?.classe?.name, span: 3}] : []),
-            ...(a?.exam?.examType ? [{key: 3, label: 'Examen', children: a?.exam?.examType?.name, span: 3}] : []),
-            ...(a && plus ? [{key: 5, label: undefined, children: <IconText color='#8f96a3' icon={<LuCalendarDays />} text={Datetime.of(a?.examDate as number[]).fDate('D MMM YYYY') as string} key="1" />}]: []),
-            ...(a && plus ? [{key: 6, label: undefined, children: <IconText color='#8f96a3' icon={<LuClock />} text={setTime(a?.startTime as []) as string} key="2" />}]: []),
-            ...(a && plus ? [{key: 7, label: undefined, children: <IconText color='#8f96a3' icon={<LuClock9 />} text={setTime(a?.endTime as []) as string} key="3" />}]: []),
-            {key: 8, label: 'Status', children: <div>
-                    <Tag color={!a?.passed ? 'gold': 'green'}>{!a?.passed ? 'A venir' : 'Accompli'}</Tag>
-                    {a?.passed ? undefined : !dateCompare(a?.examDate as Date) ? <Tag color='red'>Date dépassée</Tag> : undefined}
-                </div>, span: 3},
-            ...(a?.preparedBy ? [
-                {key: 9, label: 'Préparer par', children: <span>{setName(a?.preparedBy?.lastName, a?.preparedBy?.firstName)}</span>, span: 3},
-                {key: 10, label: 'Mise à jour', children: <span>{Datetime.of(a?.updatedDate as number).fDatetime()}</span>, span: 3}
-            ] : []),
-
-            ...(
-                a?.passed ? [] : dateCompare(a?.examDate as Date) ? [] : showBest ? [{key: 11, children: <Space.Compact block>
-                        <ModalConfirmButton handleFunc={handleRemoveAssignment} funcParam={a?.id} btnTxt={<LuX />} />
-                        <Tooltip title="Changer de date"> {/* TODO Gérer les boutons supprimer et changer de date */}
-                            <Button onClick={setUpdater} icon={<LuRefreshCcw />} />
-                        </Tooltip>
-                </Space.Compact>}]: []
-            )
-        ]
-    }
 
     const eventData: CalendarEvent = assignment ? assignments?.map(assignment => ({
         title: assignment.examName,
@@ -245,17 +208,25 @@ export const AssignmentDesc = (
                 <Responsive gutter={[16, 16]}>
                     {assignment.current && <Grid xs={24} md={!showBest ? 12 : 24} lg={!showBest ? 12 : 24}>
                         <Card>
-                            <Descriptions
+                            <AssignmentDescription
                                 title={`Prochain devoirs ${timeDiff}`}
-                                items={assignmentDesc(assignment.current as Assignment, true)}
+                                a={passedAssignment.current as Assignment}
+                                show={true}
+                                remove={handleRemoveAssignment}
+                                openUpdater={setUpdater}
+                                showBest={showBest}
                             />
                         </Card>
                     </Grid>}
                     {passedAssignment.current && <Grid xs={24} md={!showBest ? 12 : 24} lg={!showBest ? 12 : 24}>
                         <Card>
-                            <Descriptions
+                            <AssignmentDescription
                                 title={`Dernier devoir terminé`}
-                                items={assignmentDesc(passedAssignment.current as Assignment, true)}
+                                a={passedAssignment.current as Assignment}
+                                show={true}
+                                remove={handleRemoveAssignment}
+                                openUpdater={setUpdater}
+                                showBest={showBest}
                             />
                             {<AssignmentScores assignmentId={passedAssignment.current?.id} markId={onlyMark} />}
                         </Card>
@@ -266,7 +237,14 @@ export const AssignmentDesc = (
         {/* TODO Adding the link to assignment view on the title */}
         <Modal title={selectedAssignment?.examName} open={isModalOpen} footer={null} onCancel={onModalCancel} destroyOnClose>
             <Card>
-                <Descriptions items={assignmentDesc(selectedAssignment as Assignment, false, true)} />
+                <AssignmentDescription
+                    a={passedAssignment.current as Assignment}
+                    show={false}
+                    plus={true}
+                    remove={handleRemoveAssignment}
+                    openUpdater={setUpdater}
+                    showBest={showBest}
+                />
                 {selectedAssignment?.passed && <AssignmentScores assignmentId={selectedAssignment?.id} size={scoreSize} markId={onlyMark} />}
             </Card>
         </Modal>

@@ -35,6 +35,7 @@ export const useAcademicYear = (timestamp?: number) => {
     }
 
     return {
+        academicYears,
         usedAcademicYearId,
         currentAcademicYear,
         academicYearOptions,

@@ -1,5 +1,5 @@
-import {ChangeEvent, Key, useEffect, useLayoutEffect, useState} from "react";
-import {Input, Pagination, Segmented, Table, TablePaginationConfig} from "antd";
+import {ChangeEvent, Key, ReactNode, useEffect, useLayoutEffect, useState} from "react";
+import {Button, Flex, Input, Pagination, Segmented, Space, Table, TablePaginationConfig, Tooltip} from "antd";
 import {FilterValue, SorterResult } from "antd/es/table/interface";
 import LocalStorageManager from "../../core/LocalStorageManager.ts";
 import Responsive from "../../components/ui/layout/Responsive.tsx";
@@ -7,12 +7,13 @@ import CardList from "../view/CardList.tsx";
 import PageDescription from "./PageDescription.tsx";
 import PageError from "../../pages/PageError.tsx";
 import {fetchFunc, useFetch} from "../../hooks/useFetch.ts";
-import {LuLayoutDashboard, LuTable} from "react-icons/lu";
+import {LuDownload, LuLayoutDashboard, LuListFilter, LuTable} from "react-icons/lu";
 import {Enrollment} from "../../entity";
 import {ListViewerProps, StudentListDataType} from "../../core/utils/interfaces.ts";
 import {getAge} from "../../core/utils/utils.ts";
 import {AutoScrollTable} from "../ui/layout/AutoScrollTable.tsx";
 import Grid from "../ui/layout/Grid.tsx";
+import {useToggle} from "../../hooks/useToggle.ts";
 
 const ListViewer = <TData extends object, TError>(
     {
@@ -36,7 +37,9 @@ const ListViewer = <TData extends object, TError>(
         tableProps,
         descMargin,
         itemSize,
-        displayItem
+        displayItem,
+        filters,
+        shareSearchQuery
     }: ListViewerProps<TData, TError>
 ) => {
 
@@ -53,7 +56,9 @@ const ListViewer = <TData extends object, TError>(
     const [pageCount, setPageCount] = useState<number>(count!)
     const [currentPage, setCurrentPage] = useState<number>(paginationPage!)
     const [size, setSize] = useState<number>(pageSizeCount!)
-    const [searchQuery, setSearchQuery] = useState<string>('')
+    const [searchQuery, setSearchQuery] = useState<string | undefined>(undefined)
+    const [filterUI, setFilterUI] = useState<ReactNode | undefined>(undefined)
+    const [showFilters, setShowFilters] = useToggle(false)
 
     const { data, error, isLoading, refetch, isFetching, isRefetching } = useFetch(
         fetchId ?? 'students', callback, callbackParams 
@@ -81,12 +86,17 @@ const ListViewer = <TData extends object, TError>(
             }
         }
 
-    }, [data, isLoading, pageCount, refetch, searchCallback, searchCallbackParams, searchQuery, size, sortField, sortOrder]);
+    }, [data, isLoading, pageCount, refetch, searchCallback, searchCallbackParams, searchQuery, shareSearchQuery, size, sortField, sortOrder]);
 
     useLayoutEffect(() => {
-        if(refetchCondition)
+        if(refetchCondition) {
+            setPageCount(0)
             refetch().then(r => r.data)
-    }, [refetch, refetchCondition]);
+        }
+        
+        if (filters)
+            setFilterUI(filters)
+    }, [filters, refetch, refetchCondition]);
     
     if (error) {
         return <PageError />
@@ -127,8 +137,12 @@ const ListViewer = <TData extends object, TError>(
     }
 
     const handleSearchInput = (e: ChangeEvent<HTMLInputElement>) => {
-        setSearchQuery(e.target.value)
+        const q = e.target.value
+        setSearchQuery(q)
+        shareSearchQuery?.(q)
     }
+
+    const handleShowFilters = () => setShowFilters()
 
     const selectableIcons = [
         {
@@ -170,36 +184,56 @@ const ListViewer = <TData extends object, TError>(
         }).filter((item): item is StudentListDataType => item !== null)
         : content;
 
+    const handleUpdateSearchQuery = () => {
+        setSearchQuery(undefined)
+        shareSearchQuery?.(undefined)
+    }
+
     return(
         <>
             <div className='header__area'>
-                <PageDescription
-                    count={dataCount}
-                    title={
-                        countTitle
-                            ? (countTitle.endsWith('s')
-                                ? countTitle
-                                : `${countTitle}${dataCount > 1 ? 's' : ''}`)
-                            : undefined
-                    }
-                    isCount={hasCount !== undefined ? hasCount : true}
-                    addMargin={descMargin}
-                />
-                <div className='flex__end'>
-                    <Input
-                        allowClear
-                        size='middle'
-                        placeholder='Recherche...'
-                        style={{width: '300px'}}
-                        className='search__input'
-                        onChange={handleSearchInput}
+                <Flex justify='space-between' align='middle' className='flex__between' wrap='wrap'>
+                    <PageDescription
+                        count={dataCount}
+                        title={
+                            countTitle
+                                ? (countTitle.endsWith('s')
+                                    ? countTitle
+                                    : `${countTitle}${dataCount > 1 ? 's' : ''}`)
+                                : undefined
+                        }
+                        isCount={hasCount !== undefined ? hasCount : true}
+                        addMargin={descMargin}
                     />
-                    <Segmented
-                        options={selectableIcons}
-                        onChange={(value) => selectedIcon(Number.parseInt(value))}
-                        value={activeIcon.toString()}
-                    />
-                </div>
+                    <div className='flex__end'>
+                        <Input
+                            allowClear
+                            size='middle'
+                            placeholder='Recherche...'
+                            style={{width: '300px'}}
+                            className='search__input'
+                            onChange={handleSearchInput}
+                            onClear={handleUpdateSearchQuery}
+                        />
+                        <Segmented
+                            options={selectableIcons}
+                            onChange={(value) => selectedIcon(Number.parseInt(value))}
+                            value={activeIcon.toString()}
+                        />
+                        <Space.Compact>
+                            {filterUI && <Tooltip title='Filtrer'>
+                                <Button icon={<LuListFilter />} onClick={handleShowFilters} />
+                            </Tooltip>}
+                            <Tooltip title='Exporter'>
+                                <Button icon={<LuDownload />} onClick={() => alert('You clicked download')} />
+                            </Tooltip>
+                        </Space.Compact>
+
+                    </div>
+                </Flex>
+                {showFilters && <div className={`filter__area${showFilters ? ' open' : ''}`}>
+                    {filterUI}
+                </div>}
             </div>
             <Responsive gutter={[16, 16]} className={`${activeIcon !== 2 ? 'student__list__datatable' : ''}`}>
                 {
@@ -254,7 +288,7 @@ const ListViewer = <TData extends object, TError>(
                     responsive={true}
                     onShowSizeChange={handleSizeChange}
                     onChange={handleNavChange}
-                    disabled={!!(isLoading || searchQuery)}
+                    disabled={!!(isLoading || (searchQuery && !shareSearchQuery))}
                 />
             </div>}
         </>

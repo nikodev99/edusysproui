@@ -13,3 +13,7 @@ export const getAcademicYearFromYear = (year: number) => {
         }
     })
 }
+
+export const getAllAcademicYears = () => {
+    return apiClient.get<AcademicYear[]>('/academic/all')
+}

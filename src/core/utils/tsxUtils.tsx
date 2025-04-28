@@ -122,7 +122,7 @@ export const AssignmentDescription = (
     const {Link, Text} = Typography
 
     return <Descriptions items={[
-        ...(show ? [{key: 1, label: 'Titre', children: link ? <Link strong onClick={() => redirectTo(link)}>{a?.examName}</Link> : a?.examName, span: 3}] : []),
+        ...(show ? [{key: 1, label: 'Titre', children: link ? <Link onClick={() => redirectTo(link)}>{a?.examName}</Link> : a?.examName, span: 3}] : []),
         ...(a?.semester?.semester ? [{key: 2, label: 'Semestre', children: a?.semester?.semester?.semesterName, span: 3}] : []),
         ...(a?.exam?.examType ? [{key: 3, label: 'Examen', children: a?.exam?.examType?.name, span: 3}] : []),
         ...(a?.subject ? [{key: 4, label: 'Matière', children: <Text onClick={() => redirectTo(text.cc.group.course.view.href + a?.subject?.id)} className='course-Link'>

@@ -3,12 +3,11 @@ import {text} from "../../core/utils/text_display.ts";
 import {Breadcrumb, useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
 import {ListPageHierarchy} from "../../components/custom/ListPageHierarchy.tsx";
 import {redirectTo} from "../../context/RedirectContext.ts";
-import {LuCalendarPlus, LuEllipsisVertical, LuEye} from "react-icons/lu";
-import {AssignmentFilter, getAllAssignments} from "../../data/repository/assignmentRepository.ts";
+import {LuCalendarPlus, LuEllipsis, LuEllipsisVertical, LuEye} from "react-icons/lu";
+import {AssignmentFilterProps, getAllAssignments} from "../../data/repository/assignmentRepository.ts";
 import {AxiosResponse} from "axios";
 import {Assignment, Classe, Course, Individual} from "../../entity";
 import ListViewer from "../../components/custom/ListViewer.tsx";
-import {useAcademicYear} from "../../hooks/useAcademicYear.ts";
 import {useEffect, useState} from "react";
 import {Space, TableColumnsType, Tag as AntTag, Typography} from "antd";
 import {DataProps} from "../../core/utils/interfaces.ts";
@@ -18,11 +17,19 @@ import Datetime from "../../core/datetime.ts";
 import Tag from "../../components/ui/layout/Tag.tsx";
 import {ActionButton} from "../../components/ui/layout/ActionButton.tsx";
 import {setFirstName} from "../../core/utils/utils.ts";
+import {AssignmentFilter} from "../../components/ui-kit-exam/components/AssignmentFilter.tsx";
+import {useAcademicYearRepo} from "../../hooks/useAcademicYearRepo.ts";
 
 const ExamListPage = () => {
 
-    const {usedAcademicYearId} = useAcademicYear()
-    const [filters, setFilters] = useState<AssignmentFilter>()
+    const {useGetCurrentAcademicYear, useGetAllAcademicYear} = useAcademicYearRepo()
+    const [filters, setFilters] = useState<AssignmentFilterProps>()
+    const [usedAcademicYearId, setUsedAcademicYearId] = useState<string>()
+    const [isRefetch, setIsRefetch] = useState(false)
+    const [searchQuery, setSearchQuery] = useState<string | undefined>(undefined)
+    
+    const academicYear = useGetCurrentAcademicYear()
+    const academicYears = useGetAllAcademicYear()
 
     const {Link, Text} = Typography
 
@@ -36,14 +43,40 @@ const ExamListPage = () => {
     ])
 
     useEffect(() => {
-        if (usedAcademicYearId) {
-            setFilters({
-                academicYearId: usedAcademicYearId
-            })
+        if (academicYear) {
+            setUsedAcademicYearId(academicYear.id)
         }
-    }, [usedAcademicYearId, setFilters]);
 
-    console.log('filters: ', filters)
+        setFilters({
+            academicYearId: usedAcademicYearId as string
+        })
+    }, [academicYear, usedAcademicYearId]);
+
+    useEffect(() => {
+        setFilters(prev => {
+            const base = { ...prev };
+
+            if (searchQuery) {
+                base.search = searchQuery;
+            } else {
+                const noSearch = { ...base };
+                if ('search' in noSearch) {
+                    delete noSearch.search;
+                }
+                return noSearch as AssignmentFilterProps;
+            }
+
+            return base as AssignmentFilterProps;
+        });
+
+        setIsRefetch(false);
+    }, [searchQuery, setFilters]);
+
+    useEffect(() => {
+        if (filters && !isRefetch) {
+            setIsRefetch(true)
+        }
+    }, [filters, isRefetch]);
 
     const getItems = (id: string) => {
         return [
@@ -70,8 +103,10 @@ const ExamListPage = () => {
             key: 'examName',
             align: 'left',
             width: '20%',
+            sorter: true,
+            showSorterTooltip: false,
             render: (value, record) => <Link
-                onClick={() => redirectTo(text.exam.group.view.href + record?.id)} strong
+                onClick={() => redirectTo(text.exam.group.view.href + record?.id)}
             >
                 {value}
             </Link>
@@ -79,9 +114,10 @@ const ExamListPage = () => {
         {
             title: 'Matière',
             dataIndex: 'subject',
-            key: 'examName',
+            key: 'subject',
             align: "center",
-            width: '12%',
+            sorter: true,
+            showSorterTooltip: false,
             render: (subject: Course) => <Text
                 onClick={() => redirectTo(text.cc.group.course.view.href + subject?.id)}
                 className='course-Link'
@@ -94,7 +130,8 @@ const ExamListPage = () => {
             dataIndex: 'classe',
             key: 'classe',
             align: 'center',
-            width: '10%',
+            sorter: true,
+            showSorterTooltip: false,
             render: (classe: Classe) => <AntTag.CheckableTag onClick={
                 () => redirectTo(text.cc.group.classe.view.href + classe.id)
             } checked>
@@ -107,7 +144,6 @@ const ExamListPage = () => {
             key: 'preparedBy',
             align: "left",
             responsive: ['md'],
-            width: '18%',
             render: (teacher: Individual) => <AvatarTitle
                 lastName={teacher?.lastName}
                 firstName={teacher?.firstName}
@@ -122,20 +158,10 @@ const ExamListPage = () => {
             key: 'examDate',
             align: 'center',
             responsive: ['md'],
-            width: '10%',
+            sorter: true,
+            showSorterTooltip: false,
             render: (text: number[]) => <span>
                 {setFirstName(Datetime.of(text).fDate("DD MMM YYYY"))}
-            </span>
-        },
-        {
-            title: "Heures",
-            dataIndex: 'examDate',
-            key: 'times',
-            align: 'center',
-            responsive: ['md'],
-            width: '8%',
-            render: (_, record: Assignment) => <span>
-                {Datetime.timeToCurrentDate(record.startTime as number[]).fDate("HH:mm")} - {Datetime.timeToCurrentDate(record.endTime as number[]).fDate(" HH:mm")}
             </span>
         },
         {
@@ -150,7 +176,7 @@ const ExamListPage = () => {
             </Space>
         },
         {
-            title: "Action",
+            title: <LuEllipsis size={30} style={{borderStyle: 'border'}} />,
             dataIndex: 'id',
             key: 'action',
             align: 'right',
@@ -164,7 +190,19 @@ const ExamListPage = () => {
         }
     ]
 
+    const handleUpdateFilters = (value: AssignmentFilterProps) => {
+        setFilters(value)
+        setIsRefetch(false)
+    }
+
     const filterParams = [filters]
+    const academicYearOptions = academicYears?.map(a => ({
+        value: a.id,
+        label: a.academicYear
+    }))
+
+    console.log('PARAMETERS: ', filterParams)
+    console.log('SEARCH QUERY: ', searchQuery)
 
     return(
         <>
@@ -192,6 +230,13 @@ const ExamListPage = () => {
                     page: 'examPage',
                     pageCount: 'examPageCount',
                 }}
+                shareSearchQuery={setSearchQuery}
+                refetchCondition={isRefetch}
+                filters={<AssignmentFilter
+                    academicYear={usedAcademicYearId as string}
+                    academicYearOptions={academicYearOptions}
+                    setFilters={handleUpdateFilters}
+                />}
             />
         </>
     )

@@ -3,9 +3,8 @@ import {Assignment} from "../../entity";
 import {ID, IDS} from "../../core/utils/interfaces.ts";
 import {getShortSortOrder} from "../../core/utils/utils.ts";
 
-export interface AssignmentFilter {
+export interface AssignmentFilterProps {
     academicYearId: string
-    planningId?: number
     gradeId?: number
     semesterId?: number
     classeId?: number
@@ -14,7 +13,7 @@ export interface AssignmentFilter {
 }
 
 export const getAllAssignments = (
-    filter: AssignmentFilter,
+    filter: AssignmentFilterProps,
     page: number,
     size: number,
     sortField?: string,
@@ -24,19 +23,18 @@ export const getAllAssignments = (
         sortOrder = getShortSortOrder(sortOrder)
         sortField = sortedField(sortField)
     }
-
+    console.log("FIND ALL ASSIGNMENTS PARAMS: ", filter, page, size, sortField, sortOrder)
     return apiClient.get<Assignment[]>(`/assignment/all`, {
         params: {
             academicYear: filter.academicYearId,
             page: page,
             size: size,
             ...(sortField && sortOrder ? {sortCriteria: `${sortField}:${sortOrder}`} : {}),
-            ...(filter.planningId ? {planning: filter.planningId} : {}),
             ...(filter.gradeId ? {grade: filter.gradeId} : {}),
             ...(filter.semesterId ? {semester: filter.semesterId} : {}),
             ...(filter.classeId ? {classe: filter.classeId} : {}),
             ...(filter.courseId ? {course: filter.courseId} : {}),
-            ...(filter.search ? {String: filter.search} : {})
+            ...(filter.search ? {search: filter.search} : {})
         }
     })
 }
@@ -107,6 +105,12 @@ export const removeAssignment = (assignmentId: bigint) => {
 const sortedField = (sortField: string) => {
     switch (sortField) {
         case 'examName':
-            return 'assignment.examName'
+            return 'examName'
+        case 'examDate':
+            return 'examDate'
+        case 'subject':
+            return 'subject.course'
+        case 'classe':
+            return 'classeEntity.name'
     }
 }

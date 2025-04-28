@@ -100,7 +100,8 @@ export const text = {
     http: 'http://localhost:5173',
     academicYear: {
         name: 'Année scolaire'
-    }
+    },
+    semester: 'Trimestre'
 }
 
 export const calendarMessages = {

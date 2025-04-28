@@ -220,9 +220,12 @@ export interface ListViewerProps<TData extends object, TError> {
     tableProps?: TableProps
     itemSize?: number
     descMargin?: {
-        position?: "top" | "bottom" | "left" | "right",
+        position?: "top" | "bottom" | "left" | "right"
         size?: number | string
     }
+    filters?: ReactNode
+    shareSearchQuery?: (value: string | undefined) => void
+    showFilterAction?: (value: boolean) => void
 }
 
 export interface ExamData {

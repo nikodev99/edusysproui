@@ -57,7 +57,9 @@
 
 //Student List
 .header__area {
-  @include display(flex, center, space-between);
+  background: #fff;
+  padding: 10px 20px 40px 20px;
+  margin-top: 30px;
 
   .flex__end {
     @include display(flex, center, flex-end);
@@ -81,6 +83,24 @@
   .search__input {
     transition: .3s;
     @include hide_screen
+  }
+}
+
+.filter__area {
+  @include display(flex, center, space-between);
+  margin-top: 20px;
+  height: 0!important;
+  transition: height .5s ease-in-out;
+
+  &.open {
+    height: 30px!important;
+  }
+
+  .filter_action {
+    color: #0098ff;
+    &:hover {
+      color: #0184bb;
+    }
   }
 }
 

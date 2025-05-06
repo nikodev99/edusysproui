@@ -3,7 +3,7 @@ import {AxiosError} from "axios";
 import ListViewer from "../../custom/ListViewer.tsx";
 import {TableColumnsType, Tag} from "antd";
 import {Avatar} from "../../ui/layout/Avatar.tsx";
-import {dateCompare, enumToObjectArrayForFiltering, fDatetime, setFirstName} from "../../../core/utils/utils.ts";
+import {dateCompare, enumToObjectArrayForFiltering, setFirstName} from "../../../core/utils/utils.ts";
 import {Gender} from "../../../entity/enums/gender.tsx";
 import Tagger from "../../ui/layout/Tagger.tsx";
 import {AiOutlineEllipsis} from "react-icons/ai";
@@ -12,6 +12,7 @@ import {redirectTo} from "../../../context/RedirectContext.ts";
 import {text} from "../../../core/utils/text_display.ts";
 import {LuEye} from "react-icons/lu";
 import {useColumnSearch} from "../../../hooks/useColumnSearch.tsx";
+import Datetime from "../../../core/datetime.ts";
 
 export const StudentList = <TError extends AxiosError>(listProps: ListViewerProps<StudentListDataType, TError>) => {
 
@@ -95,7 +96,9 @@ export const StudentList = <TError extends AxiosError>(listProps: ListViewerProp
             width: '15%',
             sorter: true,
             showSorterTooltip: false,
-            render: (text) => (<span>{fDatetime(text)}</span>),
+            render: (value: number) => (<span>{
+                Datetime.of(value).fDatetime()
+            }</span>),
             responsive: ['md'],
         },
         {
@@ -137,7 +140,7 @@ export const StudentList = <TError extends AxiosError>(listProps: ListViewerProp
                          warnMessage='fin_annee_scolaire'/>,
             description: [
                 `${c.grade} - ${c.classe}`,
-                `Inscrit le, ${fDatetime(c.lastEnrolledDate, true)}`
+                `Inscrit le, ${Datetime.of(c.lastEnrolledDate).fDatetime({to: true})}`
             ]
         })) as DataProps[]
     }
@@ -152,6 +155,7 @@ export const StudentList = <TError extends AxiosError>(listProps: ListViewerProp
             throughDetails={throughDetails}
             countTitle={text.student.label}
             cardData={cardData}
+            level={5}
         />
     )
 }

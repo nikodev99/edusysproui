@@ -16,12 +16,12 @@ interface CardListProps {
     dropdownItems?: (url: string) => ItemType[]
     throughDetails: (id: string) => void
     avatarLess?: boolean
-    titleLevel?: 1 | 4 | 5 | 2 | 3 | undefined
+    titleLevel?: 1 | 4 | 5 | 2 | 3
     displayItem?: 1 | 2 | 3 | 4
 }
 
 const CardList = (
-    {content, isActive, isLoading, dropdownItems, throughDetails, avatarLess, titleLevel, displayItem = 4}: CardListProps
+    {content, isActive, isLoading, dropdownItems, throughDetails, avatarLess, titleLevel = 4, displayItem = 4}: CardListProps
 ) => {
 
     const selectedGender = (gender?: Gender) => {
@@ -40,7 +40,7 @@ const CardList = (
             {
                 isActive && (<Skeleton loading={isLoading} active={isLoading} avatar={isLoading}>
                     {content && content?.map(c => (
-                        <Grid key={c?.id} xs={24} md={md} lg={lg} xl={xl}>
+                        <Grid key={c?.id} xs={24} md={md} lg={lg} xl={xl} style={{marginTop: '15px'}}>
                             <Card loading={!content || isLoading} className='card__list'>
                                 {dropdownItems && <ActionButton
                                     icon={<AiOutlineMore className='cardIcon' size={30} />}
@@ -58,7 +58,7 @@ const CardList = (
                                         />
                                     </div>}
                                     <div className='col__name'>
-                                        {c.lastName || c.firstName && <Title level={titleLevel ?? 4} onClick={() => throughDetails(c?.id as string)}>
+                                        {c.lastName !== undefined && <Title level={titleLevel} onClick={() => throughDetails(c?.id as string)}>
                                             <SuperWord input={c.firstName ? `${c?.lastName?.toUpperCase()}, ${setFirstName(c?.firstName)}`: c.lastName as string} />
                                         </Title>}
                                         {c.reference && <Text className='st__ref'>{c?.reference}</Text>}

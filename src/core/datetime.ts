@@ -7,6 +7,21 @@ dayjs.extend(utc)
 dayjs.extend(timezone)
 
 type DateInput = Date | number[] | string | number | Dayjs
+type Params = {
+    date?: DateInput
+    timezone?: string
+    locale?: string
+    format?: string
+    to?: boolean
+    time?: number[]
+    statTime?: number[]
+    endTime?: number[]
+    unit?: ManipulateType
+}
+
+function isParams(arg: unknown): arg is Params {
+    return Boolean(arg && typeof arg === 'object' && Object.keys(arg).length > 0)
+}
 
 //TODO Ajouter default timezone et locale aux sittings global
 class Datetime {
@@ -18,13 +33,22 @@ class Datetime {
     private static DEFAULT_LOCALE = 'fr'
     private static DEFAULT_FORMAT = 'YYYY-MM-DD'
 
-    constructor(dateInput?: DateInput, timezone?: string, locale?: string) {
-        this.timezone = timezone || Datetime.DEFAULT_TIMEZONE
-        this.locale = locale || Datetime.DEFAULT_LOCALE
+    constructor(input?: DateInput | Params, timezone?: string, locale?: string) {
+        let dateInput: DateInput | undefined;
+        if (isParams(input)) {
+            dateInput = input.date;
+            this.timezone = input.timezone || Datetime.DEFAULT_TIMEZONE;
+            this.locale = input.locale || Datetime.DEFAULT_LOCALE;
+        } else {
+            dateInput = input;
+            this.timezone = timezone || Datetime.DEFAULT_TIMEZONE;
+            this.locale = locale || Datetime.DEFAULT_LOCALE;
+        }
+
         if (!dateInput) {
-            this.date = dayjs().tz(this.timezone).locale(this.locale)
-        }else {
-            this.date = this._parse(dateInput)
+            this.date = dayjs().tz(this.timezone).locale(this.locale);
+        } else {
+            this.date = this._parse(dateInput);
         }
     }
 
@@ -57,16 +81,17 @@ class Datetime {
         throw new Error('Invalid date format')
     }
 
-    static of(date: DateInput, timezone?: string, locale?: string): Datetime {
+    static of(date: DateInput | Params, timezone?: string, locale?: string): Datetime {
         return new Datetime(date, timezone, locale);
     }
 
-    static now(date?: DateInput, timezone?: string, locale?: string): Datetime {
+    static now(date?: DateInput | Params, timezone?: string, locale?: string): Datetime {
         return new Datetime(date, timezone, locale);
     }
 
-    static timeToCurrentDate(time: number[]): Datetime {
-        return Datetime.of(dayjs().hour(time[0]).minute(time[1]).second(0))
+    static timeToCurrentDate(time: number[] | Params): Datetime {
+        const t = isParams(time) ? time.time as number[] : time
+        return Datetime.of(dayjs().hour(t[0]).minute(t[1]).second(0))
     }
 
     get YEAR(): number {
@@ -105,12 +130,14 @@ class Datetime {
         return this.date.toDate();
     }
 
-    toDayjs(format?: string): Dayjs {
-        return dayjs(this.date, format)
+    toDayjs(format?: string | Params): Dayjs {
+        const f = isParams(format) ? format.format : format
+        return dayjs(this.date, f)
     }
 
-    minus(value: number, unit: ManipulateType): this {
-        this.date = this.date.subtract(value, unit)
+    minus(value: number, unit: ManipulateType | Params): this {
+        const u = isParams(unit) ? unit.unit : unit
+        this.date = this.date.subtract(value, u)
         return this
     }
 
@@ -142,8 +169,9 @@ class Datetime {
         return this.minus(value, 'week');
     }
 
-    plus(value: number, unit: ManipulateType): this {
-        this.date = this.date.add(value, unit)
+    plus(value: number, unit: ManipulateType | Params): this {
+        const u = isParams(unit) ? unit.unit : unit
+        this.date = this.date.add(value, u)
         return this
     }
 
@@ -175,48 +203,54 @@ class Datetime {
         return this.plus(value, 'week');
     }
 
-    diff(dateInput: DateInput, unit: ManipulateType, timezone?: string, locale?: string): number {
+    diff(dateInput: DateInput | Params, unit?: ManipulateType, timezone?: string, locale?: string): number {
         const dateToDiff = new Datetime(dateInput, timezone, locale)
-        return  dateToDiff.date.diff(this.date, unit)
+        return  dateToDiff.date.diff(this.date, isParams(dateInput) ? dateInput.unit ?? unit : unit)
     }
 
-    diffYear(date: DateInput, timezone?: string, locale?: string): number {
+    diffYear(date: DateInput | Params, timezone?: string, locale?: string): number {
         return this.diff(date, 'year', timezone, locale);
     }
 
-    diffMonth(date: DateInput, timezone?: string, locale?: string): number {
+    diffMonth(date: DateInput | Params, timezone?: string, locale?: string): number {
         return this.diff(date, 'month', timezone, locale);
     }
 
-    diffDay(date: DateInput, timezone?: string, locale?: string): number {
+    diffDay(date: DateInput | Params, timezone?: string, locale?: string): number {
         return this.diff(date, 'day', timezone, locale);
     }
 
-    diffHour(date: DateInput, timezone?: string, locale?: string): number {
+    diffHour(date: DateInput | Params, timezone?: string, locale?: string): number {
         return this.diff(date, 'hour', timezone, locale);
     }
 
-    diffMinutes(date: DateInput, timezone?: string, locale?: string): number {
+    diffMinutes(date: DateInput | Params, timezone?: string, locale?: string): number {
         return this.diff(date, 'minute', timezone, locale);
     }
 
-    diffSecond(date: DateInput, timezone?: string, locale?: string): number {
+    diffSecond(date: DateInput | Params, timezone?: string, locale?: string): number {
         return this.diff(date, 'second', timezone, locale);
     }
 
-    diffWeek(date: DateInput, timezone?: string, locale?: string): number {
+    diffWeek(date: DateInput | Params, timezone?: string, locale?: string): number {
         return this.diff(date, 'week', timezone, locale);
     }
 
-    format(format?: string): string {
-        return this.date.format(format ?? Datetime.DEFAULT_FORMAT);
+    format(format?: string | Params): string {
+        const f = (isParams(format) ? format.format : format) ?? Datetime.DEFAULT_FORMAT
+        return this.date.format(f);
     }
 
-    fDatetime(format?: string, to?: boolean): string {
-        return this.format(format || (to ? 'DD/MM/YYYY à HH:mm' : 'DD/MM/YYYY HH:mm'))
+    fDatetime(format?: string | Params, to?: boolean): string {
+        const f = isParams(format) ? format.format : format
+        const defaultFormat = isParams(format) ? 
+            format.to ? 'DD/MM/YYYY à HH:mm' : 'DD/MM/YYYY HH:mm':
+            to ? 'DD/MM/YYYY à HH:mm' : 'DD/MM/YYYY HH:mm'
+
+        return this.format(f || defaultFormat)
     }
 
-    fDate(format?: string): string {
+    fDate(format?: string | Params): string {
         return this.format(format ?? 'DD MMMM YYYY')
     }
 
@@ -224,35 +258,39 @@ class Datetime {
         return this.format('dddd D MMMM YYYY')
     }
 
-    isAfter(date: DateInput): boolean {
+    isAfter(date: DateInput | Params): boolean {
         const otherDate = new Datetime(date).date;
         return this.date.isAfter(otherDate);
     }
 
-    isBefore(date: DateInput): boolean {
+    isBefore(date: DateInput | Params): boolean {
         const otherDate = new Datetime(date).date;
         return this.date.isBefore(otherDate);
     }
 
-    compare(date: DateInput): -1 | 1 | 0 {
+    compare(date: DateInput | Params): -1 | 1 | 0 {
         if (this.isBefore(date)) return -1
         if (this.isAfter(date)) return 1
         if (this.isSame(date)) return 0
         throw new Error('Invalid date')
     }
 
-    timeToDatetime(time: number[]): this {
-        this.date = this.date.hour(time[0]).minute(time[1]).second(0)
+    timeToDatetime(time: number[] | Params): this {
+        const t = isParams(time) ? time.time as number[] : time
+        this.date = this.date.hour(t[0]).minute(t[1]).second(0)
         return this
     }
 
-    isCurrentTimeBetween(statTime: number[], endTime: number[]): boolean {
-        const date1 = this.timeToDatetime(statTime)
-        const date2 = this.timeToDatetime(endTime)
+    isCurrentTimeBetween(startTime: number[] | Params, endTime?: number[]): boolean {
+        const {start, end} = isParams(startTime) ? 
+            {start: startTime.statTime, end: startTime.endTime} : 
+            {start: startTime, end: endTime} 
+        const date1 = this.timeToDatetime(start as number[])
+        const date2 = this.timeToDatetime(end as number[])
         return this.isAfter(date1.date) && this.isBefore(date2.date)
     }
 
-    isSame(dateInput: DateInput, timezone?: string, locale?: string) {
+    isSame(dateInput: DateInput | Params, timezone?: string, locale?: string) {
         const date = new Datetime(dateInput, timezone, locale)
         return this.date.isSame(date.date)
     }

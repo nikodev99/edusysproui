@@ -26,3 +26,7 @@ export const individualSchema = z.object({
     image: z.string().nullable().optional(),
     attachments: z.array(z.string()).nullable().optional(),
 })
+
+export const individualSchemaMerge = z.object({
+    id: z.number({required_error: "Professeur est requis est requis"}),
+})

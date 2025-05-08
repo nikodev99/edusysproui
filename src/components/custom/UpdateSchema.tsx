@@ -8,14 +8,14 @@ import React, {useState} from "react";
 import {useGlobalStore} from "../../core/global/store.ts";
 import {catchError} from "../../data/action/error_catch.ts";
 
-type UpdateSchemaProps<TData extends FieldValues> = SchemaProps<TData> & {
+type UpdateSchemaProps<TData extends FieldValues, TReturn> = SchemaProps<TData> & {
     id: ID,
-    resp?: (resp: Record<string, boolean>) => void,
+    resp?: (resp: TReturn) => void,
     confirmBtnText?: string
-} & ModalProps & PutSchemaProps<TData>
+} & ModalProps & PutSchemaProps<TData, TReturn>
 
-export const UpdateSchema = <TData extends FieldValues>(
-    {data, messageSuccess, handleForm, customForm, id, resp, open, title, description, cancelText, onCancel, putFunc, okText, confirmBtnText}: UpdateSchemaProps<TData>
+export const UpdateSchema = <TData extends FieldValues, TReturn extends object>(
+    {data, messageSuccess, handleForm, customForm, id, resp, open, title, description, cancelText, onCancel, putFunc, okText, confirmBtnText}: UpdateSchemaProps<TData, TReturn>
 ) => {
 
     const [openConfirm, setOpenConfirm] = useToggle(false);
@@ -23,17 +23,17 @@ export const UpdateSchema = <TData extends FieldValues>(
     const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined)
     const breakpoints = useGlobalStore.use.modalBreakpoints()
 
-    const {mutate, isPending} = useQueryUpdate(data)
+    const {mutate, isPending} = useQueryUpdate<TData, TReturn>(data)
 
     const onSubmit = (data: TData) => {
         setErrorMessage(undefined)
         setSuccessMessage(undefined)
         mutate({putFn: putFunc, data: data, id: id}, {
             onSuccess: response => {
-                if (response && response.status === 200) {
-                    setSuccessMessage(messageSuccess ?? response?.data?.updated)
+                if (response && 'data' in response && 'updated' in response.data && response.status === 200) {
+                    setSuccessMessage(messageSuccess ?? response?.data?.updated as string)
                     if (resp) {
-                        resp(response?.data as Record<string, boolean>)
+                        resp(response?.data as TReturn)
                     }
                 }
             },

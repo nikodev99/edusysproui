@@ -5,12 +5,23 @@ import {Button, Card, Descriptions, Flex, Popover, Skeleton, Space, StepsProps, 
 import {Color} from "./interfaces.ts";
 import {MarkType} from "../../entity/enums/MarkType.ts";
 import {Assignment} from "../../entity";
-import {LuCalendarDays, LuClock, LuClock9, LuRefreshCcw, LuX} from "react-icons/lu";
+import {
+    LuAward,
+    LuCalendarDays,
+    LuCheck,
+    LuCircleCheck,
+    LuClock,
+    LuClock9,
+    LuMedal,
+    LuRefreshCcw, LuThumbsDown, LuThumbsUp, LuTrendingDown,
+    LuX
+} from "react-icons/lu";
 import Datetime from "../datetime.ts";
 import {dateCompare, setName, setTime} from "./utils.ts";
 import {ModalConfirmButton} from "../../components/ui/layout/ModalConfirmButton.tsx";
 import {redirectTo} from "../../context/RedirectContext.ts";
 import {text} from "./text_display.ts";
+import {AssignmentType, getAssignmentType} from "../../entity/enums/assignmentType.ts";
 
 export const StatusTags = ({status, female}: {status: Status, female?: boolean}): ReactNode => {
     const label = getStatusKey(status, female)
@@ -115,18 +126,20 @@ export const AssignmentDescription = (
         a: Assignment, title?: ReactNode, show?: boolean,
         plus?: boolean, remove?: (id?: bigint) => void, showBest?: boolean,
         openUpdater?: () => void
-        link?: string
+        link?: boolean
     }
 ) => {
 
     const {Link, Text} = Typography
 
     return <Descriptions items={[
-        ...(show ? [{key: 1, label: 'Titre', children: link ? <Link onClick={() => redirectTo(link)}>{a?.examName}</Link> : a?.examName, span: 3}] : []),
+        ...(show ? [{key: 1, label: 'Titre', children: link ? <Link onClick={() => redirectTo(text.exam.group.view.href + a?.id)}>{a?.examName}</Link> : a?.examName, span: 3}] : []),
+        ...(a?.semester ? [{key: 14, label: 'Planning', children: a?.semester?.designation, span: 3}] : []),
         ...(a?.semester?.semester ? [{key: 2, label: 'Semestre', children: a?.semester?.semester?.semesterName, span: 3}] : []),
         ...(a?.exam?.examType ? [{key: 3, label: 'Examen', children: a?.exam?.examType?.name, span: 3}] : []),
+        ...(a?.type ? [{key: 13, label: 'Type de devoir', children: getAssignmentType(AssignmentType[a?.type as unknown as keyof typeof AssignmentType]), span: 3}] : []),
         ...(a?.subject ? [{key: 4, label: 'Matière', children: <Text onClick={() => redirectTo(text.cc.group.course.view.href + a?.subject?.id)} className='course-Link'>
-                {a?.subject?.course}
+                <span>{a?.subject?.course}</span>
         </Text>, span: 3}] : []),
         ...(a?.classe ? [{key: 12, label: 'Classe', children: <Text onClick={() => redirectTo(text.cc.group.classe.view.href + a?.classe?.id)} className='course-Link'>
                 <SuperWord input={a?.classe?.name} />
@@ -157,34 +170,43 @@ export const AssignmentDescription = (
 export const InitMarkType = ({av}: {av: number}) => {
     let color: string;
     let text: MarkType;
+    let icon: ReactNode
 
     if (av >= 18) {
         text = MarkType.EX;
         color = 'success';
+        icon = <LuAward />
     } else if (av >= 16) {
         text = MarkType.TB;
         color = 'success';
+        icon = <LuMedal />
     } else if (av >= 14) {
         text = MarkType.GOOD;
         color = 'processing';
+        icon = <LuCircleCheck />
     } else if (av >= 12) {
         text = MarkType.AB;
         color = 'processing';
+        icon = <LuCheck />
     }else if (av >= 10) {
         text = MarkType.PA;
         color = 'warning';
+        icon = <LuThumbsUp />
     }else if (av >= 8) {
         text = MarkType.IN;
         color = 'warning';
+        icon = <LuThumbsDown />
     }else if (av >= 6) {
         text = MarkType.FA;
         color = 'danger';
+        icon = <LuTrendingDown />
     } else {
         text = MarkType.TF;
         color = 'danger';
+        icon = <LuX />
     }
 
     return (
-        <Tag color={color as 'warning'}>{text}</Tag>
+        <Tag color={color as 'warning'} icon={icon}>{text}</Tag>
     );
 };

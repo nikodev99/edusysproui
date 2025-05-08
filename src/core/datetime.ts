@@ -19,8 +19,23 @@ type Params = {
     unit?: ManipulateType
 }
 
-function isParams(arg: unknown): arg is Params {
-    return Boolean(arg && typeof arg === 'object' && Object.keys(arg).length > 0)
+export function isParams(arg: unknown): arg is Params {
+    if (!arg || typeof arg !== 'object' || Array.isArray(arg) || dayjs.isDayjs(arg)) {
+        return false;
+    }
+
+    // Check if at least one of the Params keys exists
+    return (
+        'date' in arg ||
+        'timezone' in arg ||
+        'locale' in arg ||
+        'format' in arg ||
+        'to' in arg ||
+        'time' in arg ||
+        'statTime' in arg ||
+        'endTime' in arg ||
+        'unit' in arg
+    );
 }
 
 //TODO Ajouter default timezone et locale aux sittings global

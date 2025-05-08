@@ -1,25 +1,19 @@
 import Responsive from "../ui/layout/Responsive.tsx";
 import Grid from "../ui/layout/Grid.tsx";
-import {Card, Modal} from "antd";
-import {BigCalendar} from "../graph/BigCalendar.tsx";
+import {Card} from "antd";
 import VoidData from "../view/VoidData.tsx";
 import {ShapePieChart} from "../graph/ShapePieChart.tsx";
 import {Assignment} from "../../entity";
-import {AssignmentScores} from "../ui/layout/AssignmentScores.tsx";
-import {CalendarEvent, EventProps} from "../../core/utils/interfaces.ts";
 import {dateCompare, getAssignmentBarData, getDiffFromNow} from "../../core/utils/utils.ts";
-import {ReactNode, useEffect, useLayoutEffect, useRef, useState} from "react";
+import {ReactNode, useLayoutEffect, useRef, useState} from "react";
 import {Score} from "../../entity";
-import {AssignmentDescription, CardSkeleton} from "../../core/utils/tsxUtils.tsx";
+import {CardSkeleton} from "../../core/utils/tsxUtils.tsx";
 import dayjs from "dayjs";
 import {ScoreItem} from "../ui/layout/ScoreItem.tsx";
 import {BarChart} from "../graph/BarChart.tsx";
-import {useRawFetch} from "../../hooks/useFetch.ts";
-import {removeAssignment} from "../../data/repository/assignmentRepository.ts";
-import FormSuccess from "../ui/form/FormSuccess.tsx";
-import {useToggle} from "../../hooks/useToggle.ts";
-import {UpdateAssignmentDates} from "../ui-kit-exam";
 import Datetime from "../../core/datetime.ts";
+import {AssignmentViewDesc} from "./AssignmentViewDesc.tsx";
+import {AssignmentSchedule} from "./AssignmentSchedule.tsx";
 
 interface AssignmentDescProps {
     assignments: Assignment[] | null
@@ -59,49 +53,15 @@ export const AssignmentDesc = (
     {assignments, listTitle, isLoading, studentAllScore, setRefetch, refetch, scoreLoading, hasLegend = true, showBarChart = false,
     showBest = true, barLayout = 'vertical', onlyMark}: AssignmentDescProps
 ) => {
-
-    const [selectedAssignment, setSelectedAssignment] = useState<Assignment | null>(null)
-    const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
     const [scoreSize, setScoreSize] = useState<number>(5)
-    const [wasDeleted, setWasDeleted] = useState<Record<string, boolean>>({})
-    const [wasUpdated, setWasUpdated] = useState<Record<string, boolean>>({})
-    const [openUpdater, setUpdater] = useToggle(false)
     const assignment = useRef<Assignment | null>()
     const passedAssignment = useRef<Assignment | null>()
-
-    const remove = useRawFetch<Record<string, boolean>>()
-
-    const handleRemoveAssignment = (assignmentId?: bigint) => {
-        remove(removeAssignment, [assignmentId])
-            .then(resp => {
-                if (resp.isSuccess) {
-                    setWasDeleted(resp.data as Record<string, boolean>)
-                }
-            })
-    }
-    
-    useEffect(() => {
-        if (wasDeleted?.status || wasUpdated?.updated) {
-            setIsModalOpen(false)
-            if (setRefetch) {
-                setRefetch(true)
-            }
-        }
-    }, [setRefetch, wasDeleted?.status, wasUpdated?.updated])
 
     useLayoutEffect(() => {
         if (refetch) {
             setRefetch && setRefetch(refetch)
         }
     }, [refetch, setRefetch])
-
-    const eventData: CalendarEvent = assignment ? assignments?.map(assignment => ({
-        title: assignment.examName,
-        start: Datetime.of(assignment?.examDate as number[]).timeToDatetime(assignment?.startTime as number[]).toDate(),
-        end: Datetime.of(assignment?.examDate as number[]).timeToDatetime(assignment?.endTime as number[]).toDate(),
-        allDay: false,
-        resource: assignment
-    })): []
 
     const pieData = [
         {name: 'A venir', value: assignments?.filter(a => !a.passed && dateCompare(a?.examDate as Date))?.length || 0, color: '#DAA520'},
@@ -122,35 +82,22 @@ export const AssignmentDesc = (
 
     const barData = getAssignmentBarData(assignments)
 
-    function onEventSelected(event: EventProps) {
-        setIsModalOpen(true)
-        setSelectedAssignment(event.resource as Assignment)
-    }
-
-    function onModalCancel() {
-        setIsModalOpen(false)
-        setScoreSize(prev => prev > 5 ? 5 : prev)
-    }
-
     return(
         <>
-        {wasDeleted?.status && <FormSuccess message='Evaluation Supprimer avec succès' />}
         <Responsive gutter={[16, 16]} style={{padding: '0 20px 20px 20px'}}>
             <Grid xs={24} md={24} lg={24}>
-                {!isLoading
-                    ? assignments && assignments?.length > 0
-                        ? <Card>
-                            <BigCalendar
-                                styles={{ height: 450 }}
-                                data={eventData as []}
-                                views={['month', 'week']}
-                                defaultView='month'
-                                onSelectEvent={onEventSelected}
-                                showNavButton
-                            />
-                        </Card>
-                        : <VoidData />
-                    : <CardSkeleton />
+                {assignments && assignments?.length > 0
+                    ? <Card>
+                        <AssignmentSchedule
+                            eventSchedule={assignments}
+                            shareScoreSize={setScoreSize}
+                            setRefetch={setRefetch}
+                            onlyMark={onlyMark}
+                            isLoading={isLoading}
+                            showBest={showBest}
+                        />
+                    </Card>
+                    : <VoidData />
                 }
             </Grid>
 
@@ -207,48 +154,28 @@ export const AssignmentDesc = (
             <Grid xs={24} md={!showBest ? 24 : 12} lg={!showBest ? 24 : 12}>
                 <Responsive gutter={[16, 16]}>
                     {assignment.current && <Grid xs={24} md={!showBest ? 12 : 24} lg={!showBest ? 12 : 24}>
-                        <Card>
-                            <AssignmentDescription
-                                title={`Prochain devoirs ${timeDiff}`}
-                                a={passedAssignment.current as Assignment}
-                                show={true}
-                                remove={handleRemoveAssignment}
-                                openUpdater={setUpdater}
-                                showBest={showBest}
-                            />
-                        </Card>
+                        <AssignmentViewDesc
+                            assignment={assignment.current}
+                            title={`Prochain devoirs ${timeDiff}`}
+                            show={true}
+                            showBest={showBest}
+                            onlyMark={onlyMark}
+                            scoreSize={scoreSize}
+                        />
                     </Grid>}
                     {passedAssignment.current && <Grid xs={24} md={!showBest ? 12 : 24} lg={!showBest ? 12 : 24}>
-                        <Card>
-                            <AssignmentDescription
-                                title={`Dernier devoir terminé`}
-                                a={passedAssignment.current as Assignment}
-                                show={true}
-                                remove={handleRemoveAssignment}
-                                openUpdater={setUpdater}
-                                showBest={showBest}
-                            />
-                            {<AssignmentScores assignmentId={passedAssignment.current?.id} markId={onlyMark} />}
-                        </Card>
+                        <AssignmentViewDesc
+                            assignment={passedAssignment.current}
+                            title={`Dernier devoir terminé`}
+                            show={true}
+                            showBest={showBest}
+                            onlyMark={onlyMark}
+                            scoreSize={scoreSize}
+                        />
                     </Grid>}
                 </Responsive>
             </Grid>
         </Responsive>
-        {/* TODO Adding the link to assignment view on the title */}
-        <Modal title={selectedAssignment?.examName} open={isModalOpen} footer={null} onCancel={onModalCancel} destroyOnClose>
-            <Card>
-                <AssignmentDescription
-                    a={passedAssignment.current as Assignment}
-                    show={false}
-                    plus={true}
-                    remove={handleRemoveAssignment}
-                    openUpdater={setUpdater}
-                    showBest={showBest}
-                />
-                {selectedAssignment?.passed && <AssignmentScores assignmentId={selectedAssignment?.id} size={scoreSize} markId={onlyMark} />}
-            </Card>
-        </Modal>
-        <UpdateAssignmentDates assignment={selectedAssignment} open={openUpdater} onCancel={setUpdater} resp={setWasUpdated} />
         </>
     )
 }

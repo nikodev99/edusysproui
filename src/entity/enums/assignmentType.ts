@@ -26,3 +26,18 @@ export const getAssignmentType = (assignmentType: AssignmentType): string | unde
             return undefined
     }
 }
+
+export const typeColors = (assignmentType: AssignmentTypeLiteral, literalColor?: boolean) => {
+    switch (assignmentType) {
+        case AssignmentTypeLiteral.CLASSROOM_ASSIGNMENT:
+            return literalColor ? ['#b8860b', '#fff8dc'] : 'warning'
+        case AssignmentTypeLiteral.DEPARTMENT_ASSIGNMENT:
+            return literalColor ? ['#228b22', '#eaffea'] : 'success'
+        case AssignmentTypeLiteral.EXAMINATION_ASSIGNMENT:
+            return literalColor ? ['#4682b4', '#e6f2ff'] : 'processing'
+        case AssignmentTypeLiteral.SESSION_ASSIGNMENT:
+            return literalColor ? ['#8b0000', '#ffeaea'] : 'error'
+        default:
+            return literalColor ? ['#ccc', '#000'] : undefined
+    }
+}

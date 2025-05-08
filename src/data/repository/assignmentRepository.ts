@@ -2,6 +2,8 @@ import {apiClient} from "../axiosConfig.ts";
 import {Assignment} from "../../entity";
 import {ID, IDS} from "../../core/utils/interfaces.ts";
 import {getShortSortOrder} from "../../core/utils/utils.ts";
+import {AxiosResponse} from "axios";
+import {AssignmentSchema} from "../../schema";
 
 export interface AssignmentFilterProps {
     academicYearId: string
@@ -10,6 +12,11 @@ export interface AssignmentFilterProps {
     classeId?: number
     courseId?: number
     search?: string
+}
+
+export const insertAssignment = (assignment: AssignmentSchema) => {
+    console.log("INSERT ASSIGNMENT PARAMS: ", assignment)
+    return apiClient.post<AssignmentSchema>('/assignment', assignment)
 }
 
 export const getAllAssignments = (
@@ -37,6 +44,10 @@ export const getAllAssignments = (
             ...(filter.search ? {search: filter.search} : {})
         }
     })
+}
+
+export const getAllNotCompletedAssignment = () => {
+    return apiClient.get<Assignment[]>(`/assignment/not_completed`)
 }
 
 export const getAllClasseAssignments = (
@@ -94,8 +105,8 @@ export const getAllTeacherAssignments = (personalInfoId: bigint, ids: IDS) => {
     })
 }
 
-export const changeAssignmentDate = (assignment: Assignment, assignmentId: ID)=>  {
-    return apiClient.put<Assignment>(`/assignment/change/${assignmentId}`, assignment)
+export const changeAssignmentDate = (assignment: Assignment, assignmentId: ID): Promise<AxiosResponse<{ updated: boolean }>> =>  {
+    return apiClient.put<{ updated: boolean }>(`/assignment/change/${assignmentId}`, assignment)
 }
 
 export const removeAssignment = (assignmentId: bigint) => {

@@ -308,9 +308,14 @@
 
   .rbc-day-slot {
     font-size: 14px!important;
+    border: none!important;
+
+    .rbc-event {
+      border: none;
+    }
   }
 
-  .rbc-event {
+  .rbc-event:not(.custom__wrapper) {
     border: none!important;
     color: #000!important;
 
@@ -348,5 +353,6 @@
 .agenda {
   .rbc-day-slot {
     font-size: 12px!important;
+    font-weight: bold!important;
   }
 }

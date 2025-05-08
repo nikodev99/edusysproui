@@ -5,10 +5,11 @@ import {
     countAllTeachers,
     getNumberOfStudentTaughtByClasse,
     getNumberOfStudentTaughtByTeacher,
-    getSearchedTeachers,
+    getSearchedTeachers, getTeacherBasicValues,
     getTeacherById, getTeacherSchedule, getTeacherScheduleByDay
 } from "../data/repository/teacherRepository.ts";
 import {useEffect, useState} from "react";
+import {SectionType} from "../entity/enums/section.ts";
 
 export const useTeacherRepo = () => {
     const useGetAllTeachers = (pageable: Pageable, sortField: string, sortOrder: string) => useFetch(
@@ -23,6 +24,13 @@ export const useTeacherRepo = () => {
         getSearchedTeachers,
         [input],
         !!input
+    )
+
+    const useGetTeacherBasicValues = (classeId?: number, section?: SectionType) => useFetch(
+        ['teacher-basic', classeId, section],
+        getTeacherBasicValues,
+        [classeId, section],
+        !!classeId && !!section
     )
 
     const useGetTeacher = (teacherId: string) => useFetch(
@@ -96,6 +104,7 @@ export const useTeacherRepo = () => {
         useGetTeacherSchedules,
         useGetTeacherStudentNumber,
         useGetTeacherClasseStudentNumber,
-        useCountAllTeachers
+        useCountAllTeachers,
+        useGetTeacherBasicValues
     }
 }

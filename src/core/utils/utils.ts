@@ -47,12 +47,18 @@ export const connectToElement = (connector: string, attributes?: {[key: string]:
     }
 }
 
-export const enumToObjectArray = (enumObj: EnumType) => {
+export const enumToObjectArray = (enumObj: EnumType, inverse?: boolean, enumObj2?: EnumType) => {
     return Object.keys(enumObj)
         .filter(key => isNaN(Number(key)))
         .map(key => ({
-            value: enumObj[key as keyof EnumType],
-            label: key
+            value: inverse ?
+                enumObj2 && key in enumObj2 ?
+                    enumObj2[key] :
+                    key :
+                enumObj[key as keyof EnumType],
+            label: inverse ?
+                enumObj[key as keyof EnumType] :
+                key
         }))
 }
 
@@ -470,6 +476,25 @@ export const lowerName = (first?: string, last?: string, length?: number) => {
         first = first?.charAt(0).toUpperCase() + '.'
     }
     return `${firstWord(first)} ${firstWord(last)}`
+}
+
+/**
+ * Retourne une chaîne de longueur exactement 6, avec des zéros devant.
+ *
+ * @param value - Nombre ou chaîne à formater.
+ * @param singleZero - Si vrai, n'ajoute qu'un seul "0" devant la valeur.
+ *                      Par défaut : false (complète jusqu'à 6 caractères).
+ * @returns Chaîne formatée de longueur 6, ou préfixée d'un seul zéro.
+ */
+export function zeroFormat(
+    value: number | string,
+    singleZero: boolean = false
+): string {
+    const str = String(value);
+    if (singleZero) {
+        return str.length < 6 ? `0${str}` : str;
+    }
+    return str.padStart(6, "0");
 }
 
 export const convertToM = (cm?: number) => {

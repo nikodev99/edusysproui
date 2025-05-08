@@ -15,7 +15,7 @@ type UpdateAssignmentProps = {
     assignment: Assignment | null
     open?: boolean,
     onCancel?: () => void
-    resp?: (resp: Record<string, boolean>) => void
+    resp?: (resp: { updated: boolean }) => void
 }
 
 export const UpdateAssignmentDates = ({assignment, open, onCancel, resp}: UpdateAssignmentProps) => {
@@ -42,6 +42,7 @@ export const UpdateAssignmentDates = ({assignment, open, onCancel, resp}: Update
             title="Change la date du devoir"
             okText="oui"
             description="Souhaitez-vous poursuivre cette action ?"
+            zIndex={1000}
             handleForm={form as UseFormReturn<Assignment>}
             customForm={
                 <Responsive gutter={[16, 16]}>

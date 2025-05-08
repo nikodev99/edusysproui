@@ -41,3 +41,7 @@ export const planningSchema = z.object({
         z.array(z.number()),
     ]).optional(),
 })
+
+export const planningSchemaMerge = z.object({
+    id: z.number({required_error: 'Le planning est requis'}),
+})

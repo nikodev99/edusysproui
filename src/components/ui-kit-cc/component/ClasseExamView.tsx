@@ -2,7 +2,7 @@ import {useEffect, useLayoutEffect, useMemo, useRef, useState} from "react";
 import {Assignment, Course, Enrollment, Exam, Student} from "../../../entity";
 import {useFetch, useRawFetch} from "../../../hooks/useFetch.ts";
 import {getClasseExamAssignments, getClasseExams} from "../../../data/repository/examRepository.ts";
-import {Badge, Card, Segmented, TableColumnsType, Typography} from "antd";
+import {Badge, Card, Segmented, TableColumnsType, Tag as AntTag, Typography} from "antd";
 import VoidData from "../../view/VoidData.tsx";
 import Responsive from "../../ui/layout/Responsive.tsx";
 import Grid from "../../ui/layout/Grid.tsx";
@@ -13,16 +13,17 @@ import {
     calculateSubjectsAverage, calculateTotalMarks,
     calculeMarkAverage, findPercent,
     getAssignmentBarData, getGoodAverageMedian,
-    getUniqueness,
+    getUniqueness, zeroFormat,
 } from "../../../core/utils/utils.ts";
 import {BarChart} from "../../graph/BarChart.tsx";
-import {AssignmentType, AssignmentTypeLiteral, getAssignmentType} from "../../../entity/enums/assignmentType.ts";
+import {AssignmentTypeLiteral, typeColors} from "../../../entity/enums/assignmentType.ts";
 import {getClasseStudents} from "../../../data/repository/studentRepository.ts";
 import {ExamView, NestedExamView, TypedAssignment} from "../../../core/utils/interfaces.ts";
 import {Table} from "../../ui/layout/Table.tsx";
 import {AvatarTitle} from "../../ui/layout/AvatarTitle.tsx";
 import {InitMarkType} from "../../../core/utils/tsxUtils.tsx";
 import {text} from "../../../core/utils/text_display.ts";
+import {redirectTo} from "../../../context/RedirectContext.ts";
 
 const ExamDescription = (
     {classeId, academicYear, examId}: {classeId: number, academicYear: string, examId: number},
@@ -142,22 +143,33 @@ const ExamDescription = (
             title: '',
             dataIndex: 'id',
             align: 'right',
-            width: '5%',
-            render: text => <Link>{`#${text}`}</Link>
+            width: '8%',
+            render: (text, record) => <Link onClick={() => redirectTo(text.exam.group.view.href + record?.id)} strong>
+                {`#${zeroFormat(text)}`}
+            </Link>
         },
         {
             title: 'Designation',
-            dataIndex: 'examName'
+            dataIndex: 'examName',
+            width: '30%',
+            render: (value, record) => <Link onClick={() => redirectTo(text.exam.group.view.href + record?.id)}>
+                {value}
+            </Link>
         },
         {
             title: 'Matière',
-            dataIndex: ['subject', 'course']
+            dataIndex: ['subject', 'course'],
+            width: '20%',
         },
         {
             title: 'Type',
             dataIndex: 'type',
             responsive: ['md'],
-            render: text => getAssignmentType(AssignmentType[text as unknown as keyof typeof AssignmentType])
+            width: '10%',
+            render: (value: AssignmentTypeLiteral) => {
+                const type = AssignmentTypeLiteral[value as unknown as keyof typeof AssignmentTypeLiteral]
+                return (<AntTag color={typeColors(type) as string}>{type}</AntTag>)
+            }
         },
         {
             title: 'Date',

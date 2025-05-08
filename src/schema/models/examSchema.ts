@@ -7,3 +7,7 @@ export const examSchema: ZodType = z.lazy(() => z.object({
     examType: examTypeSchema.optional(),
     assignments: z.array(assignmentSchema)
 }))
+
+export const examSchemaMerge = z.object({
+    id: z.number({required_error: 'L\'examen est requis'}),
+})

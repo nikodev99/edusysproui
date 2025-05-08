@@ -5,13 +5,12 @@ import {ID} from "../core/utils/interfaces.ts";
 import {Response} from "../data/action/response.ts";
 import {ErrorCatch} from "../data/action/error_catch.ts";
 
-type PutFunction<TData> = (data: TData, id: ID) => Promise<AxiosResponse<TData>>
+type PutFunction<TData, TReturn> = (data: TData, id: ID) => Promise<AxiosResponse<TReturn, unknown>>
 
-export const useQueryUpdate = <TData>(schema: z.ZodSchema<TData>) => {
-    return useMutation<AxiosResponse<TData>, unknown, {putFn: PutFunction<TData>, data: TData, id: ID}>({
+export const useQueryUpdate = <TData, TReturn>(schema: z.ZodSchema<TData>) => {
+    return useMutation<AxiosResponse<TReturn>, unknown, {putFn: PutFunction<TData, TReturn>, data: TData, id: ID}>({
         mutationFn: async ({putFn, data, id}) => {
             const validate = schema.safeParse(data)
-            console.log('DATA: ', schema.safeParse(data))
             if (!validate.success) {
                 throw new AxiosError(`Donnée non valide: \n${validate.error.errors.map(e => e.message).join('\n')}.`)
             }
@@ -20,9 +19,9 @@ export const useQueryUpdate = <TData>(schema: z.ZodSchema<TData>) => {
     })
 }
 
-export const useUpdate = async <TData>(putFn: PutFunction<TData>, data: TData, id: ID): Promise<Response<TData>> => {
+export const useUpdate = async <TData, TReturn>(putFn: PutFunction<TData, TReturn>, data: TData, id: ID): Promise<Response<TData>> => {
     try {
-        const resp: AxiosResponse<TData> = await putFn(data, id)
+        const resp: AxiosResponse<TReturn> = await putFn(data, id)
         if (resp.status !== 200) {
             return {
                 isSuccess: false,
@@ -31,7 +30,7 @@ export const useUpdate = async <TData>(putFn: PutFunction<TData>, data: TData, i
         }
         return {
             isSuccess: true,
-            data: resp.data
+            data: resp.data as unknown as TData
         }
 
     }catch (error: unknown) {

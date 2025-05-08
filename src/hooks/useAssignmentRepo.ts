@@ -4,7 +4,7 @@ import {Assignment} from "../entity";
 import {
     getAllClasseAssignments,
     getAllClasseAssignmentsBySubject,
-    getAllCourseAssignments,
+    getAllCourseAssignments, getAllNotCompletedAssignment,
     getAllTeacherAssignments,
     getAllTeacherCourseAssignments,
     getSomeTeacherAssignments,
@@ -14,7 +14,6 @@ import {IDS} from "../core/utils/interfaces.ts";
 
 export const useAssignmentRepo = () => {
     const useGetAllClasseAssignments = (classeId: number, academicYear: string, courseId?: number): UseQueryResult<Assignment[], unknown> => {
-        console.log('enavled: ', courseId ? !!classeId && !!courseId && !!academicYear : !!classeId && !academicYear, 'academicYear: ', academicYear)
         return useFetch(
             courseId ? ['classe-course-assignments', classeId, courseId] : ['classe-assignments', classeId],
             courseId ? getAllClasseAssignmentsBySubject : getAllClasseAssignments,
@@ -22,6 +21,12 @@ export const useAssignmentRepo = () => {
             courseId ? !!classeId && !!courseId && !!academicYear : !!classeId && !!academicYear
         )
     }
+
+    const useGetAllNotCompletedAssignments = () => useFetch(
+        'Not-Completed-Assignments',
+        getAllNotCompletedAssignment, [],
+        true
+    )
 
     const useGetAllCourseAssignments = (courseId: number, academicYear: string): UseQueryResult<Assignment[], unknown> => {
         console.log('courseId: ', courseId, 'academicYear: ', academicYear)
@@ -51,6 +56,7 @@ export const useAssignmentRepo = () => {
 
     return {
         useGetAllClasseAssignments,
+        useGetAllNotCompletedAssignments,
         useGetAllCourseAssignments,
         useGetSomeTeacherAssignments,
         useGetTeacherAssignments,

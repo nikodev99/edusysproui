@@ -3,6 +3,7 @@ import {Schedule, Teacher} from "../../entity";
 import {Counted, CountType} from "../../core/utils/interfaces.ts";
 import {AxiosResponse} from "axios";
 import {TeacherSchema} from "../../schema";
+import {SectionType} from "../../entity/enums/section.ts";
 
 export const insertTeacher = async (teacher: TeacherSchema): Promise<AxiosResponse<Teacher>> => {
     return await apiClient.post<Teacher>('/teachers', teacher)
@@ -22,6 +23,14 @@ export const getAllTeachers = (page: number, size: number, sortCriteria?: string
 
 export const getSearchedTeachers = (input: string) => {
     return apiClient.get<Teacher[]>("/teachers/search/", {params: {q: input}})
+}
+
+export const getTeacherBasicValues = (classeId: number, section: SectionType): Promise<AxiosResponse<Teacher[]>> => {
+    return apiClient.get<Teacher[]>(`/teachers/basic/${classeId}`, {
+        params: {
+            section: section
+        }
+    })
 }
 
 export const getTeacherById = (teacherId: string): Promise<AxiosResponse<Teacher>> => {

@@ -1,6 +1,6 @@
 import {Button, Form, FormListFieldData, Input} from "antd";
 import {LuCircleMinus, LuPlus, LuSave} from "react-icons/lu";
-import {Controller, FieldValues, Path} from "react-hook-form";
+import {Controller, FieldValues, Path, PathValue} from "react-hook-form";
 import {InputType, TypedInputType, ZodListControl} from "../../../core/utils/interfaces.ts";
 import Grid from "../layout/Grid.tsx";
 import {cloneElement, ReactElement} from "react";
@@ -19,7 +19,7 @@ export const ListTextInput = <T extends FieldValues>(listProps: InputListProps<T
     }
 
     const content = (
-        <Form.List name={listName as string} initialValue={defaultValue}>
+        <Form.List name={listName as string} initialValue={defaultValue as []}>
             {(fields, {add, remove}) => (
                 <>
                     <Form.Item>
@@ -27,7 +27,7 @@ export const ListTextInput = <T extends FieldValues>(listProps: InputListProps<T
                     </Form.Item>
                     {fields.map(({key, name}) => (
                         <Form.Item key={key} label={`${pluralLabel(fields)} ${fields.length > 1 ? key + 1: ''}`}>
-                            <Controller defaultValue={defaultValue ? defaultValue[name] : ''} name={`${listProps.name}.${name}` as Path<T>} control={control} render={({field}) => (
+                            <Controller defaultValue={defaultValue ? (defaultValue as PathValue<T, Path<T>>)[name] : ''} name={`${listProps.name}.${name}` as Path<T>} control={control} render={({field}) => (
                                 <Input style={{width: '80%'}} {...field} />
                             )} />
                             {fields.length >= 1 ? (

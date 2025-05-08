@@ -1,27 +1,18 @@
 import FormContent from "../ui/form/FormContent.tsx";
 import {InputTypeEnum} from "../../core/shared/sharedEnums.ts";
 import {FormContentProps} from "../../core/utils/interfaces.ts";
-import {Classe, Grade} from "../../entity";
+import {Classe} from "../../entity";
 import {FieldValues, Path, PathValue} from "react-hook-form";
-import {useEffect, useState} from "react";
-import {useRawFetch} from "../../hooks/useFetch.ts";
-import {getAllSchoolGrades} from "../../data/repository/gradeRepository.ts";
 import {SectionType} from "../../entity/enums/section.ts";
 import {FormConfig} from "../../config/FormConfig.ts";
+import {useGradeRepo} from "../../hooks/useGradeRepo.ts";
 
 export const ClasseForm = <T extends FieldValues>(
     {control, data, errors}: FormContentProps<T, Classe>
 ) => {
-    const [grades, setGrades] = useState<Grade[] | null>(null)
-    const fetch = useRawFetch<Grade>()
+    const {useGetAllGrades} = useGradeRepo()
     
-    useEffect(() => {
-        fetch(getAllSchoolGrades).then(r => {
-            if (r.isSuccess) {
-                setGrades(r.data as Grade[])
-            }
-        })
-    }, [fetch])
+    const grades = useGetAllGrades() ?? []
 
     const form = new FormConfig(errors, false)
 

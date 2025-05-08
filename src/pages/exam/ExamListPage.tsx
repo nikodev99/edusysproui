@@ -19,6 +19,7 @@ import {ActionButton} from "../../components/ui/layout/ActionButton.tsx";
 import {setFirstName} from "../../core/utils/utils.ts";
 import {AssignmentFilter} from "../../components/ui-kit-exam/components/AssignmentFilter.tsx";
 import {useAcademicYearRepo} from "../../hooks/useAcademicYearRepo.ts";
+import {AssignmentTypeLiteral, typeColors} from "../../entity/enums/assignmentType.ts";
 
 const ExamListPage = () => {
 
@@ -92,7 +93,7 @@ const ExamListPage = () => {
     const cardData = (data: Assignment[]) => {
         return data?.map(c => ({
             id: c.id,
-            description: <AssignmentDescription a={c} link={text.exam.group.view.href + c.id} show plus />
+            description: <AssignmentDescription a={c} link show plus />
         })) as DataProps[]
     }
 
@@ -116,6 +117,7 @@ const ExamListPage = () => {
             dataIndex: 'subject',
             key: 'subject',
             align: "center",
+            width: '12%',
             sorter: true,
             showSorterTooltip: false,
             render: (subject: Course) => <Text
@@ -130,6 +132,7 @@ const ExamListPage = () => {
             dataIndex: 'classe',
             key: 'classe',
             align: 'center',
+            width: '10%',
             sorter: true,
             showSorterTooltip: false,
             render: (classe: Classe) => <AntTag.CheckableTag onClick={
@@ -139,10 +142,38 @@ const ExamListPage = () => {
             </AntTag.CheckableTag>
         },
         {
+            title: "Date",
+            dataIndex: 'examDate',
+            key: 'examDate',
+            align: 'center',
+            width: '10%',
+            responsive: ['md'],
+            sorter: true,
+            showSorterTooltip: false,
+            render: (text: number[]) => <span>
+                {setFirstName(Datetime.of(text).fDate("DD MMM YYYY"))}
+            </span>
+        },
+        {
+            title: "Type",
+            dataIndex: 'type',
+            key: 'type',
+            align: 'center',
+            width: '10%',
+            responsive: ['md'],
+            sorter: true,
+            showSorterTooltip: false,
+            render: (value: AssignmentTypeLiteral) => {
+                const type = AssignmentTypeLiteral[value as unknown as keyof typeof AssignmentTypeLiteral]
+                return (<AntTag color={typeColors(type) as string}>{type}</AntTag>)
+            }
+        },
+        {
             title: "Préparer par",
             dataIndex: 'preparedBy',
             key: 'preparedBy',
             align: "left",
+            width: '16%',
             responsive: ['md'],
             render: (teacher: Individual) => <AvatarTitle
                 lastName={teacher?.lastName}
@@ -151,18 +182,6 @@ const ExamListPage = () => {
                 reference={teacher?.emailId}
                 size={35}
             />
-        },
-        {
-            title: "Date",
-            dataIndex: 'examDate',
-            key: 'examDate',
-            align: 'center',
-            responsive: ['md'],
-            sorter: true,
-            showSorterTooltip: false,
-            render: (text: number[]) => <span>
-                {setFirstName(Datetime.of(text).fDate("DD MMM YYYY"))}
-            </span>
         },
         {
             title: "Status",

@@ -24,10 +24,11 @@ import {Day} from "../../entity/enums/day.ts";
 import {AxiosResponse} from "axios";
 import IntrinsicElements = React.JSX.IntrinsicElements;
 import {PercentPositionType, ProgressSize} from "antd/es/progress/progress";
-import {TableColumnsType, TableProps} from "antd";
+import {CheckboxOptionType, TableColumnsType, TableProps} from "antd";
 import {ItemType} from "antd/es/menu/interface";
 import {z} from "zod";
 import {AssignmentTypeLiteral} from "../../entity/enums/assignmentType.ts";
+import {RadioGroupButtonStyle, RadioGroupOptionType} from "antd/es/radio";
 
 export interface Metadata {
     title: string
@@ -97,7 +98,7 @@ export interface ZodFormItemProps {
 
 export type FormType<T extends FieldValues> = ZodFormItemProps & ZodControl<T>
 export type FormItemType<T extends FieldValues> = FormType<T> & ZodControlRender<T> & Control<T>
-export type TypedInputType<T extends FieldValues> = Control<T> & FormType<T> & InputProps & ZodSelect<T> & ZodListControl<T> & {wrapper?: ReactNode}
+export type TypedInputType<T extends FieldValues> = Control<T> & FormType<T> & InputProps & ZodSelect<T> & ZodRadio<T> & ZodListControl<T> & {wrapper?: ReactNode}
 export type InputType<T extends FieldValues> = TypedInputType<T> & {isCompact?: boolean}
 export type SelectType<T extends FieldValues> = TypedInputType<T> & {isCompact?: boolean}
 export type DatePickerType<T extends FieldValues> = TypedInputType<T> & {isCompact?: boolean, showTime?: boolean, format?: string}
@@ -119,7 +120,7 @@ export interface ZodControlRender<TFieldValues extends FieldValues, TName extend
 }
 
 export interface ZodSelect<T extends FieldValues> {
-    options?: {value: string | number, label: string | number}[],
+    options?: Option[],
     selectedValue?: PathValue<T, Path<T>>
     filterOption?: boolean | ((input: string, option?: { label: string, value: string }) => boolean) | undefined
     showSearch?: boolean
@@ -129,6 +130,13 @@ export interface ZodSelect<T extends FieldValues> {
     onChange?:  ((value: string, option?: ({label: string, value: string | number } | {label: string, value: string | number }[])) => void) | undefined
     notFoundContent?: ReactNode
     mode?:  "tags" | "multiple"
+}
+
+export interface ZodRadio<T extends FieldValues> {
+    optionType?: RadioGroupOptionType
+    buttonStyle?: RadioGroupButtonStyle
+    style?: CSSProperties
+    radioOptions?: CheckboxOptionType<T>[]
 }
 
 export interface InputProps extends ZodFormItemProps {
@@ -211,7 +219,9 @@ export interface ListViewerProps<TData extends object, TError> {
     localStorage?: {activeIcon?: string, pageSize?: string, page?: string, pageCount?: string}
     cardNotAvatar?: boolean
     cardData?: (data: TData[]) => DataProps[]
-    level?: number
+    level?: 1 | 2 | 3 | 4 | 5
+    hasSearch?: boolean
+    searchInput?: boolean
     refetchCondition?: boolean
     callbackParams?: unknown[]
     searchCallbackParams?: unknown[]
@@ -428,6 +438,8 @@ export interface BigCalendarProps<TEvents extends object = Event> {
     height?: number
     onSelectSlot?: (slotInfo: SlotInfo) => void
     isLoading ?: boolean
+    wrapperColor?: (event: Event) => [Color, Color]
+    selectable?: boolean
 }
 
 export type TabFunction<T> = (teacherId: string, ids: IDS, pageable?: Pageable) => Promise<AxiosResponse<T>>
@@ -455,8 +467,13 @@ export interface PostSchemaProps<TData extends FieldValues> {
     postFunc: (data: TData) => Promise<AxiosResponse<TData>>
 }
 
-export interface PutSchemaProps<TData extends FieldValues> {
-    putFunc: (data: TData, id: ID) => Promise<AxiosResponse<TData>>
+export interface PutSchemaProps<TData extends FieldValues, TReturn> {
+    putFunc: (data: TData, id: ID) => Promise<AxiosResponse<TReturn, unknown>>
+}
+
+export type Option = {
+    label?: ReactNode;
+    value?: string | number | null;
 }
 
 export interface TableSearchProps {

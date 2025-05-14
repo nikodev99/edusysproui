@@ -42,6 +42,7 @@ export const updateStudent = async <T>(
     studentId: ID,
     type?: UpdateType
 ): Promise<CustomResponse<string>> => {
+    console.log('field: ', field, ' value: ', value)
     const dynamicSchema = studentSchema.pick({[field]: true});
     const validation = dynamicSchema.safeParse({[field]: value});
 

@@ -11,5 +11,5 @@ export enum IndividualType {
 }
 
 export enum UpdateType {
-    ADDRESS, HEALTH, GUARDIAN, INFO, TEACHER
+    ADDRESS, HEALTH, GUARDIAN, INFO, TEACHER, ASSIGNMENT
 }

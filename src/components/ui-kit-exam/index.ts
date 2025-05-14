@@ -1,1 +1,6 @@
 export {UpdateAssignmentDates} from './components/UpdateAssignment.tsx'
+export {ExamEditDrawer} from './components/ExamEditDrawer.tsx'
+export {ExamInfo} from './components/ExamInfo.tsx'
+export {InsertExam} from './components/InsertExam.tsx'
+export {AssignmentFilter} from './components/AssignmentFilter.tsx'
+export {ExamScores} from './components/ExamScores.tsx'

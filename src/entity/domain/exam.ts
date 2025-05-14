@@ -5,4 +5,6 @@ export interface Exam {
     id?: number,
     examType?: ExamType
     assignments: Assignment[]
+    startDate: Date | number[]
+    endDate: Date | number[]
 }

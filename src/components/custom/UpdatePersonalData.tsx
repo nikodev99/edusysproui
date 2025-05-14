@@ -5,7 +5,7 @@ import {useForm} from "react-hook-form";
 import {individualSchema, IndividualSchema} from "../../schema";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {PatchUpdate} from "../../core/PatchUpdate.ts";
-import {Individual} from "../../entity/domain/individual.ts";
+import {Individual} from "../../entity";
 import {Gender} from "../../entity/enums/gender.tsx";
 
 export const UpdatePersonalData = ({data, setSuccessMessage, setErrorMessage, personal}: CustomUpdateProps) => {

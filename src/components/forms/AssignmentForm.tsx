@@ -1,6 +1,6 @@
 import {FormConfig} from "../../config/FormConfig.ts";
 import {FormContentProps, Option} from "../../core/utils/interfaces.ts";
-import {Assignment, Individual as PersonalInfo} from "../../entity";
+import {Assignment} from "../../entity";
 import {FieldValues, Path, PathValue} from "react-hook-form";
 import FormContent from "../ui/form/FormContent.tsx";
 import {InputTypeEnum} from "../../core/shared/sharedEnums.ts";
@@ -17,8 +17,8 @@ import {useExamRepo} from "../../hooks/useExamRepo.ts";
 import {useAcademicYearRepo} from "../../hooks/useAcademicYearRepo.ts";
 
 export const AssignmentForm = <T extends FieldValues, Q>(
-    {control, data, errors, edit, selectedClasse}: FormContentProps<T, Assignment> & {
-    handleUpdate?: (field: keyof Q | keyof PersonalInfo, value: unknown) => Promise<void>
+    {control, data, errors, edit, selectedClasse, handleUpdate}: FormContentProps<T, Assignment> & {
+    handleUpdate?: (field: string | keyof Q | keyof Assignment, value: unknown) => Promise<void>
     selectedClasse?: number
 }) => {
     const [pickedSection, setPickedSection] = useState<SectionType>()
@@ -33,8 +33,8 @@ export const AssignmentForm = <T extends FieldValues, Q>(
     const form = new FormConfig(errors, true)
     const classes = useGetClasseBasicValues()
     const courses = useGetBasicCourses()
-    const plannings = useGetGradePlannings(pickedSection)
-    const {data: teachers} = useGetTeacherBasicValues(selectedClasse, pickedSection)
+    const plannings = useGetGradePlannings(pickedSection ?? data?.classe?.grade?.section as SectionType)
+    const {data: teachers} = useGetTeacherBasicValues(selectedClasse ?? data?.classe?.id, pickedSection ?? data?.classe?.grade?.section as SectionType)
     const currentAcademicYear = useGetCurrentAcademicYear()
     const exams = useGetAllExams(currentAcademicYear?.id)
 
@@ -73,12 +73,15 @@ export const AssignmentForm = <T extends FieldValues, Q>(
 
     }, [classes, selectedClasse]);
 
+    console.log('TYPES: ', typeOptions)
+
     return (
         <FormContent
             formItems={[
                 {
                     type: InputTypeEnum.TEXT,
                     inputProps: {
+                        hasForm: edit,
                         lg: onlyField,
                         md: onlyField,
                         label: 'Titre du devoir',
@@ -88,12 +91,14 @@ export const AssignmentForm = <T extends FieldValues, Q>(
                         placeholder: 'Devoir de Math',
                         validateStatus: form.validate('examName'),
                         help: form.error('examName'),
-                        defaultValue: (data ? data.examName : undefined) as PathValue<T, Path<T>>
+                        defaultValue: (data ? data.examName : undefined) as PathValue<T, Path<T>>,
+                        onFinish: edit && handleUpdate ? (value: unknown) => handleUpdate('examName', value) : undefined,
                     }
                 },
                 {
                     type: InputTypeEnum.DATE,
                     inputProps: {
+                        hasForm: edit,
                         control: control,
                         lg: onlyField,
                         md: onlyField,
@@ -102,12 +107,14 @@ export const AssignmentForm = <T extends FieldValues, Q>(
                         required: true,
                         validateStatus: form.validate('examDate'),
                         help: form.error('examDate'),
-                        defaultValue: (data ? data.examDate : undefined) as PathValue<T, Path<T>>
+                        defaultValue: (data ? data.examDate : undefined) as PathValue<T, Path<T>>,
+                        onFinish: edit && handleUpdate ? (value: unknown) => handleUpdate('examDate', value) : undefined,
                     }
                 },
                 {
                     type: InputTypeEnum.TIME,
                     inputProps:{
+                        hasForm: edit,
                         control: control,
                         name: 'startTime' as Path<T>,
                         label: 'Heure de début',
@@ -116,12 +123,14 @@ export const AssignmentForm = <T extends FieldValues, Q>(
                         required: true,
                         validateStatus: form.validate('startTime'),
                         help: form.error('startTime'),
-                        defaultValue: (data ? data.startTime : undefined) as PathValue<T, Path<T>>
+                        defaultValue: (data ? data.startTime : undefined) as PathValue<T, Path<T>>,
+                        onFinish: edit && handleUpdate ? (value: unknown) => handleUpdate('startTime', value) : undefined,
                     }
                 },
                 {
                     type: InputTypeEnum.TIME,
                     inputProps:{
+                        hasForm: edit,
                         control: control,
                         name: 'endTime' as Path<T>,
                         label: 'Heure de fin',
@@ -130,12 +139,14 @@ export const AssignmentForm = <T extends FieldValues, Q>(
                         required: true,
                         validateStatus: form.validate('endTime'),
                         help: form.error('endTime'),
-                        defaultValue: (data ? data.endTime : undefined) as PathValue<T, Path<T>>
+                        defaultValue: (data ? data.endTime : undefined) as PathValue<T, Path<T>>,
+                        onFinish: edit && handleUpdate ? (value: unknown) => handleUpdate('endTime', value) : undefined,
                     }
                 },
                 {
                     type: InputTypeEnum.SELECT,
                     inputProps: {
+                        hasForm: edit,
                         control: control,
                         name: 'classe.id' as Path<T>,
                         label: 'Classe',
@@ -147,12 +158,14 @@ export const AssignmentForm = <T extends FieldValues, Q>(
                         options: classeOptions,
                         validateStatus: form.validate('id', 'classe'),
                         help: form.error('id', 'classe'),
-                        defaultValue: (data ? data.classe?.id : undefined) as PathValue<T, Path<T>>
+                        defaultValue: (data ? data.classe?.id : undefined) as PathValue<T, Path<T>>,
+                        onFinish: edit && handleUpdate ? (value: unknown) => handleUpdate('classeEntity.id', value) : undefined,
                     }
                 },
                 {
                     type: InputTypeEnum.SELECT,
                     inputProps: {
+                        hasForm: edit,
                         control: control,
                         name: 'subject.id' as Path<T>,
                         label: 'Matière',
@@ -164,12 +177,14 @@ export const AssignmentForm = <T extends FieldValues, Q>(
                         options: courseOptions,
                         validateStatus: form.validate('id', 'subject'),
                         help: form.error('id', 'subject'),
-                        defaultValue: (data ? data.subject?.id : undefined) as PathValue<T, Path<T>>
+                        defaultValue: (data ? data.subject?.id : undefined) as PathValue<T, Path<T>>,
+                        onFinish: edit && handleUpdate ? (value: unknown) => handleUpdate('subject.id', value) : undefined,
                     }
                 },
                 {
                     type: InputTypeEnum.RADIO,
                     inputProps: {
+                        hasForm: edit,
                         control: control,
                         name: form.name('type'),
                         label: 'Type de devoir',
@@ -177,15 +192,18 @@ export const AssignmentForm = <T extends FieldValues, Q>(
                         md: onlyField,
                         radioOptions: typeOptions as [],
                         optionType: 'button',
+                        buttonStyle: edit ? 'solid' : 'outline',
                         required: true,
                         validateStatus: form.validate('type'),
                         help: form.error('type'),
-                        defaultValue: data ? data.type : undefined
+                        defaultValue: data ? AssignmentType[data?.type as unknown as keyof typeof AssignmentType] : undefined,
+                        onFinish: edit && handleUpdate ? (value: unknown) => handleUpdate('type', value) : undefined,
                     }
                 },
                 {
                     type: InputTypeEnum.SELECT,
                     inputProps: {
+                        hasForm: edit,
                         control: control,
                         name: 'exam.id' as Path<T>,
                         label: 'Devoir comptant pour l\'examen',
@@ -197,12 +215,14 @@ export const AssignmentForm = <T extends FieldValues, Q>(
                         placeholder: 'Choisissez l\'examen',
                         validateStatus: form.validate('id', 'exam'),
                         help: form.error('id', 'exam'),
-                        defaultValue: (data ? data.exam?.id : undefined) as PathValue<T, Path<T>>
+                        defaultValue: (data ? data.exam?.id : undefined) as PathValue<T, Path<T>>,
+                        onFinish: edit && handleUpdate ? (value: unknown) => handleUpdate('exam.id', value) : undefined,
                     }
                 },
                 {
                     type: InputTypeEnum.SELECT,
                     inputProps: {
+                        hasForm: edit,
                         control: control,
                         name: 'semester.id' as Path<T>,
                         label: 'Planning',
@@ -214,12 +234,14 @@ export const AssignmentForm = <T extends FieldValues, Q>(
                         options: planningOptions,
                         validateStatus: form.validate('id', 'semester'),
                         help: form.error('id', 'semester'),
-                        defaultValue: (data ? data.semester?.id : undefined) as PathValue<T, Path<T>>
+                        defaultValue: (data ? data.semester?.id : undefined) as PathValue<T, Path<T>>,
+                        onFinish: edit && handleUpdate ? (value: unknown) => handleUpdate('semester.id', value) : undefined,
                     }
                 },
                 {
                     type: InputTypeEnum.SELECT,
                     inputProps: {
+                        hasForm: edit,
                         control: control,
                         name: 'preparedBy.id' as Path<T>,
                         label: 'Preparer par',
@@ -231,12 +253,14 @@ export const AssignmentForm = <T extends FieldValues, Q>(
                         options: teacherOptions,
                         validateStatus: form.validate('id', 'preparedBy'),
                         help: form.error('id', 'preparedBy'),
-                        defaultValue: (data ? data.preparedBy?.id : undefined)
+                        defaultValue: (data ? data.preparedBy?.id : undefined),
+                        onFinish: edit && handleUpdate ? (value: unknown) => handleUpdate('preparedBy.id', value) : undefined,
                     }
                 },
                 {
                     type: InputTypeEnum.NUMBER,
                     inputProps: {
+                        hasForm: edit,
                         control: control,
                         name: 'coefficient' as Path<T>,
                         label: 'Coefficient',
@@ -246,7 +270,8 @@ export const AssignmentForm = <T extends FieldValues, Q>(
                         placeholder: '2',
                         validateStatus: form.validate('coefficient'),
                         help: form.error('coefficient'),
-                        defaultValue: (data ? data.coefficient : undefined) as PathValue<T, Path<T>>
+                        defaultValue: (data ? data.coefficient : undefined) as PathValue<T, Path<T>>,
+                        onFinish: edit && handleUpdate ? (value: unknown) => handleUpdate('coefficient', value) : undefined,
                     }
                 }
             ]}

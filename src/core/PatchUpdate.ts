@@ -1,5 +1,5 @@
 import {updateStudent} from "../data";
-import {Individual} from "../entity/domain/individual.ts";
+import {Individual} from "../entity";
 import {UpdateType} from "./shared/sharedEnums.ts";
 import {ID} from "./utils/interfaces.ts";
 
@@ -13,7 +13,22 @@ export class PatchUpdate {
         setErrorMessage: (msg?: string) => void,
         updateType?: UpdateType
     ) {
-        await updateStudent(field as keyof Individual, value[field as keyof Q], infoID, updateType)
+        const fieldSegment = typeof field === 'string' && field.includes('.')
+            ? field.split('.')
+            : [field]
+
+        let nestedValue = value[field as keyof Q];
+        if (fieldSegment.length > 1) {
+            const nestedField = fieldSegment[0] === 'classeEntity' ? 'classe' : fieldSegment[0]
+            nestedValue = value[nestedField as never][fieldSegment[1] as keyof Q]
+        }
+
+        await updateStudent(
+            field as keyof T,
+            nestedValue,
+            infoID,
+            updateType
+        )
             .then(({isSuccess, success, error}) => {
                 if (isSuccess) {
                     setSuccessMessage(success)

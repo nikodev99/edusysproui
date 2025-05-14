@@ -2,6 +2,7 @@ import dayjs, {Dayjs, ManipulateType} from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import 'dayjs/locale/fr.js'
+import {setFirstName} from "./utils/utils.ts";
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -106,7 +107,11 @@ class Datetime {
 
     static timeToCurrentDate(time: number[] | Params): Datetime {
         const t = isParams(time) ? time.time as number[] : time
-        return Datetime.of(dayjs().hour(t[0]).minute(t[1]).second(0))
+        if (Array.isArray(t)) {
+            return Datetime.of(dayjs().hour(t[0])?.minute(0)?.second(0))
+        }else {
+            return Datetime.of(t)
+        }
     }
 
     get YEAR(): number {
@@ -253,7 +258,7 @@ class Datetime {
 
     format(format?: string | Params): string {
         const f = (isParams(format) ? format.format : format) ?? Datetime.DEFAULT_FORMAT
-        return this.date.format(f);
+        return setFirstName(this.date.format(f));
     }
 
     fDatetime(format?: string | Params, to?: boolean): string {
@@ -262,15 +267,19 @@ class Datetime {
             format.to ? 'DD/MM/YYYY à HH:mm' : 'DD/MM/YYYY HH:mm':
             to ? 'DD/MM/YYYY à HH:mm' : 'DD/MM/YYYY HH:mm'
 
-        return this.format(f || defaultFormat)
+        return setFirstName(this.format(f || defaultFormat))
     }
 
     fDate(format?: string | Params): string {
-        return this.format(format ?? 'DD MMMM YYYY')
+        return setFirstName(this.format(format ?? 'DD MMMM YYYY'))
+    }
+
+    time(format?: string | Params): string {
+        return setFirstName(this.format(format ?? 'HH:mm'))
     }
 
     fullDay() {
-        return this.format('dddd D MMMM YYYY')
+        return setFirstName(this.format('dddd D MMMM YYYY'))
     }
 
     isAfter(date: DateInput | Params): boolean {

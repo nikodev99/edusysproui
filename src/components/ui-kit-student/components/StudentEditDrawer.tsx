@@ -98,8 +98,8 @@ export const StudentEditDrawer = ({open, close, isLoading, data}: EditProps<Stud
                 setSuccessMessage={setSuccessMessage}
                 setErrorMessage={setErrorMessage}
             />
-            {successMessage && (<FormSuccess message={successMessage} />)}
-            {errorMessage && (<FormError message={errorMessage} />)}
+            {successMessage && (<FormSuccess message={successMessage} isNotif />)}
+            {errorMessage && (<FormError message={errorMessage} isNotif />)}
             <section>
                 <div style={{marginBottom: 10}}>
                     <Button type='dashed' onClick={showAddressDrawer}>Modifier l'adresse </Button>

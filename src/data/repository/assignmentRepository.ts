@@ -15,7 +15,6 @@ export interface AssignmentFilterProps {
 }
 
 export const insertAssignment = (assignment: AssignmentSchema) => {
-    console.log("INSERT ASSIGNMENT PARAMS: ", assignment)
     return apiClient.post<AssignmentSchema>('/assignment', assignment)
 }
 
@@ -36,7 +35,7 @@ export const getAllAssignments = (
             academicYear: filter.academicYearId,
             page: page,
             size: size,
-            ...(sortField && sortOrder ? {sortCriteria: `${sortField}:${sortOrder}`} : {}),
+            sortCriteria: sortField && sortOrder ? `${sortField}:${sortOrder}` : 'examDate:desc',
             ...(filter.gradeId ? {grade: filter.gradeId} : {}),
             ...(filter.semesterId ? {semester: filter.semesterId} : {}),
             ...(filter.classeId ? {classe: filter.classeId} : {}),
@@ -103,6 +102,10 @@ export const getAllTeacherAssignments = (personalInfoId: bigint, ids: IDS) => {
             classe: ids.classId
         }
     })
+}
+
+export const getAssignmentById = (assignmentId: bigint) => {
+    return apiClient.get<Assignment>(`/assignment/${assignmentId}`)
 }
 
 export const changeAssignmentDate = (assignment: Assignment, assignmentId: ID): Promise<AxiosResponse<{ updated: boolean }>> =>  {

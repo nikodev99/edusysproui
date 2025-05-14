@@ -375,7 +375,7 @@ export type WidgetItem = {
     suffix?: ReactNode
     hasShadow?: boolean
     progress?: {
-        active: boolean
+        active?: boolean
         status?: string
         type?: string
         percent?: number

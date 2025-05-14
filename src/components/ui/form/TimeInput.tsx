@@ -5,6 +5,7 @@ import FormItem from "./FormItem.tsx";
 import {Button, Form, Space, TimePicker} from "antd";
 import dayjs from "dayjs";
 import {LuSave} from "react-icons/lu";
+import Datetime from "../../../core/datetime.ts";
 
 export const FormTimeInput = <T extends FieldValues>(timePickerProps: TimeInputType<T>) => {
 
@@ -13,16 +14,17 @@ export const FormTimeInput = <T extends FieldValues>(timePickerProps: TimeInputT
     return(
         <FormItem {...timePickerProps} render={({field}) => (
             <>
+                {console.log('defaultValue: ', field.value) as any}
                 {isCompact
                     ? (
-                        <Space.Compact>
+                        <Space.Compact style={{width: '100%'}}>
                             <TimePicker
                                 {...field}
                                 placeholder={placeholder}
                                 onChange={(time) => field.onChange(time ? time.toDate() : null)}
                                 onFocus={() => clearErrors ? clearErrors(field.name) : null}
-                                value={field.value ? dayjs(field.value) : null}
-                                defaultValue={defaultValue as PathValue<T, Path<T>>}
+                                value={field.value ? Datetime.timeToCurrentDate(field.value).toDayjs() : null}
+                                defaultValue={Datetime.timeToCurrentDate(defaultValue as number[]).toDate as PathValue<T, Path<T>>}
                                 format="HH:mm"
                                 allowClear
                                 style={{width: '100%'}}
@@ -57,7 +59,7 @@ export const TimeInput = <T extends FieldValues>(timeProps: TypedInputType<T>) =
             {hasForm
                 ? (
                     <Form layout='vertical' onFinish={(values) => onFinish && onFinish(values)}>
-                        <FormTimeInput {...timeProps} />
+                        <FormTimeInput {...timeProps} isCompact={hasForm} />
                     </Form>
                 )
                 : (

@@ -1,4 +1,4 @@
-import {ReactNode, useEffect, useMemo, useState} from "react";
+import {cloneElement, isValidElement, ReactNode, useEffect, useMemo, useState} from "react";
 import {Assignment, Classe, Course, Score} from "../../entity";
 import TabItem from "../view/TabItem.tsx";
 import {SuperWord} from "../../core/utils/tsxUtils.tsx";
@@ -25,12 +25,13 @@ interface AssignmentViewProps {
     classes?: Classe[]
     studentId?: string
     disableSelect?: boolean
+    label?: string
 }
 
 const AssignmentView = (
     {
         assignExams, academicYear, bestScores, tabViews, title, name, showBarChart, hasLegend, showBest = true, getSubject,
-        classeId, getClasse, courses, classes, selects, studentId, disableSelect
+        classeId, getClasse, courses, classes, selects, studentId, disableSelect, label = 'Evaluation'
     }: AssignmentViewProps
 ) => {
     const [assignments, setAssignments] = useState<Assignment[] | null>(null)
@@ -61,6 +62,15 @@ const AssignmentView = (
             value: c.id, label: c.name
         }))
     }, [classes])
+    
+    const selectPoints = useMemo((): ReactNode[] => {
+        return selects && selects?.length > 0 ? selects?.map((select, index) => {
+            if (isValidElement(select)) {
+                return cloneElement(select, {key: `select-${index}`})
+            }
+            return select
+        }): []
+    }, [selects])
 
     useEffect(() => {
         if(classeId || classeValue || academicYear || subjectValue || toRefetch) {
@@ -106,8 +116,8 @@ const AssignmentView = (
         if (bestScores)
             setBestStudent(bestScores)
 
-        if (getSubject && subjectValue) {
-            getSubject(subjectValue ?? 0)
+        if (getSubject) {
+            getSubject(subjectValue)
         }
 
         if (getClasse && classeValue) {
@@ -152,28 +162,30 @@ const AssignmentView = (
                 title={isString(title) ? <SuperWord input={title} /> : title}
                 selects={[
                     ...((allSubjects && allSubjects?.length > 0) || (subjects && subjects?.length > 0) ? [(<Select
+                        key='select-subject'
                         className='select-control'
                         defaultValue={subjectValue}
-                        options={allSubjects ?? subjects}
+                        options={(allSubjects ?? subjects) as []}
                         onChange={handleSubjectValue}
                         variant='borderless'
                         disabled={!disabledSelect ? !!(disableSelect && disabledSelect) : disabledSelect}
                     />)]: []),
-                    ...(classes && classes?.length ? [(<Select
+                    ...(classes && classes?.length > 0 ? [(<Select
+                        key='select-classe'
                         className='select-control'
                         defaultValue={classeValue}
                         options={classrooms}
                         onChange={handleClasseValue}
                         variant='borderless'
                     />)]: []),
-                    ...(selects && selects?.length ? [...selects] : [])
+                    ...selectPoints
                     //TODO Adding the filtre by semester
                 ]}
                 stickTab={true}
                 items={[
                     {
                         key: 'assignment-list',
-                        label: 'Evaluations',
+                        label: label,
                         children: <AssignmentDesc
                             assignments={assignments}
                             listTitle={<SuperWord

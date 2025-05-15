@@ -2,7 +2,7 @@ import {
     getAllAssignmentMarks,
     getAllStudentScores,
     getAllStudentScoresBySubject,
-    getAllTeacherMarks,
+    getAllTeacherMarks, getAssignmentMarks,
     getBestTeacherStudentByScore,
     getBestTeacherStudentBySubject,
     getClasseBestStudents,
@@ -21,14 +21,30 @@ export const useScoreRepo = () => {
     const useGetAllAssignmentMarks = (assignmentId: bigint, size: number) => useFetch(
         ['assignment-marks', assignmentId], getAllAssignmentMarks, [assignmentId, size], !!assignmentId && !!size
     )
-    
-    const useGetAllStudentScores = (studentId: string, academicYearId: string, pageable?: Pageable, subjectId?: number) => {
-        console.log('PARAMS: ', pageable ? [pageable.page, pageable.size, studentId, academicYearId] : [studentId, academicYearId, subjectId],)
 
+    const useGetAssignmentScores = (assignmentId: bigint): Score[] => {
+        const [scores, setScores] = useState<Score[]>([])
+        const fetch = useRawFetch()
+
+        useEffect(() => {
+            if (assignmentId) {
+                fetch(getAssignmentMarks, [assignmentId])
+                    .then(resp => {
+                        if (resp.isSuccess) {
+                            setScores(resp.data as Score[])
+                        }
+                    })
+            }
+        }, [assignmentId, fetch]);
+
+        return scores
+    }
+    
+    const useGetAllStudentScores = (studentId: string, academicYearId: string, pageable: Pageable, subjectId?: number) => {
         return useFetch(
             subjectId ? ['subject-mark-list', subjectId, studentId] : ['marks-list', studentId],
             subjectId ? getAllStudentScoresBySubject : getAllStudentScores,
-            pageable ? [pageable.page, pageable.size, studentId, academicYearId] : [studentId, academicYearId, subjectId],
+            subjectId ? [studentId, academicYearId, subjectId]: [pageable.page, pageable.size, studentId, academicYearId],
             subjectId ? !!studentId && !!academicYearId && !!subjectId : !!studentId && !!academicYearId
         )
     }
@@ -37,7 +53,6 @@ export const useScoreRepo = () => {
         const [scores, setScores] = useState<Score[]>([])
         const fetch = useRawFetch()
         const func = courseId ? getClasseBestStudentsByCourse : getClasseBestStudents
-        console.log('Function: ', func)
         useEffect(() => {
             if (classId && academicYear) {
                 fetch(func as (...args: unknown[]) => Promise<AxiosResponse<Score[], unknown>>, [{classId: classId, courseId: courseId}, academicYear])
@@ -123,6 +138,7 @@ export const useScoreRepo = () => {
     
     return{
         useGetAllAssignmentMarks,
+        useGetAssignmentScores,
         useGetAllStudentScores,
         useGetClasseBestStudents,
         useGetClassePoorStudents,

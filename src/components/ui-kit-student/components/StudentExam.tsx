@@ -1,18 +1,17 @@
 import {Enrollment, Score} from "../../../entity";
 import {fDate, setFirstName, startsWithVowel} from "../../../core/utils/utils.ts";
-import {Badge, Select, TableColumnsType, Typography} from "antd";
-import {ExamData, Pageable} from "../../../core/utils/interfaces.ts";
+import {Badge, Select, TableColumnsType, Tag, Typography} from "antd";
+import {ExamData} from "../../../core/utils/interfaces.ts";
 import LocalStorageManager from "../../../core/LocalStorageManager.ts";
-import {useEffect, useMemo, useRef, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {initExamData} from "../../../entity/domain/score.ts";
 import PageError from "../../../pages/PageError.tsx";
-import {LuEye} from "react-icons/lu";
-import {Link} from "react-router-dom";
 import {ColumnGroupType} from "antd/es/table";
 import {AutoScrollTable} from "../../ui/layout/AutoScrollTable.tsx";
 import {AssignmentView} from "../../common/AssignmentView.tsx";
 import {useAssignmentRepo} from "../../../hooks/useAssignmentRepo.ts";
 import {useScoreRepo} from "../../../hooks/useScoreRepo.ts";
+import {InitMarkType} from "../../../core/utils/tsxUtils.tsx";
 
 interface StudentExamProps {
     enrolledStudent: Enrollment
@@ -27,17 +26,16 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
     const [scores, setScores] = useState<Score[]>([])
     const [subjectValue, setSubjectValue] = useState<number>(0)
     const [allData, setAllData] = useState<number>(0)
-    const [size, setSize] = useState(examCount)
+    const [size, setSize] = useState<number>(examCount)
     const [academicYearId, setAcademicYearId] = useState<string>(id)
-    const pageable = useRef<Pageable | undefined>({size: size ?? examCount, page: 0});
-    
+
     const {useGetAllClasseAssignments} = useAssignmentRepo()
     const {useGetAllStudentScores} = useScoreRepo()
 
     const studentName = `${setFirstName(personalInfo?.lastName)} ${setFirstName(personalInfo?.firstName)}`
 
     const assignments = useGetAllClasseAssignments(classe?.id, academicYearId)
-    const {data, isSuccess, error, isLoading, isRefetching, refetch} = useGetAllStudentScores(student?.id, academicYearId, pageable.current, subjectValue)
+    const {data, isSuccess, error, isLoading, isRefetching, refetch} = useGetAllStudentScores(student?.id, academicYearId, {size: size, page: 0}, subjectValue)
 
     const academicYears = useMemo(() => {
         return enrollments && [
@@ -50,9 +48,12 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
     }, [id, academicYear, enrollments]);
 
     useEffect(() => {
-        if (subjectValue)
-            pageable.current = undefined
-    }, [subjectValue]);
+        if (subjectValue === 0) {
+            setSize(examCount ?? 10)
+        }else {
+            setSize(0)
+        }
+    }, [examCount, subjectValue]);
     
     useEffect(() => {
         if (academicYearId || size || subjectValue) {
@@ -85,9 +86,9 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
             title: "Matière",
             dataIndex: 'subject',
             key: 'subjet',
-            align: 'left',
-            width: '20%',
-            render: text => <Typography.Text>{text}</Typography.Text>
+            align: 'center',
+            width: '18%',
+            render: text => <Tag>{text}</Tag>
         },
         {
             title: "Classe",
@@ -103,7 +104,7 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
             key: 'examDate',
             align: 'center',
             responsive: ['md'],
-            width: '15%',
+            width: '13%',
             render: text => fDate(text),
         },
         {
@@ -112,33 +113,39 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
             key: 'coefficient',
             align: 'center',
             width: '10%',
-            render: (text: number) => <Typography.Text>
-                {text}
-            </Typography.Text>
+            render: (text: number) => <Tag>{text}</Tag>
         },
         {
+            //TODO Adding the criteria sort
             title: "Note",
             dataIndex: 'obtainedMark',
             key: 'obtainedMark',
-            align: 'center',
+            align: 'end',
             width: '10%',
-            render: (text: number) => <Typography.Title level={4}>
-                {text}
-                <Badge color={text >= 15 ? 'green' : text >= 10 ? 'gold' : 'red' } />
+            //sorter: true,
+            //showSorterTooltip: false,
+            render: (text: number, record) => <Typography.Title level={4}>
+                {text * (record?.coefficient ?? 1)}
+                <Badge color={
+                    text * (record?.coefficient ?? 1) >= 15 * (record?.coefficient ?? 1)
+                        ? 'green'
+                        : text * (record?.coefficient ?? 1) >= 10 * (record?.coefficient ?? 1)
+                            ? 'gold'
+                            : 'red' } />
             </Typography.Title>
         },
         {
-            dataIndex: 'examId',
-            key: 'examId',
-            align: 'right',
-            width: '5px',
-            //TODO redirect to the exam link
-            render: (examId) => <Link to={examId}><LuEye size={15} /></Link>
-        }
+            title: "Appreciation",
+            dataIndex: 'obtainedMark',
+            key: 'appreciation',
+            align: 'center',
+            width: '10%',
+            render: (note: number, record) => <InitMarkType av={note} coefficient={record?.coefficient} />
+        },
     ];
 
     const handleLoadMoreSize = () => {
-        setSize(prevState => prevState + examCount)
+        setSize(prevState => prevState + examCount ?? 10)
     }
 
     const handleAcademicYearIdValue = (value: string) => {
@@ -149,6 +156,7 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
         <AssignmentView
             assignExams={assignments}
             title={`Les notes d${startsWithVowel(personalInfo?.lastName) ? "'" : 'e '}${studentName}`}
+            label='Programmes des devoirs'
             selects={[
                 <Select
                     className='select-control'
@@ -177,10 +185,15 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
                         }}
                         isLoading={isLoading || isRefetching}
                         allItems={allData}
-                        size={size}
+                        size={size ?? 0}
                         loadMoreSize={handleLoadMoreSize}
                         height={500}
                     />
+                },
+                {
+                    key: 'exam-table',
+                    label: 'Performance aux examens',
+                    children: <div>ICI nous ajouterons les résultats aux examens</div>
                 }
             ]}
             getSubject={setSubjectValue}

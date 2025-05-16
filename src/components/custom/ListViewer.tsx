@@ -17,29 +17,9 @@ import {useToggle} from "../../hooks/useToggle.ts";
 
 const ListViewer = <TData extends object, TError>(
     {
-        callback,
-        searchCallback,
-        tableColumns,
-        dropdownItems,
-        throughDetails,
-        hasCount,
-        countTitle,
-        localStorage,
-        fetchId,
-        cardData,
-        cardNotAvatar,
-        level,
-        refetchCondition,
-        callbackParams,
-        searchCallbackParams,
-        infinite,
-        uuidKey,
-        tableProps,
-        descMargin,
-        itemSize,
-        displayItem,
-        filters,
-        shareSearchQuery
+        callback, searchCallback, tableColumns, dropdownItems, throughDetails, hasCount, countTitle, localStorage,
+        fetchId, cardData, cardNotAvatar, level, refetchCondition, callbackParams, searchCallbackParams, infinite,
+        uuidKey, tableProps, descMargin, itemSize, displayItem, filters, shareSearchQuery
     }: ListViewerProps<TData, TError>
 ) => {
 
@@ -88,9 +68,15 @@ const ListViewer = <TData extends object, TError>(
 
     }, [data, isLoading, pageCount, refetch, searchCallback, searchCallbackParams, searchQuery, shareSearchQuery, size, sortField, sortOrder]);
 
+    useEffect(() => {
+        if (callbackParams)
+            refetch().then(r => r.data)
+    }, [callbackParams, refetch]);
+    
     useLayoutEffect(() => {
         if(refetchCondition) {
             setPageCount(0)
+            setCurrentPage(1)
             refetch().then(r => r.data)
         }
         
@@ -157,7 +143,7 @@ const ListViewer = <TData extends object, TError>(
         }
     ]
 
-    const rowkey = (record: TData) => {
+    const rowKey = (record: TData) => {
         if (Array.isArray(uuidKey)) {
             const [parentKey, childKey] = uuidKey
             return record?.[parentKey as keyof TData]?.[childKey as keyof object]
@@ -251,7 +237,7 @@ const ListViewer = <TData extends object, TError>(
                             {infinite ? <AutoScrollTable
                                 tableProps={{
                                     ...tableProps,
-                                    rowKey: uuidKey ? rowkey as (record: TData) => Key : 'id' as keyof TData,
+                                    rowKey: uuidKey ? rowKey as (record: TData) => Key : 'id' as keyof TData,
                                     columns: tableColumns,
                                     dataSource: dataSource as TData[],
                                     loading: isLoading || dataSource === undefined,
@@ -268,7 +254,7 @@ const ListViewer = <TData extends object, TError>(
                             : <Table
                                 {...tableProps}
                                 style={{width: '100%'}}
-                                rowKey={uuidKey ? rowkey as (record: TData) => Key : 'id' as keyof TData}
+                                rowKey={uuidKey ? rowKey as (record: TData) => Key : 'id' as keyof TData}
                                 columns={tableColumns}
                                 dataSource={dataSource as TData[]}
                                 loading={isLoading || isFetching || isRefetching || dataSource === undefined}

@@ -15,13 +15,19 @@ interface ViewProps {
     blockProps:{title: ReactNode, mention: ReactNode}[]
     items?: ItemType[]
     btnLabel?: ReactNode
+    showBtn?: boolean
     pColor?: (color: string) => void
     upperName ?: boolean
     editText?: ReactNode
+    hasEdit?: boolean
+    btnDisabled?: boolean
 }
 
 const ViewHeader = (
-    {isLoading, setEdit, closeState, avatarProps, blockProps, items, btnLabel, pColor, upperName, editText}: ViewProps
+    {
+        isLoading, setEdit, closeState, avatarProps, blockProps, items, btnLabel, pColor, upperName, editText, hasEdit = true,
+        btnDisabled = false, showBtn = true
+    }: ViewProps
 ) => {
 
     const [color, setColor] = useState<string>('')
@@ -48,7 +54,7 @@ const ViewHeader = (
     }
 
     const baseItems: ItemType[] = [
-        {key: 1, label: editText ?? 'Editer', icon: <LuPencil />, onClick: handleClick},
+        ...(hasEdit ? [{key: 1, label: editText ?? 'Editer', icon: <LuPencil />, onClick: handleClick}] : [])
     ]
     const additionalItems = items ? items : []
 
@@ -63,13 +69,13 @@ const ViewHeader = (
                 </Flex>
             ))}
 
-            <Flex className='block' align='flex-start' vertical gap={4}>
+            {showBtn && <Flex className='block' align='flex-start' vertical gap={4}>
                 <Dropdown arrow menu={{items: assignKeys(baseItems, additionalItems)}} trigger={['click']}>
-                    <Button className='add__btn' style={{background: color}} icon={<LuChevronDown size={18} />} iconPosition='end'>
+                    <Button disabled={btnDisabled} className='add__btn' style={{background: color}} icon={<LuChevronDown size={18} />} iconPosition='end'>
                         {btnLabel ? btnLabel : 'Gérer'}
                     </Button>
                 </Dropdown>
-            </Flex>
+            </Flex>}
         </Flex>
     )
 }

@@ -2,6 +2,7 @@ import {useEffect, useState} from "react";
 import {AcademicYear} from "../entity";
 import {useRawFetch} from "./useFetch.ts";
 import {
+    getAcademicYearFromDate,
     getAcademicYearFromYear,
     getAllAcademicYears,
     getCurrentAcademicYear
@@ -40,6 +41,23 @@ export const useAcademicYearRepo = () => {
         
         return academicYearFromYear
     }
+
+    const useGetAcademicYearFromDate = (date: Date) => {
+        const [academicYearFromDate, setAcademicYearFromDate] = useState<AcademicYear>()
+        const fetch = useRawFetch()
+
+        useEffect(() => {
+            if (date)
+                fetch(getAcademicYearFromDate, [date])
+                    .then(resp => {
+                        if (resp) {
+                            setAcademicYearFromDate(resp.data as AcademicYear)
+                        }
+                    })
+        }, [fetch, date]);
+
+        return academicYearFromDate
+    }
     
     const useGetAllAcademicYear = () => {
         const [academicYears, setAcademicYears] = useState<AcademicYear[]>([])
@@ -60,6 +78,7 @@ export const useAcademicYearRepo = () => {
     return {
         useGetCurrentAcademicYear,
         useGetAcademicYearFromYear,
+        useGetAcademicYearFromDate,
         useGetAllAcademicYear
     }
 }

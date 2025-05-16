@@ -25,10 +25,18 @@ export const getSearchedTeachers = (input: string) => {
     return apiClient.get<Teacher[]>("/teachers/search/", {params: {q: input}})
 }
 
-export const getTeacherBasicValues = (classeId: number, section: SectionType): Promise<AxiosResponse<Teacher[]>> => {
+export const getTeachersBasicValues = (classeId: number, section: SectionType): Promise<AxiosResponse<Teacher[]>> => {
     return apiClient.get<Teacher[]>(`/teachers/basic/${classeId}`, {
         params: {
             section: section
+        }
+    })
+}
+
+export const getTeacherBasicValues = (teacherId: number, classeId: number): Promise<AxiosResponse<Teacher>> => {
+    return apiClient.get<Teacher>(`/teachers/basic-one/${teacherId}`, {
+        params: {
+            classe: classeId
         }
     })
 }

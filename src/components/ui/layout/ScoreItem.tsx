@@ -16,13 +16,14 @@ interface ScoreItemProps {
     infinite?: boolean
     height?: number
     isTable?: boolean
+    customHeaders?: TableColumnsType<Score>
 }
 
 const ScoreItem = (
-    {scores, isLoading, scoreSize, allScores, onLoadMore, infinite, height, isTable}: ScoreItemProps
+    {scores, isLoading, scoreSize, allScores, onLoadMore, infinite, height, isTable, customHeaders = undefined}: ScoreItemProps
 ) => {
 
-    const columns: TableColumnsType<Score> = [
+    const columns: TableColumnsType<Score> = customHeaders ?? [
         {
             title: 'Noms & Prénoms',
             dataIndex: 'student',

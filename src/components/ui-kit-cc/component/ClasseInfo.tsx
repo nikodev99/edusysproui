@@ -17,7 +17,6 @@ import {AvatarTitle} from "../../ui/layout/AvatarTitle.tsx";
 import {AttendanceStatus, getColors} from "../../../entity/enums/attendanceStatus.ts";
 import {ShapePieChart} from "../../graph/ShapePieChart.tsx";
 import VoidData from "../../view/VoidData.tsx";
-import {AiOutlineArrowDown} from "react-icons/ai";
 import {useClasseAttendance} from "../../../hooks/useClasseAttendance.ts";
 import Datetime from "../../../core/datetime.ts";
 import {TeacherList} from "../../common/TeacherList.tsx";
@@ -220,7 +219,6 @@ const ClassePoorStudent = ({infoData, academicYear, color}: ClasseInfoProps) => 
             <BestScoredTable
                 providedData={poorStudents}
                 color={color}
-                icon={<AiOutlineArrowDown />}
                 goodToPoor={true}
             />
         </Section>

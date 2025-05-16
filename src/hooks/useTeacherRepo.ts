@@ -5,11 +5,12 @@ import {
     countAllTeachers,
     getNumberOfStudentTaughtByClasse,
     getNumberOfStudentTaughtByTeacher,
-    getSearchedTeachers, getTeacherBasicValues,
-    getTeacherById, getTeacherSchedule, getTeacherScheduleByDay
+    getSearchedTeachers, getTeachersBasicValues,
+    getTeacherById, getTeacherSchedule, getTeacherScheduleByDay, getTeacherBasicValues
 } from "../data/repository/teacherRepository.ts";
 import {useEffect, useState} from "react";
 import {SectionType} from "../entity/enums/section.ts";
+import {Teacher} from "../entity";
 
 export const useTeacherRepo = () => {
     const useGetAllTeachers = (pageable: Pageable, sortField: string, sortOrder: string) => useFetch(
@@ -28,10 +29,27 @@ export const useTeacherRepo = () => {
 
     const useGetTeacherBasicValues = (classeId?: number, section?: SectionType) => useFetch(
         ['teacher-basic', classeId, section],
-        getTeacherBasicValues,
+        getTeachersBasicValues,
         [classeId, section],
         !!classeId && !!section
     )
+
+    const useGetTeacherBasic = (teacherId: number, classeId: number): Teacher | undefined => {
+        const [teacher, setTeacher] = useState<Teacher | undefined>(undefined)
+        const fetch = useRawFetch()
+
+        useEffect(() => {
+            if (teacherId && classeId)
+                fetch(getTeacherBasicValues, [teacherId, classeId])
+                    .then(resp => {
+                        if (resp.isSuccess) {
+                            setTeacher(resp.data as Teacher)
+                        }
+                    })
+        }, [classeId, fetch, teacherId]);
+
+        return teacher
+    }
 
     const useGetTeacher = (teacherId: string) => useFetch(
         ['teacher', teacherId],
@@ -102,6 +120,7 @@ export const useTeacherRepo = () => {
         useGetSearchedTeachers,
         useGetTeacher,
         useGetTeacherSchedules,
+        useGetTeacherBasic,
         useGetTeacherStudentNumber,
         useGetTeacherClasseStudentNumber,
         useCountAllTeachers,

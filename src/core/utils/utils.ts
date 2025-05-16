@@ -416,7 +416,7 @@ export const cutStatement = (statement: string, maxLength: number, orElse?: stri
         }
         const truncate = statement.slice(0, maxLength)
         const lastSpaceIndex = truncate.lastIndexOf(' ')
-        return statement?.slice(0, lastSpaceIndex)
+        return statement?.slice(0, lastSpaceIndex) + '... '
     }
     return undefined
 }

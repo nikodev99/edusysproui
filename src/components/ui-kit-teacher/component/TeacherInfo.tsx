@@ -5,18 +5,13 @@ import PanelTable from "../../ui/layout/PanelTable.tsx";
 import {CalendarEvent, CountType, InfoPageProps, ReprimandData} from "../../../core/utils/interfaces.ts";
 import {Classe, Course, Department, Schedule, Teacher} from "../../../entity";
 import {
-    firstLetter,
     getAge,
-    getCountry,
     getDistinctArray,
-    isNull,
     cLowerName,
-    setName, setTime,
+    setTime,
     timeToCurrentDatetime
 } from "../../../core/utils/utils.ts";
 import {useEffect, useRef, useState} from "react";
-import {Gender} from "../../../entity/enums/gender.tsx";
-import {Flag} from "../../ui/layout/Flag.tsx";
 import {Flex, TableColumnsType, Tag, TimelineProps} from "antd";
 import {useRawFetch} from "../../../hooks/useFetch.ts";
 import {getNumberOfStudentTaughtByClasse, getTeacherScheduleByDay} from "../../../data/repository/teacherRepository.ts";
@@ -37,53 +32,13 @@ import {DepartmentDesc} from "../../common/DepartmentDesc.tsx";
 import Datetime from "../../../core/datetime.ts";
 import {useScoreRepo} from "../../../hooks/useScoreRepo.ts";
 import {MarksHistogram} from "../../common/MarksHistogram.tsx";
+import {TeacherIndividual} from "../../common/TeacherIndividual.tsx";
 
 type TeacherInfo = InfoPageProps<Teacher>
 
 const IndividualInfo = ({infoData, color}: TeacherInfo) => {
 
-    const [nation, setNation] = useState<string>()
-
-    const {personalInfo, personalInfo: {address}} = infoData ?? {}
-
-    const country = getCountry(personalInfo?.nationality as string)
-
-    const informationData = [
-        {statement: 'Nom complet', response: setName(personalInfo?.lastName, personalInfo?.firstName, personalInfo?.maidenName, true)},
-        {statement: 'Genre', response: Gender[personalInfo?.gender as unknown as keyof typeof Gender]},
-        {statement: 'Date de naissance', response: `${Datetime?.of(personalInfo?.birthDate).fDate()} (${getAge(personalInfo?.birthDate as number[])} ans)`},
-        {statement: 'Lieu de naissance', response: firstLetter(personalInfo?.birthCity)},
-        {statement: 'Pays de naissance', response: <div className='country__flag'>
-                {firstLetter(country?.altSpellings[1])}&nbsp;<Flag media={country?.cca2} desc='Country Flag' size='small'/>
-        </div>},
-        {statement: 'Nationalité', response: firstLetter(nation)},
-    ]
-
-    const addressData = [
-        {statement: 'Numéro', response: address?.number},
-        {statement: 'Rue', response: address?.street},
-        {statement: 'Quartier', response: address?.neighborhood},
-        ...(!isNull(address?.borough) ? [{
-            statement: 'Arrondissement',
-            response: address?.borough
-        }] : []),
-        {statement: 'Ville', response: address?.city}
-    ]
-
-    const cordData = [
-        {statement: 'Téléphone', response: personalInfo?.telephone},
-        ...(isNull(personalInfo?.mobile) ? [] : [{statement: 'Mobile', response: personalInfo?.mobile}]),
-        ...(isNull(personalInfo?.emailId) ? [] : [{statement: '@', response: personalInfo?.emailId}])
-    ]
-
-    useEffect(() => {
-        if (infoData && country && personalInfo?.gender === Gender.FEMME) {
-            setNation(country?.demonyms.fra.f)
-        } else {
-            setNation(country?.demonyms.fra.m)
-        }
-    }, [country, infoData, personalInfo?.gender]);
-
+    const {personalInfo} = infoData ?? {}
 
     return(
         <PanelSection title={
@@ -92,9 +47,7 @@ const IndividualInfo = ({infoData, color}: TeacherInfo) => {
                 <p className='subtitle'>Informations Générales sur l'enseignant</p>
             </div>
         }>
-            <PanelTable title='Données personnelles' panelColor={color} data={informationData} />
-            <PanelTable title='Adresse' data={addressData} panelColor={color}/>
-            <PanelTable title='Coordonnées' data={cordData} panelColor={color}/>
+            <TeacherIndividual teacher={infoData} color={color} />
         </PanelSection>
     )
 }
@@ -164,7 +117,7 @@ const CalendarSection = ({infoData, seeMore}: TeacherInfo) => {
 
 const MarkMean = ({infoData, color}: TeacherInfo) => {
     const {useGetAllTeacherMarks} = useScoreRepo()
-    const {data: fetchedMarks, isLoading} = useGetAllTeacherMarks(infoData?.personalInfo?.id)
+    const {data: fetchedMarks, isLoading} = useGetAllTeacherMarks(infoData?.personalInfo?.id as bigint)
 
     return(
         <Section title='Moyenne des notes'>

@@ -14,6 +14,14 @@ export const getAcademicYearFromYear = (year: number) => {
     })
 }
 
+export const getAcademicYearFromDate = (date: Date) => {
+    return apiClient.get<AcademicYear>(`/academic/from`, {
+        params: {
+            fromDate: date,
+        }
+    })
+}
+
 export const getAllAcademicYears = () => {
     return apiClient.get<AcademicYear[]>('/academic/all')
 }

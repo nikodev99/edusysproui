@@ -6,11 +6,11 @@ import {
     getAllClasseAssignmentsBySubject,
     getAllCourseAssignments, getAllNotCompletedAssignment,
     getAllTeacherAssignments,
-    getAllTeacherCourseAssignments,
+    getAllTeacherCourseAssignments, getAssignmentById,
     getSomeTeacherAssignments,
     getTeacherAssignments
 } from "../data/repository/assignmentRepository.ts";
-import {IDS} from "../core/utils/interfaces.ts";
+import {ID, IDS} from "../core/utils/interfaces.ts";
 
 export const useAssignmentRepo = () => {
     const useGetAllClasseAssignments = (classeId: number, academicYear: string, courseId?: number): UseQueryResult<Assignment[], unknown> => {
@@ -54,6 +54,13 @@ export const useAssignmentRepo = () => {
         ids.courseId ? !!preparedById && !!ids.courseId && !!ids.classId : !!preparedById && !!ids.classId
     )
 
+    const useGetAssignment = (assignmentId: ID) => useFetch(
+        ['assignment-id', assignmentId],
+        getAssignmentById,
+        [assignmentId],
+        !!assignmentId
+    )
+
     return {
         useGetAllClasseAssignments,
         useGetAllNotCompletedAssignments,
@@ -61,5 +68,6 @@ export const useAssignmentRepo = () => {
         useGetSomeTeacherAssignments,
         useGetTeacherAssignments,
         useGetAllTeacherAssignments,
+        useGetAssignment
     }
 }

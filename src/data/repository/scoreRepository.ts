@@ -2,6 +2,7 @@ import {AxiosResponse} from "axios";
 import {Score} from "../../entity";
 import {apiClient, request} from "../axiosConfig.ts";
 import {IDS} from "../../core/utils/interfaces.ts";
+import {getShortSortOrder} from "../../core/utils/utils.ts";
 
 export const getAllAssignmentMarks = (assignmentId: bigint, size: number) => {
     return apiClient.get(`/score/all_assignment_marks/${assignmentId}`, {
@@ -11,14 +12,21 @@ export const getAllAssignmentMarks = (assignmentId: bigint, size: number) => {
     })
 }
 
-export const getAllStudentScores = (page: number, size: number, studentId: string, academicYearId: string): Promise<AxiosResponse<Score[]>> => {
+export const getAssignmentMarks = (assignmentId: bigint) => {
+    return apiClient.get<Score[]>(`/score/assignment/${assignmentId}`)
+}
+
+export const getAllStudentScores = (page: number, size: number, studentId: string, academicYearId: string, sortCriteria?: {
+    sortField: string, sortOrder: string
+}): Promise<AxiosResponse<Score[]>> => {
     return request({
         method: 'GET',
         url: `/score/all/${studentId}`,
         params: {
             page: page,
             size: size,
-            academicYearId: academicYearId
+            academicYearId: academicYearId,
+            ...(sortCriteria ? {sortCriteria: `${getSorted(sortCriteria.sortField)}:${getShortSortOrder(sortCriteria.sortOrder)}`} : {})
         }
     })
 }
@@ -84,4 +92,13 @@ export const getBestTeacherStudentBySubject = (teacherId: bigint, subjectId: num
 
 export const getBestTeacherStudentByScore = (personalInfoId: bigint) => {
     return apiClient.get<Score[]>(`/score/students/${personalInfoId}`)
+}
+
+const getSorted = (sortField: string) => {
+    switch (sortField) {
+        case 'obtainedMark':
+            return 's.obtainedMark'
+        default:
+            return undefined;
+    }
 }

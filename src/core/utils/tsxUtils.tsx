@@ -109,7 +109,7 @@ export const SuperWord = ({ input, isUpper, textSize = .6 }: { input: string; is
     }
 
     return (
-        <p style={isUpper ? { textTransform: 'uppercase', padding: 0, margin: 0 } : { padding: 0, margin: 0 }}>
+        <p style={isUpper ? { textTransform: 'uppercase', padding: 0, margin: 0 } : { pointerEvents: 'auto', padding: 0, margin: 0 }}>
             {parts}
         </p>
     );
@@ -167,36 +167,36 @@ export const AssignmentDescription = (
     ]} />
 }
 
-export const InitMarkType = ({av}: {av: number}) => {
+export const InitMarkType = ({av, coefficient}: {av: number, coefficient?: number}) => {
     let color: string;
     let text: MarkType;
     let icon: ReactNode
 
-    if (av >= 18) {
+    if ((av * (coefficient ?? 1)) >= (18 * (coefficient ?? 1))) {
         text = MarkType.EX;
         color = 'success';
         icon = <LuAward />
-    } else if (av >= 16) {
+    } else if ((av * (coefficient ?? 1)) >= 16 * (coefficient ?? 1)) {
         text = MarkType.TB;
         color = 'success';
         icon = <LuMedal />
-    } else if (av >= 14) {
+    } else if ((av * (coefficient ?? 1)) >= (14 * (coefficient ?? 1))) {
         text = MarkType.GOOD;
         color = 'processing';
         icon = <LuCircleCheck />
-    } else if (av >= 12) {
+    } else if ((av * (coefficient ?? 1)) >= 12 * (coefficient ?? 1)) {
         text = MarkType.AB;
         color = 'processing';
         icon = <LuCheck />
-    }else if (av >= 10) {
+    }else if ((av * (coefficient ?? 1)) >= 10 * (coefficient ?? 1)) {
         text = MarkType.PA;
         color = 'warning';
         icon = <LuThumbsUp />
-    }else if (av >= 8) {
+    }else if ((av * (coefficient ?? 1)) >= 8 * (coefficient ?? 1)) {
         text = MarkType.IN;
         color = 'warning';
         icon = <LuThumbsDown />
-    }else if (av >= 6) {
+    }else if ((av * (coefficient ?? 1)) >= 6 * (coefficient ?? 1)) {
         text = MarkType.FA;
         color = 'danger';
         icon = <LuTrendingDown />

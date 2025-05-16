@@ -8,7 +8,7 @@ import {AssignmentFilterProps, getAllAssignments} from "../../data/repository/as
 import {AxiosResponse} from "axios";
 import {Assignment, Classe, Course, Individual} from "../../entity";
 import ListViewer from "../../components/custom/ListViewer.tsx";
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {Space, TableColumnsType, Tag as AntTag, Typography} from "antd";
 import {DataProps} from "../../core/utils/interfaces.ts";
 import {AssignmentDescription, SuperWord} from "../../core/utils/tsxUtils.tsx";
@@ -17,7 +17,7 @@ import Datetime from "../../core/datetime.ts";
 import Tag from "../../components/ui/layout/Tag.tsx";
 import {ActionButton} from "../../components/ui/layout/ActionButton.tsx";
 import {setFirstName} from "../../core/utils/utils.ts";
-import {AssignmentFilter} from "../../components/ui-kit-exam/components/AssignmentFilter.tsx";
+import {AssignmentFilter} from "../../components/ui-kit-exam";
 import {useAcademicYearRepo} from "../../hooks/useAcademicYearRepo.ts";
 import {AssignmentTypeLiteral, typeColors} from "../../entity/enums/assignmentType.ts";
 
@@ -74,10 +74,10 @@ const ExamListPage = () => {
     }, [searchQuery, setFilters]);
 
     useEffect(() => {
-        if (filters && !isRefetch) {
+        if (searchQuery === undefined && filters && Object.keys(filters).length > 1 && !isRefetch) {
             setIsRefetch(true)
         }
-    }, [filters, isRefetch]);
+    }, [filters, isRefetch, searchQuery]);
 
     const getItems = (id: string) => {
         return [
@@ -215,12 +215,11 @@ const ExamListPage = () => {
     }
 
     const filterParams = [filters]
-    const academicYearOptions = academicYears?.map(a => ({
+    const academicYearOptions = useMemo(() => academicYears?.map(a => ({
         value: a.id,
         label: a.academicYear
-    }))
+    })), [academicYears])
 
-    console.log('PARAMETERS: ', filterParams)
     console.log('SEARCH QUERY: ', searchQuery)
 
     return(

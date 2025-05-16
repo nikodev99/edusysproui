@@ -1,5 +1,5 @@
-import {Collapse, Skeleton} from "antd";
-import {Score} from "../../../entity";
+import {Collapse, Skeleton, TableColumnsType} from "antd";
+import {Assignment, Score} from "../../../entity";
 import {useEffect, useRef, useState} from "react";
 import {ScoreItem} from "./ScoreItem.tsx";
 import {useScoreRepo} from "../../../hooks/useScoreRepo.ts";
@@ -9,10 +9,14 @@ interface AssignmentScoresProps {
     size?: number,
     markId?: string
     isTable?: boolean
+    hasCollapse?: boolean
+    tableColumns?: TableColumnsType<Score>
+    height?: number
+    addToScores?: Assignment
 }
 
 const AssignmentScores = (
-    {assignmentId, size, markId, isTable}: AssignmentScoresProps
+    {assignmentId, size, markId, isTable, hasCollapse = true, height, tableColumns, addToScores}: AssignmentScoresProps
 ) => {
 
     const [scores, setScores] = useState<Score[] | null>(null)
@@ -37,6 +41,15 @@ const AssignmentScores = (
         prevScoreSizeRef.current = scoreSize
     }, [data, isSuccess, refetch, scoreSize]);
 
+    useEffect(() => {
+        if (addToScores) {
+            setScores(prevState => prevState?.map(score => ({
+                ...score,
+                assignment: addToScores
+            })) ?? [])
+        }
+    }, [addToScores]);
+
     const onLoadMore = () => {
         if (scorePending) return
         setScoreSize(
@@ -48,30 +61,41 @@ const AssignmentScores = (
         scores.filter(s => s.student.id === markId) :
         scores
 
-    console.log('Assign data: ', scoresToShow)
+    const scoreItem = <ScoreItem
+        scores={scoresToShow as Score[]}
+        isLoading={scorePending}
+        scoreSize={scoreSize}
+        allScores={allScores}
+        onLoadMore={onLoadMore}
+        height={markId ? 110 : height}
+        isTable={isTable}
+        customHeaders={tableColumns}
+    />
 
     return(
-        !scorePending || scores && scores?.length > 0 ? (<Collapse
-        style={{marginTop: '10px'}}
-        size='small'
-        ghost
-        items={[
-            {
-                key: 1,
-                label: 'Afficher les notes',
-                children: <ScoreItem
-                    scores={scoresToShow as Score[]}
-                    isLoading={scorePending}
-                    scoreSize={scoreSize}
-                    allScores={allScores}
-                    onLoadMore={onLoadMore}
-                    height={markId ? 110 : undefined}
-                    isTable={isTable}
-                />
-            },
-        ]}
-    />) : (<Skeleton style={{marginTop: '5px'}} active={scorePending} paragraph={{rows: 1}} />)
-        
+        <>{
+            !scorePending || scores && scores.length > 0 ?
+                (hasCollapse ? (
+                    <Collapse
+                        style={{marginTop: '10px'}}
+                        size='small'
+                        ghost
+                        items={[
+                            {
+                                key: 1,
+                                label: 'Afficher les notes',
+                                children: scoreItem
+                            },
+                        ]}
+                    />
+                ): (
+                    scoreItem
+                )):
+                (
+                    <Skeleton style={{marginTop: '5px'}} active={false} paragraph={{rows: 2}}/>
+                )
+            }
+        </>
     )
 }
 

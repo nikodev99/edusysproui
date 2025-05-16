@@ -4,7 +4,7 @@ import {useRawFetch} from "../../hooks/useFetch.ts";
 import {Statistic, TableColumnsType} from "antd";
 import {AvatarTitle} from "../ui/layout/AvatarTitle.tsx";
 import {firstWord} from "../../core/utils/utils.ts";
-import {AiOutlineArrowUp} from "react-icons/ai";
+import {AiOutlineArrowDown, AiOutlineArrowUp} from "react-icons/ai";
 import {Table} from "../ui/layout/Table.tsx";
 import VoidData from "../view/VoidData.tsx";
 import {Color} from "../../core/utils/interfaces.ts";
@@ -63,6 +63,7 @@ export const BestScoredTable = (
             render: (value: Student) => <AvatarTitle
                 lastName={firstWord(value?.personalInfo?.lastName)}
                 firstName={firstWord(value?.personalInfo?.firstName)}
+                reference={value?.reference}
                 image={firstWord(value?.personalInfo?.image)}
                 size={35}
                 link={text.student.group.view.href + value.id}
@@ -72,8 +73,9 @@ export const BestScoredTable = (
             dataIndex: 'obtainedMark',
             key: 'obtainedMark',
             width: '20%',
+            align: 'center',
             render: text => <Statistic
-                value={text} precision={0} prefix={icon ?? <AiOutlineArrowUp />}
+                value={text} precision={0} prefix={icon ?? goodToPoor ? <AiOutlineArrowDown /> : <AiOutlineArrowUp />}
                 valueStyle={{color: goodToPoor ? '#cf1322' : '#10b915', fontSize: '16px'}}
             />
         }
@@ -87,7 +89,8 @@ export const BestScoredTable = (
                     dataSource: scores?.sort((a, b) => b.obtainedMark - a.obtainedMark),
                     columns: columns as [],
                     size: 'small',
-                    pagination: false
+                    pagination: false,
+                    bordered: true
                 }}
                 color={color}
             /> : <VoidData />}

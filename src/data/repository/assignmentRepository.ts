@@ -29,7 +29,6 @@ export const getAllAssignments = (
         sortOrder = getShortSortOrder(sortOrder)
         sortField = sortedField(sortField)
     }
-    console.log("FIND ALL ASSIGNMENTS PARAMS: ", filter, page, size, sortField, sortOrder)
     return apiClient.get<Assignment[]>(`/assignment/all`, {
         params: {
             academicYear: filter.academicYearId,

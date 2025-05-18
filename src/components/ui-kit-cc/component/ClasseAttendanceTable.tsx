@@ -1,8 +1,5 @@
 import ListViewer from "../../custom/ListViewer.tsx";
-import {
-    getClasseAttendanceStatus,
-    getClasseAttendanceStatusSearch
-} from "../../../data/repository/attendanceRepository.ts";
+import {getClasseAttendanceStatus, getClasseAttendanceStatusSearch} from "../../../data/repository/attendanceRepository.ts";
 import {Avatar, Badge, Progress, TableColumnsType, Typography} from "antd";
 import {
     AttendanceCount,
@@ -11,7 +8,7 @@ import {
     Color,
     DataProps
 } from "../../../core/utils/interfaces.ts";
-import {Individual} from "../../../entity/domain/individual.ts";
+import {Individual} from "../../../entity";
 import {AvatarTitle} from "../../ui/layout/AvatarTitle.tsx";
 import {AxiosResponse} from "axios";
 import {AttendanceStatus, countAll, getColors} from "../../../entity/enums/attendanceStatus.ts";
@@ -61,8 +58,8 @@ const ClasseAttendanceTable = (
             dataIndex: 'statusCount',
             key: 'present-count',
             align: 'center',
-            render: (text: AttendanceCount[]) => <Badge count={countAll(text)} color={ATTENDANCE_STATUS_COLORS[1]}>
-                <Avatar shape='square' style={{background: 'white', border: '1px solid #ccc', color: 'black'}}>
+            render: (text: AttendanceCount[]) => <Badge count={countAll(text)} style={{backgroundColor: 'white', color: 'gray'}}>
+                <Avatar shape='square' style={{background: ATTENDANCE_STATUS_COLORS[1], border: '1px solid #ccc', color: 'black'}}>
                     {text && text?.find(
                         s => AttendanceStatus[s?.status as unknown as keyof typeof AttendanceStatus] === AttendanceStatus.ABSENT
                     )?.count || 0 }
@@ -74,8 +71,8 @@ const ClasseAttendanceTable = (
             dataIndex: 'statusCount',
             key: 'present-count',
             align: 'center',
-            render: (text: AttendanceCount[]) => <Badge count={countAll(text)} color={ATTENDANCE_STATUS_COLORS[2]}>
-                <Avatar shape='square' style={{background: 'white', border: '1px solid #ccc', color: 'black'}}>
+            render: (text: AttendanceCount[]) => <Badge count={countAll(text)} style={{backgroundColor: 'white', color: 'gray'}}>
+                <Avatar shape='square' style={{background: ATTENDANCE_STATUS_COLORS[2], border: '1px solid #ccc', color: 'black'}}>
                     {text && text?.find(
                         s => AttendanceStatus[s?.status as unknown as keyof typeof AttendanceStatus] === AttendanceStatus.LATE
                     )?.count || 0 }
@@ -87,8 +84,8 @@ const ClasseAttendanceTable = (
             dataIndex: 'statusCount',
             key: 'present-count',
             align: 'center',
-            render: (text: AttendanceCount[]) => <Badge count={countAll(text)} color={ATTENDANCE_STATUS_COLORS[3]}>
-                <Avatar shape='square' style={{background: 'white', border: '1px solid #ccc', color: 'black'}}>
+            render: (text: AttendanceCount[]) => <Badge count={countAll(text)} style={{backgroundColor: 'white', color: 'gray'}}>
+                <Avatar shape='square' style={{background: ATTENDANCE_STATUS_COLORS[3], border: '1px solid #ccc', color: 'black'}}>
                     {text && text?.find(
                         s => AttendanceStatus[s?.status as unknown as keyof typeof AttendanceStatus] === AttendanceStatus.EXCUSED
                     )?.count || 0 }
@@ -235,7 +232,7 @@ const ClasseAttendanceTable = (
                             tableProps={{
                                 dataSource: nestedDataSource(record?.statusCount),
                                 columns: nestedColumns,
-                                rowKey: `${index}`,
+                                rowKey: (record) => `${index}-nested-${record?.present}-${record?.absent}-${record?.late}-${record?.excused}`,
                                 pagination: false
                             }}
                             color={color}

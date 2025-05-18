@@ -39,8 +39,13 @@ const ClasseAttendanceAnalysis = ({infoData, academicYear, studentCount, color}:
     const [goodStudent, setGoodStudent] = useState<AttendanceSummary[]>([])
     const {classeAttendances} = useClasseAttendance(infoData?.id, academicYear as string)
     const {schoolAttendances} = useSchoolAttendance(text.schoolID, academicYear as string)
-    
-    const {data, isSuccess} = useFetch<AttendanceRecentCount[], unknown>(['attendance-stat'], getClasseRecentAttendanceStatus, [infoData?.id, academicYear as string])
+
+    const {data, isSuccess} = useFetch<AttendanceRecentCount[], unknown>(
+        ['attendance-stat'],
+        getClasseRecentAttendanceStatus,
+        [infoData?.id, academicYear as string],
+        !!infoData?.id && !!academicYear
+    )
     const fetchWorstStudents = useRawFetch()
     const fetchGoodStudents = useRawFetch()
 

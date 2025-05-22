@@ -26,12 +26,11 @@ export const ExamInsertScores = (
         onClose?: (key?: string) => void,
         marks?: Score[],
         load?: (value: boolean) => void
-        loadMessage?: (message?: {success?: string, error?: string}) => void
+        loadMessage?: (message: {success?: string, error?: string}) => void
     }
 ) => {
     const [successMessage, setSuccessMessage] = useState<string | undefined>(undefined)
     const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined)
-    const [messages, setMessages] = useState<{success?: string, error?: string}>({success: '', error: ''})
     const [scores, setScores] = useState<Score[]>([])
     const {useGetClasseStudents} = useStudentRepo()
     const {control, formState: {errors}, setValue, handleSubmit} = useForm<ScoreSchema>({
@@ -98,7 +97,7 @@ export const ExamInsertScores = (
                 return <RadioInput
                     control={control}
                     name={`scores.${index}.isPresent`}
-                    defaultValue={score ? score?.isPresent : true}
+                    defaultValue={score?.isPresent ?? true}
                     radioOptions={[
                         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                         // @ts-expect-error
@@ -120,7 +119,7 @@ export const ExamInsertScores = (
                 return <TextInput.Number
                     control={control}
                     name={`scores.${index}.obtainedMark`}
-                    defaultValue={score ? score?.obtainedMark : 0}
+                    defaultValue={score?.obtainedMark || 0}
                     help={errors?.scores?.[index]?.obtainedMark ? errors?.scores?.[index]?.obtainedMark?.message : ''}
                     validateStatus={errors?.scores?.[index]?.obtainedMark ? 'error' : ''}
                     required
@@ -134,7 +133,22 @@ export const ExamInsertScores = (
         onClose && onClose(key)
     }
 
-    const onSubmit = (data: ScoreSchema, patch?: () => void) => {
+    const onAssignmentPatch = async () => {
+        await PatchUpdate.set(
+            'passed',
+            {passed: true},
+            assignment?.id as number,
+            () => {
+                load && load(true)
+                loadMessage && loadMessage({success: "Les notes ont étés ajoutés avec succès et le devoir a été traité avec succès"})
+                handleCloseTab()
+            },
+            (msg: string | undefined) => loadMessage && loadMessage({error: msg}),
+            UpdateType.ASSIGNMENT
+        )
+    }
+
+    const onSubmit = (data: ScoreSchema, isPatch: boolean = false) => {
         setErrorMessage(undefined)
         setSuccessMessage(undefined)
         data?.scores?.forEach((d, i) => {
@@ -151,14 +165,18 @@ export const ExamInsertScores = (
         mutate({postFn: saveAllScores, data: data, params: assignment?.id as number}, {
             onSuccess: response => {
                 if (response.status === 200) {
-                    patch ? patch() : setSuccessMessage('Les notes ont étés ajoutés avec succès.')
+                    if (isPatch) {
+                        onAssignmentPatch().then()
+                    }else {
+                        setSuccessMessage('Les notes ont étés ajoutés avec succès.')
+                    }
                 }
             },
             onError: error => setErrorMessage(catchError(error) as string)
         })
     }
 
-    const onModify = (data: ScoreSchema, patch?: () => void) => {
+    const onModify = (data: ScoreSchema, isPatch: boolean = false) => {
         setErrorMessage(undefined)
         setSuccessMessage(undefined)
         const newData: ScoreSchema = {scores: []}
@@ -174,49 +192,35 @@ export const ExamInsertScores = (
         updateMutate({putFn: updateAllScores, data: newData, id: assignment?.id as number}, {
             onSuccess: response => {
                 if (response.status === 200) {
-                    patch ? patch() : setSuccessMessage('Les notes ont étés ajoutés avec succès.')
+                    if (isPatch) {
+                        onAssignmentPatch().then()
+                    }else {
+                        setSuccessMessage('Les notes ont étés ajoutés avec succès.')
+                    }
                 }
             },
             onError: error => setErrorMessage(catchError(error) as string)
         })
     }
 
-    const onAssignmentPatch = async () => {
-        await PatchUpdate.set(
-            'passed',
-            {passed: true},
-            assignment?.id as number,
-            () => setMessages({success: "Les notes ont étés ajoutés avec succès et le devoir a été traité avec succès"}),
-            (msg: string | undefined) => setMessages({error: msg}),
-            UpdateType.ASSIGNMENT
-        )
-    }
-
     const handleOnSubmit = (data: ScoreSchema) => {
         onSubmit(data)
-        load && load(true)
 
     }
 
     const handleSubmitWithPatch = (data: ScoreSchema) => {
-        onSubmit(data, onAssignmentPatch)
-        loadMessage && loadMessage(messages)
-        handleCloseTab()
-
+        onSubmit(data, true)
     }
 
     const handleOnModifying = (data: ScoreSchema) => {
         onModify(data)
-        load && load(true)
     }
 
     const handleModifyingWithPatch = (data: ScoreSchema) => {
-        onModify(data, onAssignmentPatch)
-        loadMessage && loadMessage(messages)
-        handleCloseTab()
+        onModify(data, true)
     }
 
-    console.log('SCORES: ', scores)
+    console.log("SCORE: ", scores)
 
     return (
         <PageWrapper>
@@ -228,7 +232,7 @@ export const ExamInsertScores = (
                     columns: columns as [],
                     dataSource: scores,
                     pagination: false,
-                    rowKey: 'id',
+                    rowKey: record => record?.student?.id as string,
                     size: 'middle',
                     loading: isLoading || isFetching
                 }} />

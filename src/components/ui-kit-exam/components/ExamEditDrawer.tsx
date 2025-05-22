@@ -32,8 +32,6 @@ export const ExamEditDrawer = ({open, close, isLoading, data}: EditProps<Assignm
         }
     }, [errorMessage, successMessage]);
 
-    console.log("FORM DATA: ", formData)
-
     const handleUpdate = async (field: string | number | keyof Assignment) => {
         if (data.id) {
             await PatchUpdate.set(

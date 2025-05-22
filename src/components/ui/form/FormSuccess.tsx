@@ -3,8 +3,13 @@ import {useEffect} from "react";
 import {text} from "../../../core/utils/text_display.ts";
 import {redirect} from "react-router-dom";
 
-const FormSuccess = ({message, toRedirect, redirectLink, isNotif}: {
-    message?: string, toRedirect?: boolean, redirectLink?: string, isNotif?: boolean
+const FormSuccess = ({message, toRedirect, redirectLink, isNotif, type = 'success', onClose}: {
+    message?: string,
+    toRedirect?: boolean,
+    redirectLink?: string,
+    isNotif?: boolean,
+    type?: 'success' | 'error' | 'info' | 'warning'
+    onClose?: () => void
 }) => {
     const [messageApi, messageContext] = successMassage.useMessage()
     const [api, notifContext] = notification.useNotification()
@@ -15,9 +20,10 @@ const FormSuccess = ({message, toRedirect, redirectLink, isNotif}: {
             api.open({
                 key,
                 message: message,
-                type: 'success',
+                type: type,
                 placement: 'topRight',
                 duration: 2,
+                onClose: onClose
             })
         }else {
             messageApi.open({
@@ -39,7 +45,7 @@ const FormSuccess = ({message, toRedirect, redirectLink, isNotif}: {
             }, 2000)
         }
 
-    }, [api, isNotif, message, messageApi, redirectLink, toRedirect])
+    }, [api, isNotif, message, messageApi, redirectLink, toRedirect, type])
 
     return(
         <>

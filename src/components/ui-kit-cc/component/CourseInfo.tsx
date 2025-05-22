@@ -295,7 +295,7 @@ export const CourseInfo = (courseType: CourseInfoType) => {
     const teacherIds = teachers?.length ? teachers.map(t => t.personalInfo.id) : []
 
     const {data, isSuccess} = useGetCourseHourByTeacher(infoData?.id as number)
-    const {data: fetchedScores, isLoading, isSuccess: isFetched} = useGetAllTeacherMarks(teacherIds)
+    const {data: fetchedScores, isLoading, isSuccess: isFetched} = useGetAllTeacherMarks(teacherIds as [])
 
     useEffect(() => {
         if (isFetched)

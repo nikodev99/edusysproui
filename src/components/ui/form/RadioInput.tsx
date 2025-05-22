@@ -3,13 +3,12 @@ import {SelectType, TypedInputType, ZodRadio} from "../../../core/utils/interfac
 import FormItem from "./FormItem.tsx";
 import {Button, Form, Radio, Space} from "antd";
 import Grid from "../layout/Grid.tsx";
-import {CSSProperties} from "react";
 import {LuSave} from "react-icons/lu";
 
 export const FormRadioInput = <T extends FieldValues>(radioProps: SelectType<T> & ZodRadio<T>) => {
 
     const {isCompact, radioOptions, selectedValue, optionType, buttonStyle, clearErrors, style, defaultValue, buttonLabel} = radioProps
-    console.log('defaultValue: ', defaultValue)
+
     return(
         <FormItem {...radioProps} {...(selectedValue ? { defaultValue: selectedValue } : {})} render={({field}) => (
             <>

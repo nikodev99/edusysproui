@@ -27,3 +27,7 @@ export const assignmentDateUpdateSchema = z.object({
     endTime: timeProcess("L'heure de la fin est réquis"),
     updatedDate: dateProcess('Date de mise à jour est requise')
 })
+
+export const assignmentMerge = z.object({
+    id: z.number().optional()
+})

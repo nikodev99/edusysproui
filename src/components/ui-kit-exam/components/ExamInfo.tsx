@@ -4,7 +4,6 @@ import Block from "../../view/Block.tsx";
 import {InitMarkType, SuperWord} from "../../../core/utils/tsxUtils.tsx";
 import {Widgets} from "../../ui/layout/Widgets.tsx";
 import {text} from "../../../core/utils/text_display.ts";
-import {useScoreRepo} from "../../../hooks/useScoreRepo.ts";
 import {useStudentRepo} from "../../../hooks/useStudentRepo.ts";
 import {cutStatement, findPercent, sumInArray} from "../../../core/utils/utils.ts";
 import PanelSection from "../../ui/layout/PanelSection.tsx";
@@ -36,10 +35,10 @@ const ExamWidgets = ({infoData, color, marks}: ExamInfoType) => {
         infoData?.semester?.semester?.academicYear?.id as string
     )
 
-    const notes = marks?.map(m => m?.obtainedMark) ?? []
+    const notes = marks?.filter(m => m.isPresent === true)?.map(m => m?.obtainedMark) ?? []
     const greatestNote = notes?.length > 0 ? Math.max(...notes) : 0
     const poorestNote = notes?.length > 0 ? Math.min(...notes) : 0
-    const averageNote = notes?.length > 0 ? (sumInArray(notes) / notes.length) : 0
+    const averageNote = notes?.length > 0 ? parseFloat((sumInArray(notes) / notes.length).toFixed(2)) : 0
 
     return(
         <section style={{marginBottom: '20px'}}>
@@ -97,7 +96,7 @@ const ExamIndividual = ({infoData, color}: ExamInfoType) => {
             <div className='name__title'>
                 <h2 style={{fontSize: '20px', marginBottom: '5px'}}>
                     <Tooltip title={infoData?.examName || 'No Exam Name Available'} placement='top'>
-                        <SuperWord input={cutStatement(`${infoData?.examName}`, 30) as string} />
+                        <div><SuperWord input={cutStatement(`${infoData?.examName}`, 30) as string} /></div>
                     </Tooltip>
                 </h2>
                 <p className='subtitle'>Informations Générales sur l'enseignant</p>
@@ -216,11 +215,8 @@ const ExamStudentPerformance = ({marks, color}: ExamInfoType) => {
 }
 
 export const ExamInfo = (examType: ExamInfoType) => {
-    const {infoData} = examType
-    const {useGetAssignmentScores} = useScoreRepo()
-    const marks = useGetAssignmentScores(infoData?.id as bigint) ?? []
+    const {marks} = examType
 
-    console.log("INFO_DATA: ", infoData)
     return (
         <>
             <ExamWidgets {...examType} marks={marks} />

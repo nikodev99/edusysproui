@@ -7,7 +7,7 @@ import {Individual} from "./individual.ts";
 import {AssignmentType, AssignmentTypeLiteral} from "../enums/assignmentType.ts";
 
 export interface Assignment {
-    id?: bigint
+    id?: bigint | number
     semester?: Planning
     exam?: Exam
     preparedBy?: Individual

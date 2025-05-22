@@ -2,10 +2,11 @@ import {Student} from "./student.ts";
 import {Assignment} from "./assignment.ts";
 
 export interface Score {
-    id: bigint
-    assignment: Assignment
-    student: Student
+    id?: bigint | number
+    assignment?: Assignment
+    student?: Student
     obtainedMark: number
+    isPresent?: boolean
 }
 
 export const initExamData = (scores: Score[]) => {
@@ -17,5 +18,6 @@ export const initExamData = (scores: Score[]) => {
         subject: s?.assignment?.subject?.course ?? undefined,
         obtainedMark: s?.obtainedMark ?? 0,
         coefficient: s?.assignment?.coefficient ?? 1,
+        isPresent: s?.isPresent ?? false
     })) ?? []
 }

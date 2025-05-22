@@ -1,9 +1,10 @@
 import {Skeleton, TabsProps} from "antd";
 import {TabItemType} from "../../core/utils/interfaces.ts";
-import {cloneElement, ReactElement, ReactNode, useState} from "react";
+import {cloneElement, ReactElement, ReactNode, useEffect, useState} from "react";
 import LocalStorageManager from "../../core/LocalStorageManager.ts";
 import {firstLetter} from "../../core/utils/utils.ts";
 import {StickyTabs} from "../ui/layout/StickyTabs.tsx";
+import {TabsType} from "antd/es/tabs";
 
 interface ViewProps {
     items: TabItemType[]
@@ -16,12 +17,15 @@ interface ViewProps {
         size?: number
     }
     memorizedTabKey?: string
+    type?: TabsType
+    activeTab?: string
 }
 
-const ViewRoot = ({items, tab, exists, isLoading, skeleton, addMargin, memorizedTabKey}: ViewProps) => {
+const ViewRoot = ({items, tab, exists, isLoading, skeleton, addMargin, memorizedTabKey, type, activeTab}: ViewProps) => {
 
-    const activeTabKey = LocalStorageManager.get(memorizedTabKey ?? "tabKey") as string || "0"
-    const [tabKey, setTabKey] = useState<string>(activeTabKey)
+    const tabSaved = LocalStorageManager.get(memorizedTabKey ?? "tabKey") as string
+    const activeTabKey = activeTab ? activeTab : tabSaved || "0"
+    const [tabKey, setTabKey] = useState<string>()
 
     const loadingSkeleton = skeleton ?? <Skeleton loading={isLoading} active={isLoading} paragraph={{rows: 5}} />
 
@@ -29,6 +33,10 @@ const ViewRoot = ({items, tab, exists, isLoading, skeleton, addMargin, memorized
         setTabKey(activeKey)
         LocalStorageManager.update(memorizedTabKey ?? 'tabKey', () => activeKey)
     }
+
+    useEffect(() => {
+        setTabKey(activeTabKey)
+    }, [activeTabKey]);
 
     const tabItem: TabsProps['items'] = items.map((item: TabItemType, index: number) => ({
         key: index.toString(),
@@ -56,6 +64,7 @@ const ViewRoot = ({items, tab, exists, isLoading, skeleton, addMargin, memorized
                 defaultActiveKey={tabKey}
                 centered={true}
                 {...tab}
+                type={type}
             />
         </section>
     )

@@ -10,6 +10,7 @@ import VoidData from "../view/VoidData.tsx";
 import {Color} from "../../core/utils/interfaces.ts";
 import {AxiosResponse} from "axios";
 import {text} from "../../core/utils/text_display.ts";
+import Tag from "../ui/layout/Tag.tsx";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface BestProps {
@@ -59,7 +60,6 @@ export const BestScoredTable = (
             title: 'Nom, Prénom',
             dataIndex: 'student',
             key: 'student',
-            width: '80%',
             render: (value: Student) => <AvatarTitle
                 lastName={firstWord(value?.personalInfo?.lastName)}
                 firstName={firstWord(value?.personalInfo?.firstName)}
@@ -72,12 +72,16 @@ export const BestScoredTable = (
         {
             dataIndex: 'obtainedMark',
             key: 'obtainedMark',
-            width: '20%',
-            align: 'center',
-            render: text => <Statistic
-                value={text} precision={0} prefix={icon ?? goodToPoor ? <AiOutlineArrowDown /> : <AiOutlineArrowUp />}
-                valueStyle={{color: goodToPoor ? '#cf1322' : '#10b915', fontSize: '16px'}}
-            />
+            align: 'end',
+            render: (text: number, record: Score) => {
+                return <Statistic
+                    value={text}
+                    precision={0}
+                    prefix={!record?.isPresent ? <Tag color='danger'>Absent</Tag> : undefined}
+                    suffix={icon ?? goodToPoor ? <AiOutlineArrowDown /> : <AiOutlineArrowUp />}
+                    valueStyle={{color: goodToPoor ? '#cf1322' : '#10b915', fontSize: '16px'}}
+                />
+            }
         }
     ]
 

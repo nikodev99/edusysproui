@@ -1,11 +1,12 @@
-import {Collapse, Skeleton, TableColumnsType} from "antd";
+import {Collapse, Skeleton, TableColumnsType, TablePaginationConfig} from "antd";
 import {Assignment, Score} from "../../../entity";
 import {useEffect, useRef, useState} from "react";
 import {ScoreItem} from "./ScoreItem.tsx";
 import {useScoreRepo} from "../../../hooks/useScoreRepo.ts";
 
 interface AssignmentScoresProps {
-    assignmentId: bigint | undefined
+    assignmentId?: bigint | number | undefined
+    marks?: Score[]
     size?: number,
     markId?: string
     isTable?: boolean
@@ -13,10 +14,12 @@ interface AssignmentScoresProps {
     tableColumns?: TableColumnsType<Score>
     height?: number
     addToScores?: Assignment
+    loading?: boolean
+    pagination?: TablePaginationConfig | false
 }
 
 const AssignmentScores = (
-    {assignmentId, size, markId, isTable, hasCollapse = true, height, tableColumns, addToScores}: AssignmentScoresProps
+    {assignmentId, size, markId, isTable, hasCollapse = true, height, tableColumns, addToScores, marks, loading, pagination}: AssignmentScoresProps
 ) => {
 
     const [scores, setScores] = useState<Score[] | null>(null)
@@ -28,18 +31,22 @@ const AssignmentScores = (
 
     const {data, isLoading, isRefetching, isLoadingError, isSuccess, refetch} = useGetAllAssignmentMarks(assignmentId as bigint, scoreSize)
     
-    const scorePending: boolean = isLoading || isRefetching || isLoadingError
+    const scorePending: boolean = loading ?? (isLoading || isRefetching || isLoadingError)
 
     useEffect(() => {
-        if (prevScoreSizeRef.current !== scoreSize) {
-            refetch().then(r => r.data)
+        if (marks && marks.length > 0) {
+            setScores(marks)
+        } else {
+            if (prevScoreSizeRef.current !== scoreSize) {
+                refetch().then(r => r.data)
+            }
+            if (isSuccess && 'content' in data && 'totalElements' in data) {
+                setScores(data.content as Score[])
+                setAllScores(data.totalElements as number)
+            }
+            prevScoreSizeRef.current = scoreSize
         }
-        if (isSuccess && 'content' in data && 'totalElements' in data) {
-            setScores(data.content as Score[])
-            setAllScores(data.totalElements as number)
-        }
-        prevScoreSizeRef.current = scoreSize
-    }, [data, isSuccess, refetch, scoreSize]);
+    }, [data, isSuccess, marks, refetch, scoreSize]);
 
     useEffect(() => {
         if (addToScores) {
@@ -58,8 +65,7 @@ const AssignmentScores = (
     }
 
     const scoresToShow: Score[] | null = scores && scores.length > 0 && markId ?
-        scores.filter(s => s.student.id === markId) :
-        scores
+        scores.filter(s => s.student?.id === markId) : scores
 
     const scoreItem = <ScoreItem
         scores={scoresToShow as Score[]}
@@ -70,6 +76,8 @@ const AssignmentScores = (
         height={markId ? 110 : height}
         isTable={isTable}
         customHeaders={tableColumns}
+        infinite={!marks}
+        hasPagination={pagination}
     />
 
     return(

@@ -1,17 +1,21 @@
 import {AssignmentScores} from "../../ui/layout/AssignmentScores.tsx";
-import {Badge, TableColumnsType, Tag, Typography} from "antd";
+import {TableColumnsType, Tag} from "antd";
 import {Assignment, Score} from "../../../entity";
 import {AvatarTitle} from "../../ui/layout/AvatarTitle.tsx";
 import {text} from "../../../core/utils/text_display.ts";
 import PageWrapper from "../../view/PageWrapper.tsx";
-import {InitMarkType} from "../../../core/utils/tsxUtils.tsx";
+import {InitMarkType, MarkBadge} from "../../../core/utils/tsxUtils.tsx";
 
-export const ExamScores = ({assignment}: {assignment: Assignment}) => {
+export const ExamScores = (
+    {assignment, scores, loading, record}: {assignment?: Assignment, scores?: Score[], loading?: boolean, record?: Assignment}
+) => {
 
     const customTableColumns: TableColumnsType<Score> = [
         {
             title: 'Noms & Prénoms',
             dataIndex: 'student',
+            key: 'student',
+            width: '20%',
             render: student => <AvatarTitle
                 firstName={student?.personalInfo?.firstName}
                 lastName={student?.personalInfo?.lastName}
@@ -26,48 +30,42 @@ export const ExamScores = ({assignment}: {assignment: Assignment}) => {
             key: 'subject',
             align: 'center',
             responsive: ['md'],
-            render: () => <Tag>{assignment?.subject?.course}</Tag>
+            width: '15%',
+            render: () => <Tag>{(assignment?.subject?.course) || (record?.subject?.course)}</Tag>
         },
         {
             title: 'Devoir',
             key: 'name',
             align: 'center',
             responsive: ['md'],
-            render: () => <Tag>{assignment?.examName}</Tag>
+            width: '25%',
+            render: () => <Tag>{(assignment?.examName) || (record?.examName)}</Tag>
         },
         {
             title: 'Notes Obtenue',
             dataIndex: 'obtainedMark',
             key: 'obtainedMark',
             align: "end",
-            render: (score: number) => <Typography.Title level={4}>
-                {score}
-                <Badge color={score >= 15 ? 'green' : score >= 10 ? 'gold' : 'red' } />
-            </Typography.Title>
+            render: (score: number) => <MarkBadge
+                score={score}
+            />
         },
         {
             title: 'Coefficient',
             key: 'coefficient',
             align: 'end',
             responsive: ['md'],
-            render: () => <Tag>{assignment?.coefficient}</Tag>
+            render: () => <Tag>{(assignment?.coefficient) || (record?.coefficient)}</Tag>
         },
-        ...(assignment?.coefficient && assignment?.coefficient > 1 ? [{
+        ...((assignment?.coefficient && assignment?.coefficient > 1) || (record?.coefficient && record?.coefficient > 1) ? [{
             align: 'end' as 'start',
             title: 'Notes Pondéré',
             dataIndex: 'obtainedMark',
-            key: 'obtainedMark',
-            render: (score: number) => <Typography.Title level={4}>
-                {score * (assignment?.coefficient ?? 1)}
-                <Badge color={
-                    (score * (assignment?.coefficient ?? 1)) >= (15 * (assignment?.coefficient ?? 1))
-                        ? 'green'
-                            : (score * (assignment?.coefficient ?? 1)) >= (10 * (assignment?.coefficient ?? 1))
-                            ? 'gold'
-                        : 'red'
-                    }
-                />
-            </Typography.Title>
+            key: 'mark-coefficient',
+            render: (score: number) => <MarkBadge
+                score={score}
+                coefficient={(assignment?.coefficient || record?.coefficient) as number}
+            />
         }] : []),
         {
             title: 'Appreciation',
@@ -84,12 +82,15 @@ export const ExamScores = ({assignment}: {assignment: Assignment}) => {
     return(
         <PageWrapper>
             <AssignmentScores
-                assignmentId={assignment?.id as bigint}
+                assignmentId={assignment ? assignment.id as number : undefined}
+                marks={scores || undefined}
+                loading={loading}
                 tableColumns={customTableColumns}
                 isTable={true}
                 hasCollapse={false}
                 size={10}
-                height={530}
+                height={500}
+                pagination={{}}
             />
         </PageWrapper>
     )

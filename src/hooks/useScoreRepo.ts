@@ -14,7 +14,7 @@ import {
 import {useFetch, useRawFetch} from "./useFetch.ts";
 import {Pageable} from "../core/utils/interfaces.ts";
 import {Score} from "../entity";
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import {AxiosResponse} from "axios";
 
 export const useScoreRepo = () => {
@@ -22,11 +22,11 @@ export const useScoreRepo = () => {
         ['assignment-marks', assignmentId], getAllAssignmentMarks, [assignmentId, size], !!assignmentId && !!size
     )
 
-    const useGetAssignmentScores = (assignmentId: bigint): Score[] => {
+    const useGetAssignmentScores = (assignmentId: bigint): { scores: Score[], refetch: () => void } => {
         const [scores, setScores] = useState<Score[]>([])
         const fetch = useRawFetch()
 
-        useEffect(() => {
+        const loadScores = useCallback(() => {
             if (assignmentId) {
                 fetch(getAssignmentMarks, [assignmentId])
                     .then(resp => {
@@ -37,7 +37,11 @@ export const useScoreRepo = () => {
             }
         }, [assignmentId, fetch]);
 
-        return scores
+        useEffect(() => {
+            loadScores()
+        }, [loadScores]);
+
+        return {scores, refetch: loadScores}
     }
     
     const useGetAllStudentScores = (studentId: string, academicYearId: string, pageable: Pageable, subjectId?: number) => {
@@ -122,7 +126,7 @@ export const useScoreRepo = () => {
         return scores
     }
 
-    const useGetAllTeacherMarks = (teacherId: bigint | bigint[]) => useFetch(
+    const useGetAllTeacherMarks = (teacherId: bigint | number | bigint[] | number[]) => useFetch(
         ['teacher-marks', teacherId],
         getAllTeacherMarks,
         [teacherId],

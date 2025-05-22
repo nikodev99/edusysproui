@@ -3,6 +3,31 @@ import {Score} from "../../entity";
 import {apiClient, request} from "../axiosConfig.ts";
 import {IDS} from "../../core/utils/interfaces.ts";
 import {getShortSortOrder} from "../../core/utils/utils.ts";
+import {ScoreSchema} from "../../schema";
+
+export const saveAllScores = (scores: ScoreSchema, assignmentId: number) => {
+    return request({
+        method: 'POST',
+        url: '/score',
+        data: scores?.scores,
+        headers: {'Content-Type': 'application/json'},
+        params: {
+            assignment: assignmentId
+        }
+    })
+}
+
+export const updateAllScores = (scores: ScoreSchema, assignmentId: number) => {
+    return request({
+        method: 'PUT',
+        url: '/score',
+        data: scores?.scores,
+        headers: {'Content-Type': 'application/json'},
+        params: {
+            assignment: assignmentId
+        }
+    })
+}
 
 export const getAllAssignmentMarks = (assignmentId: bigint, size: number) => {
     return apiClient.get(`/score/all_assignment_marks/${assignmentId}`, {
@@ -81,7 +106,7 @@ export const getCoursePoorStudents = (courseId: number, academicYear: string) =>
     })
 }
 
-export const getAllTeacherMarks = (teacherId: bigint | bigint[]) => {
+export const getAllTeacherMarks = (teacherId: bigint | number | bigint[] | number[]) => {
     const requestParam: string = Array.isArray(teacherId) ? teacherId?.join(',') : `${teacherId}`
     return apiClient.get(`/score/all_teacher_marks/${requestParam}`)
 }

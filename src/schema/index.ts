@@ -11,6 +11,7 @@ import {individualSchema, individualSchemaMerge} from "./models/individualSchema
 import {assignmentDateUpdateSchema, assignmentSchema} from "./models/assignmentSchema.ts";
 import {attendanceSchema} from "./models/attendanceSchema.ts";
 import {planningSchema, planningSchemaMerge} from "./models/planningSchema.ts";
+import {scoreSchema, singleScoreSchema} from "./models/scoreSchema.ts";
 
 export {enrollmentSchema} from './models/enrollmentSchema'
 export {classeSchemaMerge, classeSchema} from './models/classeSchema'
@@ -19,14 +20,15 @@ export {gradeSchemaMerge, gradeSchema} from './models/gradeSchema.ts'
 export {departmentSchemaMerge} from './models/departmentSchema.ts'
 export {schoolSchema} from './models/schoolSchema'
 export {guardianSchema} from './models/guardianSchema'
-export {studentSchema} from './models/studentSchema'
+export {studentSchema, studentSchemaMerge} from './models/studentSchema'
 export {teacherSchema} from './models/teacherSchema'
 export {addressSchema} from './models/addressSchema'
 export {healthSchema} from './models/healthSchema'
 export {individualSchema, individualSchemaMerge} from './models/individualSchema.ts'
-export {assignmentDateUpdateSchema, assignmentSchema} from './models/assignmentSchema.ts'
+export {assignmentDateUpdateSchema, assignmentSchema, assignmentMerge} from './models/assignmentSchema.ts'
 export {attendanceSchema} from './models/attendanceSchema.ts'
 export {planningSchemaMerge, planningSchema} from './models/planningSchema.ts'
+export {scoreSchema, singleScoreSchema} from './models/scoreSchema.ts'
 
 export type CourseSchema = z.infer<typeof courseSchema>
 export type CourseSchemaMerge = z.infer<typeof courseSchemaMerge>
@@ -45,3 +47,5 @@ export type PlanningMergeSchema = z.infer<typeof planningSchemaMerge>
 export type PlanningSchema = z.infer<typeof planningSchema>
 export type IndividualMergeSchema = z.infer<typeof individualSchemaMerge>
 export type AssignmentSchema = z.infer<typeof assignmentSchema>
+export type ScoreSchema = z.infer<typeof scoreSchema>
+export type SingleScoreSchema = z.infer<typeof singleScoreSchema>

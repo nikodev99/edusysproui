@@ -1,7 +1,7 @@
 import {getStatusKey, Status} from "../../entity/enums/status.ts";
 import {ReactNode} from "react";
 import Tag from "../../components/ui/layout/Tag.tsx";
-import {Button, Card, Descriptions, Flex, Popover, Skeleton, Space, StepsProps, Tooltip, Typography} from "antd";
+import {Badge, Button, Card, Descriptions, Flex, Popover, Skeleton, Space, StepsProps, Tooltip, Typography} from "antd";
 import {Color} from "./interfaces.ts";
 import {MarkType} from "../../entity/enums/MarkType.ts";
 import {Assignment} from "../../entity";
@@ -158,11 +158,11 @@ export const AssignmentDescription = (
 
         ...(
             a?.passed ? [] : dateCompare(a?.examDate as Date) ? [] : showBest ? [{key: 11, children: <Space.Compact block>
-                    <ModalConfirmButton handleFunc={remove ? remove : () => 'forbidden'} funcParam={a?.id} btnTxt={<LuX />} />
-                    <Tooltip title="Changer de date"> {/* TODO Gérer les boutons supprimer et changer de date */}
-                        <Button onClick={openUpdater} icon={<LuRefreshCcw />} />
-                    </Tooltip>
-                </Space.Compact>}]: []
+                <ModalConfirmButton handleFunc={remove ? remove : () => 'forbidden'} funcParam={a?.id as bigint} btnTxt={<LuX />} />
+                <Tooltip title="Changer de date"> {/* TODO Gérer les boutons supprimer et changer de date */}
+                    <Button onClick={openUpdater} icon={<LuRefreshCcw />} />
+                </Tooltip>
+            </Space.Compact>}]: []
         )
     ]} />
 }
@@ -210,3 +210,19 @@ export const InitMarkType = ({av, coefficient}: {av: number, coefficient?: numbe
         <Tag color={color as 'warning'} icon={icon}>{text}</Tag>
     );
 };
+
+export const MarkBadge = ({score, coefficient, level = 4}: {score: number, coefficient?: number, level?: number}) => {
+    return(
+        <Typography.Title level={level as 4}>
+            {score * (coefficient ? coefficient : 1)}
+            <Badge color={
+                (score * (coefficient ? coefficient : 1)) >= (15 * (coefficient ? coefficient : 1))
+                    ? 'green'
+                    : (score * (coefficient ? coefficient : 1)) >= (10 * (coefficient ? coefficient : 1))
+                        ? 'gold'
+                        : 'red'
+            }
+            />
+        </Typography.Title>
+    )
+}

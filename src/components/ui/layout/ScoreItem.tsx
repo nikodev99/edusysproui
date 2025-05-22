@@ -1,11 +1,13 @@
 import {Score} from "../../../entity";
-import {Badge, List, Skeleton, TableColumnsType, Tag, Typography} from "antd";
+import {Badge, List, Skeleton, TableColumnsType, TablePaginationConfig, Tag, Typography} from "antd";
 import {Avatar} from "./Avatar.tsx";
 import {setFirstName} from "../../../core/utils/utils.ts";
 import {AutoScrollList} from "./AutoScrollList.tsx";
 import {AvatarTitle} from "./AvatarTitle.tsx";
 import {text} from "../../../core/utils/text_display.ts";
 import {AutoScrollTable} from "./AutoScrollTable.tsx";
+import {Table} from "./Table.tsx";
+import {useMemo} from "react";
 
 interface ScoreItemProps {
     scores: Score[];
@@ -17,11 +19,16 @@ interface ScoreItemProps {
     height?: number
     isTable?: boolean
     customHeaders?: TableColumnsType<Score>
+    hasPagination?: TablePaginationConfig | false
 }
 
 const ScoreItem = (
-    {scores, isLoading, scoreSize, allScores, onLoadMore, infinite, height, isTable, customHeaders = undefined}: ScoreItemProps
+    {scores, isLoading, scoreSize, allScores, onLoadMore, infinite = true, height, isTable, customHeaders = undefined, hasPagination = false}: ScoreItemProps
 ) => {
+
+    const sortedScores = useMemo(() => scores && scores?.length > 0 ?
+            [...scores]?.sort((a, b) => b.obtainedMark - a.obtainedMark) : []
+        , [scores])
 
     const columns: TableColumnsType<Score> = customHeaders ?? [
         {
@@ -57,29 +64,40 @@ const ScoreItem = (
 
     return(
         <>
-        {isTable ? (
+        {isTable ? infinite ? (
             <AutoScrollTable
                 tableProps={{
                     columns: columns,
-                    dataSource: scores,
-                    size: 'small',
-                    pagination: false,
+                    dataSource: sortedScores,
+                    pagination: hasPagination,
                     className: 'score-table',
                     loading: isLoading,
-                    rowKey: item => item?.student?.id
+                    rowKey: item => item?.student?.id as string
                 }}
                 height={height ?? 200}
                 size={scoreSize}
                 loadMoreSize={onLoadMore!}
                 allItems={allScores}
                 isLoading={isLoading}
-                infinite={infinite ?? true}
+                infinite={infinite}
             />
-        ) :
-        (
+        ) : (
+            <Table
+                tableProps={{
+                    columns: columns,
+                    dataSource: sortedScores,
+                    pagination: hasPagination,
+                    className: 'score-table',
+                    loading: isLoading,
+                    rowKey: item => item?.student?.id as string,
+                    scroll: {y: height ?? 200}
+                }}
+            />
+            )
+        :(
             <AutoScrollList
                 listProps={{
-                    dataSource: scores as Score[],
+                    dataSource: sortedScores as Score[],
                     renderItem: (score) => (
                         <List.Item actions={[
                             <Typography.Title level={4}>
@@ -111,7 +129,7 @@ const ScoreItem = (
                 allItems={allScores}
                 loadMoreSize={onLoadMore!}
                 height={height ?? 200}
-                infinite={infinite ?? true}
+                infinite={infinite}
             />
         )}
         </>

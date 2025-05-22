@@ -1,7 +1,7 @@
 import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {Breadcrumb, useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
-import {Button, Flex, Form, Modal, Steps} from "antd";
+import {Button, Flex, Form, Steps} from "antd";
 import {FieldValues, UseFormReturn} from "react-hook-form";
 import {ReactNode, useState} from "react";
 import {useLocation} from "react-router-dom";
@@ -13,6 +13,7 @@ import PageWrapper from "../view/PageWrapper.tsx";
 import {redirectTo} from "../../context/RedirectContext.ts";
 import {RequiredMark} from "../../core/utils/tsxUtils.tsx";
 import {ValidationAlert} from "../ui/form/ValidationAlert.tsx";
+import {LoadingButton} from "../ui/layout/LoadingButton.tsx";
 
 interface AddStepsProps<TFieldValues extends FieldValues> {
     docTitle: Metadata,
@@ -26,7 +27,6 @@ interface AddStepsProps<TFieldValues extends FieldValues> {
     isPending: boolean
     currentNumber: number
     stepsDots?: boolean | ((iconDot: ReactNode, {index, status, title, description}: never) => ReactNode)
-    follow?: ReactNode
 }
 
 const AddStepForm = <TFieldValues extends FieldValues>(
@@ -42,14 +42,12 @@ const AddStepForm = <TFieldValues extends FieldValues>(
         isPending,
         stepsDots,
         currentNumber,
-        follow
     }: AddStepsProps<TFieldValues>
 ) => {
 
     useDocumentTitle(docTitle)
     const items = useBreadCrumb(breadCrumb);
 
-    const [btnLoading, setBtnLoading] = useState<boolean[]>([])
     const [hasErrors, setHasErrors] = useState<boolean>(false);
 
     const location = useLocation()
@@ -70,28 +68,6 @@ const AddStepForm = <TFieldValues extends FieldValues>(
     }
 
     const prev = () => redirectTo(`${addLink}?step=${current - 1}`)
-
-    const onConfirmModal = (index: number) => {
-        setBtnLoading((prevLoading) => {
-            const newLoading = [...prevLoading]
-            newLoading[index] = true
-            return newLoading
-        })
-        setTimeout(() => {
-            setBtnLoading((prevLoading) => {
-                const newLoading = [...prevLoading]
-                newLoading[index] = false
-                return newLoading
-            })
-            Modal.confirm({
-                title: 'Poursuivre ?',
-                content: follow ?? 'Souhaitez vous vraiment poursuivre avec l\'inscription ?',
-                okText: 'Confirmer',
-                cancelText: 'Annuler',
-                onOk: () => handleSubmit(onSubmit)()
-            })
-        }, 2000)
-    }
 
     const stepItems = steps.map((item) => ({key: item.title, title: item.title}))
 
@@ -125,9 +101,12 @@ const AddStepForm = <TFieldValues extends FieldValues>(
                                     <Button type='primary' onClick={next}>Suivant</Button>
                                 )}
                                 {current === steps.length - 1 && (
-                                    <Button disabled={isPending} type='primary' loading={btnLoading[0]} onClick={() => {
-                                        onConfirmModal(0)
-                                    }}>Terminer</Button>
+                                    <LoadingButton
+                                        buttonText='Terminer'
+                                        onConfirm={() => handleSubmit(onSubmit)()}
+                                        isDisabled={isPending}
+                                        modalContent="Souhaitez vous vraiment poursuivre avec l'inscription ?"
+                                    />
                                 )}
                             </Flex>
                         </Form>

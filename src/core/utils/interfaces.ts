@@ -151,6 +151,7 @@ export interface InputProps extends ZodFormItemProps {
     inputType?: string
     addonAfter?: ReactNode,
     min?: number
+    max?: number
     disabled?: boolean,
 }
 

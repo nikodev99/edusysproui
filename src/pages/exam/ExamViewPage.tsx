@@ -27,15 +27,21 @@ import {ItemType} from "antd/es/menu/interface";
 import {ExamInsertScores} from "../../components/ui-kit-exam/components/ExamInsertScores.tsx";
 import {TabItemType} from "../../core/utils/interfaces.ts";
 import {useScoreRepo} from "../../hooks/useScoreRepo.ts";
+import {ExamFinished} from "../../components/ui-kit-exam/components/ExamFinished.tsx";
+import FormSuccess from "../../components/ui/form/FormSuccess.tsx";
+import FormError from "../../components/ui/form/FormError.tsx";
 
 const ExamViewPage = () => {
     const {id} = useParams()
     const [openDrawer, setOpenDrawer] = useToggle(false)
+    const [finish, setFinish] = useToggle(false)
+    const [notify, setNotify] = useToggle(false)
     const [assignment, setAssignment] = useState<Assignment | null>(null)
     const [color, setColor] = useState<string>()
     const [items, setItems] = useState<TabItemType[] | undefined>([])
     const [activeTab, setActiveTab] = useState<string | undefined>()
     const [refetchScore, setRefetchScore] = useState<boolean>(false)
+    const [messages, setMessages] = useState<{success?: string, error?: string}>({success: '', error: ''})
     const {useGetAssignment} = useAssignmentRepo()
     const {useGetAssignmentScores} = useScoreRepo()
 
@@ -61,7 +67,7 @@ const ExamViewPage = () => {
             loadScores()
             setRefetchScore(false)
         }
-    }, [data, isSuccess, loadScores, refetchScore]);
+    }, [data, isSuccess, loadScores, notify, refetchScore, setNotify]);
 
     const addTab = () => {
         const newActiveKey = '2';
@@ -73,6 +79,7 @@ const ExamViewPage = () => {
                 onClose={() => deleteTab(newActiveKey)} 
                 marks={scores}
                 load={setRefetchScore}
+                loadMessage={setMessages}
             />,
             closable: true
         }
@@ -86,6 +93,8 @@ const ExamViewPage = () => {
         setActiveTab(newActiveKey)
     }
 
+    console.log("MESSAGES: ", messages)
+
     const deleteTab = (key: string) => {
         setItems(prev => {
             const items = prev || [];
@@ -93,6 +102,16 @@ const ExamViewPage = () => {
         });
         setActiveTab(current => (current === key ? "0" : current));
         loadScores()
+        refetch()
+    }
+
+    const handleCompleteAssignment = () => {
+        if (scores && scores?.length > 0) {
+            setFinish()
+            deleteTab("2")
+        }else {
+            setNotify()
+        }
     }
 
     const itemType: ItemType[] = [
@@ -107,7 +126,8 @@ const ExamViewPage = () => {
                 key: 3,
                 label: 'Traité',
                 icon: <LuListCheck/>,
-                onClick: () => alert('Marqué le devoir comme terminer')
+                onClick: () => handleCompleteAssignment(),
+                disabled: notify
             },
             {
                 key: 4,
@@ -135,6 +155,13 @@ const ExamViewPage = () => {
         setOpenDrawer()
         refetch()
     }
+
+    const handleFinish = () => {
+        setFinish()
+        refetch()
+    }
+
+    console.log("SCORE IN VIEW: ", scores)
 
     return (
         <>
@@ -194,7 +221,11 @@ const ExamViewPage = () => {
                 memorizedTabKey='exam-view-page'
             />
             <section>
+                {notify && <FormSuccess message="Ce devoir n'a pas été noté" type='info' isNotif onClose={setNotify} />}
+                {messages?.success && <FormSuccess message={messages?.success} />}
+                {messages?.error && <FormError message={messages?.error} />}
                 <ExamEditDrawer open={openDrawer} close={handleCloseDrawer} data={assignment as Assignment} isLoading={isLoading} />
+                <ExamFinished assignmentId={assignment?.id as number} open={finish} close={handleFinish} />
             </section>
         </>
     )

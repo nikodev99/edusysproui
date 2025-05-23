@@ -9,7 +9,7 @@ import {SuperWord} from "../../core/utils/tsxUtils.tsx";
 import {cutStatement, setFirstName, zeroFormat} from "../../core/utils/utils.ts";
 import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
 import ViewHeader from "../../components/ui/layout/ViewHeader.tsx";
-import {ExamEditDrawer, ExamInfo, ExamScores} from "../../components/ui-kit-exam";
+import {ExamEditDrawer, ExamInfo, ExamScores, UpdateAssignmentDates} from "../../components/ui-kit-exam";
 import {useToggle} from "../../hooks/useToggle.ts";
 import {ViewRoot} from "../../components/custom/ViewRoot.tsx";
 import Datetime from "../../core/datetime.ts";
@@ -35,7 +35,8 @@ const ExamViewPage = () => {
     const {id} = useParams()
     const [openDrawer, setOpenDrawer] = useToggle(false)
     const [finish, setFinish] = useToggle(false)
-    const [notify, setNotify] = useToggle(false)
+    const [openChangeDate, setOpenChangeDate] = useToggle(false)
+    const [notify, setNotify] = useState<'completed' | 'date' | false>()
     const [assignment, setAssignment] = useState<Assignment | null>(null)
     const [color, setColor] = useState<string>()
     const [items, setItems] = useState<TabItemType[] | undefined>([])
@@ -93,8 +94,6 @@ const ExamViewPage = () => {
         setActiveTab(newActiveKey)
     }
 
-    console.log("MESSAGES: ", messages)
-
     const deleteTab = (key: string) => {
         setItems(prev => {
             const items = prev || [];
@@ -110,7 +109,15 @@ const ExamViewPage = () => {
             setFinish()
             deleteTab("2")
         }else {
-            setNotify()
+            setNotify('completed')
+        }
+    }
+
+    const handleChangeDate = () => {
+        if (scores && scores?.length > 0) {
+            setNotify('date')
+        }else {
+            setOpenChangeDate()
         }
     }
 
@@ -127,13 +134,14 @@ const ExamViewPage = () => {
                 label: 'Traité',
                 icon: <LuListCheck/>,
                 onClick: () => handleCompleteAssignment(),
-                disabled: notify
+                disabled: notify === 'completed'
             },
             {
                 key: 4,
                 label: 'Changer de date',
                 icon: <LuCalendarMinus2/>,
-                onClick: () => alert('Cliquer ici pour changer la date de du devoir')
+                onClick: () => handleChangeDate(),
+                disabled: notify === 'date'
             },
             {
                 key: 6,
@@ -161,7 +169,21 @@ const ExamViewPage = () => {
         refetch()
     }
 
-    console.log("SCORE IN VIEW: ", scores)
+    const handleChangeDateClose = () => {
+        setOpenChangeDate()
+        refetch()
+    }
+
+    const getNotificationMessage = () => {
+        switch (notify) {
+            case 'completed':
+                return "Ce devoir n'a pas été noté par conséquent vous ne pouvez pas le traiter"
+            case 'date':
+                return "Ce devoir est déjà noté par conséquent vous ne pouvez pas changer la date"
+            default:
+                return ''
+        }
+    }
 
     return (
         <>
@@ -187,14 +209,14 @@ const ExamViewPage = () => {
                         title: "Heure de début",
                         mention: <Flex align={"center"} gap={5}>
                             <LuClock8 style={{color: 'dimgray'}} />
-                            <span>{setFirstName(Datetime.timeToCurrentDate(assignment?.startTime as number[]).time())}</span>
+                            <span>{setFirstName(Datetime.timeToCurrentDate(assignment?.startTime as number[]).format('HH:mm'))}</span>
                         </Flex>
                     },
                     {
                         title: "Heure de fin",
                         mention: <Flex align={"center"} gap={5}>
                             <LuClock12 style={{color: 'dimgray'}} />
-                            <span>{setFirstName(Datetime.timeToCurrentDate(assignment?.endTime as number[]).time())}</span>
+                            <span>{setFirstName(Datetime.timeToCurrentDate(assignment?.endTime as number[]).format('HH:mm'))}</span>
                         </Flex>
                     },
                     {
@@ -221,11 +243,17 @@ const ExamViewPage = () => {
                 memorizedTabKey='exam-view-page'
             />
             <section>
-                {notify && <FormSuccess message="Ce devoir n'a pas été noté" type='info' isNotif onClose={setNotify} />}
+                {notify && <FormSuccess
+                    message={getNotificationMessage() as string}
+                    type='info'
+                    onClose={() => setNotify(false)}
+                    isNotif
+                />}
                 {messages?.success && <FormSuccess message={messages?.success} />}
                 {messages?.error && <FormError message={messages?.error} />}
                 <ExamEditDrawer open={openDrawer} close={handleCloseDrawer} data={assignment as Assignment} isLoading={isLoading} />
                 <ExamFinished assignmentId={assignment?.id as number} open={finish} close={handleFinish} />
+                <UpdateAssignmentDates assignment={assignment} open={openChangeDate} onCancel={handleChangeDateClose} />
             </section>
         </>
     )

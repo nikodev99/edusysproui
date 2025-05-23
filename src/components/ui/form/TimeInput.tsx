@@ -14,7 +14,6 @@ export const FormTimeInput = <T extends FieldValues>(timePickerProps: TimeInputT
     return(
         <FormItem {...timePickerProps} render={({field}) => (
             <>
-                {console.log('defaultValue: ', field.value) as any}
                 {isCompact
                     ? (
                         <Space.Compact style={{width: '100%'}}>
@@ -24,7 +23,7 @@ export const FormTimeInput = <T extends FieldValues>(timePickerProps: TimeInputT
                                 onChange={(time) => field.onChange(time ? time.toDate() : null)}
                                 onFocus={() => clearErrors ? clearErrors(field.name) : null}
                                 value={field.value ? Datetime.timeToCurrentDate(field.value).toDayjs() : null}
-                                defaultValue={Datetime.timeToCurrentDate(defaultValue as number[]).toDate as PathValue<T, Path<T>>}
+                                defaultValue={Datetime.timeToCurrentDate(defaultValue as number[]).toDate() as PathValue<T, Path<T>>}
                                 format="HH:mm"
                                 allowClear
                                 style={{width: '100%'}}

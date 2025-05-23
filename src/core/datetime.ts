@@ -108,7 +108,7 @@ class Datetime {
     static timeToCurrentDate(time: number[] | Params): Datetime {
         const t = isParams(time) ? time.time as number[] : time
         if (Array.isArray(t)) {
-            return Datetime.of(dayjs().hour(t[0])?.minute(0)?.second(0))
+            return Datetime.of(dayjs().hour(t[0])?.minute(t[1] || 0)?.second(0))
         }else {
             return Datetime.of(t)
         }

@@ -3,7 +3,7 @@ import {Assignment} from "../../entity";
 import {ID, IDS} from "../../core/utils/interfaces.ts";
 import {getShortSortOrder} from "../../core/utils/utils.ts";
 import {AxiosResponse} from "axios";
-import {AssignmentSchema} from "../../schema";
+import {AssignmentSchema, AssignmentUpdateDate} from "../../schema";
 
 export interface AssignmentFilterProps {
     academicYearId: string
@@ -107,7 +107,7 @@ export const getAssignmentById = (assignmentId: bigint) => {
     return apiClient.get<Assignment>(`/assignment/${assignmentId}`)
 }
 
-export const changeAssignmentDate = (assignment: Assignment, assignmentId: ID): Promise<AxiosResponse<{ updated: boolean }>> =>  {
+export const changeAssignmentDate = (assignment: AssignmentUpdateDate, assignmentId: ID): Promise<AxiosResponse<{ updated: boolean }>> =>  {
     return apiClient.put<{ updated: boolean }>(`/assignment/change/${assignmentId}`, assignment)
 }
 

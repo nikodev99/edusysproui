@@ -73,8 +73,6 @@ export const AssignmentForm = <T extends FieldValues, Q>(
 
     }, [classes, selectedClasse]);
 
-    console.log('TYPES: ', typeOptions)
-
     return (
         <FormContent
             formItems={[

@@ -1,6 +1,6 @@
 import Responsive from "../../ui/layout/Responsive.tsx";
 import DateInput from "../../ui/form/DateInput.tsx";
-import {useForm, UseFormReturn} from "react-hook-form";
+import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {assignmentDateUpdateSchema, AssignmentUpdateDate} from "../../../schema";
 import {TimeInput} from "../../ui/form/TimeInput.tsx";
@@ -43,7 +43,7 @@ export const UpdateAssignmentDates = ({assignment, open, onCancel, resp}: Update
             okText="oui"
             description="Souhaitez-vous poursuivre cette action ?"
             zIndex={1000}
-            handleForm={form as UseFormReturn<Assignment>}
+            handleForm={form}
             customForm={
                 <Responsive gutter={[16, 16]}>
                     <DateInput

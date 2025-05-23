@@ -1,5 +1,6 @@
 import {z} from "zod";
 import Datetime from "../core/datetime.ts";
+import dayjs from "dayjs";
 
 export const dateProcess = (requiredError: string, when?: {before?: boolean, after?: boolean})  => z.preprocess(
     (arg) => {
@@ -20,7 +21,7 @@ export const timeProcess = (title: string) =>
             return arg;
         }
 
-        if (arg instanceof Date && !isNaN(arg.getTime())) {
+        if (dayjs.isDayjs(arg) || (arg instanceof Date && !isNaN(arg.getTime()))) {
             return Datetime.of(arg).format("HH:mm");
         }
         return arg;

@@ -19,7 +19,7 @@ import {
     LuClock12,
     LuClock8,
     LuListCheck,
-    LuListPlus, LuTicketCheck, LuX
+    LuListPlus, LuX
 } from "react-icons/lu";
 import {Flex, Space} from "antd";
 import Tag from "../../components/ui/layout/Tag.tsx";
@@ -30,14 +30,18 @@ import {useScoreRepo} from "../../hooks/useScoreRepo.ts";
 import {ExamFinished} from "../../components/ui-kit-exam/components/ExamFinished.tsx";
 import FormSuccess from "../../components/ui/form/FormSuccess.tsx";
 import FormError from "../../components/ui/form/FormError.tsx";
+import {ExamRemove} from "../../components/ui-kit-exam/components/ExamRemove.tsx";
+import {redirectTo} from "../../context/RedirectContext.ts";
 
 const ExamViewPage = () => {
     const {id} = useParams()
     const [openDrawer, setOpenDrawer] = useToggle(false)
     const [finish, setFinish] = useToggle(false)
+    const [remove, setRemove] = useToggle(false)
     const [openChangeDate, setOpenChangeDate] = useToggle(false)
-    const [notify, setNotify] = useState<'completed' | 'date' | false>()
+    const [notify, setNotify] = useState<'completed' | 'date' | 'remove' | false>()
     const [assignment, setAssignment] = useState<Assignment | null>(null)
+    const [wasDeleted, setWasDeleted] = useState<boolean>(false)
     const [color, setColor] = useState<string>()
     const [items, setItems] = useState<TabItemType[] | undefined>([])
     const [activeTab, setActiveTab] = useState<string | undefined>()
@@ -121,6 +125,14 @@ const ExamViewPage = () => {
         }
     }
 
+    const handleOpenRemoveModal = () => {
+        if (scores && scores?.length > 0) {
+            setNotify('remove')
+        }else {
+            setRemove()
+        }
+    }
+
     const itemType: ItemType[] = [
         ...(assignment?.passed ? [] : [
             {
@@ -144,17 +156,12 @@ const ExamViewPage = () => {
                 disabled: notify === 'date'
             },
             {
-                key: 6,
-                label: 'Notifier Presence',
-                icon: <LuTicketCheck/>,
-                onClick: () => alert('Cliquer ici pour changer la date de du devoir')
-            },
-            {
                 key: 5,
                 label: 'Supprimer',
                 danger: true,
                 icon: <LuArchiveX />,
-                onClick: () => alert('Cliquer ici pour supprimer')
+                onClick: () => handleOpenRemoveModal(),
+                disabled: notify === 'remove'
             }
         ]),
     ]
@@ -174,12 +181,21 @@ const ExamViewPage = () => {
         refetch()
     }
 
+    const handleRemoveAssignmentt = () => {
+        setRemove()
+        if (wasDeleted) {
+            redirectTo(text.exam.href)
+        }
+    }
+
     const getNotificationMessage = () => {
         switch (notify) {
             case 'completed':
                 return "Ce devoir n'a pas été noté par conséquent vous ne pouvez pas le traiter"
             case 'date':
-                return "Ce devoir est déjà noté par conséquent vous ne pouvez pas changer la date"
+                return "Ce devoir est déjà noté par conséquent vous ne pouvez pas changer de date"
+            case 'remove':
+                return "Ce devoir est déjà noté par conséquent vous ne pouvez pas le supprimer"
             default:
                 return ''
         }
@@ -251,9 +267,10 @@ const ExamViewPage = () => {
                 />}
                 {messages?.success && <FormSuccess message={messages?.success} />}
                 {messages?.error && <FormError message={messages?.error} />}
-                <ExamEditDrawer open={openDrawer} close={handleCloseDrawer} data={assignment as Assignment} isLoading={isLoading} />
+                <ExamEditDrawer open={openDrawer} close={handleCloseDrawer} data={assignment as Assignment} isLoading={isLoading} hasMarks={scores?.length > 0} />
                 <ExamFinished assignmentId={assignment?.id as number} open={finish} close={handleFinish} />
                 <UpdateAssignmentDates assignment={assignment} open={openChangeDate} onCancel={handleChangeDateClose} />
+                <ExamRemove assignmentId={assignment?.id as number} open={remove} close={handleRemoveAssignmentt} setWasDeleted={setWasDeleted} />
             </section>
         </>
     )

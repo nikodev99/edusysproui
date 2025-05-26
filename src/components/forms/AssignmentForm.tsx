@@ -17,9 +17,10 @@ import {useExamRepo} from "../../hooks/useExamRepo.ts";
 import {useAcademicYearRepo} from "../../hooks/useAcademicYearRepo.ts";
 
 export const AssignmentForm = <T extends FieldValues, Q>(
-    {control, data, errors, edit, selectedClasse, handleUpdate}: FormContentProps<T, Assignment> & {
+    {control, data, errors, edit, selectedClasse, handleUpdate, disabled = false}: FormContentProps<T, Assignment> & {
     handleUpdate?: (field: string | keyof Q | keyof Assignment, value: unknown) => Promise<void>
     selectedClasse?: number
+    disabled?: boolean
 }) => {
     const [pickedSection, setPickedSection] = useState<SectionType>()
     const {useGetClasseBasicValues} = useClasseRepo()
@@ -73,6 +74,8 @@ export const AssignmentForm = <T extends FieldValues, Q>(
 
     }, [classes, selectedClasse]);
 
+    console.log("IsDisabled: ", disabled)
+
     return (
         <FormContent
             formItems={[
@@ -107,6 +110,7 @@ export const AssignmentForm = <T extends FieldValues, Q>(
                         help: form.error('examDate'),
                         defaultValue: (data ? data.examDate : undefined) as PathValue<T, Path<T>>,
                         onFinish: edit && handleUpdate ? (value: unknown) => handleUpdate('examDate', value) : undefined,
+                        disabled: disabled
                     }
                 },
                 {
@@ -123,6 +127,7 @@ export const AssignmentForm = <T extends FieldValues, Q>(
                         help: form.error('startTime'),
                         defaultValue: (data ? data.startTime : undefined) as PathValue<T, Path<T>>,
                         onFinish: edit && handleUpdate ? (value: unknown) => handleUpdate('startTime', value) : undefined,
+                        disabled: disabled
                     }
                 },
                 {
@@ -139,6 +144,7 @@ export const AssignmentForm = <T extends FieldValues, Q>(
                         help: form.error('endTime'),
                         defaultValue: (data ? data.endTime : undefined) as PathValue<T, Path<T>>,
                         onFinish: edit && handleUpdate ? (value: unknown) => handleUpdate('endTime', value) : undefined,
+                        disabled: disabled
                     }
                 },
                 {

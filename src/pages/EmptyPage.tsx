@@ -1,7 +1,7 @@
 import {Button, Result} from "antd";
 import {ReactNode} from "react";
 import {useNavigation} from "../hooks/useNavigation.ts";
-import {LuPlusCircle} from "react-icons/lu";
+import {LuCirclePlus} from "react-icons/lu";
 
 const EmptyPage = ({title, subTitle, icon, extra, btnLabel, btnUrl}: {title: ReactNode | string, subTitle?: ReactNode | string, icon?: ReactNode, extra?: ReactNode, btnLabel?: string, btnUrl?: string}) => {
 
@@ -24,7 +24,7 @@ const EmptyPage = ({title, subTitle, icon, extra, btnLabel, btnUrl}: {title: Rea
                     <img src="public/no-team-2.svg" alt="empty table image"/>
                 </span>
                 }
-                extra={extra ? extra : <Button type='primary' icon={<LuPlusCircle size={15} />} onClick={btnUrl ? goThrough : () => {}}>{btnLabel}</Button>}
+                extra={extra ? extra : <Button type='primary' icon={<LuCirclePlus size={15} />} onClick={btnUrl ? goThrough : () => {}}>{btnLabel}</Button>}
             />
         </main>
 

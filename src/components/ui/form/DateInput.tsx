@@ -8,7 +8,7 @@ import {LuSave} from "react-icons/lu";
 
 export const FormDateInput = <T extends FieldValues>(datePickerProps: DatePickerType<T>) => {
 
-    const {isCompact, placeholder, buttonLabel, defaultValue, clearErrors, showTime, format} = datePickerProps
+    const {isCompact, placeholder, buttonLabel, defaultValue, clearErrors, showTime, format, disabled} = datePickerProps
 
     return(
         <FormItem {...datePickerProps} render={({field}) => (
@@ -26,6 +26,7 @@ export const FormDateInput = <T extends FieldValues>(datePickerProps: DatePicker
                             showTime={showTime}
                             showHour={showTime}
                             showMinute={showTime}
+                            disabled={disabled}
                         />
                         <Button disabled={field.value === defaultValue} htmlType='submit'>{buttonLabel ?? <LuSave />}</Button>
                     </Space.Compact>

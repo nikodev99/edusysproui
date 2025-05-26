@@ -9,7 +9,7 @@ import Datetime from "../../../core/datetime.ts";
 
 export const FormTimeInput = <T extends FieldValues>(timePickerProps: TimeInputType<T>) => {
 
-    const {isCompact, placeholder, clearErrors, defaultValue, buttonLabel} = timePickerProps
+    const {isCompact, placeholder, clearErrors, defaultValue, buttonLabel, disabled} = timePickerProps
 
     return(
         <FormItem {...timePickerProps} render={({field}) => (
@@ -27,6 +27,7 @@ export const FormTimeInput = <T extends FieldValues>(timePickerProps: TimeInputT
                                 format="HH:mm"
                                 allowClear
                                 style={{width: '100%'}}
+                                disabled={disabled}
                             />
                             <Button disabled={field.value === defaultValue} htmlType='submit'>{buttonLabel ?? <LuSave />}</Button>
                         </Space.Compact>

@@ -11,7 +11,9 @@ import {UpdateType} from "../../../core/shared/sharedEnums.ts";
 import FormSuccess from "../../ui/form/FormSuccess.tsx";
 import FormError from "../../ui/form/FormError.tsx";
 
-export const ExamEditDrawer = ({open, close, isLoading, data}: EditProps<Assignment>) => {
+export const ExamEditDrawer = ({open, close, isLoading, data, hasMarks}: EditProps<Assignment> & {
+    hasMarks: boolean
+}) => {
     const [successMessage, setSuccessMessage] = useState<string | undefined>(undefined)
     const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined)
 
@@ -49,7 +51,14 @@ export const ExamEditDrawer = ({open, close, isLoading, data}: EditProps<Assignm
         <RightSidePane open={open} onClose={close} loading={isLoading} destroyOnClose>
             {successMessage && <FormSuccess message={successMessage} isNotif />}
             {errorMessage && <FormError message={errorMessage} isNotif />}
-            <AssignmentForm control={control} errors={errors} data={data} edit={true} handleUpdate={handleUpdate} />
+            <AssignmentForm
+                control={control}
+                errors={errors}
+                data={data}
+                edit={true}
+                handleUpdate={handleUpdate}
+                disabled={data?.passed || hasMarks}
+            />
         </RightSidePane>
     )
 }

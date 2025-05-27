@@ -10,16 +10,16 @@ import {Assignment, Classe, Course, Individual} from "../../entity";
 import ListViewer from "../../components/custom/ListViewer.tsx";
 import {useEffect, useMemo, useState} from "react";
 import {Space, TableColumnsType, Tag as AntTag, Typography} from "antd";
-import {DataProps} from "../../core/utils/interfaces.ts";
 import {AssignmentDescription, SuperWord} from "../../core/utils/tsxUtils.tsx";
 import {AvatarTitle} from "../../components/ui/layout/AvatarTitle.tsx";
 import Datetime from "../../core/datetime.ts";
 import Tag from "../../components/ui/layout/Tag.tsx";
 import {ActionButton} from "../../components/ui/layout/ActionButton.tsx";
 import {setFirstName} from "../../core/utils/utils.ts";
-import {AssignmentFilter} from "../../components/ui-kit-exam";
+import {AssignmentFilter, ExamActionLinks} from "../../components/ui-kit-exam";
 import {useAcademicYearRepo} from "../../hooks/useAcademicYearRepo.ts";
 import {AssignmentTypeLiteral, typeColors} from "../../entity/enums/assignmentType.ts";
+import {ItemType} from "antd/es/menu/interface";
 
 const ExamListPage = () => {
 
@@ -28,7 +28,9 @@ const ExamListPage = () => {
     const [usedAcademicYearId, setUsedAcademicYearId] = useState<string>()
     const [isRefetch, setIsRefetch] = useState(false)
     const [searchQuery, setSearchQuery] = useState<string | undefined>(undefined)
-    
+    const [links, setLinks] = useState<ItemType[]>([])
+    const [selectedAssignment, setSelectedAssignment] = useState<Assignment | null>(null)
+
     const academicYear = useGetCurrentAcademicYear()
     const academicYears = useGetAllAcademicYear()
 
@@ -83,18 +85,20 @@ const ExamListPage = () => {
         return [
             {
                 key: `details-${id}`,
-                icon: <LuEye size={20}/>,
+                icon: <LuEye />,
                 label: text.exam.group.view.label,
                 onClick: () => redirectTo(text.exam.group.view.href + id)
-            }
+            },
+            ...links,
         ]
     }
 
     const cardData = (data: Assignment[]) => {
         return data?.map(c => ({
             id: c.id,
-            description: <AssignmentDescription a={c} link show plus />
-        })) as DataProps[]
+            description: <AssignmentDescription a={c} link show plus />,
+            record: c
+        })) as []
     }
 
     const tableColumns: TableColumnsType<Assignment> = [
@@ -204,6 +208,7 @@ const ExamListPage = () => {
                 <ActionButton
                     icon={<LuEllipsisVertical size={30} style={{borderStyle: 'border'}} />}
                     items={getItems(id)}
+                    arrow
                 />
             )
         }
@@ -219,8 +224,6 @@ const ExamListPage = () => {
         value: a.id,
         label: a.academicYear
     })), [academicYears])
-
-    console.log('SEARCH QUERY: ', searchQuery)
 
     return(
         <>
@@ -255,6 +258,12 @@ const ExamListPage = () => {
                     academicYearOptions={academicYearOptions}
                     setFilters={handleUpdateFilters}
                 />}
+                onSelectData={setSelectedAssignment}
+            />
+            <ExamActionLinks
+                assignment={selectedAssignment as Assignment}
+                getLinks={setLinks}
+                setRefetch={setIsRefetch}
             />
         </>
     )

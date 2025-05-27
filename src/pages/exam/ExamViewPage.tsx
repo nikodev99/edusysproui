@@ -9,43 +9,28 @@ import {SuperWord} from "../../core/utils/tsxUtils.tsx";
 import {cutStatement, setFirstName, zeroFormat} from "../../core/utils/utils.ts";
 import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
 import ViewHeader from "../../components/ui/layout/ViewHeader.tsx";
-import {ExamEditDrawer, ExamInfo, ExamScores, UpdateAssignmentDates} from "../../components/ui-kit-exam";
+import {ExamEditDrawer, ExamInfo, ExamScores, ExamInsertScores, ExamActionLinks} from "../../components/ui-kit-exam";
 import {useToggle} from "../../hooks/useToggle.ts";
 import {ViewRoot} from "../../components/custom/ViewRoot.tsx";
 import Datetime from "../../core/datetime.ts";
-import {
-    LuArchiveX,
-    LuCalendarCheck, LuCalendarMinus2,
-    LuClock12,
-    LuClock8,
-    LuListCheck,
-    LuListPlus, LuX
-} from "react-icons/lu";
+import {LuCalendarCheck, LuClock12, LuClock8, LuListPlus, LuX} from "react-icons/lu";
 import {Flex, Space} from "antd";
 import Tag from "../../components/ui/layout/Tag.tsx";
 import {ItemType} from "antd/es/menu/interface";
-import {ExamInsertScores} from "../../components/ui-kit-exam/components/ExamInsertScores.tsx";
 import {TabItemType} from "../../core/utils/interfaces.ts";
 import {useScoreRepo} from "../../hooks/useScoreRepo.ts";
-import {ExamFinished} from "../../components/ui-kit-exam/components/ExamFinished.tsx";
-import FormSuccess from "../../components/ui/form/FormSuccess.tsx";
-import FormError from "../../components/ui/form/FormError.tsx";
-import {ExamRemove} from "../../components/ui-kit-exam/components/ExamRemove.tsx";
-import {redirectTo} from "../../context/RedirectContext.ts";
 
 const ExamViewPage = () => {
     const {id} = useParams()
+
     const [openDrawer, setOpenDrawer] = useToggle(false)
-    const [finish, setFinish] = useToggle(false)
-    const [remove, setRemove] = useToggle(false)
-    const [openChangeDate, setOpenChangeDate] = useToggle(false)
-    const [notify, setNotify] = useState<'completed' | 'date' | 'remove' | false>()
+    const [links, setLinks] = useState<ItemType[]>([])
     const [assignment, setAssignment] = useState<Assignment | null>(null)
-    const [wasDeleted, setWasDeleted] = useState<boolean>(false)
     const [color, setColor] = useState<string>()
     const [items, setItems] = useState<TabItemType[] | undefined>([])
     const [activeTab, setActiveTab] = useState<string | undefined>()
     const [refetchScore, setRefetchScore] = useState<boolean>(false)
+    const [isRefetch, setIsRefetch] = useState<boolean>(false)
     const [messages, setMessages] = useState<{success?: string, error?: string}>({success: '', error: ''})
     const {useGetAssignment} = useAssignmentRepo()
     const {useGetAssignmentScores} = useScoreRepo()
@@ -72,16 +57,24 @@ const ExamViewPage = () => {
             loadScores()
             setRefetchScore(false)
         }
-    }, [data, isSuccess, loadScores, notify, refetchScore, setNotify]);
+    }, [data, isSuccess, loadScores, refetchScore]);
+
+    useEffect(() => {
+        if (isRefetch) {
+            refetch()
+        }
+    }, [isRefetch, refetch]);
+
+    console.log('Refetch: ', isRefetch)
 
     const addTab = () => {
         const newActiveKey = '2';
         const newTab: TabItemType = {
             label: <span>Notation <LuX style={{cursor: 'pointer'}} onClick={() => deleteTab(newActiveKey)} /></span>,
             key: newActiveKey,
-            children: <ExamInsertScores 
-                assignment={assignment as Assignment} 
-                onClose={() => deleteTab(newActiveKey)} 
+            children: <ExamInsertScores
+                assignment={assignment as Assignment}
+                onClose={() => deleteTab(newActiveKey)}
                 marks={scores}
                 load={setRefetchScore}
                 loadMessage={setMessages}
@@ -108,31 +101,6 @@ const ExamViewPage = () => {
         refetch()
     }
 
-    const handleCompleteAssignment = () => {
-        if (scores && scores?.length > 0) {
-            setFinish()
-            deleteTab("2")
-        }else {
-            setNotify('completed')
-        }
-    }
-
-    const handleChangeDate = () => {
-        if (scores && scores?.length > 0) {
-            setNotify('date')
-        }else {
-            setOpenChangeDate()
-        }
-    }
-
-    const handleOpenRemoveModal = () => {
-        if (scores && scores?.length > 0) {
-            setNotify('remove')
-        }else {
-            setRemove()
-        }
-    }
-
     const itemType: ItemType[] = [
         ...(assignment?.passed ? [] : [
             {
@@ -141,64 +109,13 @@ const ExamViewPage = () => {
                 icon: <LuListPlus/>,
                 onClick: () => addTab()
             },
-            {
-                key: 3,
-                label: 'Traité',
-                icon: <LuListCheck/>,
-                onClick: () => handleCompleteAssignment(),
-                disabled: notify === 'completed'
-            },
-            {
-                key: 4,
-                label: 'Changer de date',
-                icon: <LuCalendarMinus2/>,
-                onClick: () => handleChangeDate(),
-                disabled: notify === 'date'
-            },
-            {
-                key: 5,
-                label: 'Supprimer',
-                danger: true,
-                icon: <LuArchiveX />,
-                onClick: () => handleOpenRemoveModal(),
-                disabled: notify === 'remove'
-            }
         ]),
+        ...links
     ]
 
     const handleCloseDrawer = () => {
         setOpenDrawer()
         refetch()
-    }
-
-    const handleFinish = () => {
-        setFinish()
-        refetch()
-    }
-
-    const handleChangeDateClose = () => {
-        setOpenChangeDate()
-        refetch()
-    }
-
-    const handleRemoveAssignmentt = () => {
-        setRemove()
-        if (wasDeleted) {
-            redirectTo(text.exam.href)
-        }
-    }
-
-    const getNotificationMessage = () => {
-        switch (notify) {
-            case 'completed':
-                return "Ce devoir n'a pas été noté par conséquent vous ne pouvez pas le traiter"
-            case 'date':
-                return "Ce devoir est déjà noté par conséquent vous ne pouvez pas changer de date"
-            case 'remove':
-                return "Ce devoir est déjà noté par conséquent vous ne pouvez pas le supprimer"
-            default:
-                return ''
-        }
     }
 
     return (
@@ -259,19 +176,15 @@ const ExamViewPage = () => {
                 memorizedTabKey='exam-view-page'
             />
             <section>
-                {notify && <FormSuccess
-                    message={getNotificationMessage() as string}
-                    type='info'
-                    onClose={() => setNotify(false)}
-                    isNotif
-                />}
-                {messages?.success && <FormSuccess message={messages?.success} />}
-                {messages?.error && <FormError message={messages?.error} />}
-                <ExamEditDrawer open={openDrawer} close={handleCloseDrawer} data={assignment as Assignment} isLoading={isLoading} hasMarks={scores?.length > 0} />
-                <ExamFinished assignmentId={assignment?.id as number} open={finish} close={handleFinish} />
-                <UpdateAssignmentDates assignment={assignment} open={openChangeDate} onCancel={handleChangeDateClose} />
-                <ExamRemove assignmentId={assignment?.id as number} open={remove} close={handleRemoveAssignmentt} setWasDeleted={setWasDeleted} />
+                <ExamEditDrawer open={openDrawer} close={handleCloseDrawer} data={assignment as Assignment} isLoading={isLoading} hasMarks={(scores && scores?.length > 0)} />
             </section>
+            <ExamActionLinks
+                assignment={assignment as Assignment}
+                deleteTab={deleteTab}
+                getLinks={setLinks}
+                loadMessage={messages}
+                setRefetch={setIsRefetch}
+            />
         </>
     )
 }

@@ -196,7 +196,7 @@ export interface StudentListDataType {
     image: string
 }
 
-export interface DataProps {
+export interface DataProps<TData extends object> {
     id?: string | number
     lastName?: string
     firstName?: string
@@ -205,6 +205,7 @@ export interface DataProps {
     reference?: string
     tag?: string | ReactNode
     description?: string | ReactNode | string[] | ReactNode[]
+    record?: TData
 }
 
 export interface ListViewerProps<TData extends object, TError> {
@@ -219,7 +220,7 @@ export interface ListViewerProps<TData extends object, TError> {
     fetchId?: string | string[]
     localStorage?: {activeIcon?: string, pageSize?: string, page?: string, pageCount?: string}
     cardNotAvatar?: boolean
-    cardData?: (data: TData[]) => DataProps[]
+    cardData?: (data: TData[]) => DataProps<TData>[]
     level?: 1 | 2 | 3 | 4 | 5
     hasSearch?: boolean
     searchInput?: boolean
@@ -237,6 +238,7 @@ export interface ListViewerProps<TData extends object, TError> {
     filters?: ReactNode
     shareSearchQuery?: (value: string | undefined) => void
     showFilterAction?: (value: boolean) => void
+    onSelectData?: (data: TData) => void
 }
 
 export interface ExamData {

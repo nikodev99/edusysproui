@@ -19,7 +19,7 @@ const ListViewer = <TData extends object, TError>(
     {
         callback, searchCallback, tableColumns, dropdownItems, throughDetails, hasCount, countTitle, localStorage,
         fetchId, cardData, cardNotAvatar, level, refetchCondition, callbackParams, searchCallbackParams, infinite,
-        uuidKey, tableProps, descMargin, itemSize, displayItem, filters, shareSearchQuery
+        uuidKey, tableProps, descMargin, itemSize, displayItem, filters, shareSearchQuery, onSelectData
     }: ListViewerProps<TData, TError>
 ) => {
 
@@ -232,6 +232,7 @@ const ListViewer = <TData extends object, TError>(
                         avatarLess={cardNotAvatar}
                         titleLevel={level as 1}
                         displayItem={displayItem}
+                        onSelectData={onSelectData}
                     />
                         : <Grid xs={24} md={24} lg={24}>
                             {infinite ? <AutoScrollTable
@@ -243,6 +244,9 @@ const ListViewer = <TData extends object, TError>(
                                     loading: isLoading || dataSource === undefined,
                                     pagination: false,
                                     onChange: handleSorterChange,
+                                    onRow: (record: TData) => ({
+                                        onClick: () => onSelectData ? onSelectData(record) : undefined
+                                    })
                                 }}
                                 isLoading={isLoading || isRefetching}
                                 allItems={dataCount}
@@ -261,6 +265,9 @@ const ListViewer = <TData extends object, TError>(
                                 onChange={handleSorterChange}
                                 pagination={false}
                                 scroll={{y: 550}}
+                                onRow={(record: TData) => ({
+                                    onClick: () => onSelectData ? onSelectData(record) : undefined
+                                })}
                             />}
                         </Grid>
                 }

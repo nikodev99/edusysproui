@@ -119,6 +119,10 @@ export const getBestTeacherStudentByScore = (personalInfoId: bigint) => {
     return apiClient.get<Score[]>(`/score/students/${personalInfoId}`)
 }
 
+export const countAssignmentMarks = (assignmentId: bigint | number) => {
+    return apiClient.get<number>(`/score/count/${assignmentId}`)
+}
+
 const getSorted = (sortField: string) => {
     switch (sortField) {
         case 'obtainedMark':

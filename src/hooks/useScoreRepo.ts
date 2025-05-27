@@ -1,4 +1,5 @@
 import {
+    countAssignmentMarks,
     getAllAssignmentMarks,
     getAllStudentScores,
     getAllStudentScoresBySubject,
@@ -140,6 +141,19 @@ export const useScoreRepo = () => {
         subjectId ? !!teacherPersonalInfoId && !!subjectId : !!teacherPersonalInfoId
     )
     
+    const useCountAssignmentMarks = (assignmentId: bigint | number) => {
+        const [count, setCount] = useState<number>(0)
+        const {data, isSuccess} = useFetch(['count-assignment-marks', assignmentId], countAssignmentMarks, [assignmentId], !!assignmentId)
+        
+        useEffect(() => {
+            if(isSuccess) {
+                setCount(data as number)
+            }
+        }, [data, isSuccess]);
+        
+        return count
+    }
+    
     return{
         useGetAllAssignmentMarks,
         useGetAssignmentScores,
@@ -149,6 +163,7 @@ export const useScoreRepo = () => {
         useGetCourseBestStudents,
         useGetCoursePoorStudents,
         useGetAllTeacherMarks,
-        useGetBestTeacherStudents
+        useGetBestTeacherStudents,
+        useCountAssignmentMarks
     }
 }

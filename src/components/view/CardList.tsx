@@ -9,8 +9,8 @@ import {AiOutlineMore} from "react-icons/ai";
 import {DataProps} from "../../core/utils/interfaces.ts";
 import {SuperWord} from "../../core/utils/tsxUtils.tsx";
 
-interface CardListProps {
-    content: DataProps[]
+interface CardListProps<TData extends object> {
+    content: DataProps<TData>[]
     isActive: boolean
     isLoading: boolean
     dropdownItems?: (url: string) => ItemType[]
@@ -18,10 +18,11 @@ interface CardListProps {
     avatarLess?: boolean
     titleLevel?: 1 | 4 | 5 | 2 | 3
     displayItem?: 1 | 2 | 3 | 4
+    onSelectData?: (data: never) => void
 }
 
-const CardList = (
-    {content, isActive, isLoading, dropdownItems, throughDetails, avatarLess, titleLevel = 4, displayItem = 4}: CardListProps
+const CardList = <TData extends object>(
+    {content, isActive, isLoading, dropdownItems, throughDetails, onSelectData, avatarLess, titleLevel = 4, displayItem = 4}: CardListProps<TData>
 ) => {
 
     const selectedGender = (gender?: Gender) => {
@@ -41,7 +42,7 @@ const CardList = (
                 isActive && (<Skeleton loading={isLoading} active={isLoading} avatar={isLoading}>
                     {content && content?.map(c => (
                         <Grid key={c?.id} xs={24} md={md} lg={lg} xl={xl} style={{marginTop: '15px'}}>
-                            <Card loading={!content || isLoading} className='card__list'>
+                            <Card loading={!content || isLoading} className='card__list' onClick={() => onSelectData?.(c?.record as never)}>
                                 {dropdownItems && <ActionButton
                                     icon={<AiOutlineMore className='cardIcon' size={30} />}
                                     items={dropdownItems(c?.id as string)}

@@ -49,7 +49,7 @@ const CourseInfoData = ({infoData, color, classes, academicYear}: CourseInfoType
     const allStudents = useCountStudent()
     const {data, isSuccess} = useCountSomeClasseStudents(classeIds, academicYear ?? '')
 
-    const studentConcerned = findPercent(studentCount?.total as number, allStudents?.count as number)
+    const studentConcerned = findPercent(studentCount?.total as number, allStudents?.total as number)
 
     useEffect(() => {
         if (isSuccess)

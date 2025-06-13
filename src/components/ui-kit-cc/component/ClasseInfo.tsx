@@ -17,12 +17,12 @@ import {AvatarTitle} from "../../ui/layout/AvatarTitle.tsx";
 import {AttendanceStatus, getColors} from "../../../entity/enums/attendanceStatus.ts";
 import {ShapePieChart} from "../../graph/ShapePieChart.tsx";
 import VoidData from "../../view/VoidData.tsx";
-import {useClasseAttendance} from "../../../hooks/useClasseAttendance.ts";
 import Datetime from "../../../core/datetime.ts";
 import {TeacherList} from "../../common/TeacherList.tsx";
 import {BestScoredTable} from "../../common/BestScoredTable.tsx";
 import {ScheduleCalendar} from "../../common/ScheduleCalendar.tsx";
 import {useScoreRepo} from "../../../hooks/useScoreRepo.ts";
+import {useAttendanceRepo} from "../../../hooks/useAttendanceRepo.ts";
 
 type ClasseInfoProps = InfoPageProps<Classe> & {
     studentCount?: GenderCounted | null
@@ -244,14 +244,16 @@ const ClasseTeachers = ({infoData, seeMore}: ClasseInfoProps) => {
 const ClasseAttendanceGraph = ({infoData, seeMore, academicYear}: ClasseInfoProps) => {
 
     const {id} = infoData
+    const {useGetClasseAttendanceCount} = useAttendanceRepo()
+    const {data: classeAttendances} = useGetClasseAttendanceCount(id, academicYear as string)
 
-    const {classeAttendances} = useClasseAttendance(id, academicYear as string)
+    const graphData = classeAttendances && classeAttendances?.statusCount ? Object.entries(classeAttendances?.statusCount).map(([key, value]) => ({
+        name: AttendanceStatus[key as unknown as keyof typeof AttendanceStatus],
+        value: value as number,
+        color: getColors(AttendanceStatus[key as unknown as keyof typeof AttendanceStatus])
+    })): []
 
-    const graphData = classeAttendances && classeAttendances?.map(c => ({
-        name: AttendanceStatus[c.status as unknown as keyof typeof AttendanceStatus],
-        value: c.count,
-        color: getColors(AttendanceStatus[c.status as unknown as keyof typeof AttendanceStatus])
-    }))
+    console.log('graphData: ', graphData)
 
     const handleClick = () => {
         seeMore && seeMore('3')
@@ -259,7 +261,7 @@ const ClasseAttendanceGraph = ({infoData, seeMore, academicYear}: ClasseInfoProp
 
     return(
         <Section title='Donnée de présence' more={true} seeMore={handleClick}>
-            {classeAttendances && classeAttendances.length > 0 ? <ShapePieChart
+            {classeAttendances && classeAttendances.statusCount ? <ShapePieChart
                 data={graphData as []}
                 height={280}
                 innerRadius={40}

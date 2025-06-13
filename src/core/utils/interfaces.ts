@@ -24,11 +24,13 @@ import {Day} from "../../entity/enums/day.ts";
 import {AxiosResponse} from "axios";
 import IntrinsicElements = React.JSX.IntrinsicElements;
 import {PercentPositionType, ProgressSize} from "antd/es/progress/progress";
-import {CheckboxOptionType, TableColumnsType, TableProps} from "antd";
+import {CheckboxOptionType, ListProps, TableColumnsType, TableProps} from "antd";
 import {ItemType} from "antd/es/menu/interface";
 import {z} from "zod";
 import {AssignmentTypeLiteral} from "../../entity/enums/assignmentType.ts";
 import {RadioGroupButtonStyle, RadioGroupOptionType} from "antd/es/radio";
+import {ButtonType} from "antd/es/button";
+import {UseQueryResult} from "@tanstack/react-query";
 
 export interface Metadata {
     title: string
@@ -239,6 +241,7 @@ export interface ListViewerProps<TData extends object, TError> {
     shareSearchQuery?: (value: string | undefined) => void
     showFilterAction?: (value: boolean) => void
     onSelectData?: (data: TData) => void
+    fetchedData?: UseQueryResult<TData, TError>
 }
 
 export interface ExamData {
@@ -284,6 +287,16 @@ export interface AutoScrollProps {
     height?: number
     infinite?: boolean
     seconds?: number
+}
+
+export interface LoadMoreListProps<T> {
+    listProps: ListProps<T>
+    isLoading: boolean,
+    size: number,
+    allItems: number,
+    onLoadMore?: () => void
+    buttonType?: ButtonType
+    buttonLabel?: ReactNode
 }
 
 export interface ReprimandData {
@@ -351,8 +364,8 @@ export type GenderCounted = {
     }[]
 }
 export type CountType = {classe?: string, count?: number};
-export type AttendanceCount = {status: AttendanceStatus, count: number}
-export type AttendanceSummary = {individual: Individual, statusCount: AttendanceCount[]}
+export type AttendanceCount = {status: AttendanceStatus, count: number, classeId?: number}
+export type AttendanceSummary = {individual: Individual, statusCount: AttendanceCount[], totalDays: number, classe?: string}
 export type AttendanceRecentCount = {
     date: string
     present: number
@@ -361,11 +374,22 @@ export type AttendanceRecentCount = {
     excused: number
 }
 
-export type AttendanceStatusCount = {
+export type AttendanceStatusKey = keyof typeof AttendanceStatus
+export type AttendanceStatusCount = Record<AttendanceStatusKey, number>
+export type SectionStatusCount = Partial<Record<SectionType, AttendanceStatusCount>>
+export type GenderStatusCount = Partial<Record<Gender, AttendanceStatusCount>>
+
+export type AttendanceInfo = {
     present: number
     absent: number
     late: number
     excused: number
+}
+
+export interface AttendanceStatusCountResponse {
+    statusCount: AttendanceStatusCount;
+    sectionStatusCount: SectionStatusCount;
+    genderStatusCount: GenderStatusCount;
 }
 
 export type WidgetItem = {

@@ -16,7 +16,7 @@ type BarChartProps<TData> = ChartProps<TData> & BarProps<TData>
 
 export const BarChart = <T extends object>({
    data, dataKey, legend, color, layout, showLegend, showCartesian, margins, width, height, minHeight, isPercent, stackId, stackBars,
-   stackKeys, barSize
+   stackKeys, barSize, showYAxis = true, showXAxis = true
 }: BarChartProps<T>) => {
 
     const keys = dataKey
@@ -39,12 +39,12 @@ export const BarChart = <T extends object>({
                 }}>
                 {showCartesian && <CartesianGrid strokeDasharray="3 3" />}
                 {layout === 'vertical'
-                    ? (<XAxis type="number" tickFormatter={isPercent ? (value) => value + '%' : undefined} />)
+                    ? (showXAxis ? <XAxis type="number" tickFormatter={isPercent ? (value) => value + '%' : undefined} /> : null)
                     : (<XAxis dataKey={legend as string} />)
                 }
                 {layout === 'vertical'
                     ? (<YAxis dataKey={legend as string} type="category" />)
-                    : (<YAxis tickFormatter={isPercent ? (value) => value + '%' : undefined} />)
+                    : (showYAxis ? <YAxis tickFormatter={isPercent ? (value) => value + '%' : undefined} /> : null)
                 }
                 <Tooltip formatter={isPercent ? (value) => value + '%' : undefined} />
                 {showLegend && <Legend />}
@@ -53,7 +53,7 @@ export const BarChart = <T extends object>({
                         <Bar
                             barSize={barSize ?? 50}
                             dataKey={key as string}
-                            key={index}
+                            key={`bar-${index}-${String(key)}`}
                             stackId={stackId}
                             fill={setColor(index)}
                             activeBar={
@@ -61,18 +61,19 @@ export const BarChart = <T extends object>({
                             }
                         />
                     ))
-                    : Array.from({ length: stackBars || 0 }).map((_, index) => (
-                        <Bar
+                    : Array.from({ length: stackBars || 0 }).map((_, index) => {
+                        const skey = stackKeys ? stackKeys[index] as string : `bar${index}`;
+                        return (<Bar
                             barSize={barSize ?? 50}
-                            key={index}
+                            key={`bar-${index}-${skey}`}
                             dataKey={stackKeys ? stackKeys[index] as string : `bar${index}`}
                             stackId={stackId}
                             fill={setColor(index)}
                             activeBar={
                                 <Rectangle fill={setColor(index)} stroke={setColor(index)} />
                             }
-                        />
-                    ))}
+                        />)
+                    })}
             </ReChardBarChart>
         </ResponsiveContainer>
     )

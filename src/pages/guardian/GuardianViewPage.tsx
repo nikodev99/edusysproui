@@ -22,7 +22,7 @@ const GuardianViewPage: React.FC = () => {
     const [openDrawer, setOpenDrawer] = useState<boolean>(false)
     const [color, setColor] = useState('')
 
-    const {data, isLoading, isSuccess, refetch} = useFetch(['guardian-id', id], fetchGuardianWithStudents, [id])
+    const {data, isLoading, isSuccess, refetch} = useFetch(['guardian-id', id], fetchGuardianWithStudents, [id], !!id)
 
     const guardianName = guardian ? setName(guardian?.personalInfo?.lastName, guardian?.personalInfo?.firstName) : 'Tuteur'
 

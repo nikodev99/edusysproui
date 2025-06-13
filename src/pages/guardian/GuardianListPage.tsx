@@ -127,11 +127,11 @@ const GuardianListPage = () => {
             id: c.id,
             lastName: c.personalInfo?.lastName,
             firstName: c.personalInfo?.firstName,
-            gender: c.personalInfo?.gender,
+            gender: c.personalInfo?.gender as Gender,
             reference: c.personalInfo?.emailId,
             tag: <StatusTags status={c.personalInfo?.status as Status} female={c.personalInfo?.gender === Gender.FEMME} />,
-            description: []
-        })) as DataProps[]
+            description: [],
+        })) || [] as DataProps<Guardian>[]
     }
 
     return(

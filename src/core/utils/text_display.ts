@@ -91,6 +91,20 @@ export const text = {
             }
         }
     },
+    att: {
+        label: 'Presence',
+        href: '/attendances',
+        group: {
+            add: {
+                label: 'Fiche de présence du jour',
+                href: '/attendances/new'
+            },
+            view: {
+                label: 'Voir la fiche de présence du jour',
+                href: '/attendances/'
+            }
+        }
+    },
     path: {
         page: '',
         new: 'new',

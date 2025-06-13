@@ -5,13 +5,13 @@ import {ReactNode, useEffect, useState} from "react";
 import {ItemType} from "antd/es/menu/interface";
 import {AvatarProps} from "../ui_interfaces.ts";
 import {AvatarTitle} from "./AvatarTitle.tsx";
-import {assignKeys} from "../../../core/utils/utils.ts";
+import {assignKeys, firstLetter} from "../../../core/utils/utils.ts";
 
 interface ViewProps {
     isLoading: boolean,
     setEdit: (toEdit: boolean) => void
     closeState: boolean
-    avatarProps: AvatarProps
+    avatarProps?: AvatarProps
     blockProps:{title: ReactNode, mention: ReactNode}[]
     items?: ItemType[]
     btnLabel?: ReactNode
@@ -21,16 +21,20 @@ interface ViewProps {
     editText?: ReactNode
     hasEdit?: boolean
     btnDisabled?: boolean
+    addMargin?: {
+        position?: "top" | "bottom" | "left" | "right",
+        size?: number
+    }
 }
 
 const ViewHeader = (
     {
         isLoading, setEdit, closeState, avatarProps, blockProps, items, btnLabel, pColor, upperName, editText, hasEdit = true,
-        btnDisabled = false, showBtn = true
+        btnDisabled = false, showBtn = true, addMargin
     }: ViewProps
 ) => {
 
-    const [color, setColor] = useState<string>('')
+    const [color, setColor] = useState<string>('#000C40')
     const [open, setOpen] = useToggle(false);
 
     useEffect(() => {
@@ -60,10 +64,12 @@ const ViewHeader = (
 
     return(
         <Flex align='center' justify='space-between' component='header' className='view__block'>
-            <AvatarTitle {...avatarProps} setColor={setColor} isUpper={upperName} />
+            {avatarProps && <AvatarTitle {...avatarProps} setColor={setColor} isUpper={upperName} /> }
 
             {blockProps && blockProps.map(({title, mention}, index) => (
-                <Flex className='block' align='flex-start' vertical gap={4} key={index}>
+                <Flex className='block' align='flex-start' vertical gap={4} key={index} style={addMargin ? {
+                    [`margin${firstLetter(addMargin.position)}`]: addMargin.size
+                } : undefined}>
                     <div>{title}</div>
                     <div>{mention}</div>
                 </Flex>
@@ -71,7 +77,7 @@ const ViewHeader = (
 
             {showBtn && <Flex className='block' align='flex-start' vertical gap={4}>
                 <Dropdown arrow menu={{items: assignKeys(baseItems, additionalItems)}} trigger={['click']}>
-                    <Button disabled={btnDisabled} className='add__btn' style={{background: color}} icon={<LuChevronDown size={18} />} iconPosition='end'>
+                    <Button disabled={btnDisabled} className='add__btn' style={{background: color ?? '#000C40'}} icon={<LuChevronDown size={18} />} iconPosition='end'>
                         {btnLabel ? btnLabel : 'Gérer'}
                     </Button>
                 </Dropdown>

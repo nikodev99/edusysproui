@@ -50,6 +50,9 @@ export interface ChartProps<T>{
     isPercent?: boolean
     layout?: 'horizontal' | 'vertical' | 'centric' | 'radial'
     eachBarColor?: boolean
+    isLoading?: boolean
+    showYAxis?: boolean
+    showXAxis?: boolean
 }
 
 export interface BarProps<T> {

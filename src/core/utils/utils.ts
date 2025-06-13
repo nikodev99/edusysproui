@@ -294,6 +294,10 @@ export const assignKeys = (baseItems: any[], additionalItems: any[]) => {
     return [...baseWithKeys, ...additionalWithKeys]
 }
 
+export const sumObjectValues = <TData extends object>(obj?: TData): number => {
+    return obj ? Object.values(obj).reduce((acc, val) => acc + val, 0) : 0
+}
+
 export const chooseColor = (name: string): string | undefined  => {
     if (name) {
         const firstChar = name.charAt(0).toUpperCase()
@@ -309,7 +313,7 @@ export const chooseColor = (name: string): string | undefined  => {
                 case '7': return '#7a0a47'; // Deep Pink
                 case '8': return '#188680'; // Light Sea Green
                 case '9': return '#B22222'; // Firebrick
-                default: return undefined;
+                default: return '#000C40';
             }
         }
         switch (name.toUpperCase().charAt(0)) {
@@ -339,7 +343,7 @@ export const chooseColor = (name: string): string | undefined  => {
             case 'X': return '#1E90FF'; // Dark Dodger Blue
             case 'Y': return '#483D8B'; // Dark Medium Slate Blue
             case 'Z': return '#4682B4'; // Dark Steel Blue
-            default: return undefined;
+            default: return '#000C40';
         }
     }
 }

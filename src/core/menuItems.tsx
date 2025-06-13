@@ -45,9 +45,9 @@ export const menuItems: Required<MenuProps>['items'][number][] = [
         label: text.exam.label
     },
     {
-        key: '/attendance',
+        key: text.att.href,
         icon: <LuBadgeCheck />,
-        label: "Présence"
+        label: text.att.label
     },
     {
         key: '/library',

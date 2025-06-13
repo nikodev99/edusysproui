@@ -2,7 +2,7 @@ import {useParams} from "react-router-dom";
 import {ReactNode, useEffect, useLayoutEffect, useState} from "react";
 import {Teacher} from "../../entity";
 import {chooseColor, setLastName, setName} from "../../core/utils/utils.ts";
-import {count, countStudents} from "../../data";
+import {count} from "../../data";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
 import {text} from "../../core/utils/text_display.ts";
@@ -29,6 +29,7 @@ import {
 import {useToggle} from "../../hooks/useToggle.ts";
 import {ViewRoot} from "../../components/custom/ViewRoot.tsx";
 import {useTeacherRepo} from "../../hooks/useTeacherRepo.ts";
+import {useStudentRepo} from "../../hooks/useStudentRepo.ts";
 
 const TeacherViewPage = () => {
 
@@ -36,11 +37,12 @@ const TeacherViewPage = () => {
 
     const [teacher, setTeacher] = useState<Teacher | null>(null)
     const [studentTaughtCount, setStudentTaughtCount] = useState<number>(0)
-    const [studentCount, setStudentCount] = useState<number>(0)
     const [openDrawer, setOpenDrawer] = useToggle(false)
+    const {useCountStudent} = useStudentRepo()
     const {useGetTeacher} = useTeacherRepo()
 
     const {data, isLoading, isSuccess, refetch} = useGetTeacher(id as string)
+    const studentCount = useCountStudent()
 
     const teacherName = setName(teacher?.personalInfo?.lastName, teacher?.personalInfo?.firstName)
     const color: string = teacher?.personalInfo?.firstName ? chooseColor(teacher.personalInfo?.firstName) as string  : '#7615c4'
@@ -65,11 +67,6 @@ const TeacherViewPage = () => {
                     setStudentTaughtCount(resp.data ? resp?.data.count : 0);
                 }
             });
-            countStudents().then((resp) => {
-                if (resp.isSuccess && 'data' in resp) {
-                    setStudentCount(resp.data ? resp?.data.count : 0);
-                }
-            })
         }
     }, [teacher]);
 
@@ -82,7 +79,7 @@ const TeacherViewPage = () => {
             title: 'Étudiants enseignés',
             value: studentTaughtCount,
             bottomValue: <Progress
-                percent={Math.round((studentTaughtCount * 100) / studentCount)}
+                percent={Math.round((studentTaughtCount * 100) / (studentCount?.total as number))}
                 size={{height: 20}}
                 percentPosition={{align: 'center', type: 'inner'}}
                 strokeColor={color}

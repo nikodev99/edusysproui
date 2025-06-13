@@ -1,4 +1,4 @@
-import {Counted, GenderCounted, Pageable} from "../core/utils/interfaces.ts";
+import {GenderCounted, Pageable} from "../core/utils/interfaces.ts";
 import {useFetch, useRawFetch} from "./useFetch.ts";
 import {UseQueryResult} from "@tanstack/react-query";
 import {Enrollment} from "../entity";
@@ -224,14 +224,14 @@ export const useStudentRepo = () => {
      *
      * @returns {UseQueryResult<number, unknown>}
      */
-    const useCountStudent = (): Counted | undefined => {
-        const [count, setCount] = useState<Counted>()
+    const useCountStudent = (): GenderCounted | undefined => {
+        const [count, setCount] = useState<GenderCounted>()
         const fetch = useRawFetch();
         useEffect(() => {
             fetch(countStudent, [])
                 .then(resp => {
                     if (resp.isSuccess) {
-                        setCount(resp.data as Counted)
+                        setCount(resp.data as GenderCounted)
                     }
                 })
         }, [fetch]);

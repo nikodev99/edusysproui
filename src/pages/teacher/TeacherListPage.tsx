@@ -82,7 +82,7 @@ const TeacherListPage = () => {
                     ))}
                 </Flex>
             </>
-        })) as DataProps[]
+        })) as DataProps<Teacher>[]
     }
 
     const columns: TableColumnsType<Teacher> = [

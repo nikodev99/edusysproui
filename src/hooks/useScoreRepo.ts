@@ -68,7 +68,6 @@ export const useScoreRepo = () => {
                     })
             }
         }, [academicYear, classId, courseId, fetch, func]);
-        console.log('Scores: ', scores)
         
         return scores
     }

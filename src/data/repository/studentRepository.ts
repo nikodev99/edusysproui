@@ -1,4 +1,4 @@
-import {Counted, GenderCounted, Pageable} from "../../core/utils/interfaces.ts";
+import {GenderCounted, Pageable} from "../../core/utils/interfaces.ts";
 import {AxiosResponse} from "axios";
 import {Enrollment} from "../../entity";
 import {apiClient, request} from "../axiosConfig.ts";
@@ -144,5 +144,5 @@ export const countSomeClasseStudents = (classeId: number[], academicYearId: stri
 }
 
 export const countStudent = () => {
-    return apiClient.get<Counted>('/enroll/count')
+    return apiClient.get<GenderCounted>('/enroll/count')
 }

@@ -21,11 +21,11 @@ export const getAllTeachers = (page: number, size: number, sortCriteria?: string
     })
 }
 
-export const getSearchedTeachers = (input: string) => {
+export const getSearchedTeachers = (input: string): Promise<AxiosResponse<Teacher[], unknown>> => {
     return apiClient.get<Teacher[]>("/teachers/search/", {params: {q: input}})
 }
 
-export const getTeachersBasicValues = (classeId: number, section: SectionType): Promise<AxiosResponse<Teacher[]>> => {
+export const getTeachersBasicValues = (classeId: number, section: SectionType): Promise<AxiosResponse<Teacher[], unknown>> => {
     return apiClient.get<Teacher[]>(`/teachers/basic/${classeId}`, {
         params: {
             section: section

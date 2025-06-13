@@ -4,20 +4,20 @@ import {AttendanceRecord} from "../../../core/utils/interfaces.ts";
 import {useEffect, useState} from "react";
 import {Attendance, Enrollment} from "../../../entity";
 import {getAllStudentAttendances} from "../../../data/repository/attendanceRepository.ts";
-import {fDate, setDayJsDate} from "../../../core/utils/utils.ts";
+import {fDate, setDayJsDate, sumObjectValues} from "../../../core/utils/utils.ts";
 import {useRawFetch} from "../../../hooks/useFetch.ts";
 import {Calendar, Card, Skeleton} from "antd";
 import {
     AttendanceStatus,
     attendanceTag,
-    countAttendanceStatuses, countStatus,
+    countAttendanceStatuses,
     getColors
 } from "../../../entity/enums/attendanceStatus.ts";
 import {Dayjs} from "dayjs";
 import {Widgets} from "../../ui/layout/Widgets.tsx";
 import {SuperWord} from "../../../core/utils/tsxUtils.tsx";
-import {useClasseAttendance} from "../../../hooks/useClasseAttendance.ts";
 import {BarChart} from "../../graph/BarChart.tsx";
+import {useAttendanceRepo} from "../../../hooks/useAttendanceRepo.ts";
 
 interface AnalysisProps {
     enrollment: Enrollment;
@@ -31,7 +31,9 @@ export const AttendanceAnalysis = ({enrollment, academicYear}: AnalysisProps) =>
     const [attendances, setAttendances] = useState<Attendance[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [allRecord, setAllRecord] = useState<number>(0)
-    const {classeAttendances} = useClasseAttendance(classe?.id, academicYear)
+    const {useGetClasseAttendanceCount} = useAttendanceRepo()
+
+    const {data: classeAttendances} = useGetClasseAttendanceCount(classe?.id, academicYear)
 
     const fetch = useRawFetch()
 
@@ -69,31 +71,31 @@ export const AttendanceAnalysis = ({enrollment, academicYear}: AnalysisProps) =>
     }
 
     const counts = countAttendanceStatuses(dataSource)
-    const classeCount = countStatus(classeAttendances)
-    const allClasse = classeAttendances?.reduce((sum, record) => sum + record.count, 0)
+    const classeCount = classeAttendances?.statusCount
+    const allClasse = sumObjectValues(classeCount)
 
-    const composeData = [
+    const composeData = classeCount ? [
         {
             name: AttendanceStatus.PRESENT as string,
-            valeur: Math.round((counts.present/classeCount.present) * 100),
-            classe: Math.round((classeCount.present/allClasse) * 100)
+            valeur: Math.round((counts.present/classeCount?.PRESENT) * 100),
+            classe: Math.round((classeCount?.PRESENT/allClasse) * 100)
         },
         {
             name: AttendanceStatus.ABSENT as string,
-            valeur: Math.round((counts.absent/classeCount.absent) * 100),
-            classe: Math.round((classeCount.absent/allClasse) * 100)
+            valeur: Math.round((counts.absent/classeCount.ABSENT) * 100),
+            classe: Math.round((classeCount.ABSENT/allClasse) * 100)
         },
         {
             name: AttendanceStatus.LATE as string,
-            valeur: Math.round((counts.late/classeCount.late) * 100),
-            classe: Math.round((classeCount.late/allClasse) * 100)
+            valeur: Math.round((counts.late/classeCount.LATE) * 100),
+            classe: Math.round((classeCount.LATE/allClasse) * 100)
         },
         {
             name: AttendanceStatus.EXCUSED as string,
-            valeur: Math.round((counts.excused/classeCount.excused) * 100),
-            classe: Math.round((classeCount.excused/allClasse) * 100)
+            valeur: Math.round((counts.excused/classeCount.EXCUSED) * 100),
+            classe: Math.round((classeCount.EXCUSED/allClasse) * 100)
         }
-    ];
+    ]: [];
 
     return (
         <Responsive gutter={[16, 16]} className='attendance-analysis'>

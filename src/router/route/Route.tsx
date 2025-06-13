@@ -19,6 +19,7 @@ import {text} from "../../core/utils/text_display.ts";
 import ExamListPage from "../../pages/exam/ExamListPage.tsx";
 import AddExamPage from "../../pages/exam/AddExamPage.tsx";
 import ExamViewPage from "../../pages/exam/ExamViewPage.tsx";
+import AttendancePage from "../../pages/attendance/AttendancePage.tsx";
 
 export const Route = createBrowserRouter([
     {
@@ -69,6 +70,12 @@ export const Route = createBrowserRouter([
                     {path: text.path.page, element: <ExamListPage />},
                     {path: text.path.new, element: <AddExamPage />},
                     {path: text.path.view, element: <ExamViewPage />}
+                ]
+            },
+            {
+                path: 'attendances',
+                children: [
+                    { path: text.path.page, element: <AttendancePage />}
                 ]
             },
             {

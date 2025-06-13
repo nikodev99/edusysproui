@@ -3,7 +3,7 @@ import {getClasseAttendanceStatus, getClasseAttendanceStatusSearch} from "../../
 import {Avatar, Badge, Progress, TableColumnsType, Typography} from "antd";
 import {
     AttendanceCount,
-    AttendanceStatusCount,
+    AttendanceInfo, AttendanceStatusCount,
     AttendanceSummary,
     Color,
     DataProps
@@ -15,11 +15,11 @@ import {AttendanceStatus, countAll, getColors} from "../../../entity/enums/atten
 import {ATTENDANCE_STATUS_COLORS, findPercent} from "../../../core/utils/utils.ts";
 import {Table} from "../../ui/layout/Table.tsx";
 
-type NestedType = {category: string} & AttendanceStatusCount
+type NestedType = {category: string} & AttendanceInfo
 
 const ClasseAttendanceTable = (
     {classeId, academicYear, classeTotal, color}: {
-        classeId?: number, academicYear?: string, classeTotal: AttendanceStatusCount, color?: Color
+        classeId?: number, academicYear?: string, classeTotal?: AttendanceStatusCount, color?: Color
     }) => {
 
     const { Text } = Typography;
@@ -45,8 +45,11 @@ const ClasseAttendanceTable = (
             dataIndex: 'statusCount',
             key: 'present-count',
             align: 'center',
-            render: (text: AttendanceCount[]) => <Badge count={countAll(text)} color={ATTENDANCE_STATUS_COLORS[0]}>
-                <Avatar shape='square' style={{background: 'white', border: '1px solid #ccc', color: 'black'}}>
+            sorter: true, //TODO implement the sorter by present only
+            defaultSortOrder: 'descend',
+            showSorterTooltip: false,
+            render: (text: AttendanceCount[]) => <Badge overflowCount={400} count={countAll(text)} style={{backgroundColor: 'white', color: 'gray'}}>
+                <Avatar shape='square' style={{background: ATTENDANCE_STATUS_COLORS[0], border: '1px solid #ccc', color: 'black'}}>
                     {text && text?.find(
                         s => AttendanceStatus[s?.status as unknown as keyof typeof AttendanceStatus] === AttendanceStatus.PRESENT
                     )?.count || 0 }
@@ -58,7 +61,7 @@ const ClasseAttendanceTable = (
             dataIndex: 'statusCount',
             key: 'present-count',
             align: 'center',
-            render: (text: AttendanceCount[]) => <Badge count={countAll(text)} style={{backgroundColor: 'white', color: 'gray'}}>
+            render: (text: AttendanceCount[]) => <Badge overflowCount={400} count={countAll(text)} style={{backgroundColor: 'white', color: 'gray'}}>
                 <Avatar shape='square' style={{background: ATTENDANCE_STATUS_COLORS[1], border: '1px solid #ccc', color: 'black'}}>
                     {text && text?.find(
                         s => AttendanceStatus[s?.status as unknown as keyof typeof AttendanceStatus] === AttendanceStatus.ABSENT
@@ -71,7 +74,7 @@ const ClasseAttendanceTable = (
             dataIndex: 'statusCount',
             key: 'present-count',
             align: 'center',
-            render: (text: AttendanceCount[]) => <Badge count={countAll(text)} style={{backgroundColor: 'white', color: 'gray'}}>
+            render: (text: AttendanceCount[]) => <Badge overflowCount={400} count={countAll(text)} style={{backgroundColor: 'white', color: 'gray'}}>
                 <Avatar shape='square' style={{background: ATTENDANCE_STATUS_COLORS[2], border: '1px solid #ccc', color: 'black'}}>
                     {text && text?.find(
                         s => AttendanceStatus[s?.status as unknown as keyof typeof AttendanceStatus] === AttendanceStatus.LATE
@@ -84,7 +87,7 @@ const ClasseAttendanceTable = (
             dataIndex: 'statusCount',
             key: 'present-count',
             align: 'center',
-            render: (text: AttendanceCount[]) => <Badge count={countAll(text)} style={{backgroundColor: 'white', color: 'gray'}}>
+            render: (text: AttendanceCount[]) => <Badge overflowCount={400} count={countAll(text)} style={{backgroundColor: 'white', color: 'gray'}}>
                 <Avatar shape='square' style={{background: ATTENDANCE_STATUS_COLORS[3], border: '1px solid #ccc', color: 'black'}}>
                     {text && text?.find(
                         s => AttendanceStatus[s?.status as unknown as keyof typeof AttendanceStatus] === AttendanceStatus.EXCUSED
@@ -105,19 +108,19 @@ const ClasseAttendanceTable = (
             switch (AttendanceStatus[d.status as unknown as keyof typeof AttendanceStatus]) {
                 case AttendanceStatus.ABSENT:
                     objectMap.absent =  findPercent(d.count, total) as number
-                    objectMap2.absent =  findPercent(d.count, classeTotal.absent) as number
+                    objectMap2.absent =  findPercent(d.count, classeTotal?.ABSENT as number) as number
                     break
                 case AttendanceStatus.EXCUSED:
                     objectMap.excused = findPercent(d.count, total) as number
-                    objectMap2.excused = findPercent(d.count, classeTotal.excused) as number
+                    objectMap2.excused = findPercent(d.count, classeTotal?.EXCUSED as number) as number
                     break
                 case AttendanceStatus.PRESENT:
                     objectMap.present = findPercent(d.count, total) as number
-                    objectMap2.present = findPercent(d.count, classeTotal.present) as number
+                    objectMap2.present = findPercent(d.count, classeTotal?.PRESENT as number) as number
                     break
                 case AttendanceStatus.LATE:
                     objectMap.late = findPercent(d.count, total) as number
-                    objectMap2.late = findPercent(d.count, classeTotal.late) as number
+                    objectMap2.late = findPercent(d.count, classeTotal?.LATE as number) as number
                     break
                 default:
                     break
@@ -211,7 +214,7 @@ const ClasseAttendanceTable = (
                     />
                 </div>))
             }
-        }) as DataProps[]
+        }) as DataProps<AttendanceSummary>[]
     }
 
     return(

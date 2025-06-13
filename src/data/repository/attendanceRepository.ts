@@ -1,7 +1,7 @@
 import {AxiosResponse} from "axios";
 import {Attendance} from "../../entity";
-import {request} from "../axiosConfig.ts";
-import {Pageable} from "../../core/utils/interfaces.ts";
+import {apiClient, request} from "../axiosConfig.ts";
+import {AttendanceStatusCountResponse, Pageable} from "../../core/utils/interfaces.ts";
 
 export const getStudentAttendances = (studentId: number, pageable: Pageable, academicYearId: string): Promise<AxiosResponse<Attendance[]>> => {
     const {page, size} = pageable
@@ -26,12 +26,57 @@ export const getAllStudentAttendances = (studentId: number, academicYearId: stri
     })
 }
 
-export const getClasseAttendanceStatusCount = (classeId: number, academicYearId: string) => {
+export const getAllStudentClasseAttendanceOfTheDay = (classeId: number, academicYearId: string, date?: Date) => {
+    return request({
+        method: 'GET',
+        url: `/attendance/all_classe/${classeId}`,
+        params: {
+            academicYear: academicYearId,
+            dateOfTheDay: date ?? null
+        }
+    })
+}
+
+export const getStudentAttendanceStatusCount = (studentId: number, academicYearId: string): Promise<AxiosResponse<AttendanceStatusCountResponse, unknown>> => {
+    return apiClient.get(`/attendance/status_count/${studentId}`, {
+        params: {
+            academicYear: academicYearId
+        }
+    })
+}
+
+export const getAllSchoolStudentAttendanceOfTheDay = (
+    schoolId: string,
+    academicYearId: string,
+    date?: Date,
+    searchable?: string,
+    page?: number,
+    size?: number,
+    sortField?: string,
+    sortOrder?: string,
+) => {
+    console.log('searchable: ', searchable)
+    return request({
+        method: 'GET',
+        url: `/attendance/all_school/${schoolId}`,
+        params: {
+            page: page,
+            size: size,
+            academicYear: academicYearId,
+            dateOfTheDay: date ?? null,
+            search: searchable ?? null,
+            sortCriteria: sortField && sortOrder ? `${sortField}:${sortOrder},a.attendanceDate:desc` : 'a.attendanceDate:desc'
+        }
+    })
+}
+
+export const getClasseAttendanceStatusCount = (classeId: number, academicYearId: string, date?: Date): Promise<AxiosResponse<AttendanceStatusCountResponse, unknown>> => {
     return request({
         method: 'GET',
         url: `/attendance/classe_${classeId}`,
         params: {
-            academicYear: academicYearId
+            academicYear: academicYearId,
+            date: date ?? null
         }
     })
 }
@@ -59,12 +104,27 @@ export const getClasseAttendanceStatusSearch = (classeId: number, academicYearId
     })
 }
 
-export const getClasseRecentAttendanceStatus = (classeId: number, academicYearId: string) => {
+export const getClasseRecentAttendanceStatus = (classeId: number, academicYearId: string, startDate?: Date, endDate?: Date) => {
     return request({
         method: 'GET',
         url: `/attendance/classe_stat/${classeId}`,
         params: {
-            academicYear: academicYearId
+            academicYear: academicYearId,
+            startDate: startDate ?? null,
+            endDate: endDate ?? null
+        }
+    })
+}
+
+
+export const getSchoolAttendanceStatPerStatus = (schoolId: string, academicYearId: string, startDate?: Date, endDate?: Date) => {
+    return request({
+        method: 'GET',
+        url: `/attendance/school_stat/${schoolId}`,
+        params: {
+            academicYear: academicYearId,
+            startDate: startDate ?? null,
+            endDate: endDate ?? null
         }
     })
 }
@@ -89,12 +149,23 @@ export const getClasseWorstStudentAttendanceRanking = (classeId: number, academi
     })
 }
 
-export const getSchoolAttendanceStatusCount = (schoolId: number, academicYearId: string) => {
+export const getSchoolStudentRanking = (schoolId: string, academicYearId: string, isWorst: boolean = false) => {
     return request({
         method: 'GET',
-        url: `/attendance/school_status/${schoolId}`,
+        url: `/attendance/school_ranking/${schoolId}`,
         params: {
-            academicYear: academicYearId
+            academicYear: academicYearId,
+            isWorst: isWorst ?? false
+        }
+    })
+}
+
+export const getSchoolAttendanceStatusCount = (academicYearId: string, date?: Date): Promise<AxiosResponse<AttendanceStatusCountResponse, unknown>> => {
+    return request({
+        method: 'GET',
+        url: `/attendance/school_status/${academicYearId}`,
+        params: {
+            date: date ?? null
         }
     })
 }

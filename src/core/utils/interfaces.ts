@@ -31,6 +31,7 @@ import {AssignmentTypeLiteral} from "../../entity/enums/assignmentType.ts";
 import {RadioGroupButtonStyle, RadioGroupOptionType} from "antd/es/radio";
 import {ButtonType} from "antd/es/button";
 import {UseQueryResult} from "@tanstack/react-query";
+import {Variant} from "antd/es/config-provider";
 
 export interface Metadata {
     title: string
@@ -514,3 +515,28 @@ export interface MasonryProps {
     sequential?: boolean
     children: ReactNode[]
 }
+
+export interface SelectEntityProps<
+    Entity extends object,
+    EntityID extends string | number | number[]
+> {
+    variant?: Variant
+    onlyCurrent?: boolean | EntityID
+    placeholder?: ReactNode
+    isLoading?: boolean
+    multiple?: boolean
+    defaultValue?: EntityID | EntityID[]
+    getResource?: (resource: Entity | Entity[]) => void
+}
+
+export type SelectEntity<
+    Entity extends object,
+    EntityID extends string | number | number[],
+> = {
+    data: Entity[]
+    getEntity: (value: EntityID | EntityID[]) => void
+    options: {id: keyof Entity, label: keyof Entity}
+    uniqueValue: { key?: keyof Entity, value: unknown }
+    entities?: Entity[]
+    width?: number | string
+} & SelectEntityProps<Entity, EntityID>

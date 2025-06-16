@@ -1,9 +1,10 @@
 import {useEffect, useMemo, useState} from "react";
-import {Classe, Course} from "../../../entity";
+import {Course} from "../../../entity";
 import Responsive from "../../ui/layout/Responsive.tsx";
-import {fetchAllCourses, findClassesBasicValue} from "../../../data";
+import {fetchAllCourses} from "../../../data";
 import {Form, Select} from "antd";
 import Grid from "../../ui/layout/Grid.tsx";
+import {SelectClasse} from "../../common/SelectClasse.tsx";
 
 const TeacherAcademicForm = ({onClose, defaultClasses, defaultCourses}: {
     onClose: ({courses, classes}: {courses?: {id: number}[], classes?: {id: number}[]}) => void,
@@ -12,9 +13,8 @@ const TeacherAcademicForm = ({onClose, defaultClasses, defaultCourses}: {
 }) => {
 
     const [courses, setCourses] = useState<Course[]>([])
-    const [classes, setClasses] = useState<Classe[]>([])
     const [selectedClasse, setSelectedClasse] = useState<number[]>()
-    const [selectedCourse, setSelectedCourse] = useState<number[] | undefined>(undefined)
+    const [selectedCourse, setSelectedCourse] = useState<number[]>([])
     const [isPending, setIsPending] = useState(false)
 
     useEffect(() => {
@@ -24,14 +24,6 @@ const TeacherAcademicForm = ({onClose, defaultClasses, defaultCourses}: {
                 .then(resp => {
                     if (resp.isSuccess) {
                         setCourses(resp.data as Course[])
-                        loading = resp.isLoading
-                    }
-                })
-
-            await findClassesBasicValue()
-                .then((resp) => {
-                    if (resp.isSuccess && 'data' in resp) {
-                        setClasses(resp.data as Classe[])
                         loading = resp.isLoading
                     }
                 })
@@ -49,7 +41,7 @@ const TeacherAcademicForm = ({onClose, defaultClasses, defaultCourses}: {
     };
 
     const handleCourseChange = (value: number[]) => {
-        setSelectedCourse(value ? value : undefined)
+        setSelectedCourse(value ? value : [])
         onClose({
             classes: selectedClasse?.map(id => ({id})),
             courses: value ? value.map(id => ({id})) : undefined,
@@ -61,23 +53,20 @@ const TeacherAcademicForm = ({onClose, defaultClasses, defaultCourses}: {
         label: `${c.course} - ${c.abbr}` as string
     })), [courses])
 
-    const classeOptions = useMemo(() => classes.map(c => ({
-        value: c.id,
-        label: c.name,
-    })), [classes])
+    console.log('SELECTED CLASSE: ', selectedClasse)
 
     return(
         <>
             <Responsive gutter={[16, 16]}>
                 <Grid xs={24} md={12} lg={12} xxl={12}>
                     <Form.Item label='Classes' required layout='vertical'>
-                        <Select
+                        <SelectClasse
+                            getClasse={handleClassChange as () => void}
                             placeholder='Selectionne les classes'
-                            options={classeOptions}
-                            onChange={handleClassChange}
-                            mode='multiple'
-                            loading={isPending}
-                            value={defaultClasses}
+                            isLoading={isPending}
+                            defaultValue={defaultClasses}
+                            variant={'outlined'}
+                            multiple
                         />
                     </Form.Item>
                 </Grid>

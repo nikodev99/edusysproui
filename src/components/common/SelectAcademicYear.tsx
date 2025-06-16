@@ -1,57 +1,35 @@
-import {Select} from "antd";
-import {useEffect, useMemo, useState} from "react";
 import {useAcademicYearRepo} from "../../hooks/useAcademicYearRepo.ts";
 import {AcademicYear} from "../../entity";
+import {SelectEntityProps} from "../../core/utils/interfaces.ts";
+import {CustomEntitySelect} from "../custom/CustomEntitySelect.tsx";
 
-export const SelectAcademicYear = ({getAcademicYear, academicYears}: {
-    getAcademicYear: (value: string) => void
-    academicYears?: AcademicYear[],
-}) => {
+type SelectAcademicYearProps = {
+    getAcademicYear: (value: string | string[]) => void
+    academicYears?: AcademicYear[]
+} & SelectEntityProps<AcademicYear, string>
 
-    const [allAcademicYears, setAllAcademicYears] = useState<AcademicYear[]>([])
-    const [activeAcademicYear, setActiveAcademicYear] = useState<AcademicYear>()
+export const SelectAcademicYear = (
+    {getAcademicYear, academicYears, variant, onlyCurrent, placeholder, getResource}: SelectAcademicYearProps
+) => {
+
     const {useGetAllAcademicYear} = useAcademicYearRepo()
     const allYears = useGetAllAcademicYear()
 
-    useEffect(() => {
-        if (academicYears && academicYears.length > 0) {
-            setAllAcademicYears(academicYears)
-        }else {
-            setAllAcademicYears(allYears)
-        }
-    }, [academicYears, allYears]);
-
-    useEffect(() => {
-        if (allAcademicYears && allAcademicYears.length > 0) {
-            setActiveAcademicYear(allAcademicYears?.find(a => a.current))
-        }
-    }, [allAcademicYears]);
-
-    useEffect(() => {
-        if (activeAcademicYear) {
-            getAcademicYear(activeAcademicYear.id)
-        }
-    }, [activeAcademicYear, getAcademicYear]);
-
-    const academicYearOptions = useMemo(() => {
-        return allAcademicYears.map(a => ({
-            value: a.id,
-            label: a.academicYear
-        }))
-    }, [allAcademicYears]);
-
-    const handleAcademicYearIdValue = (value: string) => {
-        const selected = allAcademicYears.find(a => a.id === value);
-        setActiveAcademicYear(selected); // <-- update selection
+    const handleAcademicYearChange = (value: string | string[]) => {
+        getAcademicYear && getAcademicYear(value)
     }
 
     return (
-        <Select
-            className='select-control'
-            value={activeAcademicYear?.id}
-            options={academicYearOptions}
-            onChange={handleAcademicYearIdValue}
-            variant='borderless'
+        <CustomEntitySelect 
+            getEntity={handleAcademicYearChange}
+            data={allYears}
+            entities={academicYears}
+            uniqueValue={{key: 'current', value: true}}
+            options={{id: 'id', label: 'academicYear'}}
+            variant={variant}
+            placeholder={placeholder}
+            onlyCurrent={onlyCurrent}
+            getResource={getResource}
         />
     )
 }

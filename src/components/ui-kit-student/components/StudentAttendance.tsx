@@ -121,7 +121,10 @@ export const StudentAttendance = ({enrolledStudent, infinite = true}: {enrolledS
             title={`Suivis de présence d${startsWithVowel(personalInfo?.lastName) ? "'" : 'e '}${studentName}`}
             selects={[
                 (
-                    <SelectAcademicYear academicYears={academicYears} getAcademicYear={handleAcademicYearIdValue} />
+                    <SelectAcademicYear
+                        academicYears={academicYears}
+                        getAcademicYear={handleAcademicYearIdValue}
+                    />
                 )
             ]}
             items={[

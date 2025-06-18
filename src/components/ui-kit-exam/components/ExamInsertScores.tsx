@@ -37,7 +37,7 @@ export const ExamInsertScores = (
         resolver: zodResolver(scoreSchema)
     })
 
-    const {mutate, isPending} = useQueryPost<ScoreSchema, number | undefined>(scoreSchema)
+    const {mutate, isPending} = useQueryPost<ScoreSchema, [number]>(scoreSchema)
     const {mutate: updateMutate, isPending: updatePending} = useQueryUpdate<ScoreSchema, number>(scoreSchema)
 
     const {data, isSuccess, isLoading, isFetching} = useGetClasseStudents(
@@ -159,8 +159,7 @@ export const ExamInsertScores = (
         })
 
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        mutate({postFn: saveAllScores, data: data, params: assignment?.id as number}, {
+        mutate({postFn: saveAllScores, data: data, params: [assignment?.id as number]}, {
             onSuccess: response => {
                 if (response.status === 200) {
                     if (isPatch) {

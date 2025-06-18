@@ -21,7 +21,7 @@ import {ReprimandType} from "../../entity/enums/reprimandType.ts";
 import {PunishmentType} from "../../entity/enums/punishmentType.ts";
 import {PunishmentStatus} from "../../entity/enums/punishmentStatus.ts";
 import {Day} from "../../entity/enums/day.ts";
-import {AxiosResponse} from "axios";
+import {AxiosError, AxiosResponse} from "axios";
 import IntrinsicElements = React.JSX.IntrinsicElements;
 import {PercentPositionType, ProgressSize} from "antd/es/progress/progress";
 import {CheckboxOptionType, ListProps, TableColumnsType, TableProps} from "antd";
@@ -112,6 +112,30 @@ export type DataIndex<TData> = keyof DataType<TData>
 export interface ZodControl<TFieldValues extends FieldValues> {
     name: Path<TFieldValues>
     defaultValue?: PathValue<TFieldValues, Path<TFieldValues>> | unknown,
+    key?: ID
+}
+
+export type PostFunction<TData, TParams extends readonly unknown[] = []> = (data: TData, ...params: TParams) => Promise<AxiosResponse<TData>>
+
+export type InsertReturnType<TData extends object | boolean> = Promise<{
+    success: boolean;
+    data?: TData;
+    error?: unknown
+    status?: number;
+    code?: string
+}>
+
+export type UseInsertReturn<
+    TData,
+    TReturn extends object | boolean,
+    TParams extends readonly unknown[] = []
+> = {
+    insert: (data: TData, params: TParams) => InsertReturnType<TReturn>,
+    result?: TReturn,
+    error?: unknown,
+    isLoading?: boolean,
+    isError?: boolean,
+    failureReason?: AxiosError | null
 }
 
 export interface ZodControlRender<TFieldValues extends FieldValues, TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>> {

@@ -19,8 +19,8 @@ const AttendancePage = () => {
     const [academicYear, setAcademicYear] = useState<string>('')
     const pageHierarchy = useBreadCrumb([{ title: text.att.label }])
 
-    const handleCatchingAcademicYear = (academicYear: string) => {
-        setAcademicYear(academicYear)
+    const handleCatchingAcademicYear = (academicYear: string | string[]) => {
+        setAcademicYear(academicYear as string)
     }
 
     return (
@@ -47,7 +47,8 @@ const AttendancePage = () => {
                         children: <AttendanceAnalysis academicYear={academicYear}/>
                     }
                 ]}
-                exists={true}
+                exists={academicYear !== null}
+                memorizedTabKey={'attendance-analysis'}
             />
         </>
     )

@@ -4,7 +4,7 @@ import FormControl from "./FormControl.tsx";
 import {FieldValues} from "react-hook-form";
 
 const FormItem = <T extends FieldValues>({
-   control, style, label, required, validateStatus, help, name, defaultValue, render
+   control, style, label, required, validateStatus, help, name, defaultValue, render, key
 }: FormItemType<T>) => {
     return(
         <Form.Item
@@ -15,7 +15,7 @@ const FormItem = <T extends FieldValues>({
             validateStatus={validateStatus}
             help={help}
         >
-            <FormControl control={control} name={name} defaultValue={defaultValue} render={render} />
+            <FormControl key={key} control={control} name={name} defaultValue={defaultValue} render={render} />
         </Form.Item>
     )
 }

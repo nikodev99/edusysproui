@@ -4,8 +4,46 @@ import {AttendanceCount, AttendanceRecord} from "../../core/utils/interfaces.ts"
 export enum AttendanceStatus {
     PRESENT = 'Présent',
     ABSENT = 'Absent',
-    LATE = 'En Retard',
+    LATE = 'Retardataire',
     EXCUSED = 'Excusé',
+}
+
+export enum AttendanceStatusLiteral {
+    PRESENT,
+    ABSENT,
+    LATE,
+    EXCUSED
+}
+
+export const statusToLiteral = (status: AttendanceStatus): AttendanceStatusLiteral => {
+    switch (status) {
+        case 'PRESENT' as AttendanceStatus:
+            return AttendanceStatusLiteral.PRESENT
+        case 'ABSENT' as AttendanceStatus:
+            return AttendanceStatusLiteral.ABSENT
+        case 'LATE' as AttendanceStatus:
+            return AttendanceStatusLiteral.LATE
+        case 'EXCUSED' as AttendanceStatus:
+            return AttendanceStatusLiteral.EXCUSED
+        default:
+            throw new Error(`Unknown attendance status: ${status}`)
+    }
+}
+
+export const litoralToStatus = (status: AttendanceStatusLiteral): AttendanceStatus => {
+    console.log('LITERAL: ', status)
+    switch (status) {
+        case 0 as AttendanceStatusLiteral:
+            return AttendanceStatus.PRESENT
+        case 1 as AttendanceStatusLiteral:
+            return AttendanceStatus.ABSENT
+        case 2 as AttendanceStatusLiteral:
+            return AttendanceStatus.LATE
+        case 3 as AttendanceStatusLiteral:
+            return AttendanceStatus.EXCUSED
+        default:
+            throw new Error(`Unknown attendance literal status: ${status}`)
+    }
 }
 
 export const attendanceTag = (status: AttendanceStatus) => {

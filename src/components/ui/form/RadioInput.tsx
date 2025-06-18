@@ -7,10 +7,10 @@ import {LuSave} from "react-icons/lu";
 
 export const FormRadioInput = <T extends FieldValues>(radioProps: SelectType<T> & ZodRadio<T>) => {
 
-    const {isCompact, radioOptions, selectedValue, optionType, buttonStyle, clearErrors, style, defaultValue, buttonLabel} = radioProps
+    const {isCompact, radioOptions, selectedValue, key, optionType, buttonStyle = 'solid', clearErrors, style, defaultValue, buttonLabel} = radioProps
 
     return(
-        <FormItem {...radioProps} {...(selectedValue ? { defaultValue: selectedValue } : {})} render={({field}) => (
+        <FormItem key={key} {...radioProps} {...(selectedValue ? { defaultValue: selectedValue } : {})} render={({field}) => (
             <>
                 {isCompact ? (
                     <Space.Compact style={{ width: '100%' }} block={false}>

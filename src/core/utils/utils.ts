@@ -1,4 +1,4 @@
-import {ApiEvent, Color, DateExplose, EnumType, ExamView, ID} from "./interfaces.ts"
+import {ApiEvent, Color, DateExplose, EnumType, ExamView, ID, StudentListDataType} from "./interfaces.ts"
 import countries from 'world-countries'
 import dayjs from "dayjs";
 import 'dayjs/locale/fr.js'
@@ -6,7 +6,7 @@ import {BloodType} from "../../entity/enums/bloodType.ts";
 import {ProgressProps} from "antd";
 import {Day} from "../../entity/enums/day.ts";
 import {Gender} from "../../entity/enums/gender.tsx";
-import {Assignment, Schedule} from "../../entity";
+import {Assignment, Enrollment, Schedule} from "../../entity";
 
 export const createElement = (htmlElement: string, parentNode: Element|null, attributes?: {[key: string]: string}, content?: string) => {
 
@@ -708,4 +708,20 @@ export const getUniqueness = <T, K>(
             return map;
         }, new Map<ID, K>()).values()
     )
+}
+
+export const setStudentList = (students: Enrollment[]) => {
+    return students?.map(c => ({
+        id: c.student.id,
+        academicYear: c.academicYear,
+        reference: c.student?.reference,
+        firstName: c.student?.personalInfo?.firstName,
+        lastName: c.student?.personalInfo?.lastName,
+        gender: c.student?.personalInfo?.gender,
+        lastEnrolledDate: c.enrollmentDate,
+        classe: c.classe?.name,
+        age: getAge(c.student.personalInfo?.birthDate as number[]),
+        grade: c.classe?.grade?.section,
+        image: c.student?.personalInfo?.image,
+    })) as StudentListDataType[] || []
 }

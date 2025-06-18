@@ -2,6 +2,16 @@ import {AxiosResponse} from "axios";
 import {Attendance} from "../../entity";
 import {apiClient, request} from "../axiosConfig.ts";
 import {AttendanceStatusCountResponse, Pageable} from "../../core/utils/interfaces.ts";
+import {AttendanceSchema} from "../../schema";
+
+export const insertAttendances = (attendances: AttendanceSchema, classeId: number, date: Date) =>{
+    return apiClient.post('attendance', Object.values(attendances?.attendance), {
+        params: {
+            classe: classeId,
+            date: date
+        }
+    })
+}
 
 export const getStudentAttendances = (studentId: number, pageable: Pageable, academicYearId: string): Promise<AxiosResponse<Attendance[]>> => {
     const {page, size} = pageable

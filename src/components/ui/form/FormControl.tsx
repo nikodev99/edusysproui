@@ -3,9 +3,9 @@ import {Control, ZodControl, ZodControlRender} from "../../../core/utils/interfa
 
 type FormControlProps<T extends  FieldValues> = ZodControl<T> & Control<T> & ZodControlRender<T>
 
-const FormControl = <T extends FieldValues>({name, defaultValue, control, render}: FormControlProps<T>) => {
+const FormControl = <T extends FieldValues>({name, key, defaultValue, control, render}: FormControlProps<T>) => {
     return(
-            <Controller name={name} defaultValue={defaultValue as PathValue<T, Path<T>> | undefined} control={control} render={render} />
+        <Controller key={key} name={name} defaultValue={defaultValue as PathValue<T, Path<T>> | undefined} control={control} render={render} />
     )
 }
 

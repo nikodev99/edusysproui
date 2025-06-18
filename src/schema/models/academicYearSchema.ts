@@ -13,3 +13,7 @@ export const academicYearSchema = z.object({
     ),
     school: schoolSchema.optional()
 })
+
+export const academicYearSchemaMerge = z.object({
+    id: z.string()
+})

@@ -16,11 +16,14 @@ import {
     getClasseWorstStudentAttendanceRanking,
     getSchoolAttendanceStatPerStatus,
     getSchoolAttendanceStatusCount, getSchoolStudentRanking,
-    getStudentAttendances, getStudentAttendanceStatusCount
+    getStudentAttendances, getStudentAttendanceStatusCount, insertAttendances
 } from "../data/repository/attendanceRepository.ts";
 import {Attendance} from "../entity";
+import {useInsert} from "./usePost.ts";
 
 export const useAttendanceRepo = () => {
+    const useInsertAttendances = () => useInsert(insertAttendances)
+
     const useGetStudentAttendance = (studentId: number, pageable: Pageable, academicYearId: string) => useFetch<Attendance[], unknown>(
         ['student-attendance', studentId],
         getStudentAttendances,
@@ -35,8 +38,8 @@ export const useAttendanceRepo = () => {
         !!studentId && !!academicYearId
     )
 
-    const useGetAllStudentClasseAttendanceOfTheDay = (classeId: number, academicYearId: string, date?: Date) => useFetch<Attendance, unknown>(
-        ['all-classe-student-attendances', classeId],
+    const useGetAllStudentClasseAttendanceOfTheDay = (classeId: number, academicYearId: string, date?: Date) => useFetch<Attendance[], unknown>(
+        ['all-classe-student-attendances', classeId, academicYearId, date],
         getAllStudentClasseAttendanceOfTheDay,
         [classeId, academicYearId, date],
         !!classeId && !!academicYearId
@@ -124,6 +127,7 @@ export const useAttendanceRepo = () => {
     )
     
     return {
+        useInsertAttendances,
         useGetStudentAttendance,
         useGetAllStudentAttendances,
         useGetAllStudentClasseAttendanceOfTheDay,

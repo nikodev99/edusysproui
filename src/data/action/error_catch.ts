@@ -23,7 +23,7 @@ export const ErrorCatch = (err: unknown) => {
 
 export const catchError = (err: unknown) => {
     if (isAxiosError(err)) {
-        if (err.response && err.response?.status === 400) {
+        if (err.response) {
             if (err?.response?.data
                 && typeof err?.response?.data === 'object'
                 && 'error' in err.response.data

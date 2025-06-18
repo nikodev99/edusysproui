@@ -5,6 +5,9 @@ import {AttendanceSummary} from "../../../core/utils/interfaces.ts";
 import Datetime from "../../../core/datetime.ts";
 import {AttendanceTable} from "./AttendanceTable.tsx";
 import {useRef} from "react";
+import {isObjectEmpty} from "../../../core/utils/utils.ts";
+import {Button, Flex} from "antd";
+import {redirectTo} from "../../../context/RedirectContext.ts";
 
 export const AttendanceAnalysis = (
     {academicYear}: {
@@ -27,6 +30,8 @@ export const AttendanceAnalysis = (
 
     const attendanceStatusCount = useGetSchoolAttendanceCount(academicYear as string, today.current.toDate())
 
+    const {data} = attendanceStatusCount
+
     return (
         <AttendanceCommonAnalysis
             recentCount={recentCount as []}
@@ -40,11 +45,19 @@ export const AttendanceAnalysis = (
             prefixTabElement={[
                 {
                     label: Datetime.now().fullDay(),
-                    children: <AttendanceTable
-                        date={today.current}
-                        todayAttendanceData={attendanceStatusCount}
-                        academicYear={academicYear}
-                    />
+                    children: data && !isObjectEmpty(data?.statusCount) ? (
+                        <AttendanceTable
+                            date={today.current}
+                            todayAttendanceData={attendanceStatusCount}
+                            academicYear={academicYear}
+                        />
+                    ): (
+                        <Flex justify='center' align='center'>
+                            <Button type={'primary'} style={{marginTop: 50, padding: '30px'}} onClick={() => redirectTo(text.att.group.add.href)}>
+                                Ajouter des données de présence du {today.current.fullDay()}
+                            </Button>
+                        </Flex>
+                    )
                 }
             ]}
         />

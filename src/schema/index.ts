@@ -26,7 +26,7 @@ export {addressSchema} from './models/addressSchema'
 export {healthSchema} from './models/healthSchema'
 export {individualSchema, individualSchemaMerge} from './models/individualSchema.ts'
 export {assignmentDateUpdateSchema, assignmentSchema, assignmentMerge} from './models/assignmentSchema.ts'
-export {attendanceSchema} from './models/attendanceSchema.ts'
+export {attendanceSchema, singleAttendanceSchema} from './models/attendanceSchema.ts'
 export {planningSchemaMerge, planningSchema} from './models/planningSchema.ts'
 export {scoreSchema, singleScoreSchema} from './models/scoreSchema.ts'
 
@@ -43,6 +43,7 @@ export type TeacherSchema = z.infer<typeof teacherSchema>
 export type IndividualSchema = z.infer<typeof individualSchema>
 export type AssignmentUpdateDate = z.infer<typeof assignmentDateUpdateSchema>
 export type AttendanceSchema = z.infer<typeof attendanceSchema>
+export type SingleAttendanceSchema = z.infer<typeof singleScoreSchema>
 export type PlanningMergeSchema = z.infer<typeof planningSchemaMerge>
 export type PlanningSchema = z.infer<typeof planningSchema>
 export type IndividualMergeSchema = z.infer<typeof individualSchemaMerge>

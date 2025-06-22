@@ -1,21 +1,28 @@
 import {SelectEntity} from "../../core/utils/interfaces.ts";
 import {useCallback, useEffect, useMemo, useState} from "react";
 import {Select} from "antd";
+import {useToggle} from "../../hooks/useToggle.ts";
 
 export const CustomEntitySelect = <TEntity extends object, TEntityID extends string | number | number[]>(
     {
-        data, getEntity, uniqueValue, uniqueValue: {key, value}, options: {id, label}, width = '200px', getResource,
+        data, getEntity, uniqueValue, options: {id, label}, width = '200px', getResource,
         entities, onlyCurrent, variant = 'borderless', placeholder, isLoading, multiple,
     }: SelectEntity<TEntity, TEntityID>
 ) => {
     const [allEntities, setAllEntities] = useState<TEntity[]>([])
     const [activeResource, setActiveResource] = useState<TEntity | TEntity[]>()
     const [activeEntity, setActiveEntity] = useState<TEntityID | TEntityID[]>()
+    const [hasUserInteracted, setHasUserInteracted] = useToggle(false)
 
     const getActiveEntity = useCallback(() => {
-        if (Array.isArray(value)) {
+        if (hasUserInteracted || !uniqueValue || !uniqueValue.key || !uniqueValue?.value) {
+            return;
+        }
+
+        if (Array.isArray(uniqueValue?.value)) {
             const activeEntities = allEntities
-                .filter(a => (value as string[]).includes(a[key as keyof TEntity] as never))
+                .filter(a => (uniqueValue?.value as string[])
+                .includes(a[uniqueValue.key as keyof TEntity] as never))
                 
             setActiveEntity(activeEntities.map(entity => entity[id]) as TEntityID[]);
             if(getResource) {
@@ -23,26 +30,26 @@ export const CustomEntitySelect = <TEntity extends object, TEntityID extends str
             }
 
         }else {
-            const entity = allEntities.find(a => a[key as keyof TEntity] === value)
+            const entity = allEntities.find(a => a[uniqueValue.key as keyof TEntity] === uniqueValue.value)
             setActiveEntity(entity?.[id] as TEntityID)
             if (getResource) {
                 setActiveResource(entity)
             }
         }
-    }, [allEntities, getResource, id, key, value])
+    }, [allEntities, getResource, hasUserInteracted, id, uniqueValue])
 
     const setDefaultValue = useCallback(() => {
-        if (activeEntity) {
+        if (activeEntity && !hasUserInteracted) {
             getEntity(activeEntity)
             if(getResource) {
                 getResource(activeResource as TEntity)
             }
         }
-    }, [activeEntity, activeResource, getEntity, getResource])
+    }, [activeEntity, activeResource, getEntity, getResource, hasUserInteracted])
     
     useEffect(() => {
         let base = entities && entities.length > 0 ? entities : data;
-        if (onlyCurrent != null && uniqueValue?.key) {
+        if (onlyCurrent && uniqueValue?.key) {
             const key = uniqueValue.key;
 
             base = base.filter(a => a[key] === onlyCurrent);
@@ -51,12 +58,15 @@ export const CustomEntitySelect = <TEntity extends object, TEntityID extends str
     }, [data, entities, onlyCurrent, uniqueValue?.key]);
 
     useEffect(() => {
-        setDefaultValue()
-    }, [setDefaultValue]);
+        if (!hasUserInteracted && allEntities?.length > 0)
+        getActiveEntity()
+    }, [allEntities, getActiveEntity, hasUserInteracted]);
 
     useEffect(() => {
-        getActiveEntity()
-    }, [getActiveEntity]);
+        if (!hasUserInteracted) {
+            setDefaultValue()
+        }
+    }, [setDefaultValue, hasUserInteracted]);
 
     const academicYearOptions = useMemo(() => {
         return allEntities?.map(a => ({
@@ -65,9 +75,10 @@ export const CustomEntitySelect = <TEntity extends object, TEntityID extends str
         }))
     }, [allEntities, id, label]);
 
-    const handleChange = useCallback(
-        (val: TEntityID | TEntityID[]) => {
+    const handleChange = useCallback((val: TEntityID | TEntityID[]) => {
+            setHasUserInteracted();
             getEntity(val as TEntityID)
+            setActiveEntity(val)
             if (getResource) {
                 if (Array.isArray(val)) {
                     getResource(allEntities.filter(a => (val as string[]).includes(a[id] as never)) as TEntity[])
@@ -76,7 +87,7 @@ export const CustomEntitySelect = <TEntity extends object, TEntityID extends str
                 }
             }
         },
-        [allEntities, getEntity, getResource, id]
+        [allEntities, getEntity, getResource, id, setHasUserInteracted, setActiveEntity]
     );
 
     return (

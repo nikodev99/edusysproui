@@ -22,7 +22,6 @@ import {PunishmentType} from "../../entity/enums/punishmentType.ts";
 import {PunishmentStatus} from "../../entity/enums/punishmentStatus.ts";
 import {Day} from "../../entity/enums/day.ts";
 import {AxiosError, AxiosResponse} from "axios";
-import IntrinsicElements = React.JSX.IntrinsicElements;
 import {PercentPositionType, ProgressSize} from "antd/es/progress/progress";
 import {CheckboxOptionType, ListProps, TableColumnsType, TableProps} from "antd";
 import {ItemType} from "antd/es/menu/interface";
@@ -30,7 +29,7 @@ import {z} from "zod";
 import {AssignmentTypeLiteral} from "../../entity/enums/assignmentType.ts";
 import {RadioGroupButtonStyle, RadioGroupOptionType} from "antd/es/radio";
 import {ButtonType} from "antd/es/button";
-import {UseQueryResult} from "@tanstack/react-query";
+import {UseMutationOptions, UseQueryResult} from "@tanstack/react-query";
 import {Variant} from "antd/es/config-provider";
 
 export interface Metadata {
@@ -115,28 +114,72 @@ export interface ZodControl<TFieldValues extends FieldValues> {
     key?: ID
 }
 
+export type UseQueryOptions<TData, TParams extends readonly unknown[] = []> = Omit<
+    UseMutationOptions<
+        AxiosResponse<TData>,
+        AxiosError,
+        MutationPostVariables<TData, TParams>
+    >, "mutationFn">
+
 export type PostFunction<TData, TParams extends readonly unknown[] = []> = (data: TData, ...params: TParams) => Promise<AxiosResponse<TData>>
 
-export type InsertReturnType<TData extends object | boolean> = Promise<{
+export type PutFunction<TData, TParams extends readonly unknown[] = []> = (data: TData, id?: ID, ...params: TParams) => Promise<AxiosResponse<TData, unknown>>
+
+export type MutationPostVariables<TData, TParams extends readonly unknown[]> = {
+    postFn: PostFunction<TData, TParams>;
+    data: TData;
+} & (
+    TParams extends readonly [] ? {params?: never} : {params: TParams}
+    )
+
+export type MutationPutVariables<TData, TParams extends readonly unknown[]> = {
+    putFn: PutFunction<TData, TParams>;
+    data: TData;
+    id?: ID
+} & (
+    TParams extends readonly [] ? {params?: never} : {params: TParams}
+    )
+
+export type ReturnType<T extends object | boolean> = Promise<{
     success: boolean;
-    data?: TData;
+    data?: T;
     error?: unknown
     status?: number;
     code?: string
 }>
 
-export type UseInsertReturn<
-    TData,
+export type InsertReturnType<TData extends object | boolean> = ReturnType<TData>
+export type UpdateReturnType<TData extends object | boolean> = ReturnType<TData>
+
+type InsertFunction<TData, TReturn extends object | boolean, TParams extends readonly unknown[] = []> = {
+    insert: (data: TData, params: TParams) => InsertReturnType<TReturn>
+}
+
+type UpdateFunction<TData, TReturn extends object | boolean, TParams extends readonly unknown[] = []> = {
+    update: (data: TData, id?: ID, params?: TParams) => InsertReturnType<TReturn>
+}
+
+type UseQueryReturn <
     TReturn extends object | boolean,
-    TParams extends readonly unknown[] = []
 > = {
-    insert: (data: TData, params: TParams) => InsertReturnType<TReturn>,
     result?: TReturn,
     error?: unknown,
     isLoading?: boolean,
     isError?: boolean,
     failureReason?: AxiosError | null
 }
+
+export type UseInsertReturn<
+    TData,
+    TReturn extends object | boolean,
+    TParams extends readonly unknown[] = []
+> = UseQueryReturn<TReturn> & InsertFunction<TData, TReturn, TParams>
+
+export type UseUpdateReturn<
+    TData,
+    TReturn extends object | boolean,
+    TParams extends readonly unknown[] = []
+> = UseQueryReturn<TReturn> & UpdateFunction<TData, TReturn, TParams>
 
 export interface ZodControlRender<TFieldValues extends FieldValues, TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>> {
     render: ({ field, fieldState, formState, }: {
@@ -530,14 +573,6 @@ export type Option = {
 
 export interface TableSearchProps {
     searchInput?: boolean
-}
-
-export interface MasonryProps {
-    columns?: number
-    gap?: number
-    itemTag?: keyof IntrinsicElements
-    sequential?: boolean
-    children: ReactNode[]
 }
 
 export interface SelectEntityProps<

@@ -9,7 +9,7 @@ type SelectClassesProps = {
 } & SelectEntityProps<Classe, number | number[]>
 
 export const SelectClasse = (
-    {getClasse, defaultClasses, isLoading, defaultValue, placeholder, multiple, onlyCurrent, variant}: SelectClassesProps
+    {getClasse, defaultClasses, isLoading, defaultValue, placeholder, multiple, onlyCurrent, variant, getResource}: SelectClassesProps
 ) => {
 
     const {useGetClasseBasicValues} = useClasseRepo()
@@ -32,6 +32,7 @@ export const SelectClasse = (
             variant={variant}
             onlyCurrent={onlyCurrent as number}
             width={'100%'}
+            getResource={getResource}
         />
     )
 }

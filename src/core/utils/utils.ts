@@ -71,6 +71,87 @@ export const enumToObjectArrayForFiltering = (enumObj: EnumType) => {
         }))
 }
 
+/**
+ * Compute a deep diff between original and updated.
+ * @param original The original value of type TObject.
+ * @param updated The updated value of type TObject.
+ * @returns An object containing:
+ *   - changes: of type TObject or undefined if no change. For primitives/arrays/type-changes, returns updated. For nested objects, returns a partial object with only changed fields.
+ *   - deletedKeys: string[] for keys removed at the top level if TObject is a plain object.
+ */
+export const diffObject = <TObject>(original: TObject, updated: TObject) => {
+    if (deepEquals(original, updated)) {
+        return {changes: undefined, deletedKeys: []}
+    }
+
+    const originalIsObj = original !== null && typeof original === 'object'
+    const updateIsObj = updated !== null && typeof updated === 'object'
+
+    if (!originalIsObj || !updateIsObj) {
+        return {changes: updated, deletedKeys: []}
+    }
+
+    if (Array.isArray(original) && Array.isArray(updated)) {
+        return { changes: updated, deletedKeys: [] };
+    }
+    if (Array.isArray(original) || Array.isArray(updated)) {
+        return { changes: updated, deletedKeys: [] };
+    }
+
+    const changes: Record<string, unknown> = {};
+    const deletedKeys: string[] = [];
+
+    const origObj = original as Record<string, unknown>;
+    const updObj = updated as Record<string, unknown>;
+    
+    for (const key of Object.keys(updObj)) {
+        if (!Object.prototype.hasOwnProperty.call(origObj, key)) {
+            changes[key] = updObj[key];
+        } else {
+            const { changes: subChanges } = diffObject(origObj[key] as TObject, updObj[key] as TObject);
+            if (subChanges !== undefined) {
+                changes[key] = subChanges;
+            }
+        }
+    }
+    
+    for (const key of Object.keys(origObj)) {
+        if (!Object.prototype.hasOwnProperty.call(updObj, key)) {
+            deletedKeys.push(key);
+        }
+    }
+
+    const hasChanges = Object.keys(changes).length > 0;
+    return { changes: hasChanges ? (changes as TObject) : undefined, deletedKeys };
+}
+
+export const deepEquals = (a: unknown, b: unknown) => {
+    if (a === b) return true;
+    if (typeof a !== typeof b) return false;
+    if (a && b && typeof a === 'object') {
+        if (Array.isArray(a) && Array.isArray(b)) {
+            if (a.length !== b.length) return false
+            for (let i = 0; i < a.length; i++) {
+                if (!deepEquals(a[i], b[i])) return false
+            }
+            return true
+        }
+        if (Array.isArray(a) || Array.isArray(b)) return false
+        const aKeys = Object.keys(a)
+        const bKeys = Object.keys(b)
+        if (aKeys.length !== bKeys.length) return false
+        for (const key of aKeys) {
+            // eslint-disable-next-line no-prototype-builtins
+            if (!b?.hasOwnProperty(key)) return false
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-expect-error
+            if (!deepEquals(a[key], b[key])) return false
+        }
+        return true
+    }
+    return false
+}
+
 export const getCountryListInFrench = () => {
     return countries.map(country => ({
         value: country.cca3,

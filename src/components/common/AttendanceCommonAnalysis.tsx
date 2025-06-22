@@ -37,13 +37,13 @@ export const AttendanceCommonAnalysis = (
     {recentCount, goodStudent, worstStudents, classeId, academicYear, suffixTabElement, prefixTabElement, lineLoading, setIndividual = undefined, sections}: AttendanceAnalysisProps
 ) => {
     const {useGetClasseAttendanceCount, useGetSchoolAttendanceCount} = useAttendanceRepo()
-    const {data: classeAttendances} = useGetClasseAttendanceCount(classeId as number, academicYear as string)
-    const  schoolAttendances = useGetSchoolAttendanceCount(academicYear as string)
+    const classeAttendances = useGetClasseAttendanceCount(classeId as number, academicYear as string)
+    const schoolAttendances = useGetSchoolAttendanceCount(academicYear as string)
 
-    const allClasse = sumObjectValues(classeAttendances?.statusCount)
+    const allClasse = sumObjectValues(classeAttendances?.data?.statusCount)
     const allSchool = sumObjectValues(schoolAttendances?.data?.statusCount)
 
-    const classe = classeAttendances ? classeAttendances.statusCount : null
+    const classe = classeAttendances ? classeAttendances?.data?.statusCount : null
     const school = schoolAttendances ? schoolAttendances?.data?.statusCount : null
 
     const processChartData = (data: AttendanceRecentCount[]) => {
@@ -185,7 +185,7 @@ export const AttendanceCommonAnalysis = (
                         </Grid>
 
                         <Grid xs={24} md={24} lg={24}>
-                            <AttendanceDaySummary data={schoolAttendances} />
+                            <AttendanceDaySummary data={classeId ? classeAttendances : schoolAttendances} />
                         </Grid>
 
                         <Grid xs={24} md={24} lg={24}>

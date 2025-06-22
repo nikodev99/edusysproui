@@ -10,7 +10,7 @@ export const singleAttendanceSchema = z.object({
     academicYear: academicYearSchemaMerge.optional(),
     individual: individualSchemaMerge,
     classe: classeSchemaMerge,
-    attendanceDate: dateProcess('Date du status de présence est requise', {before: true}),
+    attendanceDate: dateProcess('Date du status de présence est requise'),
     status: z.nativeEnum(AttendanceStatusLiteral, {required_error: 'Le status de présence est requis'})
 })
 

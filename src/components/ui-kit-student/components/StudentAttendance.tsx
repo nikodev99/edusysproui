@@ -123,7 +123,7 @@ export const StudentAttendance = ({enrolledStudent, infinite = true}: {enrolledS
                 (
                     <SelectAcademicYear
                         academicYears={academicYears}
-                        getAcademicYear={handleAcademicYearIdValue}
+                        getAcademicYear={handleAcademicYearIdValue as () => void}
                     />
                 )
             ]}

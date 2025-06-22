@@ -9,7 +9,7 @@ import ListViewer from "../../custom/ListViewer.tsx";
 import {getAllSchoolStudentAttendanceOfTheDay} from "../../../data/repository/attendanceRepository.ts";
 import {AxiosResponse} from "axios";
 import {text} from "../../../core/utils/text_display.ts";
-import {useRef, useState} from "react";
+import {useMemo, useState} from "react";
 import {AttendanceStatusCountResponse, DataProps} from "../../../core/utils/interfaces.ts";
 import {AttendanceDaySummary} from "./AttendanceDaySummary.tsx";
 import {UseQueryResult} from "@tanstack/react-query";
@@ -21,11 +21,9 @@ export const AttendanceTable = ({academicYear, todayAttendanceData, date}: {
 }) => {
 
     const [searchQuery, setSearchQuery] = useState<string | undefined>(undefined)
-    const dataExists = useRef(
-        todayAttendanceData?.isSuccess &&
-        todayAttendanceData?.data &&
-        !isObjectEmpty(todayAttendanceData?.data)
-    )
+    const dataExists = useMemo(() =>
+        todayAttendanceData?.isSuccess && todayAttendanceData?.data && !isObjectEmpty(todayAttendanceData?.data)
+    , [todayAttendanceData])
 
     const getTag = (status: AttendanceStatus) => {
         const [tagColor, tagText] = attendanceTag(status);
@@ -95,7 +93,7 @@ export const AttendanceTable = ({academicYear, todayAttendanceData, date}: {
 
     return(
         <main>
-            {todayAttendanceData && dataExists.current && <AttendanceDaySummary data={todayAttendanceData} />}
+            {todayAttendanceData && dataExists && <AttendanceDaySummary data={todayAttendanceData} />}
             <ListViewer
                 callback={getAllSchoolStudentAttendanceOfTheDay as () => Promise<AxiosResponse<Attendance>>}
                 callbackParams={[text.schoolID, academicYear, date?.toDate(), searchQuery]}

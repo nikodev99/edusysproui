@@ -13,6 +13,10 @@ export const insertAttendances = (attendances: AttendanceSchema, classeId: numbe
     })
 }
 
+export const updateAttendances = (attendances: AttendanceSchema) => {
+    return apiClient.put('attendance', Object.values(attendances?.attendance))
+}
+
 export const getStudentAttendances = (studentId: number, pageable: Pageable, academicYearId: string): Promise<AxiosResponse<Attendance[]>> => {
     const {page, size} = pageable
     return request({

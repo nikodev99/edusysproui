@@ -122,8 +122,12 @@ class Datetime {
         return this.date.month() + 1;
     }
 
-    get DAY(): number {
+    get DATE(): number {
         return this.date.date();
+    }
+
+    get DAY(): number {
+        return this.date.day()
     }
 
     get HOUR(): number {

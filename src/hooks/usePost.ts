@@ -1,18 +1,17 @@
 import {AxiosError, AxiosResponse} from "axios";
-import {useMutation, UseMutationOptions} from "@tanstack/react-query";
+import {useMutation} from "@tanstack/react-query";
 import {Response} from "../data/action/response.ts";
 import {catchError, ErrorCatch} from "../data/action/error_catch.ts";
 import {z} from "zod";
 import {attendanceSchema} from "../schema";
 import {useState} from "react";
-import {InsertReturnType, PostFunction, UseInsertReturn} from "../core/utils/interfaces.ts";
-
-type MutationVariables<TData, TParams extends readonly unknown[]> = {
-    postFn: PostFunction<TData, TParams>;
-    data: TData;
-} & (
-    TParams extends readonly [] ? {params?: never} : {params: TParams}
-)
+import {
+    InsertReturnType,
+    MutationPostVariables,
+    PostFunction,
+    UseInsertReturn,
+    UseQueryOptions
+} from "../core/utils/interfaces.ts";
 
 /**
  * A flexible hook for POST mutations that validates data with Zod schemas
@@ -29,14 +28,9 @@ type MutationVariables<TData, TParams extends readonly unknown[]> = {
  */
 export const useQueryPost = <TData, TParams extends readonly unknown[] = []>(
     schema: z.ZodSchema<TData>,
-    options?: Omit<
-        UseMutationOptions<
-            AxiosResponse<TData>,
-            AxiosError,
-            MutationVariables<TData, TParams>
-        >, "mutationFn">
+    options?: UseQueryOptions<TData, TParams>
 ) => {
-    return useMutation<AxiosResponse<TData>, AxiosError, MutationVariables<TData, TParams>>({
+    return useMutation<AxiosResponse<TData>, AxiosError, MutationPostVariables<TData, TParams>>({
         mutationFn: async ({postFn, data, params}) => {
             const validate = schema.safeParse(data)
             if (!validate.success) {
@@ -55,7 +49,8 @@ export const useQueryPost = <TData, TParams extends readonly unknown[] = []>(
 }
 
 export const usePost = async <TData, TParams extends readonly unknown[] = []>(
-    postFn: PostFunction<TData, TParams>, data: TData,
+    postFn: PostFunction<TData, TParams>,
+    data: TData,
     params: TParams
 ): Promise<Response<TData>> => {
     try {
@@ -80,8 +75,10 @@ export const useInsert = <
     TData,
     TReturn extends object | boolean,
     TParams extends readonly unknown[] = []
->(func: PostFunction<TData, TParams>): UseInsertReturn<TData, TReturn, TParams> => {
-    const { mutate, isError, failureReason, isPending, isPaused } = useQueryPost(attendanceSchema);
+>(func: PostFunction<TData, TParams>, options?: UseQueryOptions<TData, TParams>): UseInsertReturn<TData, TReturn, TParams> => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    const { mutate, isError, failureReason, isPending, isPaused } = useQueryPost(attendanceSchema, options);
     const [result, setResult] = useState<TReturn | undefined>(undefined);
     const [error, setError] = useState<unknown | null>(null);
     const [status, setStatus] = useState<number>(0)

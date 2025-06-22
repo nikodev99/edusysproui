@@ -21,6 +21,7 @@ import AddExamPage from "../../pages/exam/AddExamPage.tsx";
 import ExamViewPage from "../../pages/exam/ExamViewPage.tsx";
 import AttendancePage from "../../pages/attendance/AttendancePage.tsx";
 import AttendanceAddPage from "../../pages/attendance/AttendanceAddPage.tsx";
+import {AttendanceEditPage} from "../../pages/attendance/AttendanceEditPage.tsx";
 
 export const Route = createBrowserRouter([
     {
@@ -77,7 +78,8 @@ export const Route = createBrowserRouter([
                 path: 'attendances',
                 children: [
                     { path: text.path.page, element: <AttendancePage />},
-                    { path: text.path.new, element: <AttendanceAddPage />}
+                    { path: text.path.new, element: <AttendanceAddPage />},
+                    { path: text.path.edit, element: <AttendanceEditPage />}
                 ]
             },
             {

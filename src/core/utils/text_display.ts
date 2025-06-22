@@ -96,8 +96,12 @@ export const text = {
         href: '/attendances',
         group: {
             add: {
-                label: 'Fiche de présence du jour',
+                label: 'Ajouter la fiche de présence',
                 href: '/attendances/new'
+            },
+            edit: {
+                label: 'Mise à jour',
+                href: '/attendances/update'
             },
             view: {
                 label: 'Voir la fiche de présence du jour',
@@ -107,6 +111,7 @@ export const text = {
     },
     path: {
         page: '',
+        edit: 'update',
         new: 'new',
         view: ':id',
     },

@@ -15,6 +15,14 @@ export enum AttendanceStatusLiteral {
     EXCUSED
 }
 
+export const compareAttendanceStatus = (status: AttendanceStatus, literal: AttendanceStatusLiteral) => {
+    const literalKey = statusToLiteral(status)
+
+    console.log('STATUS: ', {literal, literalKey})
+
+    return literal === literalKey
+}
+
 export const statusToLiteral = (status: AttendanceStatus): AttendanceStatusLiteral => {
     switch (status) {
         case 'PRESENT' as AttendanceStatus:

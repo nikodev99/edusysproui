@@ -22,6 +22,10 @@ import ExamViewPage from "../../pages/exam/ExamViewPage.tsx";
 import AttendancePage from "../../pages/attendance/AttendancePage.tsx";
 import AttendanceAddPage from "../../pages/attendance/AttendanceAddPage.tsx";
 import {AttendanceEditPage} from "../../pages/attendance/AttendanceEditPage.tsx";
+import LibraryListPage from "../../pages/library/LibraryListPage.tsx";
+import FinanceDashboardPage from "../../pages/finance/FinanceDashboardPage.tsx";
+import MessagePage from "../../pages/chat/MessagePage.tsx";
+import EmployeeListPage from "../../pages/employee/EmployeeListPage.tsx";
 
 export const Route = createBrowserRouter([
     {
@@ -80,6 +84,30 @@ export const Route = createBrowserRouter([
                     { path: text.path.page, element: <AttendancePage />},
                     { path: text.path.new, element: <AttendanceAddPage />},
                     { path: text.path.edit, element: <AttendanceEditPage />}
+                ]
+            },
+            {
+                path: 'library',
+                children: [
+                    { path: text.path.page, element: <LibraryListPage /> }
+                ]
+            },
+            {
+                path: 'fee-and-finance',
+                children: [
+                    { path: text.path.page, element: <FinanceDashboardPage /> }
+                ]
+            },
+            {
+                path: 'chat',
+                children: [
+                    { path: text.path.page, element: <MessagePage /> }
+                ]
+            },
+            {
+                path: 'staff-management',
+                children: [
+                    { path: text.path.page, element: <EmployeeListPage /> }
                 ]
             },
             {

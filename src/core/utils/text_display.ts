@@ -109,6 +109,42 @@ export const text = {
             }
         }
     },
+    library: {
+        label: 'Bibliothèque',
+        href: '/library',
+        group: {
+            add: {
+                label: 'Ajouter un livre',
+                href: '/library/new'
+            },
+            view: {
+                label: 'Voir les livres',
+                href: '/library/'
+            }
+        }
+    },
+    finance: {
+        label: 'Finance',
+        href: '/fee-and-finance',
+    },
+    chat: {
+        label: 'Communication',
+        href: '/chat',
+    },
+    employee: {
+        label: 'Resource Humaine',
+        href: '/staff-management',
+    },
+    settings: {
+        label: 'Paramètres',
+        href: '/settings',
+        group: {
+            org: {
+                label: 'Organisation',
+                href: '/settings/organization'
+            }
+        }
+    },
     path: {
         page: '',
         edit: 'update',

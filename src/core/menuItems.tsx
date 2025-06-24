@@ -50,24 +50,24 @@ export const menuItems: Required<MenuProps>['items'][number][] = [
         label: text.att.label
     },
     {
-        key: '/library',
+        key: text.library.href,
         icon: <LuLibrary />,
-        label: "Bibliothèque"
+        label: text.library.label
     },
     {
-        key: '/fee-and-finance',
+        key: text.finance.href,
         icon: <LuBadgeDollarSign />,
-        label: "Frais et Finance"
+        label: text.finance.label
     },
     {
-        key: '/communication',
+        key: text.chat.href,
         icon: <LuAtSign />,
-        label: "Communication"
+        label: text.chat.label,
     },
     {
-        key: '/staff-management',
+        key: text.employee.href,
         icon: <LuContact />,
-        label: "Resource Humaine",
+        label: text.employee.label,
         title: 'Gestion du personnel'
     },
     {
@@ -76,11 +76,11 @@ export const menuItems: Required<MenuProps>['items'][number][] = [
         label: "Rapport/Analyses"
     },
     {
-        key: '/settings',
+        key: text.settings.href,
         icon: <LuCog />,
-        label: "Paramètres",
+        label: text.settings.label,
         children: [
-            {key: '/settings/organization', label: "Organization"},
+            {key: text.settings.group.org.href, label: text.settings.group.org.label},
             {key: '/settings/customization', label: "Customiser"},
             {key: '/settings/product_management', label: "Management des produits"},
             {key: '/settings/security', label: "Sécurité"},

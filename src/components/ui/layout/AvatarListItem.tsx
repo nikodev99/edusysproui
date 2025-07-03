@@ -2,7 +2,7 @@ import {Button, List, Skeleton} from "antd";
 import {Avatar} from "./Avatar.tsx";
 import {setFirstName} from "../../../core/utils/utils.ts";
 import {ReactNode} from "react";
-import {Individual} from "../../../entity/domain/individual.ts";
+import {Individual} from "../../../entity";
 
 type AvatarListItemProps = {
     isFetching?: boolean

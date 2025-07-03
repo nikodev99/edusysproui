@@ -40,6 +40,8 @@ const FormContent = <T extends FieldValues>({formItems, responsiveness}: FormCon
                 return <TimeInput key={index} {...inputProps} />
             case InputTypeEnum.RADIO:
                 return <RadioInput key={index} {...inputProps} />
+            case InputTypeEnum.PASSWORD:
+                return <TextInput.Password key={index} {...inputProps} />
             default:
                 return null;
         }

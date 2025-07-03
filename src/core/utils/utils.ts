@@ -232,8 +232,9 @@ export const getMinMaxTimes = (data: Schedule[]) => {
     let maxEndTime: [number, number] = [0, 0]
 
     for (const entry of data) {
-        const start: [number, number] = entry.startTime as [number, number]
-        const end: [number, number] = entry.endTime as [number, number]
+        const start: [number, number] = parseTimeString(entry.startTime as number[])
+        const end: [number, number] = parseTimeString(entry.endTime as [number, number])
+
         const startDate = start ? new Date(0, 0, 0, start[0], start[1] as number, 0) : new Date
         const endDate = end ? new Date(0, 0, 0, end[0], end[1], 0) : new Date()
 
@@ -314,6 +315,24 @@ export const dateCompare = (date: Date) => {
     return dateToCompareWith.isAfter(today)
 }
 
+export const parseTimeString = (timeString: number[] | string): [number, number] => {
+    if (!timeString || typeof timeString !== 'string') {
+        console.error('Invalid time string:', timeString);
+        return [0, 0]; // fallback to midnight
+    }
+
+    if (Array.isArray(timeString)) {
+        return timeString as unknown as [number, number];
+    }
+
+    const [hours, minutes] = timeString.split(':').map(Number);
+    if (isNaN(hours) || isNaN(minutes)) {
+        console.error('Unable to parse time string:', timeString);
+        return [0, 0];
+    }
+    return [hours, minutes];
+};
+
 export const setDayJsDate = (date?: Date | number[] | string) => {
     if (date) {
         let dayjsDate
@@ -348,8 +367,8 @@ const formattedDate = (date?: Date | number[] | string, format?: string): string
     return setDayJsDate(date)?.locale('fr').format(format);
 }
 
-export const setTime = (time: number[]) => {
-    const [hour, minute] = time;
+export const setTime = (time: number[] | string) => {
+    const [hour, minute] = parseTimeString(time)
     return dayjs().hour(hour).minute(minute).format('HH:mm');
 }
 
@@ -624,7 +643,14 @@ export const transformEvents = <T extends object>(apiEvents: ApiEvent<T>[]) => {
         return {monday, friday, saturday}
     }
 
-    const getDayDate = (dayOfWeek: Day, [hour, minute]: [number, number], now: Date): (Date | null)[] => {
+    const getDayDate = (dayOfWeek: Day, timeInput: [number, number] | string, now: Date): (Date | null)[] => {
+        let hour: number = 0, minute: number = 0;
+        if (typeof timeInput === 'string') {
+            [hour, minute] = timeInput.split(':').map(Number)
+        }else {
+            [hour, minute] = timeInput
+        }
+
         const day = Day[dayOfWeek as unknown as keyof typeof Day];
         if (day === Day.ALL_DAYS) {
             const {monday, friday} = getWeekRange(now)

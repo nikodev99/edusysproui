@@ -1,4 +1,8 @@
 export const text = {
+    auth: {
+        login: '/login',
+        signUp: '/signup',
+    },
     home: {
         label: 'Tableau de bord',
         href: '/dashboard',
@@ -173,3 +177,9 @@ export const calendarMessages = {
     event: 'Événement',
     showMore: (total: unknown) => `+ Voir ${total} autres`,
 };
+
+export const jwt = {
+    tokenKey: 'jwtAccessToken',
+    refreshTokenKey: 'jwtRefreshToken',
+    user: 'edusyspro-user'
+}

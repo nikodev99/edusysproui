@@ -145,7 +145,7 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
     ];
 
     const handleLoadMoreSize = () => {
-        setSize(prevState => prevState + examCount ?? 10)
+        setSize(prevState => (prevState + examCount) || 10)
     }
 
     const handleAcademicYearIdValue = (value: string) => {

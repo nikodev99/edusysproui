@@ -11,7 +11,7 @@
     display: flex;
     align-items: center;
     background-color: #0b1d39;
-    gap: 25px;
+    gap: 10px;
     justify-items: center;
     flex-direction: row;
     margin-bottom: 20px;
@@ -21,6 +21,7 @@
       width: 50px;
       height: 50px;
       border-radius: 50%;
+      background: #f1f3fd;
     }
 
     .school-name {
@@ -28,6 +29,7 @@
       font-weight: bold;
       flex-grow: 1;
       text-align: center;
+      row-span: 2;
     }
   }
 

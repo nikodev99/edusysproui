@@ -76,10 +76,10 @@ const GuardianViewPage: React.FC = () => {
                         }</Tag>
                     },
                     {title: 'Télephone', mention: guardian?.personalInfo?.telephone},
-                    {
+                    ...(guardian?.company || guardian?.jobTitle ? [{
                         title: guardian?.jobTitle ? guardian.jobTitle : '',
                         mention: guardian?.company ? guardian?.company : ''
-                    }
+                    }] : [])
                 ]}
                 items={[/*TODO Ajouter certain items concernant le tuteur*/]}
                 pColor={setColor}

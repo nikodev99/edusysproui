@@ -4,12 +4,16 @@ import {InputType, TypedInputType} from "../../../core/utils/interfaces.ts";
 import Grid from "../layout/Grid.tsx";
 import {LuSave} from "react-icons/lu";
 import FormItem from "./FormItem.tsx";
+import {useState} from "react";
 
 type dataEntryProps<T extends FieldValues> = InputType<T> & {inputType?: string}
 
 export const FormInput = <T extends FieldValues>(inputProps: dataEntryProps<T>) => {
 
+    const [passwordVisible, setPasswordVisible] = useState(false);
     const {placeholder, isCompact, buttonLabel, inputType, addonAfter, min, defaultValue, disabled, clearErrors} = inputProps
+
+    console.log("INPUT TYPE: ", inputType)
 
     return(
         <FormItem {...inputProps} render={({field}) => (
@@ -22,6 +26,13 @@ export const FormInput = <T extends FieldValues>(inputProps: dataEntryProps<T>) 
                                 min={min}
                                 {...field}
                                 style={{width: '100%'}}
+                            />}
+                            {inputType === 'password' && <Input.Password
+                                placeholder={placeholder}
+                                visibilityToggle={{ visible: passwordVisible, onVisibleChange: setPasswordVisible }}
+                                disabled={disabled}
+                                onFocus={() => clearErrors ? clearErrors(field.name) : null}
+                                {...field}
                             />}
                             {!inputType && <Input
                                 onFocus={() => clearErrors ? clearErrors(field.name) : null}
@@ -41,6 +52,13 @@ export const FormInput = <T extends FieldValues>(inputProps: dataEntryProps<T>) 
                                 min={min}
                                 {...field}
                                 style={{width: '100%'}}
+                            />}
+                            {inputType === 'password' && <Input.Password
+                                placeholder={placeholder}
+                                visibilityToggle={{ visible: passwordVisible, onVisibleChange: setPasswordVisible }}
+                                disabled={disabled}
+                                onFocus={() => clearErrors ? clearErrors(field.name) : null}
+                                {...field}
                             />}
                             {!inputType && <Input
                                 onFocus={() => clearErrors ? clearErrors(field.name) : null}
@@ -81,11 +99,11 @@ const TextInput = <T extends FieldValues>(inputProps :TypedInputType<T>) => {
 }
 
 TextInput.Email = <T extends FieldValues>(props: Omit<TypedInputType<T>, 'type'>) => (
-    <TextInput {...props} type='email' />
+    <TextInput {...props} inputType='email' />
 )
 
 TextInput.Password = <T extends FieldValues>(props: Omit<TypedInputType<T>, 'type'>) => (
-    <TextInput {...props} type='password' />
+    <TextInput {...props} inputType='password' />
 )
 
 TextInput.Number = <T extends FieldValues>(props: Omit<TypedInputType<T>, 'type'>) => (

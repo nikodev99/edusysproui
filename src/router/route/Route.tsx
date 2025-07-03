@@ -1,11 +1,10 @@
 import {createBrowserRouter} from "react-router-dom";
 import PageLayout from "../../pages/PageLayout.tsx";
 import PageError from "../../pages/PageError.tsx";
-import Dashboard from "../../pages/dashboard/page.tsx";
+import Dashboard from "../../pages/home/page.tsx";
 import StudentListPage from "../../pages/student/StudentListPage.tsx";
 import EnrollStudentPage from "../../pages/student/EnrollStudentPage.tsx";
 import StudentViewPage from "../../pages/student/StudentViewPage.tsx";
-import RedirectProvider from "../../providers/RedirectProvider.tsx";
 import TeacherListPage from "../../pages/teacher/TeacherListPage.tsx";
 import GuardianListPage from "../../pages/guardian/GuardianListPage.tsx";
 import GuardianViewPage from "../../pages/guardian/GuardianViewPage.tsx";
@@ -26,13 +25,28 @@ import LibraryListPage from "../../pages/library/LibraryListPage.tsx";
 import FinanceDashboardPage from "../../pages/finance/FinanceDashboardPage.tsx";
 import MessagePage from "../../pages/chat/MessagePage.tsx";
 import EmployeeListPage from "../../pages/employee/EmployeeListPage.tsx";
+import LoginPage from "../../pages/user/LoginPage.tsx";
+import RedirectProvider from "../../providers/RedirectProvider.tsx";
+import NavigationHandler from "../../providers/NavigationHandler.tsx";
+import {AuthMiddleware} from "../../middleware/AuthMiddleware.tsx";
 
 export const Route = createBrowserRouter([
+    {
+        path: '/login',
+        element:
+            <NavigationHandler requireAuth={false}>
+                <LoginPage />
+            </NavigationHandler>
+    },
     {
         path: '/',
         element: (
             <RedirectProvider>
-                <PageLayout />
+                <AuthMiddleware>
+                    <NavigationHandler>
+                        <PageLayout />
+                    </NavigationHandler>
+                </AuthMiddleware>
             </RedirectProvider>
         ),
         errorElement: <PageError />,

@@ -1,5 +1,6 @@
 import {Student} from "./student.ts";
 import {Individual} from "./individual.ts";
+import {School} from "./school.ts";
 
 export interface Guardian {
     id: string
@@ -9,6 +10,7 @@ export interface Guardian {
     students: Student[] | undefined
     createdAt: Date | undefined
     modifyAt: Date | undefined
+    school: School[]
 }
 
 export const toGuardianSchema = (guardian: Guardian) => {

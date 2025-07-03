@@ -21,9 +21,10 @@
     "@uploadcare/react-uploader": "^0.5.4",
     "antd": "^5.23.1",
     "antd-img-crop": "^4.22.0",
-    "axios": "^1.7.8",
+    "axios": "^1.10.0",
     "country-flag-icons": "^1.5.13",
     "dayjs": "^1.11.11",
+    "jose": "^6.0.11",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.4",
     "query-string": "^9.0.0",
@@ -55,6 +56,6 @@
     "eslint-plugin-react-refresh": "^0.4.6",
     "sass": "^1.75.0",
     "typescript": "^5.2.2",
-    "vite": "^5.4.11"
+    "vite": "^5.4.19"
   }
 }

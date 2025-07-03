@@ -130,6 +130,10 @@ class Datetime {
         return this.date.day()
     }
 
+    get DAY_NAME(): string {
+        return this.date.format('dddd')
+    }
+
     get HOUR(): number {
         return this.date.hour();
     }

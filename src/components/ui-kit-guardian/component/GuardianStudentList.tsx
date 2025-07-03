@@ -11,6 +11,8 @@ import {BloodType} from "../../../entity/enums/bloodType.ts";
 
 export const GuardianStudentList = ({students}: {students?: Student[]}) => {
 
+    console.log("STUDENT: ", students)
+
     return (
         <Responsive gutter={[16, 16]}>
             {students && students.map((student, index) => (
@@ -18,12 +20,11 @@ export const GuardianStudentList = ({students}: {students?: Student[]}) => {
                     <div className="card-container">
                         <div className="header">
                             <img
-                                src="https://example.com/school-logo.png" // Replace with the actual logo URL
+                                src="/edusyspro.svg" //TODO Replace it with the actual logo URL
                                 alt="School Logo"
                                 className="school-logo"
                             />
-                            {/* TODO ajouter le logo de l'école et le nom de l'école */}
-                            <span className="school-name">Ferguson Academy of Science & Tech</span>
+                            <span className="school-name">{student?.school?.name}</span>
                         </div>
                         <div className="student-info">
                             <div className="left-section">
@@ -34,6 +35,9 @@ export const GuardianStudentList = ({students}: {students?: Student[]}) => {
 
                                 <p className="label">ID</p>
                                 <p className="value">{student.reference}</p>
+
+                                <p className="label">Classe</p>
+                                <p className="value">{student?.classe?.name}</p>
 
                                 <p className="label">DATE DE NAISSANCE</p>
                                 <p className="value">{fDate(student?.personalInfo?.birthDate)}</p>

@@ -318,21 +318,21 @@ const SchoolColleagues = ({infoData, seeMore, color}: StudentInfoProps) => {
 const HealthData = ({infoData, color}: StudentInfoProps) => {
 
     const {student} = infoData
-    const healthCondition: HealthCondition = student.healthCondition !== null ? student.healthCondition : {} as HealthCondition
+    const healthCondition: HealthCondition | undefined = student?.healthCondition
 
-    const conditions = healthCondition.medicalConditions?.map((condition) => ({
+    const conditions = healthCondition?.medicalConditions?.map((condition) => ({
         response: <div className='health'>
             <span>{condition}</span>
             <GiHealthDecrease  className='health-icon decrease' size={25}/>
         </div>
     }))
-    const allergies = healthCondition.allergies?.map((allergy) => ({
+    const allergies = healthCondition?.allergies?.map((allergy) => ({
         response: <div className='health'>
             <span>{allergy}</span>
             <LuBan className='health-icon allergy' size={25} />
         </div>
     }))
-    const medications = healthCondition.medications?.map((medication) => ({
+    const medications = healthCondition?.medications?.map((medication) => ({
         response: <div>{medication}</div>
     }))
     const blood = healthCondition?.bloodType as unknown as keyof typeof BloodType
@@ -345,12 +345,16 @@ const HealthData = ({infoData, color}: StudentInfoProps) => {
     ]
 
     return(
-        <PanelSection title='Santé'>
-            <PanelTable title='Etat de santé' data={healthData} panelColor={color}/>
-            {conditions && (<PanelTable title='Condition Médicale' data={conditions} panelColor={color} />)}
-            {allergies && (<PanelTable title='Allergies' data={allergies} panelColor={color} />)}
-            {medications && (<PanelTable title='Medicamennt Chronique' data={medications} panelColor={color} />)}
-        </PanelSection>
+        <>
+            {healthCondition && (
+                <PanelSection title='Santé'>
+                    <PanelTable title='Etat de santé' data={healthData} panelColor={color}/>
+                    {conditions && (<PanelTable title='Condition Médicale' data={conditions} panelColor={color}/>)}
+                    {allergies && (<PanelTable title='Allergies' data={allergies} panelColor={color}/>)}
+                    {medications && (<PanelTable title='Medicamennt Chronique' data={medications} panelColor={color}/>)}
+                </PanelSection> )
+            }
+        </>
     )
 }
 

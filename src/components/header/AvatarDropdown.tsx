@@ -1,7 +1,15 @@
 import {Alert, Button, Divider, Dropdown, MenuProps} from "antd";
 import {LuCog, LuLogOut, LuShoppingCart, LuUser} from "react-icons/lu";
+import {jwtTokenManager} from "../../auth/jwt/JWTToken.tsx";
+import {firstWord} from "../../core/utils/utils.ts";
+import {useAuth} from "../../hooks/useAuth.ts";
 
 const AvatarDropdown = () => {
+    
+    const decode = jwtTokenManager.decodeToken()
+    const user = decode.payload
+
+    const {logoutUser} = useAuth()
 
     const items: MenuProps['items'] = [
         {
@@ -42,16 +50,19 @@ const AvatarDropdown = () => {
         }
     ]
 
+    function handleLogout() {
+        logoutUser()
+    }
 
     return(
         <div className="avatar-dropdown">
             <div className="avatar-dropdown--title">
                 <h2 className='avatar-image'>
-                    <span>NN</span>
+                    <span>{`${user?.firstName?.charAt(0)}${user?.lastName?.charAt(0)}`}</span>
                 </h2>
                 <div className='avatar-profile'>
-                    <p>Nikhe Niama</p>
-                    <p>nikhe.niama99@gmail.com</p>
+                    <p>{`${firstWord(user?.lastName)} ${firstWord(user?.firstName)}`}</p>
+                    <p>{`${user?.email ? user?.email : `${user?.id}`}`}</p>
                     <div className="account-dropdown">
                         <Dropdown menu={{items}} trigger={['click']}>
                             <Alert message="Manage your profile" type='info' style={{cursor: 'pointer'}} className="alert"></Alert>
@@ -61,7 +72,7 @@ const AvatarDropdown = () => {
             </div>
             <Divider/>
             <div className='avatar-btn--logout'>
-                <Button icon={<LuLogOut  size={15}/>}>Logout</Button>
+                <Button icon={<LuLogOut  size={15}/>} onClick={handleLogout}>Logout</Button>
             </div>
         </div>
     )

@@ -4,6 +4,7 @@ import {Route} from "./router";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import frFR from "antd/locale/fr_FR";
 import {ConfigProvider} from "antd";
+import {UserProvider} from "./providers/UserProvider.tsx";
 
 const App = () => {
 
@@ -16,13 +17,15 @@ const App = () => {
     })
 
     return(
-        <ConfigProvider locale={frFR} theme={{
-            token: {colorPrimary: '#000C40'},
-        }}>
-            <QueryClientProvider client={queryClient}>
-                <RouterProvider router={Route} />
-            </QueryClientProvider>
-        </ConfigProvider>
+        <UserProvider>
+            <ConfigProvider locale={frFR} theme={{
+                token: {colorPrimary: '#000C40'},
+            }}>
+                <QueryClientProvider client={queryClient}>
+                    <RouterProvider router={Route} />
+                </QueryClientProvider>
+            </ConfigProvider>
+        </UserProvider>
     )
 }
 

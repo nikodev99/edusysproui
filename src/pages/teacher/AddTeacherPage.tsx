@@ -216,7 +216,6 @@ const AddTeacherPage = () => {
             isPending={isLoading || isPending}
             stepsDots={CustomDot}
             currentNumber={5}
-            follow="Souhaitez vous continuer à ajouter "
         />
     )
 }

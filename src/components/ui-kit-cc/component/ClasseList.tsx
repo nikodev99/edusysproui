@@ -43,7 +43,7 @@ export const ClasseList = ({condition}: {condition?: boolean}) => {
                 <div style={{marginBottom: '5px'}}>Niveau Académique</div>
                 <div><Tag color='geekblue'>{c.grade.section}</Tag></div>
             </div>
-        })) as DataProps[]
+        })) as DataProps<Classe>[]
     }
 
     const columns: TableColumnsType<Classe> = [

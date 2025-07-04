@@ -88,7 +88,7 @@ export const CourseList = ({condition}: {condition?: boolean}) => {
         }
     ];
 
-    const toCardData = (data: Course[]): DataProps[] => {
+    const toCardData = (data: Course[]): DataProps<Course>[] => {
         return data?.map(d=> ({
             id: d.id,
             lastName: d.course,

@@ -4,11 +4,6 @@ import {fetchFunc} from "../../hooks/useFetch.ts";
 import {getDepartmentBasics} from "../../data/repository/departmentRepository.ts";
 import {AcademicYear, Classe, Department} from "../../entity";
 import {getAcademicYearFromYear, getCurrentAcademicYear} from "../../data/repository/academicYearRepository.ts";
-import {
-    getClasseAttendanceStatusCount,
-    getSchoolAttendanceStatusCount
-} from "../../data/repository/attendanceRepository.ts";
-import {AttendanceStatus} from "../../entity/enums/attendanceStatus.ts";
 import {getClassesBasicValues} from "../../data/repository/classeRepository.ts";
 import {countStudent} from "../../data/repository/studentRepository.ts";
 import {GenderCounted} from "../utils/interfaces.ts";
@@ -44,8 +39,6 @@ export const useGlobalStore = createSelectors(create(combine({
         xxl: '50%',
     },
     departments: [] as Department[],
-    classeAttendance: [] as {status: AttendanceStatus, count: number}[],
-    schoolAttendance: [] as {status: AttendanceStatus, count: number}[],
     allClasses: [] as Classe[],
     allTeachers: {} as GenderCounted,
     countAllClasse: 0 as number,
@@ -80,24 +73,6 @@ export const useGlobalStore = createSelectors(create(combine({
             .then(resp => {
                 if (resp.isSuccess)
                     set({academicYears: resp.data as AcademicYear[]})
-            })
-    },
-
-    setClasseAttendance (classeId: number, academicYear: string): void {
-        fetchFunc(getClasseAttendanceStatusCount, [classeId, academicYear])
-            .then(resp => {
-                if (resp.isSuccess) {
-                    set({classeAttendance: resp.data as {status: AttendanceStatus, count: number}[]})
-                }
-            })
-    },
-
-    setSchoolAttendance (schoolId: string, academicYear: string): void {
-        fetchFunc(getSchoolAttendanceStatusCount, [schoolId, academicYear])
-            .then(resp => {
-                if (resp.isSuccess) {
-                    set({schoolAttendance: resp.data as {status: AttendanceStatus, count: number}[]})
-                }
             })
     },
 
@@ -147,18 +122,6 @@ export const initAcademicYears = (year: number) => {
     const store = useGlobalStore.getState()
     store.setAcademicYears(year)
     return store.academicYears
-}
-
-export const initClasseAttendance = (classeId: number, academicYear: string) => {
-    const store = useGlobalStore.getState()
-    store.setClasseAttendance(classeId, academicYear)
-    return store.classeAttendance
-}
-
-export const initSchoolAttendance = (schoolId: string, academicYear: string) => {
-    const store = useGlobalStore.getState()
-    store.setSchoolAttendance(schoolId, academicYear)
-    return store.schoolAttendance
 }
 
 export const initCountAllClasse = ()  => {

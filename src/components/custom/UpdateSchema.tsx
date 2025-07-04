@@ -23,17 +23,19 @@ export const UpdateSchema = <TData extends FieldValues, TReturn extends object>(
     const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined)
     const breakpoints = useGlobalStore.use.modalBreakpoints()
 
-    const {mutate, isPending} = useQueryUpdate<TData, TReturn>(data)
+    const {mutate, isPending} = useQueryUpdate<TData>(data)
 
     const onSubmit = (data: TData) => {
         setErrorMessage(undefined)
         setSuccessMessage(undefined)
-        mutate({putFn: putFunc, data: data, id: id}, {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        mutate({putFn: putFunc, data: data, params: [], id: id}, {
             onSuccess: response => {
                 if (response && 'data' in response && 'updated' in response.data && response.status === 200) {
                     setSuccessMessage(messageSuccess ?? response?.data?.updated as string)
                     if (resp) {
-                        resp(response?.data as TReturn)
+                        resp(response?.data as never)
                     }
                 }
             },

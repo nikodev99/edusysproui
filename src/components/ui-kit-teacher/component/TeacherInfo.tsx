@@ -2,20 +2,18 @@ import Section from "../../ui/layout/Section.tsx";
 import Block from "../../view/Block.tsx";
 import PanelSection from "../../ui/layout/PanelSection.tsx";
 import PanelTable from "../../ui/layout/PanelTable.tsx";
-import {CalendarEvent, CountType, InfoPageProps, ReprimandData} from "../../../core/utils/interfaces.ts";
-import {Classe, Course, Department, Schedule, Teacher} from "../../../entity";
+import {CountType, InfoPageProps, ReprimandData} from "../../../core/utils/interfaces.ts";
+import {Classe, Course, Department, Teacher} from "../../../entity";
 import {
     getAge,
     getDistinctArray,
     cLowerName,
-    setTime,
-    timeToCurrentDatetime
+    setTime
 } from "../../../core/utils/utils.ts";
 import {useEffect, useRef, useState} from "react";
 import {Flex, TableColumnsType, Tag, TimelineProps} from "antd";
 import {useRawFetch} from "../../../hooks/useFetch.ts";
-import {getNumberOfStudentTaughtByClasse, getTeacherScheduleByDay} from "../../../data/repository/teacherRepository.ts";
-import {BigCalendar} from "../../graph/BigCalendar.tsx";
+import {getNumberOfStudentTaughtByClasse} from "../../../data/repository/teacherRepository.ts";
 import {getPrimaryDepartment} from "../../../data/repository/departmentRepository.ts";
 import {Timeline} from "../../graph/Timeline.tsx";
 import {AiFillClockCircle} from "react-icons/ai";
@@ -33,6 +31,8 @@ import Datetime from "../../../core/datetime.ts";
 import {useScoreRepo} from "../../../hooks/useScoreRepo.ts";
 import {MarksHistogram} from "../../common/MarksHistogram.tsx";
 import {TeacherIndividual} from "../../common/TeacherIndividual.tsx";
+import {useTeacherRepo} from "../../../hooks/useTeacherRepo.ts";
+import {ScheduleCalendar} from "../../common/ScheduleCalendar.tsx";
 
 type TeacherInfo = InfoPageProps<Teacher>
 
@@ -87,22 +87,8 @@ const ProsInfo = ({infoData, color}: TeacherInfo) => {
 }
 
 const CalendarSection = ({infoData, seeMore}: TeacherInfo) => {
-
-    const [schedules, setSchedules] = useState<Schedule[] | undefined>()
-    const allDay = useRef<boolean>(!(infoData?.courses && infoData?.courses?.length > 0));
-    const fetch = useRawFetch()
-
-    useEffect(() => {
-        fetch(getTeacherScheduleByDay, [infoData.id, allDay.current])
-            .then(response => setSchedules(response.data as Schedule[]))
-    }, [infoData, fetch]);
-
-    const events: CalendarEvent = schedules && schedules.map((s: Schedule) => ({
-        allDay: false,
-        title: `${s?.classe?.name} - ${s.designation}`,
-        start: s.startTime ? timeToCurrentDatetime(s.startTime) : new Date(),
-        end: s.endTime ? timeToCurrentDatetime(s.endTime): new Date()
-    })) as CalendarEvent
+    const {useGetTeacherSchedules} = useTeacherRepo()
+    const {data: schedules} = useGetTeacherSchedules(infoData?.id as string, !(infoData?.courses && infoData?.courses?.length > 0))
 
     const handleClick = () => {
         seeMore && seeMore('1')
@@ -110,7 +96,11 @@ const CalendarSection = ({infoData, seeMore}: TeacherInfo) => {
 
     return(
         <Section title='Informations sur l’emploi du temps' more={true} seeMore={handleClick}>
-            <BigCalendar data={events as []} views={['day']} defaultView='day' />
+            <ScheduleCalendar
+                views={['day']}
+                eventSchedule={schedules}
+                height={300}
+            />
         </Section>
     )
 }

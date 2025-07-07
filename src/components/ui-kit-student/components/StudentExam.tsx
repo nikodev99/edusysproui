@@ -5,7 +5,7 @@ import {ExamData} from "../../../core/utils/interfaces.ts";
 import LocalStorageManager from "../../../core/LocalStorageManager.ts";
 import {useEffect, useMemo, useState} from "react";
 import {initExamData} from "../../../entity/domain/score.ts";
-import PageError from "../../../pages/PageError.tsx";
+import PageError from "../../../pages/errors/PageError.tsx";
 import {ColumnGroupType} from "antd/es/table";
 import {AutoScrollTable} from "../../ui/layout/AutoScrollTable.tsx";
 import {AssignmentView} from "../../common/AssignmentView.tsx";

@@ -1,11 +1,12 @@
 import {useEffect, useState} from "react";
-import {LoginRequest, SignupRequest, UserProfile} from "../auth/dto/user.ts";
+import {LoginRequest, SignupRequest, toUser, UserProfile} from "../auth/dto/user.ts";
 import LocalStorageManager from "../core/LocalStorageManager.ts";
-import {jwt} from "../core/utils/text_display.ts";
 import {loginApi, logoutApi, signupApi} from "../auth/services/AuthService.ts.tsx";
 import {message} from "antd";
 import {UserContext, UserContextProps} from "../context/UserContext.ts";
 import {jwtTokenManager} from "../auth/jwt/JWTToken.tsx";
+import {loggedUser} from "../auth/jwt/LoggedUser.ts";
+import {School} from "../entity";
 
 export const UserProvider = ({children}: UserContextProps) => {
     const [token, setToken] = useState<string | null>(null)
@@ -14,22 +15,24 @@ export const UserProvider = ({children}: UserContextProps) => {
     const [isReady, setIsReady] = useState(false)
     const [shouldRedirectToHome, setShouldRedirectToHome] = useState(false)
     const [loginError, setLoginError] = useState<string | null>(null)
+    const [userSchools, setUserSchools] = useState<School | null>(null)
 
     useEffect(() => {
         const initAuth = async () => {
-            const userId = LocalStorageManager.get(jwt.user)
-            const token = LocalStorageManager.get(jwt.tokenKey)
+            const cachedUser = loggedUser.getUser()
+            const token = loggedUser.getToken()
+            const refreshToken = loggedUser.getRefreshToken()
 
-            if (userId && token) {
+            if (cachedUser && token) {
                 const isValidToken = await jwtTokenManager.isValidToken()
 
                 if(isValidToken) {
                     //TODO retrieve an Employee, Teacher or Guardian
-                    setUser(userId as UserProfile)
+                    setUser(cachedUser as UserProfile)
                     setToken(token as string)
-                    setRefreshToken(LocalStorageManager.get(jwt.refreshTokenKey))
+                    setRefreshToken(refreshToken as string)
                 }else {
-                    performLogout(false)
+                    await performLogout(false)
                 }
             }
             setIsReady(true)
@@ -37,6 +40,25 @@ export const UserProvider = ({children}: UserContextProps) => {
 
         initAuth().then()
     }, [])
+
+    useEffect(() => {
+        const initSchool = async () => {
+            const school = loggedUser.getSchool()
+            if (school) {
+                setUserSchools(school)
+            }else if (user) {
+                const schools = user.schools
+                if (Array.isArray(schools) && schools.length === 1) {
+                    loggedUser.setSchool(schools[0])
+                    setUserSchools(schools[0])
+                }
+            }
+        }
+        
+        initSchool().then()
+    }, [user]);
+
+    console.log({user, userSchools})
 
     const register = async (data: SignupRequest) => {
         try {
@@ -57,13 +79,13 @@ export const UserProvider = ({children}: UserContextProps) => {
         try {
             const resp = await loginApi(data)
             if (resp && resp?.status === 200) {
-                LocalStorageManager.update(jwt.tokenKey, () => resp.data.accessToken)
-                LocalStorageManager.update(jwt.refreshTokenKey, () => resp.data.refreshToken)
+                loggedUser.setToken(resp.data.accessToken)
+                loggedUser.setRefreshToken(resp.data.refreshToken)
 
                 //TODO retrieve an Employee, Teacher or Guardian
 
-                const useProfile = {user: {id: resp.data.id}} as UserProfile
-                LocalStorageManager.update(jwt.user, () => useProfile)
+                const useProfile = toUser(resp?.data)
+                loggedUser.setUser(useProfile)
 
                 setUser(useProfile)
                 setToken(resp.data.accessToken)
@@ -99,9 +121,11 @@ export const UserProvider = ({children}: UserContextProps) => {
         }catch (error) {
             console.error("Error calling logout API:", error)
         }finally {
-            LocalStorageManager.remove(jwt.tokenKey)
-            LocalStorageManager.remove(jwt.refreshTokenKey)
-            LocalStorageManager.remove(jwt.user)
+            loggedUser.removeToken()
+            loggedUser.removeRefreshToken()
+            loggedUser.removeUser()
+            loggedUser.removeSchool()
+            loggedUser.clearCache()
             LocalStorageManager.remove('lastActivity')
 
             jwtTokenManager.clearCache()
@@ -123,6 +147,7 @@ export const UserProvider = ({children}: UserContextProps) => {
             user,
             token,
             refreshToken,
+            userSchools,
             registerUser: register,
             loginUser: login,
             logoutUser: logout,

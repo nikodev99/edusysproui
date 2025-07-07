@@ -1,27 +1,27 @@
-import React from "react";
+import {ComponentType, ReactNode, useEffect} from "react";
 import {useAuth} from "../hooks/useAuth.ts";
 import {redirectTo} from "../context/RedirectContext.ts";
 
 /**
  * Higher-Order Component for route protection
- * Use this to wrap components that require authentication
+ * Uses this to wrap components that require authentication
  */
 export const withAuthProtection = <P extends object>(
-    WrappedComponent: React.ComponentType<P>
+    WrappedComponent: ComponentType<P>
 ) => {
-    return (props: P) => {
+    return (props: P): ReactNode => {
         const { isLoggedIn } = useAuth();
 
-        React.useEffect(() => {
+        useEffect(() => {
             if (!isLoggedIn()) {
                 redirectTo('/login');
             }
         }, [isLoggedIn]);
 
         if (!isLoggedIn()) {
-            return null; // or a loading spinner
+            return <p>Utilisateur pas connecté...</p> // or a loading spinner
         }
 
         return <WrappedComponent {...props} />;
     };
-};
+}

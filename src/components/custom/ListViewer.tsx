@@ -5,7 +5,7 @@ import LocalStorageManager from "../../core/LocalStorageManager.ts";
 import Responsive from "../../components/ui/layout/Responsive.tsx";
 import CardList from "../view/CardList.tsx";
 import PageDescription from "./PageDescription.tsx";
-import PageError from "../../pages/PageError.tsx";
+import PageError from "../../pages/errors/PageError.tsx";
 import {fetchFunc, useFetch} from "../../hooks/useFetch.ts";
 import {LuDownload, LuLayoutDashboard, LuListFilter, LuTable} from "react-icons/lu";
 import {Enrollment} from "../../entity";

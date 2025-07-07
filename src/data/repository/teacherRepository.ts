@@ -53,11 +53,11 @@ export const getNumberOfStudentTaughtByClasse = (teacherId: string) => {
     return apiClient.get<CountType>(`/teachers/count_by_classe/${teacherId}`)
 }
 
-export const getTeacherSchedule = (teacherId: string) => {
+export const getTeacherSchedule = (teacherId: string): Promise<AxiosResponse<Schedule[]>> => {
     return apiClient.get(`/schedule/teacher/${teacherId}`)
 }
 
-export const getTeacherScheduleByDay = (teacherId: string, allDay: boolean): Promise<AxiosResponse<Schedule>> => {
+export const getTeacherScheduleByDay = (teacherId: string, allDay: boolean): Promise<AxiosResponse<Schedule[]>> => {
     return apiClient.get(`/schedule/teacher_day/${teacherId}`, {
         params: {
             allDay: allDay

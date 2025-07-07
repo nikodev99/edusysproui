@@ -1,6 +1,6 @@
 import {useRouteError} from "react-router-dom";
 import {FC, useEffect, useState} from "react";
-import {isAxiosError} from "../data/axiosConfig.ts";
+import {isAxiosError} from "../../data/axiosConfig.ts";
 import {Collapse, Result} from "antd";
 
 interface ErrorDisplayProps {

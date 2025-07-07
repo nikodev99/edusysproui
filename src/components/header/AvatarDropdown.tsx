@@ -1,15 +1,11 @@
 import {Alert, Button, Divider, Dropdown, MenuProps} from "antd";
 import {LuCog, LuLogOut, LuShoppingCart, LuUser} from "react-icons/lu";
-import {jwtTokenManager} from "../../auth/jwt/JWTToken.tsx";
 import {firstWord} from "../../core/utils/utils.ts";
 import {useAuth} from "../../hooks/useAuth.ts";
 
 const AvatarDropdown = () => {
-    
-    const decode = jwtTokenManager.decodeToken()
-    const user = decode.payload
 
-    const {logoutUser} = useAuth()
+    const {user, logoutUser} = useAuth()
 
     const items: MenuProps['items'] = [
         {
@@ -62,7 +58,7 @@ const AvatarDropdown = () => {
                 </h2>
                 <div className='avatar-profile'>
                     <p>{`${firstWord(user?.lastName)} ${firstWord(user?.firstName)}`}</p>
-                    <p>{`${user?.email ? user?.email : `${user?.id}`}`}</p>
+                    <p>{`${user?.email || user?.username || user?.phoneNumber}`}</p>
                     <div className="account-dropdown">
                         <Dropdown menu={{items}} trigger={['click']}>
                             <Alert message="Manage your profile" type='info' style={{cursor: 'pointer'}} className="alert"></Alert>

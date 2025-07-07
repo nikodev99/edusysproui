@@ -2,10 +2,10 @@ import {FC, ReactNode, useCallback, useEffect} from "react";
 import {useAuth} from "../hooks/useAuth.ts";
 import LocalStorageManager from "../core/LocalStorageManager.ts";
 import {useLocation} from "react-router-dom";
-import {jwt} from "../core/utils/text_display.ts";
 import {redirectTo} from "../context/RedirectContext.ts";
 import {jwtTokenManager} from "../auth/jwt/JWTToken.tsx";
 import {refreshToken} from "../auth/services/AuthService.ts.tsx";
+import {loggedUser} from "../auth/jwt/LoggedUser.ts";
 
 const ACTIVITY_TIMEOUT = 30 * 60 * 1000
 const ACTIVITY_CHECK_INTERNAL = 60 * 1000
@@ -60,7 +60,7 @@ export const AuthMiddleware: FC<AuthMiddlewareProps> = ({children}) => {
         }
 
         try {
-            const currentToken = LocalStorageManager.get<string>(jwt.tokenKey);
+            const currentToken = loggedUser.getToken();
             if (!currentToken) {
                 logoutAndRedirect("No token found, redirecting to login")
             }
@@ -101,12 +101,14 @@ export const AuthMiddleware: FC<AuthMiddlewareProps> = ({children}) => {
         }
 
         if (checkInactivity()) {
-            window.alert("User inactive for too long, logging out")
-            logoutAndRedirect('User inactive for too long, logging out')
+            alert("Inactivité constaté, vous allez maintenant être déconnecté")
+            logoutUser()
+            redirectTo('/login')
+            return false
         }
         
         await validateAndRefreshToken()
-    }, [checkInactivity, isLoggedIn, logoutAndRedirect, validateAndRefreshToken])
+    }, [checkInactivity, isLoggedIn, logoutUser, validateAndRefreshToken])
     
     const handleActivity = useCallback(() => {
         if (isLoggedIn()) {

@@ -1,10 +1,9 @@
 import axios, {AxiosError, AxiosResponse} from "axios";
 import {AxiosConfig} from "../core/utils/interfaces.ts";
-import LocalStorageManager from "../core/LocalStorageManager.ts";
 import {message} from "antd";
 import {redirectTo} from "../context/RedirectContext.ts";
-import {jwt} from "../core/utils/text_display.ts";
 import {refreshToken} from "../auth/services/AuthService.ts.tsx";
+import {loggedUser} from "../auth/jwt/LoggedUser.ts";
 
 const baseURL = import.meta.env.VITE_API_URL;
 
@@ -16,7 +15,7 @@ const apiClient = axios.create({
 })
 
 apiClient.interceptors.request.use(config => {
-    const token = LocalStorageManager.get(jwt.tokenKey);
+    const token = loggedUser.getToken();
     if (token) config.headers!['Authorization'] = `Bearer ${token}`;
     return config;
 })
@@ -29,7 +28,7 @@ apiClient.interceptors.response.use(
             try {
                 const didRefresh = await refreshToken();
                 if (didRefresh) {
-                    const token = LocalStorageManager.get(jwt.tokenKey);
+                    const token = loggedUser.getToken();
 
                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     // @ts-expect-error
@@ -44,7 +43,7 @@ apiClient.interceptors.response.use(
             }
         }
         // if we get here, either it wasn’t a 401 or refresh failed
-        LocalStorageManager.remove(jwt.tokenKey);
+        loggedUser.removeToken();
     }
 );
 

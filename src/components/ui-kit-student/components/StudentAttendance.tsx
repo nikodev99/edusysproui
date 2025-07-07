@@ -10,7 +10,7 @@ import { attendanceTag } from "../../../entity/enums/attendanceStatus.ts";
 import { AttendanceRecord } from "../../../core/utils/interfaces.ts";
 import Datetime from "../../../core/datetime.ts";
 import Tag from "../../ui/layout/Tag.tsx";
-import PageError from "../../../pages/PageError.tsx";
+import PageError from "../../../pages/errors/PageError.tsx";
 import {LuEye} from "react-icons/lu";
 import {Link} from "react-router-dom";
 import {SelectAcademicYear} from "../../common/SelectAcademicYear.tsx";

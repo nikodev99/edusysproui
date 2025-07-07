@@ -1,6 +1,5 @@
-import LocalStorageManager from "../../core/LocalStorageManager.ts";
-import { jwt } from "../../core/utils/text_display.ts";
 import { decodeJwt, jwtVerify, type JWTPayload, type JWTHeaderParameters } from "jose";
+import {loggedUser} from "./LoggedUser.ts";
 
 // Enhanced type definitions for better type safety
 interface TokenValidationResult {
@@ -12,7 +11,7 @@ interface TokenValidationResult {
 
 interface DecodedTokenResult {
     success: boolean;
-    payload?: JWTPayload & {id?: number, lastName?: string, firstName?: string};
+    payload?: JWTPayload & {id?: number};
     error?: string;
 }
 
@@ -23,7 +22,7 @@ interface DecodedTokenResult {
  * including validation, decoding, and storage operations. It implements
  * the singleton pattern to ensure a consistent token state across the application.
  */
-class JWTTokenManager {
+export class JWTTokenManager {
     // Private static instance for a singleton pattern
     private static instance: JWTTokenManager | null = null;
 
@@ -65,13 +64,13 @@ class JWTTokenManager {
      */
     private getCurrentToken(): string | null {
         if (!this.cachedToken) {
-            this.cachedToken = LocalStorageManager.get<string>(jwt.tokenKey);
+            this.cachedToken = loggedUser.getToken()
         }
         return this.cachedToken;
     }
 
     public getRefreshToken(): string | null {
-        return LocalStorageManager.get<string>(jwt.refreshTokenKey);
+        return loggedUser.getRefreshToken()
     }
 
     /**
@@ -79,7 +78,7 @@ class JWTTokenManager {
      * Call this method when the token is updated externally
      */
     public refreshTokenCache(): void {
-        this.cachedToken = LocalStorageManager.get<string>(jwt.tokenKey);
+        this.cachedToken = loggedUser.getToken()
         this.lastValidationTime = 0; // Reset validation cache
     }
 
@@ -178,7 +177,7 @@ class JWTTokenManager {
     }
 
     /**
-     * Convenience method to check if token exists and is valid
+     * Convenience method to check if a token exists and is valid
      * Returns a simple boolean for quick validity checks
      */
     public async isValidToken(): Promise<boolean> {
@@ -242,8 +241,4 @@ class JWTTokenManager {
     }
 }
 
-// Export singleton instance for convenient access
 export const jwtTokenManager = JWTTokenManager.getInstance();
-
-// Also export the class for cases where direct instantiation control is needed
-export default JWTTokenManager;

@@ -1,6 +1,6 @@
 import {createBrowserRouter} from "react-router-dom";
 import PageLayout from "../../pages/PageLayout.tsx";
-import PageError from "../../pages/PageError.tsx";
+import PageError from "../../pages/errors/PageError.tsx";
 import Dashboard from "../../pages/home/page.tsx";
 import StudentListPage from "../../pages/student/StudentListPage.tsx";
 import EnrollStudentPage from "../../pages/student/EnrollStudentPage.tsx";
@@ -29,17 +29,36 @@ import LoginPage from "../../pages/user/LoginPage.tsx";
 import RedirectProvider from "../../providers/RedirectProvider.tsx";
 import NavigationHandler from "../../providers/NavigationHandler.tsx";
 import {AuthMiddleware} from "../../middleware/AuthMiddleware.tsx";
+import {withAuthProtection} from "../../middleware/withAuthProtection.tsx";
+import LogSchoolPage from "../../pages/user/LogSchoolPage.tsx";
+
+const DashboardPage = withAuthProtection(Dashboard);
+const ListStudentPage = withAuthProtection(StudentListPage);
+const EnrollPage = withAuthProtection(EnrollStudentPage);
+const ViewStudentPage = withAuthProtection(StudentViewPage);
+
+console.log("TEXT: ", text)
 
 export const Route = createBrowserRouter([
     {
-        path: '/login',
-        element:
-            <NavigationHandler requireAuth={false}>
-                <LoginPage />
-            </NavigationHandler>
+        path: '/',
+        element: <NavigationHandler requireAuth={false}>
+            <LoginPage />
+        </NavigationHandler>,
+        children: [
+            {path: 'login', element: <LoginPage />}
+        ]
     },
     {
-        path: '/',
+        path: '/active_school',
+        element: (
+            <NavigationHandler>
+                <LogSchoolPage />
+            </NavigationHandler>
+        )
+    },
+    {
+        path: '/:schoolSlug',
         element: (
             <RedirectProvider>
                 <AuthMiddleware>
@@ -51,14 +70,14 @@ export const Route = createBrowserRouter([
         ),
         errorElement: <PageError />,
         children: [
-            { path: text.home.path.page[0], element: <Dashboard />},
-            { path: text.home.path.page[1], element: <Dashboard />},
+            { index: true, element: <DashboardPage />},
+            { path: text.home.path.page[1], element: <DashboardPage />},
             {
                 path: 'students',
                 children: [
-                    { path: text.path.page, element: <StudentListPage />},
-                    { path: text.path.new, element: <EnrollStudentPage />},
-                    { path: text.path.view, element: <StudentViewPage />}
+                    { path: text.path.page, element: <ListStudentPage />},
+                    { path: text.path.new, element: <EnrollPage />},
+                    { path: text.path.view, element: <ViewStudentPage />}
                 ]
             },
             {

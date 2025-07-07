@@ -1,7 +1,6 @@
 import {apiClient, handleError} from "../../data/axiosConfig.ts";
 import {LoginRequest, SignupRequest, UserProfileToken} from "../dto/user.ts";
-import LocalStorageManager from "../../core/LocalStorageManager.ts";
-import {jwt} from "../../core/utils/text_display.ts";
+import {loggedUser} from "../jwt/LoggedUser.ts";
 
 export const loginApi = async (login: LoginRequest) => {
     try {
@@ -15,15 +14,15 @@ export const loginApi = async (login: LoginRequest) => {
 }
 
 export const refreshToken = async () => {
-    const refreshToken = LocalStorageManager.get<string>(jwt.refreshTokenKey)
+    const refreshToken = loggedUser.getRefreshToken()
     if (!refreshToken) return false
 
     try {
-        const response = await apiClient.post<UserProfileToken>('/refresh', {refreshToken})
+        const response = await apiClient.post<UserProfileToken>('/auth/refresh', {refreshToken})
         if (response.status >= 200 && response.status <= 300) {
             const data = response.data
-            LocalStorageManager.save(jwt.tokenKey, data.accessToken)
-            LocalStorageManager.save(jwt.refreshTokenKey, data.refreshToken)
+            loggedUser.setToken(data.accessToken)
+            loggedUser.setRefreshToken(data.refreshToken)
             return true
         }
     }catch (error) {
@@ -41,6 +40,6 @@ export const signupApi = async (data: SignupRequest) => {
 }
 
 export const logoutApi = async () => {
-    const refreshToken = LocalStorageManager.get<string>(jwt.refreshTokenKey)
+    const refreshToken = loggedUser.getRefreshToken()
     await apiClient.post('/auth/logout', {refreshToken})
 }

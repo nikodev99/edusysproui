@@ -1,4 +1,7 @@
-export const text = {
+import {loggedUser} from "../../auth/jwt/LoggedUser.ts";
+import {toLower} from "./utils.ts";
+
+export const raw = {
     auth: {
         login: '/login',
         signUp: '/signup',
@@ -163,6 +166,29 @@ export const text = {
     semester: 'Trimestre'
 }
 
+/**
+ * Processes a deep clone of the `text` object and appends a given school slug as a prefix
+ * to all `href` properties found in the object hierarchy.
+ *
+ * @param {string} schoolSlug - The slug to be prefixed to all `href` properties.
+ * @returns {typeof text} A deep clone of the `text` object with modified `href` properties.
+ */
+export const withSlug = (schoolSlug: string): typeof raw => {
+    const prefix = `/${schoolSlug}`
+    const deepClone = JSON.parse(JSON.stringify(raw))
+    const walk = (obj: Record<string, unknown>) => {
+        Object.keys(obj).forEach(key => {
+            if (typeof obj[key] === 'object') {
+                walk(obj[key] as Record<string, unknown>)
+            }else if (key === 'href') {
+                obj[key] = prefix + obj[key]
+            }
+        })
+    }
+    walk(deepClone)
+    return deepClone as typeof raw
+}
+
 export const calendarMessages = {
     allDay: 'Journée entière',
     previous: 'Précédent',
@@ -181,5 +207,8 @@ export const calendarMessages = {
 export const jwt = {
     tokenKey: 'jwtAccessToken',
     refreshTokenKey: 'jwtRefreshToken',
-    user: 'edusyspro-user'
+    user: 'edusyspro-user',
+    school: 'edusyspro-school'
 }
+
+export const text = withSlug(toLower(loggedUser.getSchool()?.abbr as string) as string)

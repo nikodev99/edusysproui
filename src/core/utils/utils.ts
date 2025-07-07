@@ -485,6 +485,13 @@ export const setFirstName = (firstName?: string) => {
     return ''
 }
 
+export const toLower = (sequence?: string): string | null => {
+    if (sequence) {
+        return sequence.toLowerCase()
+    }
+    return null
+}
+
 export const setName = (lastName?: string, firstName?: string, maidenName?: string, showMaiden?: boolean) => {
     const fullRealName = setFirstName(`${lastName} ${firstName}`)
     if (lastName && firstName) {

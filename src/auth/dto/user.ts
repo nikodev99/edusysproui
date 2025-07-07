@@ -9,8 +9,9 @@ export interface UserProfileToken {
     id: number
     username: string
     email: string
+    phoneNumber: string
     roles: Role[]
-    school: School
+    user: UserProfile
 }
 
 export interface LoginRequest {
@@ -28,5 +29,20 @@ export interface SignupRequest {
 }
 
 export interface UserProfile {
-    user: Individual
+    userId: string
+    firstName: string
+    lastName: string
+    username: string
+    email: string
+    phoneNumber: string
+    roles: Role[]
+    schools: School[]
 }
+
+export const toUser = (profil: UserProfileToken): UserProfile => ({
+    ...profil?.user,
+    email: profil?.email,
+    username: profil?.username,
+    phoneNumber: profil?.phoneNumber,
+    roles: profil?.roles
+});

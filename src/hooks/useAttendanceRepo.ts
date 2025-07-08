@@ -21,8 +21,11 @@ import {
 import {Attendance} from "../entity";
 import {useInsert} from "./usePost.ts";
 import {useUpdate} from "./useUpdate.ts";
+import {loggedUser} from "../auth/jwt/LoggedUser.ts";
 
 export const useAttendanceRepo = () => {
+    const userSchool = loggedUser.getSchool()
+
     const useInsertAttendances = () => useInsert(insertAttendances, {
         mutationKey: ['attendance-post']
     })
@@ -65,7 +68,6 @@ export const useAttendanceRepo = () => {
     )
 
     const useGetAllSchoolStudentAttendanceOfDay = (
-        schoolId: string,
         academicYearId: string,
         date?: Date,
         searchable?: string,
@@ -73,10 +75,10 @@ export const useAttendanceRepo = () => {
         sortField?: string,
         sortOrder?: string,
     ) => useFetch<Attendance[], unknown>(
-        ['school-all-student-attendances', schoolId],
+        ['school-all-student-attendances', userSchool?.id],
         getAllSchoolStudentAttendanceOfTheDay,
-        [schoolId, academicYearId, date, searchable, pageable?.page, pageable?.size, sortField, sortOrder],
-        !!schoolId && !!academicYearId
+        [userSchool?.id, academicYearId, date, searchable, pageable?.page, pageable?.size, sortField, sortOrder],
+        !!userSchool?.id && !!academicYearId
     )
 
     const useGetClasseAttendanceStatus = (classeId: number, academicYearId: string, searchQuery?: string, pageCount?: number, size?: number) => useFetch<AttendanceSummary[], unknown>(
@@ -99,15 +101,14 @@ export const useAttendanceRepo = () => {
     )
 
     const useGetSchoolAttendanceStatPerStatus = (
-        schoolId: string,
         academicYearId: string,
         startDate?: Date,
         endDate?: Date
     ) => useFetch<AttendanceRecentCount[], unknown>(
-        ['school-recent-attendances', schoolId, academicYearId],
+        ['school-recent-attendances', userSchool?.id, academicYearId],
         getSchoolAttendanceStatPerStatus,
-        [schoolId, academicYearId, startDate, endDate],
-        !!schoolId && !!academicYearId
+        [userSchool?.id, academicYearId, startDate, endDate],
+        !!userSchool?.id && !!academicYearId
     )
 
     const useGetClasseStudentRankingAttendances = (classeId: number, academicYearId: string, showWorst: boolean = false) => useFetch<AttendanceSummary[], unknown>(
@@ -117,11 +118,11 @@ export const useAttendanceRepo = () => {
         !!classeId && !!academicYearId
     )
 
-    const useGetSchoolStudentRanking = (schoolId: string, academicYearId: string, showWorst: boolean = false) => useFetch<AttendanceSummary[], unknown>(
-        ['school-student-ranking-attendances', schoolId, showWorst, academicYearId],
+    const useGetSchoolStudentRanking = (academicYearId: string, showWorst: boolean = false) => useFetch<AttendanceSummary[], unknown>(
+        ['school-student-ranking-attendances', userSchool?.id, showWorst, academicYearId],
         getSchoolStudentRanking,
-        [schoolId, academicYearId, showWorst],
-        !!schoolId && !!academicYearId
+        [userSchool?.id, academicYearId, showWorst],
+        !!userSchool?.id && !!academicYearId
     )
 
     const useGetSchoolAttendanceCount = (academicYearId: string, date?: Date) => useFetch<AttendanceStatusCountResponse, unknown>(

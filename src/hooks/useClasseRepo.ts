@@ -8,13 +8,16 @@ import {
 } from "../data/repository/classeRepository.ts";
 import {useEffect, useState} from "react";
 import {Classe} from "../entity";
+import {loggedUser} from "../auth/jwt/LoggedUser.ts";
 
 export const useClasseRepo = () => {
+    const userSchool = loggedUser.getSchool()
+
     const useGetAllClasse = (page: Pageable, sortCriteria?: string) => useFetch(
         ['classes'],
         getAllClasses,
-        [page, sortCriteria],
-        !!page.size
+        [userSchool?.id, page, sortCriteria],
+        !!userSchool?.id && !!page.size
     )
     
     const useGetAllSearchClasses = (classeName: string) => {
@@ -23,7 +26,7 @@ export const useClasseRepo = () => {
 
         useEffect(() => {
             if (classeName)
-                fetch(getAllSearchClasses, [classeName])
+                fetch(getAllSearchClasses, [userSchool?.id, classeName])
                     .then(resp => {
                         if (resp.isSuccess) {
                             setClasses(resp.data as Classe[])
@@ -47,7 +50,7 @@ export const useClasseRepo = () => {
         const fetch = useRawFetch()
 
         useEffect(() => {
-            fetch(getClassesBasicValues, [])
+            fetch(getClassesBasicValues, [userSchool?.id])
                 .then(resp => {
                         if (resp.isSuccess) {
                             setClasses(resp.data as Classe[])

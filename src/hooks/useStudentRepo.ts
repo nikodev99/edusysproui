@@ -16,8 +16,10 @@ import {
 } from "../data/repository/studentRepository.ts";
 import {fetchEnrolledClasseStudents} from "../data/action/studentAction.ts";
 import {useEffect, useState} from "react";
+import {loggedUser} from "../auth/jwt/LoggedUser.ts";
 
 export const useStudentRepo = () => {
+    const userSchool = loggedUser.getSchool()
 
     /**
      * Fetches paginated enrolled students.
@@ -50,10 +52,10 @@ export const useStudentRepo = () => {
         searchInput: string
     ): UseQueryResult<Enrollment[], unknown> => {
         return useFetch(
-            ['students-search', searchInput],
+            ['students-search', userSchool?.id, searchInput],
             searchEnrolledStudents,
-            [searchInput],
-            !!searchInput
+            [userSchool?.id, searchInput],
+            !!userSchool?.id && !!searchInput
         );
     };
 
@@ -151,10 +153,10 @@ export const useStudentRepo = () => {
         classeId: string
     ): UseQueryResult<Enrollment[], unknown> => {
         return useFetch(
-            ['random-classmate', studentId, classeId],
+            ['random-classmate', userSchool?.id, studentId, classeId],
             getRandomStudentClassmate,
-            [studentId, classeId],
-            !!studentId && !!classeId
+            [userSchool?.id, studentId, classeId],
+            !!userSchool?.id && !!studentId && !!classeId
         );
     };
 
@@ -228,7 +230,7 @@ export const useStudentRepo = () => {
         const [count, setCount] = useState<GenderCounted>()
         const fetch = useRawFetch();
         useEffect(() => {
-            fetch(countStudent, [])
+            fetch(countStudent, [userSchool?.id])
                 .then(resp => {
                     if (resp.isSuccess) {
                         setCount(resp.data as GenderCounted)

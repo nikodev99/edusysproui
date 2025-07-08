@@ -3,8 +3,11 @@ import {useEffect, useState} from "react";
 import {useRawFetch} from "./useFetch.ts";
 import {getAllPlannings, getGradePlannings} from "../data/repository/planningRepository.ts";
 import {SectionType} from "../entity/enums/section.ts";
+import {loggedUser} from "../auth/jwt/LoggedUser.ts";
 
 export const usePlanningRepo = () => {
+    const userSchool = loggedUser.getSchool()
+
     return {
         useGetAllPlannings: (academicYear: string): Planning[] => {
             const [plannings, setPlannings] = useState<Planning[]>([])
@@ -12,7 +15,7 @@ export const usePlanningRepo = () => {
 
             useEffect(() => {
                 if (academicYear)
-                    fetch(getAllPlannings, [academicYear])
+                    fetch(getAllPlannings, [userSchool?.id, academicYear])
                         .then(resp => {
                             if (resp.isSuccess) {
                                 setPlannings(resp.data as Planning[])
@@ -29,7 +32,7 @@ export const usePlanningRepo = () => {
 
             useEffect(() => {
                 if (section)
-                    fetch(getGradePlannings, [section])
+                    fetch(getGradePlannings, [userSchool?.id, section])
                         .then(resp => {
                             if (resp.isSuccess) {
                                 setPlannings(resp.data as Planning[])

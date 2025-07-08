@@ -25,10 +25,10 @@ export const AttendanceAnalysis = (
         useGetSchoolAttendanceCount
     } = useAttendanceRepo()
 
-    const {data: recentCount} = useGetSchoolAttendanceStatPerStatus(text.schoolID, academicYear as string)
+    const {data: recentCount} = useGetSchoolAttendanceStatPerStatus(academicYear as string)
 
-    const {data: goodStudents} = useGetSchoolStudentRanking(text.schoolID, academicYear as string)
-    const {data: worstStudents} = useGetSchoolStudentRanking(text.schoolID, academicYear as string, true)
+    const {data: goodStudents} = useGetSchoolStudentRanking(academicYear as string)
+    const {data: worstStudents} = useGetSchoolStudentRanking(academicYear as string, true)
 
     const attendanceStatusCount = useGetSchoolAttendanceCount(academicYear as string, today.toDate())
 

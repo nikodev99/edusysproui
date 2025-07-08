@@ -4,19 +4,22 @@ import {getAllBasicCourses, getAllCourses} from "../repository/courseRepository.
 import {Response} from "./response.ts";
 import {AxiosResponse} from "axios";
 import {getShortSortOrder, setSortFieldName} from "../../core/utils/utils.ts";
+import {loggedUser} from "../../auth/jwt/LoggedUser.ts";
+
+const schoolId: string = loggedUser.getSchool()?.id as string;
 
 export const getAllSchoolCourses = async (page: number, size: number, sortField?: string, sortOrder?: string): Promise<AxiosResponse<Course[]>> => {
     if(sortField && sortOrder) {
         sortOrder = getShortSortOrder(sortOrder)
         sortField = sortedField(sortField);
-        return await getAllCourses({page: page, size: size}, `${sortField}:${sortOrder}`);
+        return await getAllCourses(schoolId, {page: page, size: size}, `${sortField}:${sortOrder}`);
     }
-    return await getAllCourses({page: page, size: size})
+    return await getAllCourses(schoolId, {page: page, size: size})
 }
 
 export const fetchAllCourses = async (): Promise<Response<Course[]>> => {
     try {
-        const resp = await getAllBasicCourses()
+        const resp = await getAllBasicCourses(schoolId)
         if (resp && 'data' in resp) {
             return {
                 isSuccess: true,

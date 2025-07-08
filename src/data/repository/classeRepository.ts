@@ -13,8 +13,8 @@ export const addClasse = (data: ClasseSchema): Promise<AxiosResponse<ClasseSchem
     })
 }
 
-export const getAllClasses = (page: Pageable, sortCriteria?: string) => {
-    return apiClient.get<Classe[]>("/classes", {
+export const getAllClasses = (schoolId: string, page: Pageable, sortCriteria?: string) => {
+    return apiClient.get<Classe[]>("/classes/all/" + schoolId, {
         params: {
             page: page.page,
             size: page.size,
@@ -23,8 +23,8 @@ export const getAllClasses = (page: Pageable, sortCriteria?: string) => {
     });
 }
 
-export const getAllSearchClasses = (classeName: string): Promise<AxiosResponse<Classe[]>> => {
-    return apiClient.get<Classe[]>("/classes/search/", {
+export const getAllSearchClasses = (schoolId: string, classeName: string): Promise<AxiosResponse<Classe[]>> => {
+    return apiClient.get<Classe[]>("/classes/search/" + schoolId, {
         params: {
             q: classeName
         }
@@ -39,8 +39,8 @@ export const getClasse = (classeId: number, academicYear: string) => {
     })
 }
 
-export const getClassesBasicValues = (): Promise<AxiosResponse<Classe[]>> => {
-    return apiClient.get<Classe[]>("/classes/basic");
+export const getClassesBasicValues = (schoolId: string): Promise<AxiosResponse<Classe[]>> => {
+    return apiClient.get<Classe[]>("/classes/basic/" + schoolId);
 }
 
 export const updateClasseValues = (data: ClasseSchema, classeId: ID) => {

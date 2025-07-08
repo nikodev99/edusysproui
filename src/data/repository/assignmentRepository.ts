@@ -44,8 +44,12 @@ export const getAllAssignments = (
     })
 }
 
-export const getAllNotCompletedAssignment = () => {
-    return apiClient.get<Assignment[]>(`/assignment/not_completed`)
+export const getAllNotCompletedAssignment = (academicYear: string) => {
+    return apiClient.get<Assignment[]>(`/assignment/not_completed`, {
+        params: {
+            academicYear: academicYear
+        }
+    })
 }
 
 export const getAllClasseAssignments = (

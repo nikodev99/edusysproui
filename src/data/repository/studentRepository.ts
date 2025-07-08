@@ -14,10 +14,10 @@ export const enrollStudent = (data: EnrollmentSchema): Promise<AxiosResponse<Enr
     })
 }
 
-export const getEnrolledStudents = (page: number, size: number, sortCriteria?: string) => {
+export const getEnrolledStudents = (schoolId: string, page: number, size: number, sortCriteria?: string) => {
     return request({
         method: 'GET',
-        url: '/enroll',
+        url: '/enroll/' + schoolId,
         params: {
             page: page,
             size: size,
@@ -26,10 +26,10 @@ export const getEnrolledStudents = (page: number, size: number, sortCriteria?: s
     })
 }
 
-export const searchEnrolledStudents = (searchInput: string) => {
+export const searchEnrolledStudents = (schoolId: string, searchInput: string) => {
     return request({
         method: 'GET',
-        url: '/enroll/search/',
+        url: '/enroll/search/' + schoolId,
         params: {
             q: searchInput
         }
@@ -74,14 +74,14 @@ export const getClasseStudents = (classeId: number, academicYear: string) => {
     })
 }
 
-export const getRandomStudentClassmate = (studentId: string, classeId: number): Promise<AxiosResponse<Enrollment[]>> => {
-    return apiClient.get<Enrollment[]>(`enroll/classmates/${studentId}_${classeId}`)
+export const getRandomStudentClassmate = (schoolId: string, studentId: string, classeId: number): Promise<AxiosResponse<Enrollment[]>> => {
+    return apiClient.get<Enrollment[]>(`enroll/classmates/${schoolId}/${studentId}_${classeId}`)
 }
 
 export const getAllStudentClassmate = (studentId: string, classeId: number, academicYearId: string, pageable: Pageable) => {
     return request({
         method: 'GET',
-        url: `/enroll/${studentId}_${classeId}`,
+        url: `/enroll/classmates/${studentId}_${classeId}`,
         params: {
             academicYearId: academicYearId,
             page: pageable.page,
@@ -143,6 +143,6 @@ export const countSomeClasseStudents = (classeId: number[], academicYearId: stri
     })
 }
 
-export const countStudent = () => {
-    return apiClient.get<GenderCounted>('/enroll/count')
+export const countStudent = (schoolId: string) => {
+    return apiClient.get<GenderCounted>('/enroll/count/' + schoolId)
 }

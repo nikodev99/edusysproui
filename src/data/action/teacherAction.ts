@@ -2,18 +2,21 @@ import {getShortSortOrder, setSortFieldName} from "../../core/utils/utils.ts";
 import {getAllTeachers, getNumberOfStudentTaughtByTeacher, getTeacherById} from "../repository/teacherRepository.ts";
 import {ErrorCatch} from "./error_catch.ts";
 import {Counted} from "../../core/utils/interfaces.ts";
+import {loggedUser} from "../../auth/jwt/LoggedUser.ts";
+
+const schoolId: string = loggedUser.getSchool()?.id as string;
 
 export const fetchTeachers = async (page: number, size: number, sortField?: string, sortOrder?: string) => {
     if (sortField && sortOrder) {
         sortOrder = getShortSortOrder(sortOrder);
         sortField = sortedField(sortField);
-        return await getAllTeachers(page, size, `${sortField}:${sortOrder}`);
+        return await getAllTeachers(schoolId, page, size, `${sortField}:${sortOrder}`);
     }
-    return await getAllTeachers(page, size)
+    return await getAllTeachers(schoolId, page, size)
 }
 
 export const fetchTeacherById = async (teacherId: string) => {
-    return await getTeacherById(teacherId)
+    return await getTeacherById(teacherId, schoolId)
 }
 
 export const count = async (teacherId: string) => {

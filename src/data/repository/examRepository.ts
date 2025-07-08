@@ -2,10 +2,10 @@ import {AxiosResponse} from "axios";
 import {Exam} from "../../entity";
 import {request} from "../axiosConfig.ts";
 
-export const getAllExams = (academicYear: string): Promise<AxiosResponse<Exam[], unknown>> => {
+export const getAllExams = (schoolId: string, academicYear: string): Promise<AxiosResponse<Exam[], unknown>> => {
     return request({
         method: 'GET',
-        url: `/exam`,
+        url: `/exam/${schoolId}`,
         params: {
             academicYear: academicYear
         }

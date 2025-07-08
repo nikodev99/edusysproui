@@ -11,13 +11,16 @@ import {
 import {useEffect, useState} from "react";
 import {SectionType} from "../entity/enums/section.ts";
 import {Teacher} from "../entity";
+import {loggedUser} from "../auth/jwt/LoggedUser.ts";
 
 export const useTeacherRepo = () => {
+    const userSchool = loggedUser.getSchool()
+
     const useGetAllTeachers = (pageable: Pageable, sortField: string, sortOrder: string) => useFetch(
         ['teacher-list'],
         fetchTeachers,
-        [pageable.page, pageable.size, sortField, sortOrder],
-        !!pageable.size,
+        [userSchool?.id, pageable.page, pageable.size, sortField, sortOrder],
+        !!userSchool?.id && !!pageable.size,
     )
     
     const useGetSearchedTeachers = (input: string) => useFetch(
@@ -52,10 +55,10 @@ export const useTeacherRepo = () => {
     }
 
     const useGetTeacher = (teacherId: string) => useFetch(
-        ['teacher', teacherId],
+        ['teacher', teacherId, userSchool?.id],
         getTeacherById,
-        [teacherId],
-        !!teacherId
+        [teacherId, userSchool?.id],
+        !!teacherId && !!userSchool?.id
     )
 
     const useGetTeacherSchedules = (teacherId: string,  allDay: boolean = false) => useFetch(
@@ -104,7 +107,7 @@ export const useTeacherRepo = () => {
         const fetch = useRawFetch()
 
         useEffect(() => {
-            fetch(countAllTeachers, [])
+            fetch(countAllTeachers, [userSchool?.id])
                 .then(resp => {
                     if (resp.isSuccess) {
                         setCount(resp.data as GenderCounted)

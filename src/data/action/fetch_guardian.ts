@@ -7,19 +7,22 @@ import {
 } from "../request";
 import {Guardian} from "../../entity";
 import {getShortSortOrder, setSortFieldName} from "../../core/utils/utils.ts";
+import {loggedUser} from "../../auth/jwt/LoggedUser.ts";
+
+const schoolId: string = loggedUser.getSchool()?.id as string;
 
 export const fetchEnrolledStudentsGuardians = async (page: number, size: number, sortField?: string, sortOrder?: string) => {
     if (sortField && sortOrder) {
         sortOrder = getShortSortOrder(sortOrder)
         sortField = sortedField(sortField)
-        return await getEnrolledStudentsGuardians(page, size, `${sortField}:${sortOrder}`);
+        return await getEnrolledStudentsGuardians(schoolId, page, size, `${sortField}:${sortOrder}`);
     }
-    return await getEnrolledStudentsGuardians(page, size)
+    return await getEnrolledStudentsGuardians(schoolId, page, size)
 }
 
 export const fetchSearchedEnrolledStudentsGuardian = async (searchInput: string) => {
     try {
-        const resp = await getSearchedEnrolledStudentGuardian(searchInput)
+        const resp = await getSearchedEnrolledStudentGuardian(schoolId, searchInput)
         if (resp && resp.status === 200) {
             return {
                 isSuccess: true,

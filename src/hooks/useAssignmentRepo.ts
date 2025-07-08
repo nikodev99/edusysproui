@@ -22,9 +22,9 @@ export const useAssignmentRepo = () => {
         )
     }
 
-    const useGetAllNotCompletedAssignments = () => useFetch(
+    const useGetAllNotCompletedAssignments = (academicYear: string) => useFetch(
         'Not-Completed-Assignments',
-        getAllNotCompletedAssignment, [],
+        getAllNotCompletedAssignment, [academicYear],
         true
     )
 

@@ -1,16 +1,18 @@
 import {Exam} from "../entity";
 import {getAllExams, getClasseExamAssignments, getClasseExams} from "../data/repository/examRepository.ts";
 import {useFetch} from "./useFetch.ts";
+import {loggedUser} from "../auth/jwt/LoggedUser.ts";
 
 export const useExamRepo = () => {
+    const userSchool = loggedUser.getSchool()
 
     return{
         useGetAllExams: (academicYear?: string): Exam[] => {
             return useFetch(
                 ['exam-list'],
                 getAllExams,
-                [academicYear],
-                !!academicYear
+                [userSchool?.id, academicYear],
+                !!userSchool?.id && !!academicYear
             ).data as Exam[]
         },
 

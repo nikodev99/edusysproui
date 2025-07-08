@@ -15,6 +15,7 @@ import {useToggle} from "../../../hooks/useToggle.ts";
 import {Typography} from "antd";
 import {AssignmentForm} from "../../forms/AssignmentForm.tsx";
 import Datetime from "../../../core/datetime.ts";
+import {useAcademicYearRepo} from "../../../hooks/useAcademicYearRepo.ts";
 
 const InsertExam = () => {
     const {Title} = Typography
@@ -22,8 +23,10 @@ const InsertExam = () => {
     const [isRefetch, setIsRefetch] = useState(false)
     const [openModal, setOpenModal] = useToggle(false)
     const {useGetAllNotCompletedAssignments} = useAssignmentRepo()
-    
-    const {data, refetch} = useGetAllNotCompletedAssignments()
+    const {useGetCurrentAcademicYear} = useAcademicYearRepo()
+
+    const academicYear = useGetCurrentAcademicYear()
+    const {data, refetch} = useGetAllNotCompletedAssignments(academicYear?.id as string)
 
     const form = useForm<AssignmentSchema>({
         resolver: zodResolver(assignmentSchema)

@@ -7,14 +7,17 @@ import {
     getAllAcademicYears,
     getCurrentAcademicYear
 } from "../data/repository/academicYearRepository.ts";
+import {loggedUser} from "../auth/jwt/LoggedUser.ts";
 
 export const useAcademicYearRepo = () => {
+    const userSchool = loggedUser.getSchool()
+
     const useGetCurrentAcademicYear = () => {
         const [currentYear, setCurrentYear] = useState<AcademicYear>()
         const fetch = useRawFetch()
 
         useEffect(() => {
-            fetch(getCurrentAcademicYear, [])
+            fetch(getCurrentAcademicYear, [userSchool?.id])
                 .then(resp => {
                     if (resp) {
                         setCurrentYear(resp.data as AcademicYear)
@@ -31,7 +34,7 @@ export const useAcademicYearRepo = () => {
         
         useEffect(() => {
             if (year)
-                fetch(getAcademicYearFromYear, [year])
+                fetch(getAcademicYearFromYear, [userSchool?.id, year])
                     .then(resp => {
                         if (resp) {
                             setAcademicYearFromYear(resp.data as AcademicYear[])
@@ -48,7 +51,7 @@ export const useAcademicYearRepo = () => {
 
         useEffect(() => {
             if (date)
-                fetch(getAcademicYearFromDate, [date])
+                fetch(getAcademicYearFromDate, [userSchool?.id, date])
                     .then(resp => {
                         if (resp) {
                             setAcademicYearFromDate(resp.data as AcademicYear)
@@ -64,7 +67,7 @@ export const useAcademicYearRepo = () => {
         const fetch = useRawFetch()
 
         useEffect(() => {
-            fetch(getAllAcademicYears, [])
+            fetch(getAllAcademicYears, [userSchool?.id])
                 .then(resp => {
                     if (resp) {
                         setAcademicYears(resp.data as AcademicYear[])

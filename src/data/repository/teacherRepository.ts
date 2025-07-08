@@ -9,10 +9,10 @@ export const insertTeacher = async (teacher: TeacherSchema): Promise<AxiosRespon
     return await apiClient.post<Teacher>('/teachers', teacher)
 }
 
-export const getAllTeachers = (page: number, size: number, sortCriteria?: string) => {
+export const getAllTeachers = (schoolId: string, page: number, size: number, sortCriteria?: string) => {
     return request({
         method: 'GET',
-        url: '/teachers',
+        url: '/teachers/' + schoolId,
         params: {
             page: page,
             size: size,
@@ -21,8 +21,8 @@ export const getAllTeachers = (page: number, size: number, sortCriteria?: string
     })
 }
 
-export const getSearchedTeachers = (input: string): Promise<AxiosResponse<Teacher[], unknown>> => {
-    return apiClient.get<Teacher[]>("/teachers/search/", {params: {q: input}})
+export const getSearchedTeachers = (schoolId: string, input: string): Promise<AxiosResponse<Teacher[], unknown>> => {
+    return apiClient.get<Teacher[]>("/teachers/search/" + schoolId, {params: {q: input}})
 }
 
 export const getTeachersBasicValues = (classeId: number, section: SectionType): Promise<AxiosResponse<Teacher[], unknown>> => {
@@ -41,8 +41,8 @@ export const getTeacherBasicValues = (teacherId: number, classeId: number): Prom
     })
 }
 
-export const getTeacherById = (teacherId: string): Promise<AxiosResponse<Teacher>> => {
-    return apiClient.get<Teacher>(`/teachers/${teacherId}`)
+export const getTeacherById = (teacherId: string, schoolId: string): Promise<AxiosResponse<Teacher>> => {
+    return apiClient.get<Teacher>(`/teachers/${teacherId}/${schoolId}`)
 }
 
 export const getNumberOfStudentTaughtByTeacher = (teacherId: string) => {
@@ -65,6 +65,6 @@ export const getTeacherScheduleByDay = (teacherId: string, allDay: boolean): Pro
     })
 }
 
-export const countAllTeachers = () => {
-    return apiClient.get(`/teachers/count`)
+export const countAllTeachers = (schoolId: string) => {
+    return apiClient.get(`/teachers/count/${schoolId}`)
 }

@@ -6,7 +6,7 @@ export type UserAuthContext = {
     user: UserProfile | null,
     token: string | null
     refreshToken: string | null
-    userSchools: School | null
+    userSchool: School | null
 
     registerUser: (data: SignupRequest) => Promise<boolean>
     loginUser: (data: LoginRequest) => Promise<boolean>

@@ -1,17 +1,14 @@
 // Create NavigationHandler.tsx
 import {ReactNode, useEffect, useState} from 'react';
-import {useLocation, Navigate, useParams} from 'react-router-dom';
+import {useLocation, Navigate} from 'react-router-dom';
 import {useAuth} from "../hooks/useAuth.ts";
 import {toLower} from "../core/utils/utils.ts";
 import {Flex, Spin} from "antd";
 
 const NavigationHandler = ({ children, requireAuth = true }: { children: ReactNode, requireAuth?: boolean }) => {
-    const { isLoggedIn, userSchools } = useAuth();
+    const { isLoggedIn, userSchool } = useAuth();
     const location = useLocation();
-    const {schoolSlug} = useParams<{schoolSlug: string}>()
     const [isLoading, setIsLoading] = useState(true)
-
-    console.log({userSchools, schoolSlug});
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -43,9 +40,9 @@ const NavigationHandler = ({ children, requireAuth = true }: { children: ReactNo
     // For public routes like the login page (requireAuth = false)
     if (!isLoading && !requireAuth && isLoggedIn()) {
         // User is already authenticated, redirect to dashboard
-        if (userSchools && Object.keys(userSchools).length !== 0) {
-            const userSchool = toLower(userSchools?.abbr);
-            return <Navigate to={`/${userSchool}`} replace />;
+        if (userSchool && Object.keys(userSchool).length !== 0) {
+            const school = toLower(userSchool?.abbr);
+            return <Navigate to={`/${school}`} replace />;
         }else {
             return <Navigate to="/active_school" replace />;
         }

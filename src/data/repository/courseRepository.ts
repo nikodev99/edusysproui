@@ -10,8 +10,8 @@ export const addCourse = async (course: CourseSchema): Promise<AxiosResponse<Cou
     });
 }
 
-export const getAllCourses = async (page: Pageable, sortCriteria?: string): Promise<AxiosResponse<Course[]>> => {
-    return apiClient.get<Course[]>('/courses/all', {
+export const getAllCourses = async (schoolId: string, page: Pageable, sortCriteria?: string): Promise<AxiosResponse<Course[]>> => {
+    return apiClient.get<Course[]>('/courses/all/' + schoolId, {
         params: {
             page: page.page,
             size: page.size,
@@ -20,16 +20,16 @@ export const getAllCourses = async (page: Pageable, sortCriteria?: string): Prom
     })
 }
 
-export const getAllCoursesSearch = async (courseName: string): Promise<AxiosResponse<Course[]>> => {
-    return apiClient.get<Course[]>('/courses/search/', {
+export const getAllCoursesSearch = async (schoolId: string, courseName: string): Promise<AxiosResponse<Course[]>> => {
+    return apiClient.get<Course[]>('/courses/search/' + schoolId, {
         params: {
             q: courseName
         }
     })
 }
 
-export const getAllBasicCourses = () => {
-    return apiClient.get<Course[]>("/courses")
+export const getAllBasicCourses = (schoolId: string) => {
+    return apiClient.get<Course[]>("/courses/basic" + schoolId)
 }
 
 export const getCourseById = (courseId: string): Promise<AxiosResponse<Course>> => {

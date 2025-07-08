@@ -8,14 +8,17 @@ import {getShortSortOrder} from "../../core/utils/utils.ts";
 import {ErrorCatch} from "./error_catch.ts";
 import {Enrollment} from "../../entity";
 import {getClasseEnrolledStudents} from "../repository/studentRepository.ts";
+import {loggedUser} from "../../auth/jwt/LoggedUser.ts";
+
+const schoolId: string = loggedUser.getSchool()?.id as string;
 
 export const fetchEnrolledStudents = (page: number, size: number, sortField?: string, sortOrder?: string) => {
     if (sortField && sortOrder) {
         sortOrder = getShortSortOrder(sortOrder)
         sortField = sortedField(sortField)
-        return getEnrolledStudents(page, size, `${sortField}:${sortOrder}`)
+        return getEnrolledStudents(schoolId, page, size, `${sortField}:${sortOrder}`)
     }
-    return getEnrolledStudents(page, size)
+    return getEnrolledStudents(schoolId, page, size)
 }
 
 export const fetchStudentById = (id: string) => {
@@ -40,7 +43,7 @@ export const fetchEnrolledClasseStudents = (
 
 export const fetchStudentClassmatesRandomly = async (enrolledStudent: Enrollment) => {
     try {
-        const resp = await getRandomStudentClassmate(enrolledStudent.student.id, enrolledStudent.classe.id)
+        const resp = await getRandomStudentClassmate(schoolId, enrolledStudent.student.id, enrolledStudent.classe.id)
         if (resp && 'data' in resp) {
             return {
                 isSuccess: true,
@@ -58,7 +61,7 @@ export const fetchStudentClassmatesRandomly = async (enrolledStudent: Enrollment
 
 export const countStudents = async () => {
     try {
-        const resp = await countStudent()
+        const resp = await countStudent(schoolId)
         if (resp && 'data' in resp) {
             return {
                 isSuccess: true,

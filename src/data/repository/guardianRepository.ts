@@ -2,8 +2,8 @@ import {AxiosResponse} from "axios";
 import {Guardian} from "../../entity";
 import {apiClient, request} from "../axiosConfig.ts";
 
-export const getEnrolledStudentsGuardians = (page: number, size: number, sortCriteria?: string): Promise<AxiosResponse<Guardian[]>> => {
-    return apiClient.get<Guardian[]>("/enroll/guardians", {
+export const getEnrolledStudentsGuardians = (schoolId: string, page: number, size: number, sortCriteria?: string): Promise<AxiosResponse<Guardian[]>> => {
+    return apiClient.get<Guardian[]>("/enroll/guardians/" + schoolId, {
         params: {
             page: page,
             size: size,
@@ -12,10 +12,10 @@ export const getEnrolledStudentsGuardians = (page: number, size: number, sortCri
     })
 }
 
-export const getSearchedEnrolledStudentGuardian = (searchInput: string) => {
+export const getSearchedEnrolledStudentGuardian = (schoolId: string, searchInput: string) => {
     return request({
         method: 'GET',
-        url: '/enroll/guardians/search/',
+        url: '/enroll/guardians/search/' + schoolId,
         params: {
             q: searchInput
         }

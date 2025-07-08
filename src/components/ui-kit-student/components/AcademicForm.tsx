@@ -1,36 +1,18 @@
 import {ZodProps} from "../../../core/utils/interfaces.ts";
 import Responsive from "../../ui/layout/Responsive.tsx";
-import {useEffect, useMemo, useState} from "react";
-import {AcademicYear, Classe} from "../../../entity";
-import {findClassesBasicValue} from "../../../data";
-import {findCurrentAcademicYear} from "../../../data/action/fetch_academic_year.ts";
+import {useMemo} from "react";
 import SelectInput from "../../ui/form/SelectInput.tsx";
 import {EnrollmentSchema} from "../../../schema";
+import {useAcademicYearRepo} from "../../../hooks/useAcademicYearRepo.ts";
+import {useClasseRepo} from "../../../hooks/useClasseRepo.ts";
 
 export const AcademicForm = ({control, errors}: ZodProps<EnrollmentSchema>) => {
 
-    const [classes, setClasses] = useState<Classe[]>([])
-    const [academicYear, setAcademicYear] = useState<AcademicYear | undefined>(undefined)
+    const {useGetCurrentAcademicYear} = useAcademicYearRepo()
+    const {useGetClasseBasicValues} = useClasseRepo()
 
-    useEffect(() => {
-        const fetchData = async () => {
-            await findClassesBasicValue()
-                .then((resp) => {
-                    if (resp && resp.isSuccess && 'data' in resp) {
-                        setClasses(resp.data as Classe[])
-                    }
-                })
-
-            await findCurrentAcademicYear()
-                .then(async (resp) => {
-                    if (resp && resp.isSuccess) {
-                        setAcademicYear(resp.data as AcademicYear)
-
-                    }
-                })
-        }
-        fetchData().catch(e => console.error(e.message))
-    }, []);
+    const academicYear = useGetCurrentAcademicYear()
+    const classes = useGetClasseBasicValues()
 
     console.log('Academic Year: ', academicYear)
 

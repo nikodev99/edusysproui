@@ -15,7 +15,7 @@ export const UserProvider = ({children}: UserContextProps) => {
     const [isReady, setIsReady] = useState(false)
     const [shouldRedirectToHome, setShouldRedirectToHome] = useState(false)
     const [loginError, setLoginError] = useState<string | null>(null)
-    const [userSchools, setUserSchools] = useState<School | null>(null)
+    const [userSchool, setUserSchool] = useState<School | null>(null)
 
     useEffect(() => {
         const initAuth = async () => {
@@ -45,12 +45,12 @@ export const UserProvider = ({children}: UserContextProps) => {
         const initSchool = async () => {
             const school = loggedUser.getSchool()
             if (school) {
-                setUserSchools(school)
+                setUserSchool(school)
             }else if (user) {
                 const schools = user.schools
                 if (Array.isArray(schools) && schools.length === 1) {
                     loggedUser.setSchool(schools[0])
-                    setUserSchools(schools[0])
+                    setUserSchool(schools[0])
                 }
             }
         }
@@ -58,7 +58,7 @@ export const UserProvider = ({children}: UserContextProps) => {
         initSchool().then()
     }, [user]);
 
-    console.log({user, userSchools})
+    console.log({user, userSchool})
 
     const register = async (data: SignupRequest) => {
         try {
@@ -147,7 +147,7 @@ export const UserProvider = ({children}: UserContextProps) => {
             user,
             token,
             refreshToken,
-            userSchools,
+            userSchool,
             registerUser: register,
             loginUser: login,
             logoutUser: logout,

@@ -51,7 +51,7 @@ export const useGlobalStore = createSelectors(create(combine({
     },
 
     setDepartment () {
-        fetchFunc(getDepartmentBasics)
+        fetchFunc(getDepartmentBasics, [""])
             .then(resp => {
                 if(resp.isSuccess) {
                     set({departments: resp.data as Department[]})

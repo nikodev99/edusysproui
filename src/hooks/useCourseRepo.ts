@@ -5,8 +5,11 @@ import {UseQueryResult} from "@tanstack/react-query";
 import {Course} from "../entity";
 import {getAllBasicCourses, getAllCoursesSearch, getCourseById} from "../data/repository/courseRepository.ts";
 import {useEffect, useState} from "react";
+import {loggedUser} from "../auth/jwt/LoggedUser.ts";
 
 export const useCourseRepo = () => {
+    const userSchool = loggedUser.getSchool()
+
     const useGetAllCourses = (
         pageable: Pageable,
         sortField?: string,
@@ -16,7 +19,7 @@ export const useCourseRepo = () => {
     }
 
     const useGetAllCourseSearched = (courseName: string): UseQueryResult<Course[], unknown> => {
-        return useFetch(['course-list', courseName], getAllCoursesSearch, [courseName], !!courseName);
+        return useFetch(['course-list', courseName], getAllCoursesSearch, [userSchool?.id, courseName], !!userSchool?.id && !!courseName);
     }
 
     const useGetCourse = (courseId: number): UseQueryResult<Course, unknown> => {
@@ -28,7 +31,7 @@ export const useCourseRepo = () => {
         const fetch = useRawFetch()
 
         useEffect(() => {
-            fetch(getAllBasicCourses, [])
+            fetch(getAllBasicCourses, [userSchool?.id])
                 .then(resp => {
                     if (resp) {
                         setCourses(resp.data as Course[])

@@ -8,7 +8,6 @@ import {AvatarTitle} from "../../ui/layout/AvatarTitle.tsx";
 import ListViewer from "../../custom/ListViewer.tsx";
 import {getAllSchoolStudentAttendanceOfTheDay} from "../../../data/repository/attendanceRepository.ts";
 import {AxiosResponse} from "axios";
-import {text} from "../../../core/utils/text_display.ts";
 import {useMemo, useState} from "react";
 import {AttendanceStatusCountResponse, DataProps} from "../../../core/utils/interfaces.ts";
 import {AttendanceDaySummary} from "./AttendanceDaySummary.tsx";
@@ -96,7 +95,7 @@ export const AttendanceTable = ({academicYear, todayAttendanceData, date}: {
             {todayAttendanceData && dataExists && <AttendanceDaySummary data={todayAttendanceData} />}
             <ListViewer
                 callback={getAllSchoolStudentAttendanceOfTheDay as () => Promise<AxiosResponse<Attendance>>}
-                callbackParams={[text.schoolID, academicYear, date?.toDate(), searchQuery]}
+                callbackParams={[academicYear, date?.toDate(), searchQuery]}
                 shareSearchQuery={setSearchQuery}
                 tableColumns={columns as []}
                 hasCount={false}

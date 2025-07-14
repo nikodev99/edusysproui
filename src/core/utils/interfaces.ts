@@ -401,6 +401,11 @@ export interface Pageable {
     size: number,
 }
 
+export interface SortCriteria<T extends object> {
+    sortField?: keyof T
+    sortOrder?: 'asc' | 'desc'
+}
+
 export interface InfoPageProps<T extends object> {
     infoData: T
     dataKey: string

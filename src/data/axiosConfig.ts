@@ -2,7 +2,6 @@ import axios, {AxiosError, AxiosResponse} from "axios";
 import {AxiosConfig} from "../core/utils/interfaces.ts";
 import {message} from "antd";
 import {redirectTo} from "../context/RedirectContext.ts";
-import {refreshToken} from "../auth/services/AuthService.ts.tsx";
 import {loggedUser} from "../auth/jwt/LoggedUser.ts";
 
 const baseURL = import.meta.env.VITE_API_URL;
@@ -20,13 +19,13 @@ apiClient.interceptors.request.use(config => {
     return config;
 })
 
-apiClient.interceptors.response.use(
+/*apiClient.interceptors.response.use(
     response => response,
     async (error: AxiosError) => {
         const { response, config } = error;
         if (response?.status === 401 && config) {
             try {
-                const didRefresh = await refreshToken();
+                const didRefresh = await tokenRefresh();
                 if (didRefresh) {
                     const token = loggedUser.getToken();
 
@@ -45,7 +44,7 @@ apiClient.interceptors.response.use(
         // if we get here, either it wasn’t a 401 or refresh failed
         loggedUser.removeToken();
     }
-);
+);*/
 
 const request = ({method, url, data, headers, params}: AxiosConfig) => {
     return apiClient({

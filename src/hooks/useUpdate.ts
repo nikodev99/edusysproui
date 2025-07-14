@@ -1,10 +1,16 @@
 import {z} from "zod";
 import {useMutation, UseMutationOptions} from "@tanstack/react-query";
 import {AxiosError, AxiosResponse} from "axios";
-import {ID, MutationPutVariables, PutFunction, UpdateReturnType, UseUpdateReturn} from "../core/utils/interfaces.ts";
+import {
+    ID,
+    MutationPutVariables,
+    PutFunction,
+    UpdateReturnType,
+    UseQueryOptions,
+    UseUpdateReturn
+} from "../core/utils/interfaces.ts";
 import {Response} from "../data/action/response.ts";
 import {catchError, ErrorCatch} from "../data/action/error_catch.ts";
-import {attendanceSchema} from "../schema";
 import {useState} from "react";
 
 export const useQueryUpdate = <TData, TParams extends readonly unknown[] = []>(
@@ -62,8 +68,10 @@ export const useUpdate = <
     TData,
     TReturn extends object | boolean,
     TParams extends readonly unknown[] = []
->(func: PutFunction<TData, TParams>): UseUpdateReturn<TData, TReturn, TParams> => {
-    const { mutate, isError, failureReason, isPending, isPaused } = useQueryUpdate(attendanceSchema);
+>(schema: z.ZodSchema<TData>, func: PutFunction<TData, TParams>, options?: UseQueryOptions<TData, TParams>): UseUpdateReturn<TData, TReturn, TParams> => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    const { mutate, isError, failureReason, isPending, isPaused } = useQueryUpdate(schema, options);
     const [result, setResult] = useState<TReturn | undefined>(undefined);
     const [error, setError] = useState<unknown | null>(null);
     const [status, setStatus] = useState<number>(0)
@@ -81,7 +89,7 @@ export const useUpdate = <
             mutate({putFn: func, data: data, id: id, params: params}, {
                 onSuccess: (response) => {
                     const success = response.status === 200;
-                    const data = success ? (response.data as TReturn) : undefined;
+                    const data = success ? (response.data as unknown as TReturn) : undefined;
 
                     setResult(data);
                     setStatus(response.status);

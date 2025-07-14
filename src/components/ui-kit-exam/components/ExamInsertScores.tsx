@@ -79,7 +79,7 @@ export const ExamInsertScores = (
                 size={35}
                 firstName={info?.firstName}
                 lastName={info?.lastName}
-                reference={record?.student?.reference}
+                reference={record?.student?.personalInfo?.reference}
                 image={info?.image}
             />
         },

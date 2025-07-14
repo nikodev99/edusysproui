@@ -38,6 +38,8 @@ export const useRedirect = () => {
         toFinance: () => redirectTo(text.finance.href),
         toChat: () => redirectTo(text.chat.href),
         toEmployee: () => redirectTo(text.employee.href),
+        toAddEmployee: () => redirectTo(text.employee.group.add.href),
+        toViewEmployee: (employeeId: string) => redirectTo(text.employee.group.view.href + employeeId),
         toSettings: () => redirectTo(text.settings.href),
         toSettingOrg: () => redirectTo(text.settings.group.org.href)
     }

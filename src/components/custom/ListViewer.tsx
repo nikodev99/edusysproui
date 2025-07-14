@@ -157,7 +157,7 @@ const ListViewer = <TData extends object, TError>(
             return {
                 id: c.student.id,
                 academicYear: c.academicYear,
-                reference: c.student?.reference,
+                reference: c.student?.personalInfo?.reference,
                 firstName: c.student?.personalInfo?.firstName,
                 lastName: c.student?.personalInfo?.lastName,
                 gender: c.student?.personalInfo?.gender,

@@ -1,12 +1,13 @@
 import {useEffect, useState} from "react";
-import {LoginRequest, SignupRequest, toUser, UserProfile} from "../auth/dto/user.ts";
+import {LoginRequest, SignupRequest, toUser, UserProfile, UserProfileToken} from "../auth/dto/user.ts";
 import LocalStorageManager from "../core/LocalStorageManager.ts";
-import {loginApi, logoutApi, signupApi} from "../auth/services/AuthService.ts.tsx";
+import {loginApi, logoutApi, signupApi, tokenRefresh} from "../auth/services/AuthService.ts.tsx";
 import {message} from "antd";
 import {UserContext, UserContextProps} from "../context/UserContext.ts";
 import {jwtTokenManager} from "../auth/jwt/JWTToken.tsx";
 import {loggedUser} from "../auth/jwt/LoggedUser.ts";
 import {School} from "../entity";
+import {AxiosResponse} from "axios";
 
 export const UserProvider = ({children}: UserContextProps) => {
     const [token, setToken] = useState<string | null>(null)
@@ -58,8 +59,6 @@ export const UserProvider = ({children}: UserContextProps) => {
         initSchool().then()
     }, [user]);
 
-    console.log({user, userSchool})
-
     const register = async (data: SignupRequest) => {
         try {
             const resp = await signupApi(data)
@@ -79,28 +78,35 @@ export const UserProvider = ({children}: UserContextProps) => {
         try {
             const resp = await loginApi(data)
             if (resp && resp?.status === 200) {
-                loggedUser.setToken(resp.data.accessToken)
-                loggedUser.setRefreshToken(resp.data.refreshToken)
-
-                //TODO retrieve an Employee, Teacher or Guardian
-
-                const useProfile = toUser(resp?.data)
-                loggedUser.setUser(useProfile)
-
-                setUser(useProfile)
-                setToken(resp.data.accessToken)
-                setRefreshToken(resp.data.refreshToken)
-                setShouldRedirectToHome(true)
-
-                jwtTokenManager.refreshTokenCache()
-
-                return true
+                return cashedLoggedUser(resp)
             }else {
                 setLoginError("Username ou mot de passe invalide(s) !")
                 return false
             }
         }catch(error) {
             message.error("An error occurred while logging in, please try again...", 5)
+            return false
+        }
+    }
+
+    const handleRefreshToken = async () => {
+        setLoginError(null)
+        try {
+            const response = await tokenRefresh()
+            if (response && response?.status === 200) {
+                const success = cashedLoggedUser(response)
+                if (success) {
+                    jwtTokenManager.clearCache()
+                    jwtTokenManager.refreshTokenCache()
+                    return true
+                }
+                return false
+            }else {
+                setLoginError("An error occurred while refreshing your token, please try again...")
+                return false
+            }
+        }catch (error) {
+            console.error("Error during token refresh:", error)
             return false
         }
     }
@@ -138,6 +144,28 @@ export const UserProvider = ({children}: UserContextProps) => {
         }
     }
 
+    const cashedLoggedUser = (resp: AxiosResponse<UserProfileToken>) => {
+        try {
+            // Update storage first
+            loggedUser.setToken(resp.data.accessToken)
+            loggedUser.setRefreshToken(resp.data.refreshToken)
+
+            const userProfile = toUser(resp?.data)
+            loggedUser.setUser(userProfile)
+
+            // Update React state
+            setUser(userProfile)
+            setToken(resp.data.accessToken)
+            setRefreshToken(resp.data.refreshToken)
+            setShouldRedirectToHome(true)
+
+            return true
+        } catch (error) {
+            console.error("Error caching logged user:", error)
+            return false
+        }
+    }
+
     const logout = () => {
         performLogout().then()
     }
@@ -150,6 +178,7 @@ export const UserProvider = ({children}: UserContextProps) => {
             userSchool,
             registerUser: register,
             loginUser: login,
+            refresh: handleRefreshToken,
             logoutUser: logout,
             isLoggedIn: isLoggedIn,
             shouldRedirectToHome: shouldRedirectToHome,

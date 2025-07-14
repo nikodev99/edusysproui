@@ -10,25 +10,21 @@ export const loginApi = async (login: LoginRequest) => {
         })
     }catch (error) {
         handleError(error)
+        throw error
     }
 }
 
-export const refreshToken = async () => {
+export const tokenRefresh = async () => {
     const refreshToken = loggedUser.getRefreshToken()
-    if (!refreshToken) return false
+    if (!refreshToken)
+        throw new Error('No refresh token found')
 
     try {
-        const response = await apiClient.post<UserProfileToken>('/auth/refresh', {refreshToken})
-        if (response.status >= 200 && response.status <= 300) {
-            const data = response.data
-            loggedUser.setToken(data.accessToken)
-            loggedUser.setRefreshToken(data.refreshToken)
-            return true
-        }
+        return await apiClient.post<UserProfileToken>('/auth/refresh', {refreshToken: refreshToken})
     }catch (error) {
-        handleError(error)
+        console.error('Token refresh API call failed:', error)
+        throw error
     }
-    return false
 }
 
 export const signupApi = async (data: SignupRequest) => {
@@ -36,10 +32,11 @@ export const signupApi = async (data: SignupRequest) => {
         return await apiClient.post<UserProfileToken>('/auth/signup', data)
     }catch (error) {
         handleError(error)
+        throw error
     }
 }
 
 export const logoutApi = async () => {
     const refreshToken = loggedUser.getRefreshToken()
-    await apiClient.post('/auth/logout', {refreshToken})
+    await apiClient.post('/auth/logout', {refreshToken: refreshToken})
 }

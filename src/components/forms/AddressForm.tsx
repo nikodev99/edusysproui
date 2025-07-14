@@ -37,11 +37,11 @@ const AddressForm = <T extends FieldValues>(addressProps: AddressFormProps<T>) =
                     validate: form.validate(fieldName, 'teacher.personalInfo.address'),
                     error: form.error(fieldName, 'teacher.personalInfo.address'),
                 }
-            case AddressOwner.ADMIN:
+            case AddressOwner.EMPLOYEE:
                 return {
-                    name: form.name(fieldName),
-                    validate: form.validate(fieldName),
-                    error: form.error(fieldName),
+                    name: form.name(fieldName, 'employee.personalInfo.address'),
+                    validate: form.validate(fieldName, 'employee.personalInfo.address'),
+                    error: form.error(fieldName, 'employee.personalInfo.address'),
                 }
             case AddressOwner.GUARDIAN:
                 return {

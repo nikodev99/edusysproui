@@ -190,7 +190,7 @@ const ExamDescription = (
                 lastName={text?.personalInfo?.lastName}
                 firstName={text?.personalInfo?.firstName}
                 image={text?.personalInfo?.image}
-                reference={text?.reference}
+                reference={text?.personalInfo?.reference}
                 link={`${studentLink.current}${text?.id}`}
                 size={40}
             />

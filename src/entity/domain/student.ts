@@ -13,7 +13,6 @@ export interface Student {
     enrollments: Enrollment[]
     dadName: string
     momName: string
-    reference: string
     guardian: Guardian
     healthCondition: HealthCondition
     marks: Score[]

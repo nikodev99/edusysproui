@@ -78,6 +78,7 @@ export class JWTTokenManager {
      * Call this method when the token is updated externally
      */
     public refreshTokenCache(): void {
+        this.cachedToken = null;
         this.cachedToken = loggedUser.getToken()
         this.lastValidationTime = 0; // Reset validation cache
     }
@@ -88,8 +89,8 @@ export class JWTTokenManager {
      * This method performs cryptographic verification of the JWT token
      * and implements caching to avoid redundant verification operations.
      */
-    public async verifyToken(): Promise<TokenValidationResult> {
-        const token = this.getCurrentToken();
+    public async verifyToken(forceRefresh: boolean = false): Promise<TokenValidationResult> {
+        const token = forceRefresh ? this.forceRefreshToken() : this.getCurrentToken();
 
         // Early return if no token exists
         if (!token) {
@@ -147,10 +148,10 @@ export class JWTTokenManager {
      * Safe token decoding without verification
      *
      * This method extracts the payload from a JWT without verifying its signature.
-     * Use this when you need to read token data but signature verification isn't required.
+     * Use this when you need to read token data, but signature verification isn't required.
      */
-    public decodeToken(): DecodedTokenResult {
-        const token = this.getCurrentToken();
+    public decodeToken(forceRefresh: boolean = false): DecodedTokenResult {
+        const token = forceRefresh ? this.forceRefreshToken() : this.getCurrentToken();
 
         if (!token) {
             return {
@@ -180,8 +181,8 @@ export class JWTTokenManager {
      * Convenience method to check if a token exists and is valid
      * Returns a simple boolean for quick validity checks
      */
-    public async isValidToken(): Promise<boolean> {
-        const result = await this.verifyToken();
+    public async isValidToken(forceRefresh: boolean = false): Promise<boolean> {
+        const result = await this.verifyToken(forceRefresh);
         return result.isValid;
     }
 
@@ -189,8 +190,8 @@ export class JWTTokenManager {
      * Extract specific claims from the token payload
      * Provides type-safe access to common JWT claims
      */
-    public getTokenClaim<T = never>(claimName: string): T | null {
-        const decodeResult = this.decodeToken();
+    public getTokenClaim<T = never>(claimName: string, forceRefresh: boolean = false): T | null {
+        const decodeResult = this.decodeToken(forceRefresh);
 
         if (!decodeResult.success || !decodeResult.payload) {
             return null;
@@ -203,8 +204,8 @@ export class JWTTokenManager {
      * Check if the token is expired based on 'exp' claim
      * Useful for proactive token refresh logic
      */
-    public isTokenExpired(): boolean {
-        const exp = this.getTokenClaim<number>('exp');
+    public isTokenExpired(forceRefresh: boolean = false): boolean {
+        const exp = this.getTokenClaim<number>('exp', forceRefresh);
 
         if (!exp) {
             return true; // Consider tokens without expiration as expired for safety
@@ -218,8 +219,8 @@ export class JWTTokenManager {
      * Get time remaining until token expiration
      * Returns milliseconds until expiration, or 0 if expired/invalid
      */
-    public getTimeUntilExpiration(): number {
-        const exp = this.getTokenClaim<number>('exp');
+    public getTimeUntilExpiration(forceRefresh: boolean = false): number {
+        const exp = this.getTokenClaim<number>('exp', forceRefresh);
 
         if (!exp) {
             return 0;
@@ -238,6 +239,15 @@ export class JWTTokenManager {
     public clearCache(): void {
         this.cachedToken = null;
         this.lastValidationTime = 0;
+    }
+
+    /**
+     * Force refresh the token from storage
+     * Use this after token refresh to ensure we have the latest token
+     */
+    private forceRefreshToken(): string | null {
+        this.cachedToken = null;
+        return this.getCurrentToken();
     }
 }
 

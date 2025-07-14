@@ -44,6 +44,12 @@ const IndividualForm = <T extends FieldValues, Q extends object>(individualProps
                     validate: form.validate(fieldName, 'student.guardian.personalInfo'),
                     error: form.error(fieldName, 'student.guardian.personalInfo'),
                 }
+            case IndividualType.EMPLOYEE:
+                return {
+                    name: form.name(fieldName, 'employee.personalInfo'),
+                    validate: form.validate(fieldName, 'employee.personalInfo'),
+                    error: form.error(fieldName, 'employee.personalInfo'),
+                }
             default:
                 return null
         }
@@ -202,7 +208,7 @@ const IndividualForm = <T extends FieldValues, Q extends object>(individualProps
                     lg: onlyField,
                     label: 'E-mail',
                     control: control,
-                    required: type === IndividualType.TEACHER,
+                    required: type !== IndividualType.STUDENT,
                     name: get(type, 'emailId')?.name as Path<T>,
                     defaultValue: (edit && data ? data.emailId : '') as PathValue<T, Path<T>>,
                     placeholder: 'p.malonga@gmail.com',

@@ -3,7 +3,6 @@ import {useMutation} from "@tanstack/react-query";
 import {Response} from "../data/action/response.ts";
 import {catchError, ErrorCatch} from "../data/action/error_catch.ts";
 import {z} from "zod";
-import {attendanceSchema} from "../schema";
 import {useState} from "react";
 import {
     InsertReturnType,
@@ -33,6 +32,7 @@ export const useQueryPost = <TData, TParams extends readonly unknown[] = []>(
     return useMutation<AxiosResponse<TData>, AxiosError, MutationPostVariables<TData, TParams>>({
         mutationFn: async ({postFn, data, params}) => {
             const validate = schema.safeParse(data)
+            console.log("VALIDATE: ", validate)
             if (!validate.success) {
                 throw new AxiosError(
                     `Donnée non valide: \n${validate.error.errors.map(e => e.message).join('\n')}.`,
@@ -75,10 +75,8 @@ export const useInsert = <
     TData,
     TReturn extends object | boolean,
     TParams extends readonly unknown[] = []
->(func: PostFunction<TData, TParams>, options?: UseQueryOptions<TData, TParams>): UseInsertReturn<TData, TReturn, TParams> => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    const { mutate, isError, failureReason, isPending, isPaused } = useQueryPost(attendanceSchema, options);
+>(schema: z.ZodSchema, func: PostFunction<TData, TParams>, options?: UseQueryOptions<TData, TParams>): UseInsertReturn<TData, TReturn, TParams> => {
+    const { mutate, isError, failureReason, isPending, isPaused } = useQueryPost(schema, options);
     const [result, setResult] = useState<TReturn | undefined>(undefined);
     const [error, setError] = useState<unknown | null>(null);
     const [status, setStatus] = useState<number>(0)

@@ -68,10 +68,10 @@ const AddTeacherPage = () => {
     }
 
     useEffect(() => {
-        if(formData) {
+        if(formData?.personalInfo?.gender && formData?.personalInfo?.status) {
             setShowMaidenName(formData?.personalInfo?.gender === Gender.FEMME && formData?.personalInfo?.status === Status.MARIE)
         }
-    }, [formData, classes, courses, errors])
+    }, [formData?.personalInfo?.gender, formData?.personalInfo?.status])
 
     const validate = (validateFields: boolean, current: number) => {
         if (validateFields) {

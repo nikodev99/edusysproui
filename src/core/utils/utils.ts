@@ -180,10 +180,11 @@ export const sumInArray = <T extends object | number>(arrayToSum: T[], arrayKey?
     }, 0);
 };
 
-export const getAge = (dateArray?: number[]): number => {
+export const getAge = (dateArray?: number[], hasLabel: boolean = false): number | string => {
     const date = new Date()
     const incomingYear = dateArray ? arrayToDate(dateArray).getFullYear() : 0
-    return date.getFullYear() - incomingYear
+    const age = date.getFullYear() - incomingYear
+    return hasLabel ? `${age} ans` : age
 }
 
 export const currency = (input?: number) => {
@@ -828,7 +829,7 @@ export const setStudentList = (students: Enrollment[]) => {
     return students?.map(c => ({
         id: c.student.id,
         academicYear: c.academicYear,
-        reference: c.student?.reference,
+        reference: c.student?.personalInfo?.reference,
         firstName: c.student?.personalInfo?.firstName,
         lastName: c.student?.personalInfo?.lastName,
         gender: c.student?.personalInfo?.gender,

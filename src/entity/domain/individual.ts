@@ -15,6 +15,7 @@ export interface Individual {
     nationality: string
     telephone: string
     mobile: string
+    reference: string
     address: Address
     image: string
     attachments: string[]

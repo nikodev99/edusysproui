@@ -34,7 +34,7 @@ export const GuardianStudentList = ({students}: {students?: Student[]}) => {
                                 </Link>
 
                                 <p className="label">ID</p>
-                                <p className="value">{student.reference}</p>
+                                <p className="value">{student?.personalInfo?.reference}</p>
 
                                 <p className="label">Classe</p>
                                 <p className="value">{student?.classe?.name}</p>

@@ -4,7 +4,6 @@ import LocalStorageManager from "../core/LocalStorageManager.ts";
 import {useLocation} from "react-router-dom";
 import {redirectTo} from "../context/RedirectContext.ts";
 import {jwtTokenManager} from "../auth/jwt/JWTToken.tsx";
-import {refreshToken} from "../auth/services/AuthService.ts.tsx";
 import {loggedUser} from "../auth/jwt/LoggedUser.ts";
 
 const ACTIVITY_TIMEOUT = 30 * 60 * 1000
@@ -26,7 +25,7 @@ interface AuthMiddlewareProps {
 
 export const AuthMiddleware: FC<AuthMiddlewareProps> = ({children}) => {
     const location = useLocation()
-    const {logoutUser, isLoggedIn} = useAuth()
+    const {logoutUser, isLoggedIn, refresh} = useAuth()
 
     const updateLastActivity = useCallback(() => {
         const currentTime = Date.now()
@@ -68,15 +67,25 @@ export const AuthMiddleware: FC<AuthMiddlewareProps> = ({children}) => {
             const isExpired = jwtTokenManager.isTokenExpired()
             if (isExpired) {
                 console.log('Token expired, attempting refresh');
-                const refreshSuccess = await refreshToken()
+                jwtTokenManager.clearCache()
+                loggedUser.clearCache()
+                const refreshSuccess = await refresh()
 
-                if (refreshSuccess) {
-                    console.log('Token refreshed successfully')
-                    jwtTokenManager.refreshTokenCache()
-                    return true
-                }else {
-                    logoutAndRedirect('Token refresh failed, logging out the user')
+                if (!refreshSuccess) {
+                    return logoutAndRedirect('Token refresh failed, logging out the user')
                 }
+
+                console.log('Token refreshed successfully, updating cache...')
+                jwtTokenManager.refreshTokenCache()
+
+                await new Promise(resolve => setTimeout(resolve, 1000))
+
+                const newToken = loggedUser.getToken()
+                if (!newToken) {
+                    return logoutAndRedirect("New token not found after refresh")
+                }
+
+                console.log('New token obtained, verifying...')
             }
 
             const tokenValidation = await jwtTokenManager.verifyToken()
@@ -93,7 +102,7 @@ export const AuthMiddleware: FC<AuthMiddlewareProps> = ({children}) => {
             redirectTo('/login');
             return false;
         }
-    }, [isLoggedIn, location.pathname, logoutAndRedirect, logoutUser])
+    }, [isLoggedIn, location.pathname, logoutAndRedirect, logoutUser, refresh])
 
     const performAuthCheck = useCallback(async () => {
         if (!isLoggedIn()) {

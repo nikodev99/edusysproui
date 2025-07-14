@@ -2,8 +2,10 @@ import {ActiveShape, Margin} from "recharts/types/util/types";
 import {Color} from "../../core/utils/interfaces.ts";
 import {PieSectorDataItem} from "recharts/types/polar/Pie";
 import {CurveType} from "recharts/types/shape/Curve";
+import {Individual} from "../../entity";
 
 export interface AvatarProps {
+    personalInfo?: Individual
     image?: string,
     firstName?: string,
     lastName?: string,

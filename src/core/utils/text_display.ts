@@ -141,6 +141,16 @@ export const raw = {
     employee: {
         label: 'Resource Humaine',
         href: '/staff-management',
+        group: {
+            add: {
+                label: 'Ajouter Employé',
+                href: '/staff-management/new'
+            },
+            view: {
+                label: 'Afficher Employé',
+                href: '/staff-management/'
+            }
+        }
     },
     settings: {
         label: 'Paramètres',

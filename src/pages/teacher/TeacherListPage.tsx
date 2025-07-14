@@ -104,7 +104,7 @@ const TeacherListPage = () => {
                         <p style={{textAlign: 'left'}}>
                             {`${text?.toUpperCase()}, ${setFirstName(personalInfo?.firstName)}`}
                         </p>
-                        <p className='st__ref'>{personalInfo?.emailId}</p>
+                        <p className='st__ref'>{personalInfo?.reference ?? personalInfo?.emailId}</p>
                     </div>
                 </div>
             )

@@ -47,11 +47,11 @@ export class LoginUser {
     }
 
     public setUser(user: UserProfile) {
-        LocalStorageManager.save<UserProfile>(jwt.user, user)
+        LocalStorageManager.update<UserProfile>(jwt.user, () => user)
     }
 
     public setToken(token: string) {
-        LocalStorageManager.save<string>(jwt.tokenKey, token)
+        LocalStorageManager.update<string>(jwt.tokenKey, () => token)
     }
 
     public setRefreshToken(token: string) {
@@ -59,7 +59,7 @@ export class LoginUser {
     }
 
     public setSchool(school: School) {
-        LocalStorageManager.save<School>(jwt.school, school)
+        LocalStorageManager.update<School>(jwt.school, () => school)
     }
 
     public removeUser() {

@@ -22,15 +22,18 @@ import {Attendance} from "../entity";
 import {useInsert} from "./usePost.ts";
 import {useUpdate} from "./useUpdate.ts";
 import {loggedUser} from "../auth/jwt/LoggedUser.ts";
+import {attendanceSchema} from "../schema";
 
 export const useAttendanceRepo = () => {
     const userSchool = loggedUser.getSchool()
 
-    const useInsertAttendances = () => useInsert(insertAttendances, {
+    const useInsertAttendances = () => useInsert(attendanceSchema, insertAttendances, {
         mutationKey: ['attendance-post']
     })
 
-    const useUpdateAttendances = () => useUpdate(updateAttendances)
+    const useUpdateAttendances = () => useUpdate(attendanceSchema, updateAttendances, {
+        mutationKey: ['attendance-put']
+    })
 
     const useGetStudentAttendance = (studentId: number, pageable: Pageable, academicYearId: string) => useFetch<Attendance[], unknown>(
         ['student-attendance', studentId],

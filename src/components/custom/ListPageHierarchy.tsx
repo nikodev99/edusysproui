@@ -17,15 +17,14 @@ interface PageHierarchyProps {
 
 export const ListPageHierarchy = (
     {
-        items, hasButton, onClick, type, icon, label, hasDropdownButton, dropdownItems
+        items, hasButton, onClick, type = 'primary', icon, label, hasDropdownButton, dropdownItems
     }: PageHierarchyProps
 ) => {
     return(
         <Flex align="center" justify='space-between'>
             <PageHierarchy items={items} />
             {hasButton && <div className='add__btn__wrapper'>
-                <Button onClick={onClick} type={type} icon={icon}
-                        className='add__btn'>{label}</Button>
+                <Button onClick={onClick} type={type} icon={icon} className='add__btn'>{label}</Button>
             </div>}
             {hasDropdownButton && <ActionButton
                 icon={icon}

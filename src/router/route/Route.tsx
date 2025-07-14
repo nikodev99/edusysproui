@@ -31,13 +31,21 @@ import NavigationHandler from "../../providers/NavigationHandler.tsx";
 import {AuthMiddleware} from "../../middleware/AuthMiddleware.tsx";
 import {withAuthProtection} from "../../middleware/withAuthProtection.tsx";
 import LogSchoolPage from "../../pages/user/LogSchoolPage.tsx";
+import AddEmployeePage from "../../pages/employee/AddEmployeePage.tsx";
+import EmployeeViewPage from "../../pages/employee/EmployeeViewPage.tsx";
 
 const DashboardPage = withAuthProtection(Dashboard);
 const ListStudentPage = withAuthProtection(StudentListPage);
 const EnrollPage = withAuthProtection(EnrollStudentPage);
 const ViewStudentPage = withAuthProtection(StudentViewPage);
 
-console.log("TEXT: ", text)
+const ListTeacherPage = withAuthProtection(TeacherListPage);
+const TeacherAddPage = withAuthProtection(AddTeacherPage);
+const ViewTeacherPage = withAuthProtection(TeacherViewPage);
+
+const ListEmployeePage = withAuthProtection(EmployeeListPage);
+const EmployeeAddPage = withAuthProtection(AddEmployeePage);
+const ViewEmployeePage = withAuthProtection(EmployeeViewPage);
 
 export const Route = createBrowserRouter([
     {
@@ -83,9 +91,9 @@ export const Route = createBrowserRouter([
             {
                 path: 'teachers',
                 children: [
-                    { path: text.path.page, element: <TeacherListPage /> },
-                    { path: text.path.new, element: <AddTeacherPage /> },
-                    { path: text.path.view, element: <TeacherViewPage /> }
+                    { path: text.path.page, element: <ListTeacherPage /> },
+                    { path: text.path.new, element: <TeacherAddPage /> },
+                    { path: text.path.view, element: <ViewTeacherPage /> }
                 ]
             },
             {
@@ -140,7 +148,9 @@ export const Route = createBrowserRouter([
             {
                 path: 'staff-management',
                 children: [
-                    { path: text.path.page, element: <EmployeeListPage /> }
+                    { path: text.path.page, element: <ListEmployeePage /> },
+                    { path: text.path.new, element: <EmployeeAddPage /> },
+                    { path: text.path.view, element: <ViewEmployeePage /> }
                 ]
             },
             {

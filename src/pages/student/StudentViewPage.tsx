@@ -80,7 +80,7 @@ const StudentViewPage = () => {
                     image: enrolledStudent?.student.personalInfo?.image,
                     firstName: enrolledStudent?.student.personalInfo?.firstName,
                     lastName: enrolledStudent?.student.personalInfo?.lastName,
-                    reference: enrolledStudent?.student?.reference
+                    reference: enrolledStudent?.student?.personalInfo?.reference
                 }}
                 blockProps={[
                     {

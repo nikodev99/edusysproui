@@ -13,8 +13,6 @@ export const FormInput = <T extends FieldValues>(inputProps: dataEntryProps<T>) 
     const [passwordVisible, setPasswordVisible] = useState(false);
     const {placeholder, isCompact, buttonLabel, inputType, addonAfter, min, defaultValue, disabled, clearErrors} = inputProps
 
-    console.log("INPUT TYPE: ", inputType)
-
     return(
         <FormItem {...inputProps} render={({field}) => (
             <>

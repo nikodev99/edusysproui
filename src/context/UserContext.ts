@@ -10,6 +10,7 @@ export type UserAuthContext = {
 
     registerUser: (data: SignupRequest) => Promise<boolean>
     loginUser: (data: LoginRequest) => Promise<boolean>
+    refresh: () => Promise<boolean>
     logoutUser: () => void
     isLoggedIn: () => boolean
     shouldRedirectToHome: boolean

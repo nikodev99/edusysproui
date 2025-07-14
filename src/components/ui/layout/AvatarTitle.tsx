@@ -13,7 +13,12 @@ type AvatarTitleProps = AvatarProps & {
     link?: string
 }
 
-export const AvatarTitle = ({image, reference, lastName, firstName, setColor, gap, size, isUpper, link}: AvatarTitleProps)=>  {
+export const AvatarTitle = ({personalInfo, image, reference, lastName, firstName, setColor, gap, size, isUpper, link}: AvatarTitleProps)=>  {
+
+    image = image ?? personalInfo?.image
+    lastName = lastName ?? personalInfo?.lastName
+    firstName = firstName ?? personalInfo?.firstName
+    reference = reference ?? personalInfo?.reference
 
     const avatarText = <SuperWord
         input={`${lastName ? lastName?.toUpperCase() + ',' : ''}${firstName ? ' ' + setFirstName(firstName): ''}`}

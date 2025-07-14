@@ -39,6 +39,28 @@ export function isParams(arg: unknown): arg is Params {
     );
 }
 
+/**
+ * Converts the provided argument into an array of numbers representing time.
+ *
+ * Depending on the type of the input argument, the method processes it as follows:
+ * - If the argument is an array, it is returned directly.
+ * - If the argument is a string, it is split by colons and the resulting parts are converted to numbers.
+ *
+ * @param {unknown} arg The input value to convert. It can be an array or a colon-separated string.
+ * @return {number[]} The array of numbers representing time components. Returns the input directly if it is already an array. For strings, returns the numeric components as an array.
+ */
+export function toTimeArray(arg: unknown): number[] | string {
+    if (Array.isArray(arg)) {
+        return arg
+    }
+
+    if (typeof arg === 'string') {
+        return arg.split(':').map(Number)
+    }
+
+    return ''
+}
+
 //TODO Ajouter default timezone et locale aux sittings global
 class Datetime {
 
@@ -105,9 +127,9 @@ class Datetime {
         return new Datetime(date, timezone, locale);
     }
 
-    static timeToCurrentDate(time: number[] | Params): Datetime {
-        const t = isParams(time) ? time.time as number[] : time
-        if (Array.isArray(t)) {
+    static timeToCurrentDate(time: number[] | string | Params): Datetime {
+        const t = isParams(time) ? time.time as number[] : toTimeArray(time)
+        if (Array.isArray(t) && t.length >= 2) {
             return Datetime.of(dayjs().hour(t[0])?.minute(t[1] || 0)?.second(0))
         }else {
             return Datetime.of(t)

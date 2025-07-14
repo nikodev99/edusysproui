@@ -65,8 +65,6 @@ const ExamViewPage = () => {
         }
     }, [isRefetch, refetch]);
 
-    console.log('Refetch: ', isRefetch)
-
     const addTab = () => {
         const newActiveKey = '2';
         const newTab: TabItemType = {

@@ -167,6 +167,7 @@ export const raw = {
         edit: 'update',
         new: 'new',
         view: ':id',
+        slug: ':slug',
     },
     schoolID: '81148a1b-bdb9-4be1-9efd-fdf4106341d6',
     http: 'http://localhost:5173',

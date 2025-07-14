@@ -9,7 +9,7 @@ import {fetchAllEmployees, fetchSearchedEmployees} from "../../data/action/emplo
 import {TableColumnsType, Tag} from "antd";
 import {Employee} from "../../entity";
 import {AvatarTitle} from "../../components/ui/layout/AvatarTitle.tsx";
-import {getAge} from "../../core/utils/utils.ts";
+import {firstWord, getAge} from "../../core/utils/utils.ts";
 import {Gender} from "../../entity/enums/gender.tsx";
 import {StatusTags} from "../../core/utils/tsxUtils.tsx";
 import {ActionButton} from "../../components/ui/layout/ActionButton.tsx";
@@ -17,6 +17,7 @@ import {BiSolidUserAccount} from "react-icons/bi";
 import {AiOutlineUserDelete} from "react-icons/ai";
 import {DataProps} from "../../core/utils/interfaces.ts";
 import {Status} from "../../entity/enums/status.ts";
+import {useCallback} from "react";
 
 const EmployeeListPage = () => {
     const {toAddEmployee, toViewEmployee} = useRedirect()
@@ -32,22 +33,29 @@ const EmployeeListPage = () => {
         }
     ])
 
-    const getItems = (url: string) => {
+    const getSlug = useCallback((employee: Employee) => {
+        const first = firstWord(employee.personalInfo?.firstName)
+        const last = firstWord(employee.personalInfo?.lastName)
+        return (`${first}_${last}`)?.toLowerCase()
+    }, [])
+
+    const getItems = (employee: Employee) => {
+        const slug = getSlug(employee)
         return [
             {
-                key: `details-${url}`,
+                key: `details-${employee.id}`,
                 icon: <LuEye size={20}/>,
                 label: 'Voir Profile',
-                onClick: () => toViewEmployee(url)
+                onClick: () => toViewEmployee(slug, employee.id)
             },
             {
-                key: `account-${url}`,
+                key: `account-${employee.id}`,
                 icon: <BiSolidUserAccount size={20}/>,
                 label: 'Compte Employee',
                 onClick: () => alert('Création de compte')
             },
             {
-                key: `delete-${url}`,
+                key: `delete-${employee.id}`,
                 icon: <AiOutlineUserDelete size={20}/>,
                 label: 'Retirer l\'Employé',
                 danger: true
@@ -130,10 +138,10 @@ const EmployeeListPage = () => {
             key: 'action',
             align: 'right',
             width: '6%',
-            render: (text) => (
+            render: (_id: string, record: Employee) => (
                 <ActionButton
                     icon={<LuEllipsisVertical size={30} style={{borderStyle: 'border'}} />}
-                    items={getItems(text)}
+                    items={getItems(record)}
                 />
             )
         }
@@ -153,7 +161,7 @@ const EmployeeListPage = () => {
                 searchCallback={fetchSearchedEmployees as () => Promise<never>}
                 tableColumns={columns}
                 cardData={cardData}
-                throughDetails={toViewEmployee}
+                throughDetails={(data: Employee) => toViewEmployee(getSlug(data), data.id)}
                 fetchId={"employees-list"}
             />
         </>

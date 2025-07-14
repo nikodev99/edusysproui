@@ -150,7 +150,7 @@ export const Route = createBrowserRouter([
                 children: [
                     { path: text.path.page, element: <ListEmployeePage /> },
                     { path: text.path.new, element: <EmployeeAddPage /> },
-                    { path: text.path.view, element: <ViewEmployeePage /> }
+                    { path: text.path.slug, element: <ViewEmployeePage /> }
                 ]
             },
             {

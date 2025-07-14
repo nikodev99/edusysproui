@@ -1,6 +1,14 @@
-const EmployeeViewPage = () => {
+import {useLocation, useParams} from "react-router-dom";
 
-  return <div>Employee View Page</div>
+const EmployeeViewPage = () => {
+  const location = useLocation()
+
+  const {state: employeeID} = location
+
+
+  return(
+      <div></div>
+  )
 }
 
 export default EmployeeViewPage;

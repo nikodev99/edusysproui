@@ -47,8 +47,6 @@ const TeacherViewPage = () => {
     const teacherName = setName(teacher?.personalInfo?.lastName, teacher?.personalInfo?.firstName)
     const color: string = teacher?.personalInfo?.firstName ? chooseColor(teacher.personalInfo?.firstName) as string  : '#7615c4'
 
-    console.log("DATA: ", data)
-
     useDocumentTitle({
         title: teacherName,
         description: 'Teacher description',

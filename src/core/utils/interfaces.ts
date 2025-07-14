@@ -31,6 +31,7 @@ import {RadioGroupButtonStyle, RadioGroupOptionType} from "antd/es/radio";
 import {ButtonType} from "antd/es/button";
 import {UseMutationOptions, UseQueryResult} from "@tanstack/react-query";
 import {Variant} from "antd/es/config-provider";
+import {NavigateOptions} from "react-router-dom";
 
 export interface Metadata {
     title: string
@@ -284,7 +285,7 @@ export interface ListViewerProps<TData extends object, TError> {
     tableColumns?: TableColumnsType<TData>
     displayItem?: 1 | 2 | 3 | 4,
     dropdownItems?: (url: string) => ItemType[]
-    throughDetails?: (id: string) => void
+    throughDetails?: ((id: string) => void) | ((data: TData) => void)
     hasCount?: boolean,
     countTitle?: string,
     fetchId?: string | string[]
@@ -423,7 +424,7 @@ export interface EditProps<TData extends object> {
     resp?: (resp: Record<string, boolean>) => void
 }
 
-export type RedirectFunction = (link: string) => void;
+export type RedirectFunction = (link: string, option?:NavigateOptions) => void;
 export type Moment = Date | number[] | string
 export type Color = string
 export type Counted = Record<string, number>

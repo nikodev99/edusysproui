@@ -152,7 +152,7 @@ export const AssignmentDescription = (
                 {a?.passed ? undefined : !dateCompare(a?.examDate as Date) ? <Tag color='danger'>Date Dépassée</Tag> : undefined}
             </Space>, span: 3},
         ...(a?.preparedBy ? [
-            {key: 9, label: 'Préparer par', children: <span>{setName(a?.preparedBy?.lastName, a?.preparedBy?.firstName)}</span>, span: 3},
+            {key: 9, label: 'Préparer par', children: <span>{setName(a?.preparedBy, false)}</span>, span: 3},
             {key: 10, label: 'Mise à jour', children: <span>{Datetime.of(a?.updatedDate as number).fDatetime()}</span>, span: 3}
         ] : []),
 

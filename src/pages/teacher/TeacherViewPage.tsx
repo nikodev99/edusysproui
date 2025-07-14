@@ -44,7 +44,7 @@ const TeacherViewPage = () => {
     const {data, isLoading, isSuccess, refetch} = useGetTeacher(id as string)
     const studentCount = useCountStudent()
 
-    const teacherName = setName(teacher?.personalInfo?.lastName, teacher?.personalInfo?.firstName)
+    const teacherName = setName(teacher?.personalInfo)
     const color: string = teacher?.personalInfo?.firstName ? chooseColor(teacher.personalInfo?.firstName) as string  : '#7615c4'
 
     useDocumentTitle({

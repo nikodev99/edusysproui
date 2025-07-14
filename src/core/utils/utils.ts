@@ -6,7 +6,7 @@ import {BloodType} from "../../entity/enums/bloodType.ts";
 import {ProgressProps} from "antd";
 import {Day} from "../../entity/enums/day.ts";
 import {Gender} from "../../entity/enums/gender.tsx";
-import {Assignment, Enrollment, Schedule} from "../../entity";
+import {Assignment, Enrollment, Individual, Schedule} from "../../entity";
 
 export const createElement = (htmlElement: string, parentNode: Element|null, attributes?: {[key: string]: string}, content?: string) => {
 
@@ -478,7 +478,7 @@ export const setGender = (gender: string) => {
     return Gender[gender as unknown as keyof typeof Gender]
 }
 
-export const setFirstName = (firstName?: string) => {
+export const setFirstName = (firstName?: string): string => {
     if (firstName)
         return firstName.split(' ')
             .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
@@ -493,15 +493,21 @@ export const toLower = (sequence?: string): string | null => {
     return null
 }
 
-export const setName = (lastName?: string, firstName?: string, maidenName?: string, showMaiden?: boolean) => {
-    const fullRealName = setFirstName(`${lastName} ${firstName}`)
-    if (lastName && firstName) {
-        if (maidenName) {
-            return showMaiden ? setFirstName(`${lastName} née ${maidenName} ${firstName}`) : fullRealName
+export const setName = (personalInfo?: Individual, showMaiden: boolean = true): string => {
+    if (!personalInfo)
+        return ''
+
+    const fullRealName = setFirstName(`${personalInfo?.lastName} ${personalInfo?.firstName}`)
+    if (personalInfo?.lastName && personalInfo?.firstName) {
+        if (personalInfo?.maidenName) {
+            return showMaiden ?
+                setFirstName(`${personalInfo?.lastName} née ${personalInfo?.maidenName} ${personalInfo?.firstName}`) :
+                fullRealName as string
         }else {
-            return fullRealName
+            return fullRealName as string
         }
     }
+
     return ''
 }
 

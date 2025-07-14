@@ -20,7 +20,7 @@ export const TeacherIndividual = ({teacher, color}: {teacher: Teacher, color?: s
     }, [country, teacher, personalInfo?.gender]);
 
     const informationData = [
-        {statement: 'Nom complet', response: setName(personalInfo?.lastName, personalInfo?.firstName, personalInfo?.maidenName, true)},
+        {statement: 'Nom complet', response: setName(personalInfo)},
         {statement: 'Genre', response: Gender[personalInfo?.gender as unknown as keyof typeof Gender]},
         {statement: 'Date de naissance', response: `${Datetime?.of(personalInfo?.birthDate).fDate()} (${getAge(personalInfo?.birthDate as number[])} ans)`},
         {statement: 'Lieu de naissance', response: firstLetter(personalInfo?.birthCity)},

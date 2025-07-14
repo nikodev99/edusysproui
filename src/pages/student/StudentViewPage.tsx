@@ -30,10 +30,7 @@ const StudentViewPage = () => {
 
     const {data, isLoading, isSuccess, error, refetch} = useGetStudent(id as string)
 
-    const studentName = enrolledStudent ? setName(
-        enrolledStudent?.student.personalInfo?.lastName,
-        enrolledStudent?.student.personalInfo?.firstName
-    ) : 'Étudiant'
+    const studentName = enrolledStudent ? setName(enrolledStudent?.student.personalInfo) : 'Étudiant'
 
     useDocumentTitle({
         title: `EduSysPro - ${studentName}`,
@@ -85,11 +82,7 @@ const StudentViewPage = () => {
                 blockProps={[
                     {
                         title: 'Tuteur Légal',
-                        mention: setName(
-                            enrolledStudent?.student?.guardian?.personalInfo?.lastName,
-                            enrolledStudent?.student?.guardian?.personalInfo?.firstName,
-                            enrolledStudent?.student?.guardian?.personalInfo?.maidenName
-                        ),
+                        mention: setName(enrolledStudent?.student?.guardian?.personalInfo),
                     },
                     {title: enrolledStudent?.classe?.name, mention: enrolledStudent?.classe?.grade?.section}
                 ]}

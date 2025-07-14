@@ -24,7 +24,7 @@ const GuardianViewPage: React.FC = () => {
 
     const {data, isLoading, isSuccess, refetch} = useFetch(['guardian-id', id], fetchGuardianWithStudents, [id], !!id)
 
-    const guardianName = guardian ? setName(guardian?.personalInfo?.lastName, guardian?.personalInfo?.firstName) : 'Tuteur'
+    const guardianName = guardian ? setName(guardian?.personalInfo) : 'Tuteur'
 
     useDocumentTitle({
         title: guardianName,

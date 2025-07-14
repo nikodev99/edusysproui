@@ -97,7 +97,7 @@ export const GuardianForm = ({control, errors, showField, checked, onChecked, va
                         <GuardianDetails data={data} value={value} fetching={fetching} onSearch={handleSearch} onChange={handleChange}/>
                     </Modal>
                     {isExists && <>
-                            <Alert type='success' message={setName(guardian?.personalInfo?.lastName, guardian?.personalInfo?.firstName, guardian?.personalInfo?.maidenName)} showIcon />
+                            <Alert type='success' message={setName(guardian?.personalInfo)} showIcon />
                             <Divider />
                         </>
                     }

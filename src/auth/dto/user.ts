@@ -25,6 +25,7 @@ export interface SignupRequest {
     password: string
     phoneNumber: string
     personalInfo: Individual
+    userType: UserType
     roles: Role[]
 }
 
@@ -37,6 +38,10 @@ export interface UserProfile {
     phoneNumber: string
     roles: Role[]
     schools: School[]
+}
+
+export enum UserType {
+    EMPLOYEE, GUARDIAN, TEACHER
 }
 
 export const toUser = (profil: UserProfileToken): UserProfile => ({

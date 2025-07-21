@@ -51,7 +51,7 @@ export const UpdateAssignmentDates = ({assignment, open, onCancel, resp}: Update
                         name='examDate'
                         label='Nouvelle date'
                         validateStatus={errors?.examDate ? 'error' : ''}
-                        help={errors.examDate ? errors?.examDate?.message : ''}
+                        help={(errors.examDate ? errors?.examDate?.message : '') as never}
                         required
                         defaultValue={assignment ? Datetime.of(assignment?.examDate as number[]).toDate() : undefined}
                     />

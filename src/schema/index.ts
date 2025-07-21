@@ -12,7 +12,7 @@ import {assignmentDateUpdateSchema, assignmentSchema} from "./models/assignmentS
 import {attendanceSchema} from "./models/attendanceSchema.ts";
 import {planningSchema, planningSchemaMerge} from "./models/planningSchema.ts";
 import {scoreSchema, singleScoreSchema} from "./models/scoreSchema.ts";
-import {loginSchema, logoutSchema} from "./models/authSchema.ts";
+import {loginSchema, logoutSchema, signupSchema} from "./models/authSchema.ts";
 import {employeeSchema} from "./models/employeeSchema.ts";
 
 export {enrollmentSchema} from './models/enrollmentSchema'
@@ -31,7 +31,7 @@ export {assignmentDateUpdateSchema, assignmentSchema, assignmentMerge} from './m
 export {attendanceSchema, singleAttendanceSchema} from './models/attendanceSchema.ts'
 export {planningSchemaMerge, planningSchema} from './models/planningSchema.ts'
 export {scoreSchema, singleScoreSchema} from './models/scoreSchema.ts'
-export {loginSchema, logoutSchema} from './models/authSchema.ts'
+export {loginSchema, logoutSchema, signupSchema} from './models/authSchema.ts'
 
 export type CourseSchema = z.infer<typeof courseSchema>
 export type CourseSchemaMerge = z.infer<typeof courseSchemaMerge>
@@ -55,4 +55,5 @@ export type ScoreSchema = z.infer<typeof scoreSchema>
 export type SingleScoreSchema = z.infer<typeof singleScoreSchema>
 export type LoginSchema = z.infer<typeof loginSchema>
 export type LogoutSchema = z.infer<typeof logoutSchema>
+export type SignupSchema = z.infer<typeof signupSchema>
 export type EmployeeSchema = z.infer<typeof employeeSchema>

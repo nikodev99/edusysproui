@@ -9,10 +9,16 @@ import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
 import {text} from "../../core/utils/text_display.ts";
 import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
 import ViewHeader from "../../components/ui/layout/ViewHeader.tsx";
-import {GuardianEditDrawer, GuardianStudentList} from "../../components/ui-kit-guardian";
+import {GuardianEditDrawer, GuardianStudentList, GuardianActionLinks} from "../../components/ui-kit-guardian";
 import {Gender} from "../../entity/enums/gender.tsx";
 import {getStatusKey, Status} from "../../entity/enums/status.ts";
 import {Tabs, Tag} from "antd";
+import {useAccount} from "../../hooks/useAccount.ts";
+import {LuUserPlus} from "react-icons/lu";
+
+type ActionsButtons = {
+    createUser?: boolean
+}
 
 const GuardianViewPage: React.FC = () => {
 
@@ -21,9 +27,13 @@ const GuardianViewPage: React.FC = () => {
     const [guardian, setGuardian] = useState<Guardian | null>(null);
     const [openDrawer, setOpenDrawer] = useState<boolean>(false)
     const [color, setColor] = useState('')
+    const [openActions, setOpenActions] = useState<ActionsButtons>({})
+    const [showAction, setShowAction] = useState<ActionsButtons>({})
+    const {useAccountExists} = useAccount()
 
     const {data, isLoading, isSuccess, refetch} = useFetch(['guardian-id', id], fetchGuardianWithStudents, [id], !!id)
-
+    const accountExists = useAccountExists(guardian?.personalInfo?.id as number)
+    
     const guardianName = guardian ? setName(guardian?.personalInfo) : 'Tuteur'
 
     useDocumentTitle({
@@ -45,7 +55,8 @@ const GuardianViewPage: React.FC = () => {
         if (isSuccess && data) {
             setGuardian(data as Guardian);
         }
-    }, [data, isSuccess])
+        setShowAction({createUser: accountExists})
+    }, [accountExists, data, isSuccess])
 
     const handleOpenDrawer = (state: boolean) => {
         setOpenDrawer(state)
@@ -81,7 +92,14 @@ const GuardianViewPage: React.FC = () => {
                         mention: guardian?.company ? guardian?.company : ''
                     }] : [])
                 ]}
-                items={[/*TODO Ajouter certain items concernant le tuteur*/]}
+                items={[
+                ...(accountExists ? [] : [{
+                        key: 2,
+                        label: 'Compte Tuteur',
+                        icon: <LuUserPlus />,
+                        onClick: () => setOpenActions({createUser: true})
+                    }])
+                ]}
                 pColor={setColor}
             />
             <section>
@@ -89,7 +107,13 @@ const GuardianViewPage: React.FC = () => {
                     rootClassName='tabs'
                     centered
                     items={[
-                        {key: '1', label: 'List des étudiants', children: <GuardianStudentList students={guardian?.students} />},
+                        {
+                            key: '1',
+                            label: 'List des étudiants',
+                            children: <GuardianStudentList
+                                students={guardian?.students}
+                            />
+                        }
                     ]}
                 />
             </section>
@@ -101,6 +125,12 @@ const GuardianViewPage: React.FC = () => {
                     open={openDrawer}
                 />
             </section>
+            <GuardianActionLinks
+                open={openActions}
+                setActions={setOpenActions}
+                show={showAction}
+                personalInfo={guardian?.personalInfo}
+            />
         </>
     )
 }

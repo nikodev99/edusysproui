@@ -111,6 +111,9 @@ export const updateStudentByField = <T>(field: keyof T, value: unknown, studentI
         case UpdateType.ASSIGNMENT:
             url = '/assignment'
             break
+        case UpdateType.EMPLOYEE:
+            url = '/employee'
+            break
         default:
             url = '/student'
             break
@@ -126,7 +129,7 @@ export const updateStudentByField = <T>(field: keyof T, value: unknown, studentI
 }
 
 export const countClasseStudents = (classeId: number, academicYearId: string) => {
-    return apiClient.get<GenderCounted>(`/enroll/count/${classeId}`, {
+    return apiClient.get<GenderCounted>(`/enroll/count_classe/${classeId}`, {
         params: {
             academicYear: academicYearId
         }
@@ -144,5 +147,5 @@ export const countSomeClasseStudents = (classeId: number[], academicYearId: stri
 }
 
 export const countStudent = (schoolId: string) => {
-    return apiClient.get<GenderCounted>('/enroll/count/' + schoolId)
+    return apiClient.get<GenderCounted>('/enroll/count_school/' + schoolId)
 }

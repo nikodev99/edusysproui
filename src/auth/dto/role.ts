@@ -1,5 +1,11 @@
 export enum RoleEnum {
-    ADMIN, TOP_ADMIN, USER, TEACHER, SECRETARY, DIRECTOR
+    ADMIN = 'ADMIN',
+    TOP_ADMIN = 'TOP_ADMIN',
+    USER = 'UTILISATEUR',
+    TEACHER = 'PROFESSEUR',
+    SECRETARY = 'SECRETAIRE',
+    DIRECTOR = 'DIRECTEUR',
+    GUARDIAN = 'TUTEUR'
 }
 
 export type Role = keyof typeof RoleEnum;

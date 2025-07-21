@@ -11,9 +11,10 @@ type AvatarTitleProps = AvatarProps & {
     size?: number
     isUpper?: boolean
     link?: string
+    slug?: string
 }
 
-export const AvatarTitle = ({personalInfo, image, reference, lastName, firstName, setColor, gap, size, isUpper, link}: AvatarTitleProps)=>  {
+export const AvatarTitle = ({personalInfo, image, reference, lastName, firstName, setColor, gap, size, isUpper, link, slug}: AvatarTitleProps)=>  {
 
     image = image ?? personalInfo?.image
     lastName = lastName ?? personalInfo?.lastName
@@ -25,6 +26,22 @@ export const AvatarTitle = ({personalInfo, image, reference, lastName, firstName
         isUpper={isUpper}
     />
 
+    const handleRedirect = () => {
+        if (link) {
+            if (slug) {
+                const linkParts = link.split('/')
+                const id = linkParts[linkParts.length - 1]
+                const allButLast = linkParts.slice(0, -1).join('/')
+                return redirectTo(`${allButLast}/${slug}`, {
+                    state: id
+                })
+            }
+            return redirectTo(link)
+        }
+
+        console.log(link)
+    }
+
     return(
         <Flex className="avatar-container" align='center' gap={gap ?? 10}>
             <Avatar
@@ -33,12 +50,12 @@ export const AvatarTitle = ({personalInfo, image, reference, lastName, firstName
                 lastText={lastName}
                 size={size ?? 60}
                 setColor={setColor}
-                onClick={link ? () => redirectTo(link) : undefined}
+                onClick={handleRedirect}
             />
             <Flex className="legal" vertical justify='center'>
                 <span
                     className={`title ${link ? 'linked' : ''}`}
-                    onClick={link ? () => redirectTo(link) : undefined}
+                    onClick={handleRedirect}
                 >
                     {avatarText}
                 </span>

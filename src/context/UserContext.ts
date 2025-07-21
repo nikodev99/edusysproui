@@ -1,6 +1,8 @@
-import {LoginRequest, SignupRequest, UserProfile} from "../auth/dto/user.ts";
+import {LoginRequest, UserProfile} from "../auth/dto/user.ts";
 import React, {createContext} from "react";
 import {School} from "../entity";
+import {SignupSchema} from "../schema";
+import {AxiosResponse} from "axios";
 
 export type UserAuthContext = {
     user: UserProfile | null,
@@ -8,7 +10,7 @@ export type UserAuthContext = {
     refreshToken: string | null
     userSchool: School | null
 
-    registerUser: (data: SignupRequest) => Promise<boolean>
+    registerUser: (data: SignupSchema) => Promise<false | AxiosResponse<SignupSchema>>
     loginUser: (data: LoginRequest) => Promise<boolean>
     refresh: () => Promise<boolean>
     logoutUser: () => void

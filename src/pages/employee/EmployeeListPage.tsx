@@ -6,10 +6,10 @@ import {useRedirect} from "../../hooks/useRedirect.ts";
 import {LuEllipsisVertical, LuEye, LuUserPlus} from "react-icons/lu";
 import ListViewer from "../../components/custom/ListViewer.tsx";
 import {fetchAllEmployees, fetchSearchedEmployees} from "../../data/action/employeeAction.ts";
-import {TableColumnsType, Tag} from "antd";
+import {TableColumnsType} from "antd";
 import {Employee} from "../../entity";
 import {AvatarTitle} from "../../components/ui/layout/AvatarTitle.tsx";
-import {firstWord, getAge} from "../../core/utils/utils.ts";
+import {getAge, getSlug} from "../../core/utils/utils.ts";
 import {Gender} from "../../entity/enums/gender.tsx";
 import {StatusTags} from "../../core/utils/tsxUtils.tsx";
 import {ActionButton} from "../../components/ui/layout/ActionButton.tsx";
@@ -17,7 +17,6 @@ import {BiSolidUserAccount} from "react-icons/bi";
 import {AiOutlineUserDelete} from "react-icons/ai";
 import {DataProps} from "../../core/utils/interfaces.ts";
 import {Status} from "../../entity/enums/status.ts";
-import {useCallback} from "react";
 
 const EmployeeListPage = () => {
     const {toAddEmployee, toViewEmployee} = useRedirect()
@@ -33,20 +32,18 @@ const EmployeeListPage = () => {
         }
     ])
 
-    const getSlug = useCallback((employee: Employee) => {
-        const first = firstWord(employee.personalInfo?.firstName)
-        const last = firstWord(employee.personalInfo?.lastName)
-        return (`${first}_${last}`)?.toLowerCase()
-    }, [])
+    const redirectToView = (id: string, employee?: Employee) => {
+        const slug:string | undefined = employee?.personalInfo ? getSlug(employee?.personalInfo) : undefined
+        toViewEmployee(id, slug)
+    }
 
     const getItems = (employee: Employee) => {
-        const slug = getSlug(employee)
         return [
             {
                 key: `details-${employee.id}`,
                 icon: <LuEye size={20}/>,
                 label: 'Voir Profile',
-                onClick: () => toViewEmployee(slug, employee.id)
+                onClick: () => redirectToView(employee?.id, employee)
             },
             {
                 key: `account-${employee.id}`,
@@ -68,9 +65,10 @@ const EmployeeListPage = () => {
         lastName: e?.personalInfo?.lastName,
         firstName: e?.personalInfo?.firstName,
         gender: e?.personalInfo?.gender,
-        reference: e.personalInfo?.emailId,
+        reference: e.personalInfo.emailId ?? e.personalInfo?.reference,
         tag: <StatusTags status={e.personalInfo?.status as Status} female={e.personalInfo?.gender === Gender.FEMME} />,
-        description: <div></div>
+        record: e,
+        description: <div></div>,
     })) as DataProps<Employee>[]
 
     const columns: TableColumnsType<Employee> = [
@@ -79,8 +77,12 @@ const EmployeeListPage = () => {
             key: 'lastName',
             dataIndex: ['personalInfo', "lastName"],
             sorter: true,
-            render: (_lastname, {personalInfo, id}) => (
-                <AvatarTitle personalInfo={personalInfo} link={text.employee.group.view.href + id} />
+            render: (_lastname, record: Employee) => (
+                <AvatarTitle
+                    personalInfo={record?.personalInfo}
+                    link={text.employee.group.view.href + record?.id}
+                    slug={getSlug(record?.personalInfo)}
+                />
             )
         },
         {
@@ -118,21 +120,6 @@ const EmployeeListPage = () => {
             render: (text, {personalInfo}) => <StatusTags status={text} female={personalInfo?.gender === Gender.FEMME} />
         },
         {
-            title: "Type de contrat",
-            dataIndex: 'contractType',
-            key: 'contractType',
-            align: 'center',
-            sorter: true,
-            showSorterTooltip: false,
-            render: (contreType: string) => <Tag>{contreType}</Tag>
-        },
-        {
-            title: "Téléphone",
-            dataIndex: ['personalInfo', 'telephone'],
-            key: 'telephone',
-            align: 'center',
-        },
-        {
             title: "Action",
             dataIndex: 'id',
             key: 'action',
@@ -161,7 +148,7 @@ const EmployeeListPage = () => {
                 searchCallback={fetchSearchedEmployees as () => Promise<never>}
                 tableColumns={columns}
                 cardData={cardData}
-                throughDetails={(data: Employee) => toViewEmployee(getSlug(data), data.id)}
+                throughDetails={redirectToView}
                 fetchId={"employees-list"}
             />
         </>

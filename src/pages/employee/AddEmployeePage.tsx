@@ -147,7 +147,7 @@ const AddEmployeePage = () => {
 
     const school = loggedUser.getSchool()
 
-    if(/*submitCount === 0 && */school !== null && school.id) {
+    if(submitCount === 0 && school !== null && school.id) {
       data = {...data, personalInfo: {...data.personalInfo,
           image: image,
           reference: `${school.abbr}0004000`

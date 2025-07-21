@@ -16,10 +16,11 @@ import {Gender} from "../../entity/enums/gender.tsx";
 import {
     LuClipboardPenLine,
     LuListChecks, LuListTodo,
-    LuTrash2,
+    LuTrash2, LuUserCheck,
     LuUserMinus,
 } from "react-icons/lu";
 import {
+    TeacherActionLinks,
     TeacherAgenda,
     TeacherAssignments,
     TeacherEditDrawer,
@@ -29,7 +30,12 @@ import {
 import {useToggle} from "../../hooks/useToggle.ts";
 import {ViewRoot} from "../../components/custom/ViewRoot.tsx";
 import {useTeacherRepo} from "../../hooks/useTeacherRepo.ts";
-import {useStudentRepo} from "../../hooks/useStudentRepo.ts";
+import {useStudentRepo} from "../../hooks/useStudentRepo.ts"
+import {useAccount} from "../../hooks/useAccount.ts";
+
+type ActionsButtons = {
+    createUser?: boolean
+}
 
 const TeacherViewPage = () => {
 
@@ -37,12 +43,16 @@ const TeacherViewPage = () => {
 
     const [teacher, setTeacher] = useState<Teacher | null>(null)
     const [studentTaughtCount, setStudentTaughtCount] = useState<number>(0)
+    const [openActions, setOpenActions] = useState<ActionsButtons>({})
+    const [showAction, setShowAction] = useState<ActionsButtons>({})
     const [openDrawer, setOpenDrawer] = useToggle(false)
     const {useCountStudent} = useStudentRepo()
     const {useGetTeacher} = useTeacherRepo()
+    const {useAccountExists} = useAccount()
 
     const {data, isLoading, isSuccess, refetch} = useGetTeacher(id as string)
     const studentCount = useCountStudent()
+    const accountExists = useAccountExists(teacher?.personalInfo?.id as number)
 
     const teacherName = setName(teacher?.personalInfo)
     const color: string = teacher?.personalInfo?.firstName ? chooseColor(teacher.personalInfo?.firstName) as string  : '#7615c4'
@@ -56,7 +66,8 @@ const TeacherViewPage = () => {
         if (isSuccess && data) {
             setTeacher(data as Teacher)
         }
-    }, [isSuccess, data])
+        setShowAction({createUser: accountExists})
+    }, [isSuccess, data, accountExists])
 
     useLayoutEffect(() => {
         if (teacher?.id) {
@@ -126,6 +137,7 @@ const TeacherViewPage = () => {
                     {title: 'Télephone', mention: teacher?.personalInfo?.telephone},
                 ]}
                 items={[
+                    {key: 2, label: 'Créer compte Professeur', icon: <LuUserCheck/>, onClick: () => setOpenActions({createUser: true})},
                     {key: 2, label: 'Ajouter programme', icon: <LuListChecks/>},
                     {key: 3, label: 'Créer examen', icon: <LuClipboardPenLine/>},
                     {key: 4, label: 'Réprimander', icon: <LuUserMinus/>},
@@ -157,6 +169,12 @@ const TeacherViewPage = () => {
                     data={teacher ? teacher : {} as Teacher}
                 />
             </section>
+            <TeacherActionLinks 
+                open={openActions} 
+                setActions={setOpenActions} 
+                show={showAction} 
+                personalInfo={teacher?.personalInfo}
+            />
         </>
     )
 }

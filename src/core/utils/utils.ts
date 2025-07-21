@@ -399,7 +399,7 @@ export const sumObjectValues = <TData extends object>(obj?: TData): number => {
     return obj ? Object.values(obj).reduce((acc, val) => acc + val, 0) : 0
 }
 
-export const chooseColor = (name: string): string | undefined  => {
+export const chooseColor = (name?: string): string  => {
     if (name) {
         const firstChar = name.charAt(0).toUpperCase()
         if (/[0-9]/.test(firstChar)) {
@@ -447,6 +447,7 @@ export const chooseColor = (name: string): string | undefined  => {
             default: return '#000C40';
         }
     }
+    return '#000C40';
 }
 
 export const createConicGradient = (colors: string[], hasStep?: boolean): string[] | ProgressProps['strokeColor'] => {
@@ -638,6 +639,12 @@ export const getShortSortOrder = (order: string | undefined): 'asc' | 'desc' | u
             return undefined;
     }
 };
+
+export const getSlug = (personalInfo: Individual) => {
+    const first = firstWord(personalInfo?.firstName)
+    const last = firstWord(personalInfo?.lastName)
+    return (`${first}_${last}`)?.toLowerCase()
+}
 
 export const setSortFieldName = (sortField: string | string[])=>  {
     return Array.isArray(sortField)

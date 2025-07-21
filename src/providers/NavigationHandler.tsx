@@ -1,4 +1,3 @@
-// Create NavigationHandler.tsx
 import {ReactNode, useEffect, useState} from 'react';
 import {useLocation, Navigate} from 'react-router-dom';
 import {useAuth} from "../hooks/useAuth.ts";
@@ -13,7 +12,7 @@ const NavigationHandler = ({ children, requireAuth = true }: { children: ReactNo
     useEffect(() => {
         const timer = setTimeout(() => {
             setIsLoading(false);
-        }, 2000)
+        }, 5000)
 
         return () => {
             clearTimeout(timer)

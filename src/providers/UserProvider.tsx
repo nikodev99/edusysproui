@@ -1,13 +1,13 @@
 import {useEffect, useState} from "react";
-import {LoginRequest, SignupRequest, toUser, UserProfile, UserProfileToken} from "../auth/dto/user.ts";
+import {LoginRequest, toUser, UserProfile, UserProfileToken} from "../auth/dto/user.ts";
 import LocalStorageManager from "../core/LocalStorageManager.ts";
 import {loginApi, logoutApi, signupApi, tokenRefresh} from "../auth/services/AuthService.ts.tsx";
-import {message} from "antd";
 import {UserContext, UserContextProps} from "../context/UserContext.ts";
 import {jwtTokenManager} from "../auth/jwt/JWTToken.tsx";
 import {loggedUser} from "../auth/jwt/LoggedUser.ts";
 import {School} from "../entity";
 import {AxiosResponse} from "axios";
+import {SignupSchema} from "../schema";
 
 export const UserProvider = ({children}: UserContextProps) => {
     const [token, setToken] = useState<string | null>(null)
@@ -59,16 +59,11 @@ export const UserProvider = ({children}: UserContextProps) => {
         initSchool().then()
     }, [user]);
 
-    const register = async (data: SignupRequest) => {
+    const register = (data: SignupSchema) => {
         try {
-            const resp = await signupApi(data)
-            if (resp && resp?.status === 200) {
-                message.success("Account created successfully, the user can now login...", 5)
-                return true
-            }
-            return false
+            return signupApi(data)
         } catch (error) {
-            message.error("An error occurred while creating your account, please try again...", 5)
+            console.error("Error during registration:", error)
             return false
         }
     }
@@ -84,7 +79,7 @@ export const UserProvider = ({children}: UserContextProps) => {
                 return false
             }
         }catch(error) {
-            message.error("An error occurred while logging in, please try again...", 5)
+            setLoginError("An error occurred while logging in, please try again...")
             return false
         }
     }

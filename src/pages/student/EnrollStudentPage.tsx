@@ -18,6 +18,7 @@ import HealthConditionForm from "../../components/forms/HealthConditionForm.tsx"
 import {useToggle} from "../../hooks/useToggle.ts";
 import {OutputFileEntry} from "@uploadcare/blocks";
 import {IndividualForm} from "../../components/forms/IndividualForm.tsx";
+import {loggedUser} from "../../auth/jwt/LoggedUser.ts";
 
 const EnrollStudentPage = () => {
 
@@ -209,6 +210,8 @@ const EnrollStudentPage = () => {
         setError("")
         setSuccess("")
 
+        const school = loggedUser.getSchool()
+
         startTransition(() => {
 
             if (image)
@@ -227,8 +230,11 @@ const EnrollStudentPage = () => {
                 ...data,
                 student: {
                     ...data.student,
-                    reference: 'AMB000005'
-                }
+                    personalInfo: {
+                        ...data.student.personalInfo,
+                        reference: `${school?.abbr}000400`
+                    }
+                },
             }
 
             addStudent(data)

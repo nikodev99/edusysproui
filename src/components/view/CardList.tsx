@@ -14,7 +14,7 @@ interface CardListProps<TData extends object> {
     isActive: boolean
     isLoading: boolean
     dropdownItems?: (url: string) => ItemType[]
-    throughDetails: (id: string) => void
+    throughDetails: (id: string, record?: TData) => void
     avatarLess?: boolean
     titleLevel?: 1 | 4 | 5 | 2 | 3
     displayItem?: 1 | 2 | 3 | 4
@@ -55,11 +55,11 @@ const CardList = <TData extends object>(
                                             lastText={c?.lastName}
                                             firstText={c?.firstName}
                                             size={80}
-                                            onClick={() => throughDetails(c?.id as string)}
+                                            onClick={() => throughDetails(c?.id as string, c?.record)}
                                         />
                                     </div>}
                                     <div className='col__name'>
-                                        {c.lastName !== undefined && <Title level={titleLevel} onClick={() => throughDetails(c?.id as string)}>
+                                        {c.lastName !== undefined && <Title level={titleLevel} onClick={() => throughDetails(c?.id as string, c?.record)}>
                                             <SuperWord input={c.firstName ? `${c?.lastName?.toUpperCase()}, ${setFirstName(c?.firstName)}`: c.lastName as string} />
                                         </Title>}
                                         {c.reference && <Text className='st__ref'>{c?.reference}</Text>}

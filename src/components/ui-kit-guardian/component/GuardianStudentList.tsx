@@ -11,8 +11,6 @@ import {BloodType} from "../../../entity/enums/bloodType.ts";
 
 export const GuardianStudentList = ({students}: {students?: Student[]}) => {
 
-    console.log("STUDENT: ", students)
-
     return (
         <Responsive gutter={[16, 16]}>
             {students && students.map((student, index) => (

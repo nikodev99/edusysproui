@@ -1,6 +1,7 @@
 import {apiClient, handleError} from "../../data/axiosConfig.ts";
-import {LoginRequest, SignupRequest, UserProfileToken} from "../dto/user.ts";
+import {LoginRequest, UserProfileToken} from "../dto/user.ts";
 import {loggedUser} from "../jwt/LoggedUser.ts";
+import {SignupSchema} from "../../schema";
 
 export const loginApi = async (login: LoginRequest) => {
     try {
@@ -9,8 +10,7 @@ export const loginApi = async (login: LoginRequest) => {
             password: login.password
         })
     }catch (error) {
-        handleError(error)
-        throw error
+        return false
     }
 }
 
@@ -27,9 +27,20 @@ export const tokenRefresh = async () => {
     }
 }
 
-export const signupApi = async (data: SignupRequest) => {
+export const signupApi = async (data: SignupSchema) => {
+    console.log("DATA: ", data)
+
     try {
-        return await apiClient.post<UserProfileToken>('/auth/signup', data)
+        return await apiClient.post<SignupSchema>('/auth/register', data)
+    }catch (error) {
+        handleError(error)
+        throw error
+    }
+}
+
+export const userExists = async (personalInfoId: number) => {
+    try {
+        return await apiClient.get<boolean>('/auth/user/' + personalInfoId)
     }catch (error) {
         handleError(error)
         throw error

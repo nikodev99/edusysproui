@@ -285,7 +285,7 @@ export interface ListViewerProps<TData extends object, TError> {
     tableColumns?: TableColumnsType<TData>
     displayItem?: 1 | 2 | 3 | 4,
     dropdownItems?: (url: string) => ItemType[]
-    throughDetails?: ((id: string) => void) | ((data: TData) => void)
+    throughDetails?: (id: string, record?:TData) => void
     hasCount?: boolean,
     countTitle?: string,
     fetchId?: string | string[]
@@ -575,6 +575,17 @@ export interface PutSchemaProps<TData extends FieldValues, TReturn> {
 export type Option = {
     label?: ReactNode;
     value?: string | number | null;
+}
+
+export type ActionsButtons = {
+    createUser?: boolean
+}
+
+export interface ActionLinksProps<TButtonAction extends object> {
+    open: TButtonAction
+    setActions: (actions: TButtonAction) => void
+    show: TButtonAction
+    personalInfo?: Individual
 }
 
 export interface TableSearchProps {

@@ -36,6 +36,7 @@ const InsertSchema = <TData extends FieldValues>(
         setSuccessMessage(undefined)
         mutate({postFn: postFunc, data: data}, {
             onSuccess: response => {
+                console.log("RESPONSE: ", response)
                 if (response.status === 200) {
                     setSuccessMessage(messageSuccess)
                     handleForm.reset()

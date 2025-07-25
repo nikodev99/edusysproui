@@ -81,10 +81,11 @@ export const menuItems: Required<MenuProps>['items'][number][] = [
         label: text.settings.label,
         children: [
             {key: text.settings.group.org.href, label: text.settings.group.org.label},
-            {key: '/settings/customization', label: "Customiser"},
-            {key: '/settings/product_management', label: "Management des produits"},
-            {key: '/settings/security', label: "Sécurité"},
-            {key: '/settings/tags', label: "Tags"},
+            {key: text.settings.group.customize.href, label: text.settings.group.customize.label},
+            {key: text.settings.group.academicYear.href, label: text.settings.group.academicYear.label},
+            {key: text.settings.group.grade.href, label: text.settings.group.grade.label},
+            {key: text.settings.group.department.href, label: text.settings.group.department.label},
+            {key: text.settings.group.user.href, label: text.settings.group.user.label},
             {key: '/settings/legal_certificate', label: "Certificat Légal"},
             {key: '/settings/general_term', label: "Terme Général"},
             {key: '/settings/special_document', label: "Document Spéciale & Contrat"}

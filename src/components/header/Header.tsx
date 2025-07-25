@@ -4,12 +4,13 @@ import Search from "antd/es/input/Search";
 import AvatarDropdown from "./AvatarDropdown.tsx";
 import NotificationDropdown from "./NotificationDropdown.tsx";
 import {LuBell, LuMenu, LuUser} from "react-icons/lu";
-import {useGlobalStore} from "../../core/global/store.ts";
+import {useAcademicYearRepo} from "../../hooks/useAcademicYearRepo.ts";
 
 
 const Header = ({onCollapsed}: {onCollapsed: () => void}) => {
 
-    const {academicYear} = useGlobalStore()
+    const {useGetCurrentAcademicYear} = useAcademicYearRepo()
+    const academicYear = useGetCurrentAcademicYear()
 
     return(
         <Layout.Header className='header'>
@@ -22,7 +23,7 @@ const Header = ({onCollapsed}: {onCollapsed: () => void}) => {
                         Année académique
                     </Typography.Text>
                     <Typography.Text type='secondary' className='welcome-message'>
-                        {academicYear}
+                        {academicYear?.academicYear}
                     </Typography.Text>
                 </Flex>
 

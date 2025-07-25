@@ -43,7 +43,7 @@ export const useRedirect = () => {
             if (employeeSlug)
                 return redirectTo(text.employee.group.view.href + employeeSlug, {state: employeeId})
             else
-                redirectTo(text.employee.group.view.href + employeeId)
+                return redirectTo(text.employee.group.view.href + employeeId)
         },
         toSettings: () => redirectTo(text.settings.href),
         toSettingOrg: () => redirectTo(text.settings.group.org.href)

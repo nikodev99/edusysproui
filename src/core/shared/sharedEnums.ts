@@ -3,7 +3,7 @@ export enum InputTypeEnum {
 }
 
 export enum AddressOwner {
-    STUDENT, TEACHER, EMPLOYEE, GUARDIAN, ENROLLMENT
+    STUDENT, TEACHER, EMPLOYEE, GUARDIAN, ENROLLMENT, SCHOOL
 }
 
 export enum IndividualType {
@@ -11,5 +11,6 @@ export enum IndividualType {
 }
 
 export enum UpdateType {
-    ADDRESS, HEALTH, GUARDIAN, INFO, TEACHER, ASSIGNMENT, EMPLOYEE
+    ADDRESS, HEALTH, GUARDIAN, INFO, TEACHER, ASSIGNMENT, EMPLOYEE, SCHOOL,
+    ACADEMIC_YEAR, GRADE, DEPARTMENT
 }

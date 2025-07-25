@@ -2,7 +2,7 @@ import {z} from "zod";
 import {guardianSchema} from "./guardianSchema.ts";
 import {healthSchema} from "./healthSchema.ts";
 import {individualSchema} from "./individualSchema.ts";
-import {dateProcess} from "../dateSchema.ts";
+import {dateProcess} from "../commonSchema.ts";
 
 export const studentSchema = z.object({
     personalInfo: individualSchema.extend({

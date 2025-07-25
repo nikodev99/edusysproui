@@ -1,6 +1,6 @@
 import {z} from "zod";
 import {addressSchema} from "./addressSchema.ts";
-import {dateProcess} from "../dateSchema.ts";
+import {dateProcess} from "../commonSchema.ts";
 
 export const individualSchema = z.object({
     firstName: z.string({required_error: 'Prénom(s) est réquis'})

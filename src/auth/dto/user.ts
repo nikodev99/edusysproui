@@ -36,8 +36,24 @@ export interface UserProfile {
     username: string
     email: string
     phoneNumber: string
+    userType: UserType
     roles: Role[]
     schools: School[]
+}
+
+export interface User {
+    id: number
+    username: string
+    email: string
+    roles: Role[]
+    phoneNumber: string
+    enabled: boolean
+    accountNonLocked: boolean
+    failedLoginAttempts: number
+    lastLogin: Date | number | string
+    userType: UserType
+    createdAt: Date | number | string
+    updatedAt: Date | number | string
 }
 
 export enum UserType {

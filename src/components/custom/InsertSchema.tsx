@@ -21,7 +21,8 @@ const InsertSchema = <TData extends FieldValues>(
         okText,
         description,
         customForm,
-        handleForm
+        handleForm,
+        explain
     }: InsertSchemaType<TData>
 ) => {
     const [openConfirm, setOpenConfirm] = useState<boolean>(false);
@@ -65,6 +66,7 @@ const InsertSchema = <TData extends FieldValues>(
         >
             {successMessage && (<Alert message={successMessage} type="success" showIcon/>)}
             {errorMessage && (<Alert message={errorMessage} type="error" showIcon/>)}
+            {explain && (<Alert style={{marginTop: '10px'}} message={explain} type="info" showIcon/>)}
             <Form layout='vertical' style={{marginTop: '15px'}}>
                 {customForm}
                 <Flex justify='flex-end' gap='small'>

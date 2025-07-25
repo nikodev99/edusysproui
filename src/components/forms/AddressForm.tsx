@@ -49,6 +49,12 @@ const AddressForm = <T extends FieldValues>(addressProps: AddressFormProps<T>) =
                     validate: form.validate(fieldName, 'student.guardian.personalInfo.address'),
                     error: form.error(fieldName, 'student.guardian.personalInfo.address'),
                 }
+            case AddressOwner.SCHOOL:
+                return {
+                    name: form.name(fieldName, 'school.address'),
+                    validate: form.validate(fieldName, 'school.address'),
+                    error: form.error(fieldName, 'school.address'),
+                }
             default:
                 return null
 

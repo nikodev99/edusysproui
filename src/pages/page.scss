@@ -34,6 +34,13 @@
   @include flex-center;
 }
 
+.btn__danger {
+  color: #f61818!important;
+  &:hover {
+    color: lighten(#f61818, 20%)!important;
+  }
+}
+
 //Page Description
 .page__header {
   //margin: 15px 0;

@@ -2,7 +2,7 @@ import {z} from "zod";
 import {AttendanceStatusLiteral} from "../../entity/enums/attendanceStatus.ts";
 import {academicYearSchemaMerge} from "./academicYearSchema.ts";
 import {classeSchemaMerge} from "./classeSchema.ts";
-import {dateProcess} from "../dateSchema.ts";
+import {dateProcess} from "../commonSchema.ts";
 import {individualSchemaMerge} from "./individualSchema.ts";
 
 export const singleAttendanceSchema = z.object({

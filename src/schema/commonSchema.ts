@@ -2,6 +2,17 @@ import {z} from "zod";
 import Datetime from "../core/datetime.ts";
 import dayjs from "dayjs";
 
+type TypicalErrors = {
+    requiredError?: string,
+    when?: {
+        before?: boolean,
+        after?: boolean
+    }
+    minError?: string,
+    maxError?: string,
+    regexError?: string,
+}
+
 /**
  * The `dateProcess` function is responsible for processing and validating a date input. It adjusts the input date by adding one hour,
  * validates its format, and ensures it meets specified conditions based on the `when` parameter, such as being before or after the current date.
@@ -14,9 +25,9 @@ import dayjs from "dayjs";
  */
 export const dateProcess = (requiredError: string, when?: {before?: boolean, after?: boolean}): z.ZodType  => z.preprocess(
     (arg) => {
-        return Datetime.of(arg as string).plusHour(1).toDate()
+        return arg ? Datetime.of(arg as string).plusHour(1).toDate() : undefined
     }, z.date({required_error: requiredError})
-        .refine(date => (isNaN(date.getDate()) || !!date), {message: 'Date invalide'})
+        .refine(date => !isNaN(date.getTime()), {message: 'Date invalide'})
         .refine(d => when?.before ? Datetime.of(d).isBefore(new Date()) : true, {
             message: 'La date doit être postérieure à maintenant'
         })
@@ -36,3 +47,7 @@ export const timeProcess = (title: string) =>
         }
         return arg;
     }, z.string({ required_error: title }));
+
+export const excludeSpecialCharacters= (errors: TypicalErrors) =>
+    z.string({required_error: errors.requiredError})
+    .regex(/^[a-zA-Z0-9\s]+$/, {message: errors.regexError})

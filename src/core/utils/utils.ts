@@ -640,9 +640,9 @@ export const getShortSortOrder = (order: string | undefined): 'asc' | 'desc' | u
     }
 };
 
-export const getSlug = (personalInfo: Individual) => {
-    const first = firstWord(personalInfo?.firstName)
-    const last = firstWord(personalInfo?.lastName)
+export const getSlug = (personalInfo: Individual, firstName?: string, lastName?: string) => {
+    const first = firstWord(personalInfo?.firstName ?? firstName)
+    const last = firstWord(personalInfo?.lastName ?? lastName)
     return (`${first}_${last}`)?.toLowerCase()
 }
 

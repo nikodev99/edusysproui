@@ -1,6 +1,11 @@
 import {AxiosResponse} from "axios";
 import {AcademicYear} from "../../entity";
 import {apiClient} from "../axiosConfig.ts";
+import {AcademicYearSchema} from "../../schema";
+
+export const saveAcademicYear = (academicYear: AcademicYearSchema) => {
+    return apiClient.post<AcademicYear>('/academic', academicYear)
+}
 
 export const getCurrentAcademicYear = (schoolId: string): Promise<AxiosResponse<AcademicYear>> => {
     return apiClient.get<AcademicYear>('/academic/' + schoolId)

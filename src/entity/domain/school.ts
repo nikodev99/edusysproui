@@ -11,7 +11,7 @@ export interface School {
     accreditationNumber?: string
     contactEmail?: string
     phoneNumber?: string
-    website?: string
+    websiteURL?: string
     grade?: Grade[]
     createdAt?: Date
     modifyAt?: Date

@@ -159,7 +159,27 @@ export const raw = {
             org: {
                 label: 'Organisation',
                 href: '/settings/organization'
-            }
+            },
+            customize: {
+                label: 'Customiser',
+                href: '/settings/customize'
+            },
+            academicYear: {
+                label: 'Année Académique',
+                href: '/settings/academic_year'
+            },
+            grade: {
+                label: 'Grade',
+                href: '/settings/grades'
+            },
+            department: {
+                label: 'Départements',
+                href: '/settings/departments'
+            },
+            user: {
+                label: 'Utilisateurs',
+                href: '/settings/users'
+            },
         }
     },
     path: {

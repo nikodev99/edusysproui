@@ -7,21 +7,29 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {PatchUpdate} from "../../core/PatchUpdate.ts";
 import {CustomUpdateProps} from "../../core/utils/interfaces.ts";
 import {AddressOwner} from "../../core/shared/sharedEnums.ts";
+import {useMemo} from "react";
 
 export const UpdateAddress = ({data, open, close, personal, setSuccessMessage, setErrorMessage}: CustomUpdateProps) => {
 
     const {control, formState: {errors}, watch} = useForm<AddressSchema>({
         resolver: zodResolver(addressSchema)
     })
+    
+    const address: Address | undefined = useMemo(() => {
+        return personal === AddressOwner.SCHOOL && 'address' in data 
+            ? data.address : 'personalInfo' in data 
+                ? data?.personalInfo?.address 
+                : {} as Address
+    }, [data, personal])
 
     const addressData = watch()
 
     const handleAddressUpdate = async (field: keyof Address) => {
-        if (data?.personalInfo?.address.id) {
+        if (address?.id) {
             await PatchUpdate.address(
                 field,
                 addressData,
-                data?.personalInfo?.address.id,
+                address?.id,
                 setSuccessMessage,
                 setErrorMessage,
             )
@@ -29,13 +37,13 @@ export const UpdateAddress = ({data, open, close, personal, setSuccessMessage, s
     }
 
     return(
-        <RightSidePane loading={data?.personalInfo?.address === undefined} open={open} onClose={close} className='address__drawer'>
+        <RightSidePane loading={address === undefined} open={open} onClose={close} className='address__drawer'>
             <AddressForm
                 control={control}
                 errors={errors}
                 type={personal as AddressOwner}
                 edit={true}
-                data={data?.personalInfo?.address}
+                data={address}
                 handleUpdate={handleAddressUpdate}
             />
         </RightSidePane>

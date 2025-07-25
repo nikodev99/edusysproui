@@ -1,4 +1,4 @@
-import {FieldErrors} from "react-hook-form";
+import {FieldErrors, FieldValues} from "react-hook-form";
 import {ReactNode} from "react";
 
 class FormUtils {
@@ -6,42 +6,42 @@ class FormUtils {
         return toEdit ? editScreen : actualScreen;
     }
 
-    static getValidationStatus<T extends FieldErrors>(fieldName: string, errors: FieldErrors<T>, toEdit: boolean, parent?: string, enroll?: boolean) {
+    static getValidationStatus<T extends FieldErrors>(fieldName: keyof T, errors: FieldErrors<T>, toEdit: boolean, parent?: string, enroll?: boolean) {
         if (toEdit) {
-            return errors?.[fieldName] ? 'error' : '';
+            return errors?.[fieldName as string] ? 'error' : '';
         } else {
             if (enroll) {
-                return FormUtils.getNestedErrorValidationStatus(fieldName, errors, parent)
+                return FormUtils.getNestedErrorValidationStatus(fieldName as string, errors, parent)
             }else {
-                return FormUtils.setValidation(fieldName, errors, parent);
+                return FormUtils.setValidation(fieldName as string, errors, parent);
             }
         }
     }
 
-    static getErrorMessage<T extends FieldErrors>(fieldName: string, errors: FieldErrors<T>, toEdit: boolean, parent?: string, enroll?: boolean): ReactNode {
+    static getErrorMessage<T extends FieldErrors>(fieldName: keyof T, errors: FieldErrors<T>, toEdit: boolean, parent?: string, enroll?: boolean): ReactNode {
         if (toEdit) {
             return (errors?.[fieldName]?.message || '') as ReactNode
         } else {
             if (enroll) {
-                return FormUtils.getNestedError(fieldName, errors, parent) || ''
+                return FormUtils.getNestedError(fieldName as string, errors, parent) || ''
             }else {
-                return FormUtils.setError(fieldName, errors, parent);
+                return FormUtils.setError(fieldName as string, errors, parent);
             }
         }
     }
 
-    static setName (fieldName: string, toEdit: boolean, parent?: string, enroll?: boolean) {
+    static setName <T extends FieldValues>(fieldName: keyof T, toEdit: boolean, parent?: string, enroll?: boolean) {
         if (toEdit) {
-            return fieldName
+            return String(fieldName)
         }else {
             if (enroll) {
-                return parent ? `${parent}.${fieldName}` : fieldName
+                return parent ? `${parent}.${String(fieldName)}` : String(fieldName)
             }
-            return parent ? `${FormUtils.getOnlyParent(parent)}.${fieldName}` : fieldName
+            return parent ? `${FormUtils.getOnlyParent(parent)}.${String(fieldName)}` : String(fieldName)
         }
     }
 
-    private static getNestedError<T extends FieldErrors>(fieldName: string, errors: FieldErrors<T>, parent?: string): ReactNode {
+    private static getNestedError<T extends FieldErrors>(fieldName: keyof T, errors: FieldErrors<T>, parent?: string): ReactNode {
         let nestedErrors = errors
         if (parent) {
             const path = parent.split('.')
@@ -56,7 +56,7 @@ class FormUtils {
         return (nestedErrors?.[fieldName]?.message || '') as ReactNode
     }
 
-    private static getNestedErrorValidationStatus<T extends FieldErrors>(fieldName: string, errors: FieldErrors<T>, parent?: string) {
+    private static getNestedErrorValidationStatus<T extends FieldErrors>(fieldName: keyof T, errors: FieldErrors<T>, parent?: string) {
         let nestedErrors = errors
         if (parent) {
             const path = parent.split('.')
@@ -68,15 +68,15 @@ class FormUtils {
                 }
             }
         }
-        return nestedErrors?.[fieldName] ? 'error' : ''
+        return nestedErrors?.[fieldName as string] ? 'error' : ''
     }
     
-    private static setError<T extends FieldErrors>(fieldName: string, errors: FieldErrors<T>, parent?: string) {
+    private static setError<T extends FieldErrors>(fieldName: keyof T, errors: FieldErrors<T>, parent?: string) {
         const onlyParent = FormUtils.getOnlyParent(parent);
         return FormUtils.getNestedError(fieldName, errors, onlyParent)
     }
     
-    private static setValidation<T extends FieldErrors>(fieldName: string, errors: FieldErrors<T>, parent?: string) {
+    private static setValidation<T extends FieldErrors>(fieldName: keyof T, errors: FieldErrors<T>, parent?: string) {
         const onlyParent = FormUtils.getOnlyParent(parent)
         return FormUtils.getNestedErrorValidationStatus(fieldName, errors, onlyParent)
     }

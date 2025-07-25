@@ -1,11 +1,16 @@
 import {useEffect, useState} from "react";
 import {Grade} from "../entity";
 import {useRawFetch} from "./useFetch.ts";
-import {getAllSchoolGrades} from "../data/repository/gradeRepository.ts";
+import {getAllSchoolGrades, saveGrade} from "../data/repository/gradeRepository.ts";
 import {loggedUser} from "../auth/jwt/LoggedUser.ts";
+import {useInsert} from "./usePost.ts";
+import {gradeSchema} from "../schema";
 
 export const useGradeRepo = () => {
     const userSchool = loggedUser.getSchool()
+
+    const useInsertGrade = () =>
+        useInsert(gradeSchema, saveGrade)
 
     const useGetAllGrades = () => {
         const [grades, setGrades] = useState<Grade[]>([])
@@ -24,6 +29,7 @@ export const useGradeRepo = () => {
     }
 
     return {
+        useInsertGrade,
        useGetAllGrades
     }
 }

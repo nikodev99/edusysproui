@@ -1,17 +1,22 @@
 import {z} from "zod";
-import {schoolSchema} from "./schoolSchema.ts";
+import {schoolMergeSchema} from "./schoolSchema.ts";
+import {dateProcess} from "../commonSchema.ts";
+import Datetime from "../../core/datetime.ts";
 
 export const academicYearSchema = z.object({
-    id: z.string().optional(),
-    startDate: z.preprocess(
-        (arg) => (typeof arg === 'string' || arg instanceof Date ? new Date(arg) : undefined),
-        z.date().refine((date) => !isNaN(date.getTime()), {message: "Date invalide"})
-    ),
-    endDate: z.preprocess(
-        (arg) => (typeof arg === 'string' || arg instanceof Date ? new Date(arg) : undefined),
-        z.date().refine((date) => !isNaN(date.getTime()), {message: "Date invalide"})
-    ),
-    school: schoolSchema.optional()
+    startDate: dateProcess("La date de début est requise"),
+    endDate: dateProcess("La date de fin est requise"),
+    school: schoolMergeSchema.optional()
+}).refine((data) => {
+    return Datetime.of(data.startDate).compare(data.endDate) !== 0
+}, {
+    message: "La date de debut ne peut pas être égale à la date de fin",
+    path: ["startDate"]
+}).refine((data) => {
+    return Datetime.of(data.startDate).isBefore(data.endDate);
+}, {
+    message: 'La date de début doit être antérieure à la date de fin',
+    path: ["endDate"]
 })
 
 export const academicYearSchemaMerge = z.object({

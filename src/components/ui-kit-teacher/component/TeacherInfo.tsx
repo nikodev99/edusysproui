@@ -10,11 +10,10 @@ import {
     cLowerName,
     setTime
 } from "../../../core/utils/utils.ts";
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {Flex, TableColumnsType, Tag, TimelineProps} from "antd";
 import {useRawFetch} from "../../../hooks/useFetch.ts";
 import {getNumberOfStudentTaughtByClasse} from "../../../data/repository/teacherRepository.ts";
-import {getPrimaryDepartment} from "../../../data/repository/departmentRepository.ts";
 import {Timeline} from "../../graph/Timeline.tsx";
 import {AiFillClockCircle} from "react-icons/ai";
 import {getSomeStudentReprimandedByTeacher} from "../../../data/repository/reprimandRepository.ts";
@@ -33,6 +32,7 @@ import {MarksHistogram} from "../../common/MarksHistogram.tsx";
 import {TeacherIndividual} from "../../common/TeacherIndividual.tsx";
 import {useTeacherRepo} from "../../../hooks/useTeacherRepo.ts";
 import {ScheduleCalendar} from "../../common/ScheduleCalendar.tsx";
+import {useDepartmentRepo} from "../../../hooks/useDepartmentRepo.ts";
 
 type TeacherInfo = InfoPageProps<Teacher>
 
@@ -125,20 +125,28 @@ const DepartmentInfo = ({infoData, color}: TeacherInfo) => {
     const [departments, setDepartments] = useState<Department[] | undefined>()
     //TODO the value of the primary department code should be in the settings
     const primaryDepartmentCode = useGlobalStore.use.primaryDepartment()
-    const primary = useRef<string | undefined>(primaryDepartmentCode)
-    const fetch = useRawFetch()
-
-    useEffect(() => {
+    const {useGetDepartmentByCode} = useDepartmentRepo()
+    const primary = useMemo(() => primaryDepartmentCode, [primaryDepartmentCode])
+    const fetchedDepartment = useGetDepartmentByCode(primary, !infoData.courses || infoData.courses?.length === 0)
+    
+    const settingDapartments = useMemo(() => {
         if (infoData.courses && infoData.courses?.length !== 0) {
-            const deps: Department[] = Array.from(
+            return  Array.from(
                 new Set(infoData.courses?.map((course) => course.department))
             ) as Department[]
-            setDepartments(getDistinctArray<Department>(deps, (dep: Department) => dep?.id))
+            
         }else {
-            fetch(getPrimaryDepartment, [primary.current])
-                .then(response => setDepartments([response.data] as Department[]))
+            return [fetchedDepartment]
         }
-    }, [infoData.courses, fetch]);
+    }, [fetchedDepartment, infoData.courses])
+
+    useEffect(() => {
+        setDepartments(
+            getDistinctArray<Department>(
+                settingDapartments, (dep: Department) => dep?.id
+            )
+        )
+    }, [settingDapartments]);
 
     return(
         <>

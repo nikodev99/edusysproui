@@ -10,7 +10,7 @@ import GuardianListPage from "../../pages/guardian/GuardianListPage.tsx";
 import GuardianViewPage from "../../pages/guardian/GuardianViewPage.tsx";
 import AddTeacherPage from "../../pages/teacher/AddTeacherPage.tsx";
 import TeacherViewPage from "../../pages/teacher/TeacherViewPage.tsx";
-import {Organization} from "../../pages/setting/Organization.tsx";
+import {OrganizationPage} from "../../pages/setting/OrganizationPage.tsx";
 import ClasseSubjectListsPage from "../../pages/classe_subject/ClasseSubjectListsPage.tsx";
 import ClasseViewPage from "../../pages/classe_subject/ClasseViewPage.tsx";
 import SubjectViewPage from "../../pages/classe_subject/SubjectViewPage.tsx";
@@ -33,6 +33,11 @@ import {withAuthProtection} from "../../middleware/withAuthProtection.tsx";
 import LogSchoolPage from "../../pages/user/LogSchoolPage.tsx";
 import AddEmployeePage from "../../pages/employee/AddEmployeePage.tsx";
 import EmployeeViewPage from "../../pages/employee/EmployeeViewPage.tsx";
+import CustomizePage from "../../pages/setting/CustomizePage.tsx";
+import AcademicYearPage from "../../pages/setting/AcademicYearPage.tsx";
+import GradePage from "../../pages/setting/GradePage.tsx";
+import DepartmentPage from "../../pages/setting/DepartmentPage.tsx";
+import UserPage from "../../pages/setting/UserPage.tsx";
 
 const DashboardPage = withAuthProtection(Dashboard);
 const ListStudentPage = withAuthProtection(StudentListPage);
@@ -46,6 +51,12 @@ const ViewTeacherPage = withAuthProtection(TeacherViewPage);
 const ListEmployeePage = withAuthProtection(EmployeeListPage);
 const EmployeeAddPage = withAuthProtection(AddEmployeePage);
 const ViewEmployeePage = withAuthProtection(EmployeeViewPage);
+
+const SettingCustomizePage = withAuthProtection(CustomizePage);
+const SettingAcademicYearPage = withAuthProtection(AcademicYearPage);
+const SettingGradePage = withAuthProtection(GradePage);
+const SettingDepartmentPage = withAuthProtection(DepartmentPage);
+const SettingUserPage = withAuthProtection(UserPage);
 
 export const Route = createBrowserRouter([
     {
@@ -156,7 +167,12 @@ export const Route = createBrowserRouter([
             {
                 path: 'settings',
                 children: [
-                    {path: 'organization', element: <Organization />}
+                    {path: 'organization', element: <OrganizationPage />},
+                    {path: 'customize', element: <SettingCustomizePage />},
+                    {path: 'academic_year', element: <SettingAcademicYearPage />},
+                    {path: 'grades', element: <SettingGradePage />},
+                    {path: 'departments', element: <SettingDepartmentPage />},
+                    {path: 'users', element: <SettingUserPage />},
                 ]
             }
         ]

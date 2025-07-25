@@ -1,7 +1,7 @@
 import {z} from "zod";
 import {classeSchemaMerge} from "./classeSchema.ts";
 import {courseSchemaMerge} from "./courseSchema.ts";
-import {dateProcess, timeProcess} from "../dateSchema.ts";
+import {dateProcess, timeProcess} from "../commonSchema.ts";
 import {planningSchemaMerge} from "./planningSchema.ts";
 import {individualSchemaMerge} from "./individualSchema.ts";
 import {examSchemaMerge} from "./examSchema.ts";

@@ -1,6 +1,6 @@
 import RightSidePane from "../../ui/layout/RightSidePane.tsx";
 import {EditProps} from "../../../core/utils/interfaces.ts";
-import {Guardian} from "../../../entity";
+import {Guardian, Individual} from "../../../entity";
 import GuardianForm from "../../forms/GuardianForm.tsx";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
@@ -10,7 +10,6 @@ import {Button} from "antd";
 import {useEffect, useState} from "react";
 import FormSuccess from "../../ui/form/FormSuccess.tsx";
 import FormError from "../../ui/form/FormError.tsx";
-import {Individual} from "../../../entity/domain/individual.ts";
 import {hasField} from "../../../core/utils/utils.ts";
 import {UpdateAddress} from "../../custom/UpdateAddress.tsx";
 import {UpdatePersonalData} from "../../custom/UpdatePersonalData.tsx";

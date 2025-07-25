@@ -11,7 +11,7 @@ import {
 } from "react-hook-form";
 import {ValidateStatus} from "antd/es/form/FormItem";
 import React, {CSSProperties, ReactNode} from "react";
-import {AcademicYear, Assignment, Course, Guardian, Student, Teacher, Employee, Individual} from "../../entity";
+import {AcademicYear, Assignment, Course, Guardian, Student, Teacher, Employee, Individual, School} from "../../entity";
 import {SectionType} from "../../entity/enums/section.ts";
 import {Gender} from "../../entity/enums/gender.tsx";
 import {AttendanceStatus} from "../../entity/enums/attendanceStatus.ts";
@@ -505,7 +505,7 @@ export type TabItemType = {
 }
 
 export type CustomUpdateProps = {
-    data: Student | Teacher | Employee | Guardian,
+    data: Student | Teacher | Employee | Guardian | School,
     open?: boolean, close?: () => void,
     personal: AddressOwner | IndividualType,
     setSuccessMessage: (msg: string | undefined) => void,
@@ -560,6 +560,7 @@ export interface SchemaProps<TData extends FieldValues> {
     data: z.ZodSchema<TData>;
     messageSuccess?: string;
     description?: string;
+    explain?: string;
     customForm: ReactNode
     handleForm: UseFormReturn<TData>
 }

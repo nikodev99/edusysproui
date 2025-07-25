@@ -1,54 +1,60 @@
 import {Alert, Button, Divider, Dropdown, MenuProps} from "antd";
 import {LuCog, LuLogOut, LuShoppingCart, LuUser} from "react-icons/lu";
-import {firstWord} from "../../core/utils/utils.ts";
+import {firstWord, getSlug} from "../../core/utils/utils.ts";
 import {useAuth} from "../../hooks/useAuth.ts";
+import {useRedirect} from "../../hooks/useRedirect.ts";
+import {Individual} from "../../entity";
+import {UserType} from "../../auth/dto/user.ts";
 
 const AvatarDropdown = () => {
 
     const {user, logoutUser} = useAuth()
+    const {toViewEmployee, toViewTeacher, toViewGuardian} = useRedirect()
+
+    const redirectToProfile = () => {
+        const userSlug = getSlug({firstName: user?.firstName, lastName: user?.lastName} as Individual)
+        switch (user?.userType) {
+            case UserType.TEACHER:
+                return toViewTeacher(user?.userId as string)
+            case UserType.GUARDIAN:
+                return toViewGuardian(user?.userId as string)
+            case UserType.EMPLOYEE:
+                return toViewEmployee(user?.userId, userSlug)
+            default:
+                alert('Profile Inexistant')
+        }
+    }
 
     const items: MenuProps['items'] = [
         {
             key: '1',
-            label: (
-                <a target="_blank" rel="noopener noreferrer" href="#">
-                    Profile
-                </a>
-            ),
-            icon: <LuUser />
+            label: <span>Profile</span>,
+            icon: <LuUser />,
+            onClick: redirectToProfile
         },
         {
             key: '2',
-            label: (
-                <a rel="noopener noreferrer" href="#">
-                    To be paid
-                </a>
-            ),
+            label: 'Payements',
             icon: <LuShoppingCart />
         },
         {
             key: '3',
-            label: (
-                <a rel="noopener noreferrer" href="#">
-                    Settings
-                </a>
-            ),
+            label: 'Paramètres',
             icon: <LuCog />
         },
         {
             key: '4',
-            label: (
-                <a rel="noopener noreferrer" href="#">
-                    Logout
-                </a>
-            ),
-            icon: <LuLogOut />
+            label: 'Déconnexion',
+            icon: <LuLogOut />,
+            onClick: handleLogout,
         }
     ]
 
     function handleLogout() {
         logoutUser()
     }
+
+    console.log(user)
 
     return(
         <div className="avatar-dropdown">
@@ -68,7 +74,7 @@ const AvatarDropdown = () => {
             </div>
             <Divider/>
             <div className='avatar-btn--logout'>
-                <Button icon={<LuLogOut  size={15}/>} onClick={handleLogout}>Logout</Button>
+                <Button icon={<LuLogOut  size={15}/>} onClick={handleLogout}>Déconnexion</Button>
             </div>
         </div>
     )

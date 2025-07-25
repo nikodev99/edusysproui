@@ -1,31 +1,28 @@
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {AcademicYear} from "../entity";
-import {useRawFetch} from "./useFetch.ts";
+import {useFetch, useRawFetch} from "./useFetch.ts";
 import {
     getAcademicYearFromDate,
     getAcademicYearFromYear,
     getAllAcademicYears,
-    getCurrentAcademicYear
+    getCurrentAcademicYear, saveAcademicYear
 } from "../data/repository/academicYearRepository.ts";
 import {loggedUser} from "../auth/jwt/LoggedUser.ts";
+import {useInsert} from "./usePost.ts";
+import {academicYearSchema} from "../schema";
 
 export const useAcademicYearRepo = () => {
-    const userSchool = loggedUser.getSchool()
+    const userSchool = useMemo(() => loggedUser.getSchool(), [])
 
-    const useGetCurrentAcademicYear = () => {
-        const [currentYear, setCurrentYear] = useState<AcademicYear>()
-        const fetch = useRawFetch()
+    const useInsertAcademicYear = () =>
+        useInsert(academicYearSchema, saveAcademicYear)
 
-        useEffect(() => {
-            fetch(getCurrentAcademicYear, [userSchool?.id])
-                .then(resp => {
-                    if (resp) {
-                        setCurrentYear(resp.data as AcademicYear)
-                    }
-                })
-        }, [fetch]);
-        
-        return currentYear
+    const useGetCurrentAcademicYear = (shouldRefetch: boolean = false) => {
+        const {data, refetch} = useFetch(['current-academic-year', userSchool?.id], getCurrentAcademicYear, [userSchool?.id], !!userSchool?.id)
+        if (shouldRefetch) {
+            refetch().then(r => r.data)
+        }
+        return data
     }
     
     const useGetAcademicYearFromYear = (year: number) => {
@@ -62,23 +59,17 @@ export const useAcademicYearRepo = () => {
         return academicYearFromDate
     }
     
-    const useGetAllAcademicYear = () => {
-        const [academicYears, setAcademicYears] = useState<AcademicYear[]>([])
-        const fetch = useRawFetch()
+    const useGetAllAcademicYear = (shouldRefetch: boolean = false) => {
+        const {data, refetch} = useFetch(['academic-year-list', userSchool?.id], getAllAcademicYears, [userSchool?.id], !!userSchool?.id)
 
-        useEffect(() => {
-            fetch(getAllAcademicYears, [userSchool?.id])
-                .then(resp => {
-                    if (resp) {
-                        setAcademicYears(resp.data as AcademicYear[])
-                    }
-                })
-        }, [fetch]);
+        if(shouldRefetch)
+            refetch().then(r => r.data)
 
-        return academicYears
+        return data
     }
     
     return {
+        useInsertAcademicYear,
         useGetCurrentAcademicYear,
         useGetAcademicYearFromYear,
         useGetAcademicYearFromDate,

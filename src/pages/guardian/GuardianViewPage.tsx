@@ -1,4 +1,4 @@
-import React, {ReactNode, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useFetch} from "../../hooks/useFetch.ts";
 import {useParams} from "react-router-dom";
 import {fetchGuardianWithStudents} from "../../data";
@@ -7,7 +7,6 @@ import {Guardian} from "../../entity";
 import {setLastName, setName} from "../../core/utils/utils.ts";
 import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
 import {text} from "../../core/utils/text_display.ts";
-import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
 import ViewHeader from "../../components/ui/layout/ViewHeader.tsx";
 import {GuardianEditDrawer, GuardianStudentList, GuardianActionLinks} from "../../components/ui-kit-guardian";
 import {Gender} from "../../entity/enums/gender.tsx";
@@ -41,15 +40,17 @@ const GuardianViewPage: React.FC = () => {
         description: "Guardian description",
     })
 
-    const pageHierarchy = useBreadCrumb([
-        {
-            title: text.guardian.label,
-            path: text.guardian.href
-        },
-        {
-            title: guardianName
-        }
-    ])
+    const {context} = useBreadCrumb({
+        bCItems: [
+            {
+                title: text.guardian.label,
+                path: text.guardian.href
+            },
+            {
+                title: guardianName
+            }
+        ]
+    })
 
     useEffect(() => {
         if (isSuccess && data) {
@@ -69,7 +70,7 @@ const GuardianViewPage: React.FC = () => {
 
     return (
         <>
-            <PageHierarchy items={pageHierarchy as [{title: string | ReactNode, path?: string}]} mBottom={25} />
+            {context}
             <ViewHeader
                 isLoading={isLoading}
                 setEdit={handleOpenDrawer}

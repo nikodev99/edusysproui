@@ -1,6 +1,6 @@
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {text} from "../../core/utils/text_display.ts";
-import {Breadcrumb, useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
+import {BreadcrumbType, useBreadcrumbItem} from "../../hooks/useBreadCrumb.tsx";
 import {ListPageHierarchy} from "../../components/custom/ListPageHierarchy.tsx";
 import {redirectTo} from "../../context/RedirectContext.ts";
 import {LuCalendarPlus, LuEllipsis, LuEllipsisVertical, LuEye} from "react-icons/lu";
@@ -41,7 +41,7 @@ const ExamListPage = () => {
         description: "Exams description",
     })
 
-    const pageHierarchy = useBreadCrumb([
+    const pageHierarchy = useBreadcrumbItem([
         {title: text.exam.label},
     ])
 
@@ -228,7 +228,7 @@ const ExamListPage = () => {
     return(
         <>
             <ListPageHierarchy
-                items={pageHierarchy as [Breadcrumb]}
+                items={pageHierarchy as [BreadcrumbType]}
                 onClick={() => redirectTo(text.exam.group.add.href)}
                 icon={<LuCalendarPlus />}
                 label={text.exam.group.add.label}

@@ -1,6 +1,6 @@
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {text} from "../../core/utils/text_display.ts";
-import {Breadcrumb, useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
+import {BreadcrumbType, useBreadcrumbItem} from "../../hooks/useBreadCrumb.tsx";
 import {ListPageHierarchy} from "../../components/custom/ListPageHierarchy.tsx";
 import {useRedirect} from "../../hooks/useRedirect.ts";
 import {LuEllipsisVertical, LuEye, LuUserPlus} from "react-icons/lu";
@@ -26,7 +26,7 @@ const EmployeeListPage = () => {
         description: "Employee description",
     })
 
-    const pageHierarchy = useBreadCrumb([
+    const pageHierarchy = useBreadcrumbItem([
         {
             title: text.employee.label + 's'
         }
@@ -137,7 +137,7 @@ const EmployeeListPage = () => {
     return(
         <>
             <ListPageHierarchy
-                items={pageHierarchy as [Breadcrumb]}
+                items={pageHierarchy as [BreadcrumbType]}
                 onClick={toAddEmployee}
                 icon={<LuUserPlus />}
                 label={text.employee.group.add.label}

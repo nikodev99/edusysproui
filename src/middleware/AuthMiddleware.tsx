@@ -6,9 +6,9 @@ import {redirectTo} from "../context/RedirectContext.ts";
 import {jwtTokenManager} from "../auth/jwt/JWTToken.tsx";
 import {loggedUser} from "../auth/jwt/LoggedUser.ts";
 
-const ACTIVITY_TIMEOUT = 30 * 60 * 1000
-const ACTIVITY_CHECK_INTERNAL = 60 * 1000
-const LAST_ACTIVITY_KEY = 'lastActivity'
+const ACTIVITY_TIMEOUT = import.meta.env.VITE_ACTIVITY_TIMEOUT as number;
+const ACTIVITY_CHECK_INTERNAL = import.meta.env.VITE_ACTIVITY_CHECK_INTERNAL as number;
+const LAST_ACTIVITY_KEY = import.meta.env.VITE_LAST_ACTIVITY_KEY as string;
 
 const ACTIVITY_EVENTS = [
     'mousedown',

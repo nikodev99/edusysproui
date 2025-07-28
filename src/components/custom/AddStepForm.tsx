@@ -1,6 +1,5 @@
-import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
-import {Breadcrumb, useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
+import {BreadcrumbType, useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
 import {Button, Flex, Form, Steps} from "antd";
 import {FieldValues, UseFormReturn} from "react-hook-form";
 import {ReactNode, useState} from "react";
@@ -17,7 +16,7 @@ import {LoadingButton} from "../ui/layout/LoadingButton.tsx";
 
 interface AddStepsProps<TFieldValues extends FieldValues> {
     docTitle: Metadata,
-    breadCrumb: Breadcrumb[]
+    breadCrumb: BreadcrumbType[]
     addLink: string
     handleForm: UseFormReturn<TFieldValues>
     triggerNext: (current: number) => void
@@ -46,7 +45,7 @@ const AddStepForm = <TFieldValues extends FieldValues>(
 ) => {
 
     useDocumentTitle(docTitle)
-    const items = useBreadCrumb(breadCrumb);
+    const {context} = useBreadCrumb({bCItems: breadCrumb});
 
     const [hasErrors, setHasErrors] = useState<boolean>(false);
 
@@ -73,7 +72,7 @@ const AddStepForm = <TFieldValues extends FieldValues>(
 
     return(
         <>
-            <PageHierarchy items={items as [{ title: string | ReactNode, path?: string }]}/>
+            {context}
 
             <div className="step-wrapper">
                 <Steps current={current} progressDot={stepsDots as never} items={stepItems} size='small' />

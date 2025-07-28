@@ -10,7 +10,7 @@ export type UserAuthContext = {
     refreshToken: string | null
     userSchool: School | null
 
-    registerUser: (data: SignupSchema) => Promise<false | AxiosResponse<SignupSchema>>
+    registerUser: (data: SignupSchema) => Promise<AxiosResponse<SignupSchema>> | false
     loginUser: (data: LoginRequest) => Promise<boolean>
     refresh: () => Promise<boolean>
     logoutUser: () => void

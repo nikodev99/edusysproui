@@ -2,9 +2,8 @@ import {useParams} from "react-router-dom";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {text} from "../../core/utils/text_display.ts";
 import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
-import {ReactNode, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {Enrollment, Student} from "../../entity";
-import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
 import ViewHeader from "../../components/ui/layout/ViewHeader.tsx";
 import {setName} from "../../core/utils/utils.ts";
 import {
@@ -38,15 +37,17 @@ const StudentViewPage = () => {
         hasEdu: false
     })
 
-    const pageHierarchy = useBreadCrumb([
-        {
-            title: text.student.label,
-            path: text.student.href
-        },
-        {
-            title: studentName
-        }
-    ])
+    const {context} = useBreadCrumb({
+        bCItems: [
+            {
+                title: text.student.label,
+                path: text.student.href
+            },
+            {
+                title: studentName
+            }
+        ]
+    })
 
     useEffect(() => {
         if (isSuccess && data) {
@@ -67,7 +68,7 @@ const StudentViewPage = () => {
 
     return(
         <>
-            <PageHierarchy items={pageHierarchy as [{ title: string | ReactNode, path?: string }]} mBottom={25}/>
+            {context}
             <ViewHeader
                 pColor={setColor}
                 isLoading={isLoading}

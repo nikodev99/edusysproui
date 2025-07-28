@@ -1,6 +1,5 @@
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
-import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
 import {text} from "../../core/utils/text_display.ts";
 import {Badge, Button, Card, Divider, Flex, Table, TableColumnsType, Typography} from "antd";
 import Responsive from "../../components/ui/layout/Responsive.tsx";
@@ -19,10 +18,12 @@ const AcademicYearPage = () => {
         description: "Setting description",
     })
 
-    const breadcrumb = useBreadCrumb([
-        {title: 'Setting'},
-        {title: text.settings.group.academicYear.label}
-    ])
+    const {context} = useBreadCrumb({
+        bCItems: [
+            {title: 'Setting'},
+            {title: text.settings.group.academicYear.label}
+        ]
+    })
 
     const [openSavePane, setOpenSavePane] = useToggle(false)
     const [refetch, setRefetch] = useToggle(false)
@@ -77,7 +78,7 @@ const AcademicYearPage = () => {
 
     return(
         <>
-            <PageHierarchy items={breadcrumb as [{ title: string, path?: string }]} />
+            {context}
             <Divider orientation='left'><h3>Manager Années Académiques</h3></Divider>
             <Responsive gutter={[16, 16]}>
                 <Grid xs={24} md={12} lg={8}>

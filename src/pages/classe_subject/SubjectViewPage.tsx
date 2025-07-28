@@ -1,12 +1,11 @@
 import {useParams} from "react-router-dom";
-import {ReactNode, useEffect, useMemo, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {Classe, Course, Schedule, Teacher} from "../../entity";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {cutStatement, getUniqueness} from "../../core/utils/utils.ts";
 import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
 import {text} from "../../core/utils/text_display.ts";
 import {SuperWord} from "../../core/utils/tsxUtils.tsx";
-import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
 import ViewHeader from "../../components/ui/layout/ViewHeader.tsx";
 import {Tag} from "antd";
 import {ItemType} from "antd/es/menu/interface";
@@ -42,10 +41,12 @@ const SubjectViewPage = () => {
         description: "Course Description"
     })
 
-    const pageHierarchy = useBreadCrumb([
-        { title: text.cc.label, path: text.cc.href },
-        { title: <SuperWord input={course?.course as string} /> }
-    ])
+    const {context} = useBreadCrumb({
+        bCItems: [
+            { title: text.cc.label, path: text.cc.href },
+            { title: <SuperWord input={course?.course as string} /> }
+        ]
+    })
 
     const uniqueClasses = useMemo(() => {
         return schedules && schedules.length ? getUniqueness(schedules, s => s?.classe, c => `${c?.id}-${c?.name}`) : []
@@ -95,7 +96,7 @@ const SubjectViewPage = () => {
 
     return(
         <>
-            <PageHierarchy items={pageHierarchy as [{ title: string | ReactNode, path?: string }]} />
+            {context}
             <ViewHeader
                 isLoading={course === null}
                 setEdit={setOpen}

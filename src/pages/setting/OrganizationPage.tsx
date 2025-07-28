@@ -11,7 +11,6 @@ import {
 } from "react-icons/ai";
 import {chooseColor, cutStatement} from "../../core/utils/utils.ts";
 import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
-import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
 import {
     LuBuilding2,
     LuCalendarClock,
@@ -38,10 +37,12 @@ export const OrganizationPage = () => {
         description: "Setting description",
     })
 
-    const breadcrumb = useBreadCrumb([
-        {title: 'Setting'},
-        {title: 'Organisation'}
-    ])
+    const {context} = useBreadCrumb({
+        bCItems: [
+            {title: 'Setting'},
+            {title: 'Organisation'}
+        ]
+    })
 
     const [openEditDrawer, setOpenEditDrawer] = useToggle(false)
     const [refetch, setRefetch] = useState(false)
@@ -73,7 +74,7 @@ export const OrganizationPage = () => {
 
     return(
         <>
-        <PageHierarchy items={breadcrumb as [{ title: string, path?: string }]} />
+        {context}
         <Divider orientation='left'><h3>Mon Organisation</h3></Divider>
         <Responsive gutter={[16, 16]}>
             <Grid xs={24} md={12} lg={6}>

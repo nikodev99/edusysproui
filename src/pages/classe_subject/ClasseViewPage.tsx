@@ -1,5 +1,5 @@
 import {useParams} from "react-router-dom";
-import {ReactNode, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {Classe} from "../../entity";
 import {Color, GenderCounted} from "../../core/utils/interfaces.ts";
 import {useFetch} from "../../hooks/useFetch.ts";
@@ -7,7 +7,6 @@ import {getClasse} from "../../data/repository/classeRepository.ts";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
 import {text} from "../../core/utils/text_display.ts";
-import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
 import ViewHeader from "../../components/ui/layout/ViewHeader.tsx";
 import {Select, Tag} from "antd";
 import {
@@ -51,10 +50,12 @@ const ClasseViewPage = () => {
         description: "Classe Description"
     })
 
-    const pageHierarchy = useBreadCrumb([
-        { title: text.cc.label, path: text.cc.href },
-        { title: <SuperWord input={classe?.name as string} /> }
-    ])
+    const {context} = useBreadCrumb({
+        bCItems: [
+            { title: text.cc.label, path: text.cc.href },
+            { title: <SuperWord input={classe?.name as string} /> }
+        ]
+    })
 
     useEffect(() => {
         if (isCountSuccess)
@@ -103,7 +104,7 @@ const ClasseViewPage = () => {
 
     return(
         <>
-            <PageHierarchy items={pageHierarchy as [{ title: string | ReactNode, path?: string }]} />
+            {context}
             <ViewHeader
                 isLoading={isLoading}
                 setEdit={() => setOpen()}

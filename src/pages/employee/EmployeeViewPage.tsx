@@ -1,7 +1,6 @@
 import {useLocation} from "react-router-dom";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
-import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
-import {Breadcrumb, useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
+import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
 import {text} from "../../core/utils/text_display.ts";
 import {useEffect, useMemo, useState} from "react";
 import {Employee} from "../../entity";
@@ -43,6 +42,13 @@ const EmployeeViewPage = () => {
     const employeeFullName = useMemo(() => setName(employee?.personalInfo), [employee?.personalInfo])
     const accountExists = useAccountExists(employee?.personalInfo?.id as number)
 
+    const {context} = useBreadCrumb({
+        bCItems: [
+            {title: text.employee.label, path: text.employee.href},
+            {title: employeeFullName}
+        ]
+    })
+
     useEffect(() => {
         if (isSuccess && data) {
             setEmployee(data as Employee)
@@ -60,10 +66,7 @@ const EmployeeViewPage = () => {
 
   return(
       <>
-        <PageHierarchy mBottom={25} items={useBreadCrumb([
-          {title: text.employee.label, path: text.employee.href},
-          {title: employeeFullName}
-        ]) as [Breadcrumb]} />
+        {context}
         <ViewHeader
             isLoading={isLoading}
             setEdit={setOpenDrawer}

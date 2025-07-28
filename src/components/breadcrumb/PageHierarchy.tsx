@@ -1,18 +1,21 @@
 import './breadcrumb.scss'
 import {Breadcrumb, Flex} from "antd";
 import {LuChevronRight} from "react-icons/lu";
-import {useNavigate} from "react-router-dom";
-import {ReactNode} from "react";
+import {Link} from "react-router-dom";
+import {BreadcrumbType} from "../../hooks/useBreadCrumb.tsx";
 
-const PageHierarchy = ({items, mBottom}: {items?: [{title: string | ReactNode, path?: string}], mBottom?: number}) => {
+export interface PageHierarchyProps {
+    mBottom?: number;
+    items?: BreadcrumbType[];
+}
 
-    const navigate = useNavigate()
+const PageHierarchy = ({items, mBottom}: PageHierarchyProps) => {
 
-    const breadcrumbItems = items?.map((item) => ({
+    const breadcrumbItems = items?.map((item, index) => ({
         title: item.path ? (
-            <span onClick={() => navigate(`${item.path}`)} className='breadcrumb-nav' key={item.path}>
+            <Link to={`${item.path}`} className='breadcrumb-nav' key={item.path || index}>
                 {item.title}
-            </span>
+            </Link>
         ): (
             item.title
         )

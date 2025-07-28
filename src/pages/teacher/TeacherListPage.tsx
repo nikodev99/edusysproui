@@ -1,6 +1,6 @@
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {text} from "../../core/utils/text_display.ts";
-import {Breadcrumb, useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
+import {BreadcrumbType, useBreadcrumbItem} from "../../hooks/useBreadCrumb.tsx";
 import {redirectTo} from "../../context/RedirectContext.ts";
 import {LuEllipsisVertical, LuEye} from "react-icons/lu";
 import {BiSolidUserAccount} from "react-icons/bi";
@@ -28,7 +28,7 @@ const TeacherListPage = () => {
         description: 'Teacher list',
     })
 
-    const pageHierarchy = useBreadCrumb([
+    const pageHierarchy = useBreadcrumbItem([
         {
             title: text.teacher.label + 's'
         }
@@ -188,7 +188,7 @@ const TeacherListPage = () => {
     return (
         <>
             <ListPageHierarchy
-                items={pageHierarchy as [Breadcrumb]}
+                items={pageHierarchy as [BreadcrumbType]}
                 onClick={() => redirectTo(addUrl.current)}
                 hasButton
                 type='primary'

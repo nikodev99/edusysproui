@@ -1,5 +1,5 @@
 import {ListPageHierarchy} from "../../components/custom/ListPageHierarchy.tsx";
-import {Breadcrumb, useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
+import {BreadcrumbType, useBreadcrumbItem} from "../../hooks/useBreadCrumb.tsx";
 import {text} from "../../core/utils/text_display.ts";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import ListViewer from "../../components/custom/ListViewer.tsx";
@@ -27,7 +27,7 @@ const GuardianListPage = () => {
         description: 'Guardian Description'
     })
 
-    const pageHierarchy = useBreadCrumb([
+    const pageHierarchy = useBreadcrumbItem([
         {
             title: text.guardian.label
         }
@@ -136,7 +136,7 @@ const GuardianListPage = () => {
 
     return(
         <>
-            <ListPageHierarchy items={pageHierarchy as [Breadcrumb]} />
+            <ListPageHierarchy items={pageHierarchy as [BreadcrumbType]} />
             <ListViewer
                 callback={fetchEnrolledStudentsGuardians as () => Promise<AxiosResponse<Guardian[]>>}
                 searchCallback={getSearchedEnrolledStudentGuardian as (...input: unknown[]) => Promise<AxiosResponse<Guardian[]>>}

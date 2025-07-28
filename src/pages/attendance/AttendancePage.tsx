@@ -1,7 +1,6 @@
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {text} from "../../core/utils/text_display.ts";
-import {ReactNode, useMemo, useState} from "react";
-import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
+import {useMemo, useState} from "react";
 import ViewHeader from "../../components/ui/layout/ViewHeader.tsx";
 import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
 import Datetime from "../../core/datetime.ts";
@@ -21,10 +20,11 @@ const AttendancePage = () => {
         description: "Exam description",
     })
 
+    const {context} = useBreadCrumb({bCItems: [{ title: text.att.label }]})
+
     const [academicYear, setAcademicYear] = useState<string>('')
     const [academicYearResource, setAcademicYearResource] = useState<AcademicYear>()
     const [date, setDate] = useState<Datetime>(Datetime.now())
-    const pageHierarchy = useBreadCrumb([{ title: text.att.label }])
 
     const handleCatchingAcademicYear = (academicYear: string | string[]) => {
         setAcademicYear(academicYear as string)
@@ -41,7 +41,7 @@ const AttendancePage = () => {
 
     return (
         <>
-            <PageHierarchy items={pageHierarchy as [{ title: string | ReactNode, path?: string }]} />
+            {context}
             <ViewHeader
                 isLoading={false}
                 setEdit={() => redirectTo(text.att.group.edit.href)}

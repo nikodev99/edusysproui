@@ -1,13 +1,12 @@
 import {useParams} from "react-router-dom";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {useAssignmentRepo} from "../../hooks/useAssignmentRepo.ts";
-import {ReactNode, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {Assignment} from "../../entity";
 import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
 import {text} from "../../core/utils/text_display.ts";
 import {SuperWord} from "../../core/utils/tsxUtils.tsx";
 import {cutStatement, setFirstName, zeroFormat} from "../../core/utils/utils.ts";
-import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
 import ViewHeader from "../../components/ui/layout/ViewHeader.tsx";
 import {ExamEditDrawer, ExamInfo, ExamScores, ExamInsertScores, ExamActionLinks} from "../../components/ui-kit-exam";
 import {useToggle} from "../../hooks/useToggle.ts";
@@ -35,10 +34,12 @@ const ExamViewPage = () => {
     const {useGetAssignment} = useAssignmentRepo()
     const {useGetAssignmentScores} = useScoreRepo()
 
-    const pageHierarchy = useBreadCrumb([
-        { title: text.exam.label, path: text.exam.href },
-        { title: <SuperWord input={cutStatement(assignment?.examName as string, 20) as string} /> }
-    ])
+    const {context} = useBreadCrumb({
+        bCItems: [
+            { title: text.exam.label, path: text.exam.href },
+            { title: <SuperWord input={cutStatement(assignment?.examName as string, 20) as string} /> }
+        ]
+    })
 
     useDocumentTitle({
         title: assignment?.examName as string,
@@ -118,7 +119,7 @@ const ExamViewPage = () => {
 
     return (
         <>
-            <PageHierarchy items={pageHierarchy as [{ title: string | ReactNode, path?: string }]} />
+            {context}
             <ViewHeader
                 isLoading={isLoading}
                 setEdit={() => setOpenDrawer()}

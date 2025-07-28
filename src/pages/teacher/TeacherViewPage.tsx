@@ -1,10 +1,9 @@
 import {useParams} from "react-router-dom";
-import {ReactNode, useEffect, useLayoutEffect, useState} from "react";
+import {useEffect, useLayoutEffect, useState} from "react";
 import {Teacher} from "../../entity";
 import {chooseColor, setLastName, setName} from "../../core/utils/utils.ts";
 import {count} from "../../data";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
-import PageHierarchy from "../../components/breadcrumb/PageHierarchy.tsx";
 import {text} from "../../core/utils/text_display.ts";
 import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
 import {Widgets} from "../../components/ui/layout/Widgets.tsx";
@@ -62,6 +61,13 @@ const TeacherViewPage = () => {
         description: 'Teacher description',
     })
 
+    const {context} = useBreadCrumb({
+        bCItems: [
+            {title: text.teacher.label + 's', path: text.teacher.href},
+            {title: teacherName}
+        ]
+    })
+
     useEffect(() => {
         if (isSuccess && data) {
             setTeacher(data as Teacher)
@@ -111,10 +117,7 @@ const TeacherViewPage = () => {
 
     return(
         <>
-            <PageHierarchy mBottom={25} items={useBreadCrumb([
-                {title: text.teacher.label + 's', path: text.teacher.href},
-                {title: teacherName}
-            ]) as [{ title: string | ReactNode, path?: string }]}/>
+            {context}
             <ViewHeader
                 isLoading={isLoading}
                 setEdit={setOpenDrawer}

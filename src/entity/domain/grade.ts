@@ -8,6 +8,6 @@ export interface Grade {
     subSection?: string
     school?: School
     planning?: Planning[]
-    createdAt?: Date
-    modifiedAt?: Date
+    createdAt?: Date | number[] | string
+    modifyAt?: Date | number[] | string
 }

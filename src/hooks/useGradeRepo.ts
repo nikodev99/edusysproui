@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import {Grade} from "../entity";
-import {useRawFetch} from "./useFetch.ts";
-import {getAllSchoolGrades, saveGrade} from "../data/repository/gradeRepository.ts";
+import {useFetch, useRawFetch} from "./useFetch.ts";
+import {getAllSchoolGrades, getGradesWithPlanning, saveGrade} from "../data/repository/gradeRepository.ts";
 import {loggedUser} from "../auth/jwt/LoggedUser.ts";
 import {useInsert} from "./usePost.ts";
 import {gradeSchema} from "../schema";
@@ -28,8 +28,19 @@ export const useGradeRepo = () => {
         return grades
     }
 
+    const useGetAllGradesWithPlannings = (academicYearId: string) => {
+        const {data} = useFetch(
+            ['grades', academicYearId],
+            getGradesWithPlanning,
+            [userSchool?.id, academicYearId],
+            !!userSchool?.id && !!academicYearId
+        )
+        return data as Grade[] || []
+    }
+
     return {
         useInsertGrade,
-       useGetAllGrades
+       useGetAllGrades,
+        useGetAllGradesWithPlannings
     }
 }

@@ -7,9 +7,15 @@ import {Alert, Button, Flex, Form, Modal, ModalProps} from "antd";
 import {PopConfirm} from "../ui/layout/PopConfirm.tsx";
 import {PostSchemaProps, SchemaProps} from "../../core/utils/interfaces.ts";
 
-type InsertSchemaType<TData extends FieldValues> = SchemaProps<TData> & ModalProps & PostSchemaProps<TData>
+type InsertSchemaType<TData extends FieldValues> = SchemaProps<TData>
+    & ModalProps
+    & PostSchemaProps<TData>
+    & {
+        onSuccess?: (response: unknown) => void,
+        onError?: (error: string) => void
+    }
 
-const InsertSchema = <TData extends FieldValues>(
+const InsertModal = <TData extends FieldValues>(
     {
         data,
         open,
@@ -22,39 +28,32 @@ const InsertSchema = <TData extends FieldValues>(
         description,
         customForm,
         handleForm,
-        explain
+        explain,
+        onSuccess,
+        onError
     }: InsertSchemaType<TData>
 ) => {
-    const [openConfirm, setOpenConfirm] = useState<boolean>(false);
-    const [successMessage, setSuccessMessage] = useState<string | undefined>(undefined)
-    const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined)
-
-    const {mutate, isPending} = useQueryPost<TData>(data)
-    const breakpoints = useGlobalStore.use.modalBreakpoints()
-
-    const onSubmit = (data: TData) => {
-        setErrorMessage(undefined)
-        setSuccessMessage(undefined)
-        mutate({postFn: postFunc, data: data}, {
-            onSuccess: response => {
-                console.log("RESPONSE: ", response)
-                if (response.status === 200) {
-                    setSuccessMessage(messageSuccess)
-                    handleForm.reset()
-                }
-            },
-            onError: error => setErrorMessage(catchError(error) as string)
-        })
-        setOpenConfirm(false)
-    }
+    const breakpoints = useGlobalStore.use.modalBreakpoints();
 
     const handleModalClose = (e: React.MouseEvent<HTMLButtonElement>) => {
-        setErrorMessage(undefined)
-        setSuccessMessage(undefined)
-        if (onCancel) {
-            onCancel(e)
-        }
-    }
+        onCancel?.(e);
+    };
+
+    const handleFormCancel = () => {
+        // Create a synthetic event for backward compatibility
+        const syntheticEvent = {
+            preventDefault: () => {},
+            stopPropagation: () => {},
+        } as React.MouseEvent<HTMLButtonElement>;
+
+        handleModalClose(syntheticEvent);
+    };
+
+    const handleFormSuccess = (response: unknown) => {
+        onSuccess?.(response);
+        // Optionally close modal on success
+        // handleFormCancel();
+    };
 
     return (
         <Modal
@@ -63,29 +62,128 @@ const InsertSchema = <TData extends FieldValues>(
             onCancel={handleModalClose}
             width={breakpoints}
             footer={null}
+            destroyOnClose
         >
-            {successMessage && (<Alert message={successMessage} type="success" showIcon/>)}
-            {errorMessage && (<Alert message={errorMessage} type="error" showIcon/>)}
-            {explain && (<Alert style={{marginTop: '10px'}} message={explain} type="info" showIcon/>)}
-            <Form layout='vertical' style={{marginTop: '15px'}}>
+            <InsertSchema
+                data={data}
+                postFunc={postFunc}
+                messageSuccess={messageSuccess}
+                cancelText={cancelText}
+                okText={okText}
+                description={description}
+                customForm={customForm}
+                handleForm={handleForm}
+                explain={explain}
+                onClose={handleFormCancel}
+                onSuccess={handleFormSuccess}
+                onError={onError}
+            />
+        </Modal>
+    );
+}
+
+const InsertSchema = <TData extends FieldValues>(
+    {
+        data,
+        onClose,
+        postFunc,
+        messageSuccess,
+        cancelText = 'Annuler',
+        okText = 'Confirmer',
+        description,
+        customForm,
+        handleForm,
+        explain,
+        onSuccess,
+        onError
+    }: InsertSchemaType<TData> & {
+        onSuccess?: (response: unknown) => void,
+        onError?: (error: string) => void
+        onClose?: () => void,
+    }
+) => {
+    const [openConfirm, setOpenConfirm] = useState<boolean>(false);
+    const [successMessage, setSuccessMessage] = useState<string | undefined>(undefined);
+    const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
+
+    const { mutate, isPending } = useQueryPost<TData>(data);
+
+    const clearMessages = () => {
+        setErrorMessage(undefined);
+        setSuccessMessage(undefined);
+    };
+
+    const onSubmit = (formData: TData) => {
+        clearMessages();
+
+        mutate(
+            { postFn: postFunc, data: formData },
+            {
+                onSuccess: (response) => {
+                    if (response.status === 200) {
+                        setSuccessMessage(messageSuccess);
+                        handleForm.reset();
+                        onSuccess?.(response);
+                    }
+                },
+                onError: (error) => {
+                    const errorMsg = catchError(error) as string;
+                    setErrorMessage(errorMsg);
+                    onError?.(errorMsg);
+                },
+            }
+        );
+        setOpenConfirm(false);
+    };
+
+    const handleCancel = () => {
+        clearMessages();
+        onClose?.();
+    };
+
+    const handleConfirmOpen = () => {
+        setOpenConfirm(true);
+    };
+
+    const handleConfirmCancel = () => {
+        setOpenConfirm(false);
+    };
+
+    return (
+        <>
+            {successMessage && (<Alert message={successMessage} type="success" showIcon closable onClose={clearMessages}/>)}
+            {errorMessage && (<Alert message={errorMessage} type="error" showIcon closable onClose={clearMessages}/>)}
+            {explain && (<Alert style={{ marginTop: '10px' }} message={explain} type="info" showIcon/>)}
+
+            <Form layout="vertical" style={{ marginTop: '15px' }}>
                 {customForm}
-                <Flex justify='flex-end' gap='small'>
-                    <Button onClick={handleModalClose}>{cancelText ?? 'Annuler'}</Button>
+
+                <Flex justify="flex-end" gap="small" style={{ marginTop: '20px' }}>
+                    {onClose && <Button onClick={handleCancel} disabled={isPending}>
+                        {cancelText}
+                    </Button>}
+
                     <PopConfirm
-                        title='Confirmation'
+                        title="Confirmation"
                         open={openConfirm}
-                        onCancel={() => setOpenConfirm(false)}
+                        onCancel={handleConfirmCancel}
                         description={description}
                         okText="Confirmer"
                         onConfirm={handleForm.handleSubmit(onSubmit)}
                     >
-                        <Button disabled={isPending} type='primary'
-                                onClick={() => setOpenConfirm(true)}>{okText}</Button>
+                        <Button
+                            disabled={isPending}
+                            type="primary"
+                            loading={isPending}
+                            onClick={handleConfirmOpen}
+                        >
+                            {okText}
+                        </Button>
                     </PopConfirm>
                 </Flex>
             </Form>
-        </Modal>
-    )
+        </>
+    );
 }
 
-export { InsertSchema }
+export { InsertModal, InsertSchema }

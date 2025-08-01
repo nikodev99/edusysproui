@@ -10,7 +10,7 @@ interface BlockProps {
 const Block = ({items}: BlockProps) => {
 
     return(
-        <ResponsiveMasonry columnsCountBreakPoints={{350: 1, 750: 2, 1100: 3}}>
+        <ResponsiveMasonry columnsCountBreakPoints={{350: 1, 750: 2, 1100: 3, 2000: 4}}>
             <Masonry gap='20px' itemTag='section'>
                 {items.map((item, index) => {
                     if (isValidElement(item)) {

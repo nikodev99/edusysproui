@@ -1,4 +1,4 @@
-import {InsertSchema} from "../custom/InsertSchema.tsx";
+import {InsertModal} from "../custom/InsertSchema.tsx";
 import {useForm} from "react-hook-form";
 import {signupSchema, SignupSchema} from "../../schema";
 import {zodResolver} from "@hookform/resolvers/zod";
@@ -51,7 +51,7 @@ const CreateUser = ({open, onCancel, personalInfo, userType}: CreateUserProps) =
     }
 
     return(
-        <InsertSchema
+        <InsertModal
             data={signupSchema}
             customForm={
                 <UserAccountForm

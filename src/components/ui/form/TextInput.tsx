@@ -81,6 +81,8 @@ const TextInput = <T extends FieldValues>(inputProps :TypedInputType<T>) => {
         }
     }
 
+    console.log(xs, md, lg)
+
     return(
         <Grid xs={xs ?? 24} md={md ?? 12} lg={lg ?? 8}>
             {hasForm ? (

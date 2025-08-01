@@ -16,6 +16,8 @@ import {loginSchema, logoutSchema, signupSchema} from "./models/authSchema.ts";
 import {employeeSchema} from "./models/employeeSchema.ts";
 import {schoolSchema} from "./models/schoolSchema.ts";
 import {academicYearSchema} from "./models/academicYearSchema.ts";
+import {gradeSchema} from "./models/gradeSchema.ts";
+import {semesterSchema} from "./models/semesterSchema.ts";
 
 export {enrollmentSchema} from './models/enrollmentSchema'
 export {classeSchemaMerge, classeSchema} from './models/classeSchema'
@@ -35,6 +37,7 @@ export {planningSchemaMerge, planningSchema} from './models/planningSchema.ts'
 export {scoreSchema, singleScoreSchema} from './models/scoreSchema.ts'
 export {loginSchema, logoutSchema, signupSchema} from './models/authSchema.ts'
 export {academicYearSchema, academicYearSchemaMerge} from './models/academicYearSchema.ts'
+export {semesterSchema} from './models/semesterSchema.ts'
 
 export type CourseSchema = z.infer<typeof courseSchema>
 export type CourseSchemaMerge = z.infer<typeof courseSchemaMerge>
@@ -62,3 +65,5 @@ export type SignupSchema = z.infer<typeof signupSchema>
 export type EmployeeSchema = z.infer<typeof employeeSchema>
 export type SchoolSchema = z.infer<typeof schoolSchema>
 export type AcademicYearSchema = z.infer<typeof academicYearSchema>
+export type GradeSchema = z.infer<typeof gradeSchema>
+export type SemesterSchema = z.infer<typeof semesterSchema>

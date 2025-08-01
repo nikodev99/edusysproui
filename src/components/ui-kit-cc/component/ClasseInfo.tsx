@@ -1,5 +1,5 @@
 import {GenderCounted, InfoPageProps} from "../../../core/utils/interfaces.ts";
-import {Classe, Planning, Teacher, Individual} from "../../../entity";
+import {Classe, Teacher, Individual} from "../../../entity";
 import Block from "../../view/Block.tsx";
 import {ReactNode} from "react";
 import Section from "../../ui/layout/Section.tsx";
@@ -8,7 +8,6 @@ import {findPercent, setFirstName, setGender} from "../../../core/utils/utils.ts
 import {text} from "../../../core/utils/text_display.ts";
 import PanelTable from "../../ui/layout/PanelTable.tsx";
 import {SuperWord} from "../../../core/utils/tsxUtils.tsx";
-import {DatedListItem} from "../../ui/layout/DatedListItem.tsx";
 import {Avatar as AntAvatar, Progress} from "antd";
 import {IndividualDescription} from "../../ui/layout/IndividualDescription.tsx";
 import PanelSection from "../../ui/layout/PanelSection.tsx";
@@ -17,12 +16,12 @@ import {AvatarTitle} from "../../ui/layout/AvatarTitle.tsx";
 import {AttendanceStatus, getColors} from "../../../entity/enums/attendanceStatus.ts";
 import {ShapePieChart} from "../../graph/ShapePieChart.tsx";
 import VoidData from "../../view/VoidData.tsx";
-import Datetime from "../../../core/datetime.ts";
 import {TeacherList} from "../../common/TeacherList.tsx";
 import {BestScoredTable} from "../../common/BestScoredTable.tsx";
 import {ScheduleCalendar} from "../../common/ScheduleCalendar.tsx";
 import {useScoreRepo} from "../../../hooks/useScoreRepo.ts";
 import {useAttendanceRepo} from "../../../hooks/useAttendanceRepo.ts";
+import {GradeCard} from "../../ui-kit-setting";
 
 type ClasseInfoProps = InfoPageProps<Classe> & {
     studentCount?: GenderCounted | null
@@ -110,47 +109,13 @@ const ClasseInfoData = ({infoData, color, studentCount, totalStudents, seeMore}:
     )
 }
 
-const PlanningInfo = ({infoData, color}: ClasseInfoProps) => {
+const PlanningInfo = ({infoData}: ClasseInfoProps) => {
 
     const {grade} = infoData
 
-    const groupeBySemester = (terms: Planning[]) => {
-        return terms?.reduce((acc, term) => {
-            const semesterName = term.semester?.semesterName
-            if (!acc[semesterName as string]) {
-                acc[semesterName as string] = []
-            }
-
-            acc[semesterName as string].push(term)
-            return acc
-        }, {} as Record<string, Planning[]>)
-    }
-
-    const semesters = groupeBySemester(grade?.planning as Planning[])
-    const planningData = Object.entries(semesters)?.map(([semesterName, planning]) => {
-        return {
-            semester: semesterName,
-            data: [{
-                response: <DatedListItem dataSource={planning.map(term => ({
-                    date: [
-                        Datetime?.of(term?.termStartDate as number[]).fDate(),
-                        Datetime?.of(term?.termEndDate as number[]).fDate()
-                    ],
-                    title: term.designation
-                }))} />,
-                tableRow: true
-            }]
-        }
-    })
-
     return(
         <PanelSection title='Planning de la classe'>
-            {planningData && planningData?.map(data => <PanelTable
-                key={data?.semester}
-                title={data?.semester}
-                data={data.data}
-                panelColor={color} ps
-            />)}
+            <GradeCard data={grade} size='small' onlyPlanning={true} />
         </PanelSection>
     )
 }

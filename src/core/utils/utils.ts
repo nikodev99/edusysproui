@@ -6,7 +6,8 @@ import {BloodType} from "../../entity/enums/bloodType.ts";
 import {ProgressProps} from "antd";
 import {Day} from "../../entity/enums/day.ts";
 import {Gender} from "../../entity/enums/gender.tsx";
-import {Assignment, Enrollment, Individual, Schedule} from "../../entity";
+import {Assignment, Enrollment, Individual, Planning, Schedule} from "../../entity";
+import Datetime from "../datetime.ts";
 
 export const createElement = (htmlElement: string, parentNode: Element|null, attributes?: {[key: string]: string}, content?: string) => {
 
@@ -282,6 +283,33 @@ export const datetimeExpose = (timestamp?: number): DateExplose | undefined => {
     }
     return undefined
 }
+
+export const calculateDuration = (
+    startDate: Date | number[] | string,
+    endDate:   Date | number[] | string
+): string => {
+    const totalDays = Math.abs(
+        Datetime.of(startDate).diffDay(endDate)
+    );
+
+    const weeks = Math.floor(totalDays / 7);
+    const days  = totalDays % 7;
+
+    const parts: string[] = [];
+    if (weeks > 0) {
+        parts.push(`${weeks} semaine${weeks > 1 ? 's' : ''}`);
+    }
+    if (days > 0) {
+        parts.push(`${days} jour${days > 1 ? 's' : ''}`);
+    }
+
+    if (parts.length === 0) {
+        return `0 jour`;
+    }
+
+    return parts.join(' & ');
+};
+
 
 export const fDate = (date?: Date | number[] | string, format?: string) => {
     if (!format) {
@@ -652,6 +680,18 @@ export const setSortFieldName = (sortField: string | string[])=>  {
         : sortField
 }
 
+export const groupeBySemester = (terms: Planning[]) => {
+    return terms?.reduce((acc, term) => {
+        const semesterName = term.semester?.semesterName
+        if (!acc[semesterName as string]) {
+            acc[semesterName as string] = []
+        }
+
+        acc[semesterName as string].push(term)
+        return acc
+    }, {} as Record<string, Planning[]>)
+}
+
 export const transformEvents = <T extends object>(apiEvents: ApiEvent<T>[]) => {
     const getWeekRange = (date: Date) => {
         const day = date.getDay()
@@ -718,7 +758,7 @@ export const transformEvents = <T extends object>(apiEvents: ApiEvent<T>[]) => {
 };
 
 
-export const COLOR: Color[] = ['#0088FE', '#FF6F61', '#00C49F', '#6B8E23','#FFBB28','#FFD700', '#FF8042', '#20B2AA', '#FF6347', '#4682B4','#8A2BE2', '#D2691E', '#32CD32'];
+export const COLOR: Color[] = ['#000C40', '#D95C54', '#2DB39B', '#4F6B1F','#D99A20','#C9A300', '#DB6C30', '#2B8D87', '#C94A3D', '#3B6A95','#6635A8', '#9C4F18', '#2A9D2A'];
 export const ATTENDANCE_STATUS_COLORS: Color[] = ['#28a745', '#dc3545', '#ffc107', '#17a2b8']
 export const MAIN_COLOR = '#000C40'
 export const fontFamily = 'Mulish, Kameron, Helvetica, sans-serif'

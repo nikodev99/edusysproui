@@ -617,3 +617,8 @@ export type SelectEntity<
     entities?: Entity[]
     width?: number | string
 } & SelectEntityProps<Entity, EntityID>
+
+export interface RepoOptions {
+    shouldRefetch?: boolean
+    enable?: boolean
+}

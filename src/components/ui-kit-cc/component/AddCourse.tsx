@@ -1,5 +1,5 @@
 import {ModalProps} from "antd";
-import {InsertSchema} from "../../custom/InsertSchema.tsx";
+import {InsertModal} from "../../custom/InsertSchema.tsx";
 import {useForm} from "react-hook-form";
 import {courseSchema, CourseSchema} from "../../../schema";
 import {zodResolver} from "@hookform/resolvers/zod";
@@ -15,7 +15,7 @@ export const AddCourse = ({open, onCancel}: ModalProps) => {
     const {control, formState: {errors}} = form
 
     return (
-        <InsertSchema
+        <InsertModal
             data={courseSchema}
             customForm={<CourseForm control={control} errors={errors} />}
             handleForm={form}

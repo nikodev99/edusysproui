@@ -20,6 +20,11 @@ const App = () => {
         <UserProvider>
             <ConfigProvider locale={frFR} theme={{
                 token: {colorPrimary: '#000C40'},
+                components: {
+                    Timeline: {
+                        dotBg: 'transparent',
+                    }
+                }
             }}>
                 <QueryClientProvider client={queryClient}>
                     <RouterProvider router={Route} />

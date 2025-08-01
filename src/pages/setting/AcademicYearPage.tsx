@@ -29,7 +29,7 @@ const AcademicYearPage = () => {
     const [refetch, setRefetch] = useToggle(false)
     const [openEdit, setOpenEdit] = useToggle(false)
     const {useGetAllAcademicYear} = useAcademicYearRepo()
-    const academicYears = useGetAllAcademicYear(refetch)
+    const academicYears = useGetAllAcademicYear({shouldRefetch: refetch})
 
     const current = useMemo(() => academicYears?.find(a => a.current), [academicYears])
     const entries = useMemo(() => academicYears?.length || 0, [academicYears])

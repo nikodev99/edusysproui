@@ -118,7 +118,7 @@ const ScoreItem = (
                                             {score?.student?.personalInfo?.lastName} {setFirstName(`${score?.student?.personalInfo?.firstName}`)}
                                         </span>
                                     }
-                                    description={score?.student?.reference}
+                                    description={score?.student?.personalInfo?.reference}
                                 />
                             </Skeleton>
                         </List.Item>

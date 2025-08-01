@@ -9,3 +9,11 @@ export const saveGrade = (grade: Grade) => {
 export const getAllSchoolGrades = (schoolId: string): Promise<AxiosResponse<Grade[]>> => {
     return apiClient.get<Grade[]>('/grades/' + schoolId)
 }
+
+export const getGradesWithPlanning = (schoolId: string, academicYearId: string) => {
+    return apiClient.get<Grade[]>(`/grades/all/${schoolId}`, {
+        params: {
+            academicYear: academicYearId
+        }
+    })
+}

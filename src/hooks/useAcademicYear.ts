@@ -1,34 +1,29 @@
-import {AcademicYear} from "../entity";
-import {initAcademicYears, initCurrentAcademicYear, useGlobalStore} from "../core/global/store.ts";
-import {useEffect, useState} from "react";
-import {datetimeExpose, isObjectEmpty} from "../core/utils/utils.ts";
+import {useEffect, useMemo, useState} from "react";
+import {useAcademicYearRepo} from "./useAcademicYearRepo.ts";
+import Datetime from "../core/datetime.ts";
 
 export const useAcademicYear = (timestamp?: number) => {
-    const currentAcademicYear: AcademicYear = useGlobalStore.use.currentAcademicYear()
-    const academicYears: AcademicYear[] = useGlobalStore.use.academicYears()
-
     const [usedAcademicYearId, setUsedAcademicYearId] = useState<string | null>(null)
-    
-    
-    useEffect(() => {
-        if (!isObjectEmpty(currentAcademicYear))
-            setUsedAcademicYearId(currentAcademicYear.id)
-    }, [currentAcademicYear]);
+    const {useGetCurrentAcademicYear, useGetAllAcademicYear, useGetAcademicYearFromYear} = useAcademicYearRepo()
+    const currentAcademicYear = useGetCurrentAcademicYear()
 
-    useEffect(() => {
-        if(isObjectEmpty(currentAcademicYear)) {
-            initCurrentAcademicYear()
-        }
-        if (academicYears.length === 0 && timestamp) {
-            const date = datetimeExpose(timestamp)
-            initAcademicYears(date?.year as number)
-        }
-    }, [academicYears.length, currentAcademicYear, timestamp])
+    const year = useMemo(() => {
+        return timestamp ? Datetime.of(timestamp).YEAR : undefined
+    }, [timestamp])
+
+    const allAcademicYears = useGetAllAcademicYear({enable: !timestamp})
+    const yearAcademicYears = useGetAcademicYearFromYear(year as number, {enable: Boolean(timestamp && year)})
+
+    const academicYears = timestamp ? yearAcademicYears : allAcademicYears
 
     const academicYearOptions = academicYears?.map(a => ({
         value: a.id,
         label: a.academicYear
     }))
+
+    useEffect(() => {
+        setUsedAcademicYearId(currentAcademicYear?.id as string)
+    }, [currentAcademicYear?.id]);
 
     const handleAcademicYearIdValue = (value: string) =>  {
         setUsedAcademicYearId(value)

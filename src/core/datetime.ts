@@ -110,7 +110,11 @@ class Datetime {
             }
         }
         if (typeof date === "number") {
-            return dayjs.unix(date).tz(this.timezone).locale(this.locale)
+            const d = date > 1e12
+                ? dayjs(date)       // interprets `date` as ms
+                : dayjs.unix(date); // interprets `date` as s
+
+            return d.tz(this.timezone).locale(this.locale);
         }
         if (dayjs.isDayjs(date)) {
             return dayjs(date).tz(this.timezone).locale(this.locale)
@@ -259,31 +263,31 @@ class Datetime {
     }
 
     diffYear(date: DateInput | Params, timezone?: string, locale?: string): number {
-        return this.diff(date, 'year', timezone, locale);
+        return Math.ceil(this.diff(date, 'year', timezone, locale));
     }
 
     diffMonth(date: DateInput | Params, timezone?: string, locale?: string): number {
-        return this.diff(date, 'month', timezone, locale);
+        return Math.ceil(this.diff(date, 'month', timezone, locale));
     }
 
     diffDay(date: DateInput | Params, timezone?: string, locale?: string): number {
-        return this.diff(date, 'day', timezone, locale);
+        return Math.ceil(this.diff(date, 'day', timezone, locale));
     }
 
     diffHour(date: DateInput | Params, timezone?: string, locale?: string): number {
-        return this.diff(date, 'hour', timezone, locale);
+        return Math.ceil(this.diff(date, 'hour', timezone, locale));
     }
 
     diffMinutes(date: DateInput | Params, timezone?: string, locale?: string): number {
-        return this.diff(date, 'minute', timezone, locale);
+        return Math.ceil(this.diff(date, 'minute', timezone, locale));
     }
 
     diffSecond(date: DateInput | Params, timezone?: string, locale?: string): number {
-        return this.diff(date, 'second', timezone, locale);
+        return Math.ceil(this.diff(date, 'second', timezone, locale));
     }
 
     diffWeek(date: DateInput | Params, timezone?: string, locale?: string): number {
-        return this.diff(date, 'week', timezone, locale);
+        return Math.ceil(this.diff(date, 'week', timezone, locale));
     }
 
     format(format?: string | Params): string {

@@ -97,7 +97,7 @@ const HealthConditionForm = <T extends FieldValues>({control, errors, edit, enro
                     validateStatus: form.validate('medicalConditions', parent),
                     help: form.error('medicalConditions', parent),
                     hasForm: edit,
-                    defaultValue: (edit && data ? data.medicalConditions : 0) as PathValue<T, Path<T>>,
+                    defaultValue: (edit && data ? data.medicalConditions : undefined) as PathValue<T, Path<T>>,
                     wrapper: <Card style={{width: '100%', marginBottom: '20px'}} />,
                     onFinish: edit && handleUpdate ? (value) => handleUpdate('medicalConditions', value) : undefined
                 }
@@ -115,7 +115,7 @@ const HealthConditionForm = <T extends FieldValues>({control, errors, edit, enro
                     validateStatus: form.validate('allergies', parent),
                     help: form.error('allergies', parent),
                     hasForm: edit,
-                    defaultValue: (edit && data ? data.allergies : 0) as PathValue<T, Path<T>>,
+                    defaultValue: (edit && data ? data.allergies : undefined) as PathValue<T, Path<T>>,
                     wrapper: <Card style={{width: '100%', marginBottom: '20px'}} />,
                     onFinish: edit && handleUpdate ? (value) => handleUpdate('allergies', value) : undefined
                 }

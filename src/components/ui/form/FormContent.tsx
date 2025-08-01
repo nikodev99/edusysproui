@@ -6,12 +6,13 @@ import SelectInput from "./SelectInput.tsx";
 import DateInput from "./DateInput.tsx";
 import CountrySelect from "./CountrySelect.tsx";
 import {InputTypeEnum} from "../../../core/shared/sharedEnums.ts";
-import ListInput from "./ListInput.tsx";
+import ListInput, {FieldConfig} from "./ListInput.tsx";
 import RadioInput from "./RadioInput.tsx";
 import {TimeInput} from "./TimeInput.tsx";
 
 interface InputProps<TFieldValues extends FieldValues> {
-    inputProps: TypedInputType<TFieldValues>,
+    inputProps: TypedInputType<TFieldValues> & { itemLabel?: string }
+    fieldList?: FieldConfig<TFieldValues>[]
     type: InputTypeEnum
 }
 
@@ -22,7 +23,7 @@ interface FormContentProps<T extends FieldValues> {
 
 const FormContent = <T extends FieldValues>({formItems, responsiveness}: FormContentProps<T>) => {
 
-    const renderInput = ({type, inputProps}: InputProps<T>, index: string) => {
+    const renderInput = ({type, inputProps, fieldList}: InputProps<T>, index: string) => {
         switch (type) {
             case InputTypeEnum.TEXT:
                 return <TextInput key={index} {...inputProps} />
@@ -35,7 +36,7 @@ const FormContent = <T extends FieldValues>({formItems, responsiveness}: FormCon
             case InputTypeEnum.NUMBER:
                 return <TextInput.Number key={index} {...inputProps} />
             case InputTypeEnum.LIST:
-                return <ListInput key={index} {...inputProps} />
+                return <ListInput key={index} formFields={fieldList} {...inputProps} />
             case InputTypeEnum.TIME:
                 return <TimeInput key={index} {...inputProps} />
             case InputTypeEnum.RADIO:

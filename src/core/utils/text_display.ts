@@ -170,7 +170,11 @@ export const raw = {
             },
             grade: {
                 label: 'Grade',
-                href: '/settings/grades'
+                href: '/settings/grades',
+                add: {
+                    label: 'Ajouter un grade',
+                    href: '/settings/grades/new'
+                }
             },
             department: {
                 label: 'Départements',

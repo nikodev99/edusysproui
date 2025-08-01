@@ -5,7 +5,7 @@ import {useAssignmentRepo} from "../../../hooks/useAssignmentRepo.ts";
 import {useEffect, useState} from "react";
 import {Assignment} from "../../../entity";
 import {AssignmentSchedule} from "../../common/AssignmentSchedule.tsx";
-import {InsertSchema} from "../../custom/InsertSchema.tsx";
+import {InsertModal} from "../../custom/InsertSchema.tsx";
 import {useForm} from "react-hook-form";
 import {assignmentSchema, AssignmentSchema} from "../../../schema";
 import {zodResolver} from "@hookform/resolvers/zod";
@@ -75,7 +75,7 @@ const InsertExam = () => {
                     />
                 </Grid>
             </Responsive>
-            <InsertSchema
+            <InsertModal
                 data={assignmentSchema as never}
                 customForm={<AssignmentForm
                     errors={errors}

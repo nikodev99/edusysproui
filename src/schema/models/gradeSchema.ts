@@ -1,20 +1,13 @@
-import {z} from "zod";
-import {SectionType} from "../../entity/enums/section.ts";
+import {z, ZodType} from "zod";
 import {schoolMergeSchema} from "./schoolSchema.ts";
+import {planningSchema} from "./planningSchema.ts";
 
-export const gradeSchema = z.object({
+export const gradeSchema: ZodType = z.object({
     id: z.number().optional(),
-    section: z.nativeEnum(SectionType, {required_error: 'Type de section requis'}),
+    section: z.string({required_error: 'La section est requise'}),
     subSection: z.string().optional(),
+    planning: z.array(planningSchema).optional(),
     school: schoolMergeSchema.optional(),
-    createdAt: z.union([
-        z.date().refine(date => !isNaN(date.getTime()), {message: 'Date invalide'}),
-        z.array(z.number()),
-    ]).optional(),
-    modifiedAt: z.union([
-        z.date().refine(date => !isNaN(date.getTime()), {message: 'Date invalide'}),
-        z.array(z.number()),
-    ]).optional()
 })
 
 export const gradeSchemaMerge = z.object({

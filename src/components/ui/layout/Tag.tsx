@@ -1,14 +1,16 @@
 import {ReactNode} from "react";
 import '../ui.scss'
 import {LuBadgeAlert, LuBadgeCheck, LuClock4} from "react-icons/lu";
+import {Color} from "../../../core/utils/interfaces.ts";
 
 interface TagProps {
     children?: ReactNode;
-    color?: 'success' | 'warning' | 'danger' | 'processing';
+    color?: 'success' | 'warning' | 'danger' | 'processing' | Color;
     icon?: ReactNode;
+    textColor?: Color;
 }
 
-const Tag = ({color, children, icon}: TagProps) => {
+const Tag = ({color, children, icon, textColor}: TagProps) => {
 
     let customIcon: ReactNode;
 
@@ -27,9 +29,14 @@ const Tag = ({color, children, icon}: TagProps) => {
 
     }
 
+    const isOtherColor = color && color !== 'success' && color !== 'danger' && color !== 'warning' && color !== 'processing'
+
     return (
-        <div className={`tag__wrapper ${color}`}>
-            <div className='tagged'>
+        <div
+            className={`tag__wrapper ${isOtherColor ? '' : color}`}
+            style={isOtherColor ? {backgroundColor: color} : undefined}
+        >
+            <div className='tagged' style={textColor ? {color: textColor} : undefined}>
                 {icon ? icon : customIcon}
                 {children}
             </div>

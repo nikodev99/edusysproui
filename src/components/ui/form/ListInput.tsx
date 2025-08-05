@@ -1,4 +1,4 @@
-import {Button, Form, FormListFieldData} from "antd";
+import {Button, Form} from "antd";
 import {LuCircleMinus, LuPlus, LuSave} from "react-icons/lu";
 import {FieldValues, Path} from "react-hook-form";
 import {InputType, TypedInputType, ZodListControl} from "../../../core/utils/interfaces.ts";
@@ -7,6 +7,7 @@ import {cloneElement, ReactElement, ReactNode} from "react";
 import TextInput from "./TextInput.tsx";
 import DateInput from "./DateInput.tsx";
 import SelectInput from "./SelectInput.tsx";
+import Responsive from "../layout/Responsive.tsx";
 
 export type FieldConfig<T extends FieldValues> = InputType<T> & {name: string}
 
@@ -20,35 +21,29 @@ export const ListTextInput = <T extends FieldValues>(listProps: InputListProps<T
 
     const {listName, defaultValue, formFields, wrapper, isCompact, onFinish, buttonLabel, name, itemLabel = 'Item'} = listProps
 
-    const pluralLabel = (inputArray: FormListFieldData[], baseLabel: string) => {
-        if (inputArray.length > 1) {
-            return baseLabel.split(' ').map(w => w + 's').join(' ');
-        }
-        return baseLabel;
-    };
-
     const renderInputField = (listIndex: number, fieldConfig?: FieldConfig<T>): ReactNode => {
-        const fieldPath = `${listIndex}.${name}` as Path<T>
+        const fieldPath = `${name}.${listIndex}` as Path<T>
 
         if (fieldConfig) {
             const longFieldPath = fieldConfig.name
-                ? `${name}.${listIndex}.${fieldConfig.name}` as Path<T>
+                ? `${name ? name + '.' : ''}${listIndex}.${fieldConfig.name}` as Path<T>
                 :  fieldPath as Path<T>
+
+            console.log({fieldConfig})
+
             switch (fieldConfig.type) {
                 case 'date':
-                    return <DateInput {...fieldConfig} name={longFieldPath} xs={24} md={24} lg={24} />
+                    return <DateInput {...fieldConfig} md={fieldConfig.md} lg={fieldConfig.lg} name={longFieldPath} />
                 case 'number':
-                    return <TextInput.Number {...fieldConfig} name={longFieldPath} xs={24} md={24} lg={24} />
+                    return <TextInput.Number {...fieldConfig} md={fieldConfig.md} lg={fieldConfig.lg} name={longFieldPath} />
                 case 'select':
-                    return <SelectInput {...fieldConfig} name={longFieldPath} xs={24} md={24} lg={24} />
+                    return <SelectInput {...fieldConfig} md={fieldConfig.md} lg={fieldConfig.lg} name={longFieldPath} />
                 default:
-                    return <TextInput {...fieldConfig} name={longFieldPath} xs={24} md={24} lg={24} />
+                    return <TextInput {...fieldConfig} md={fieldConfig.md} lg={fieldConfig.lg} name={longFieldPath} />
             }
         }
-        return <TextInput {...listProps} name={fieldPath} />
+        return <TextInput {...listProps} md={24} lg={24} name={fieldPath} />
     }
-
-
 
     const content = (
         <Form.List name={listName as string} initialValue={defaultValue as []}>
@@ -62,7 +57,7 @@ export const ListTextInput = <T extends FieldValues>(listProps: InputListProps<T
                     </Form.Item>
                     {fields.map(({key, name}, index) => (
                         <div style={{
-                            border: '1px solid #d9d9d9', borderRadius: '5px', padding: '5px', marginBottom: '10px', position: 'relative'
+                            border: '1px solid #d9d9d9', borderRadius: '5px', padding: '5px', marginBottom: '10px', background: '#e0e1e4',
                         }} key={key}>
                             <div style={{
                                 display: 'flex',
@@ -71,9 +66,8 @@ export const ListTextInput = <T extends FieldValues>(listProps: InputListProps<T
                                 marginBottom: '8px',
                             }}>
                                 <h4 style={{ margin: 0, color: '#666' }}>
-                                    {pluralLabel(fields, itemLabel as string)} {fields.length > 1 ? index + 1 : ''}
+                                    {itemLabel} {fields.length > 1 ? index + 1 : ''}
                                 </h4>
-                                {/* Only show the remove button if there are items to remove - prevents empty states */}
                                 {fields.length > 0 && (
                                     <Button
                                         type="text"
@@ -84,15 +78,13 @@ export const ListTextInput = <T extends FieldValues>(listProps: InputListProps<T
                                     />
                                 )}
                             </div>
-                            <div style={{
-                                width: '100%'
-                            }}>
+                            <Responsive gutter={[16, 16]}>
                                 {formFields && formFields?.length > 0 ? formFields?.map((field) => (
                                     renderInputField(index, field)
                                 )) : (
                                     renderInputField(index)
                                 )}
-                            </div>
+                            </Responsive>
                         </div>
                     ))}
                 </>

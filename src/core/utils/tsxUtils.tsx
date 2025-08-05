@@ -135,7 +135,7 @@ export const AssignmentDescription = (
     return <Descriptions items={[
         ...(show ? [{key: 1, label: 'Titre', children: link ? <Link onClick={() => redirectTo(text.exam.group.view.href + a?.id)}>{a?.examName}</Link> : a?.examName, span: 3}] : []),
         ...(a?.semester ? [{key: 14, label: 'Planning', children: a?.semester?.designation, span: 3}] : []),
-        ...(a?.semester?.semester ? [{key: 2, label: 'Semestre', children: a?.semester?.semester?.semesterName, span: 3}] : []),
+        ...(a?.semester?.semester ? [{key: 2, label: 'Semestre', children: a?.semester?.semester?.template?.semesterName, span: 3}] : []),
         ...(a?.exam?.examType ? [{key: 3, label: 'Examen', children: a?.exam?.examType?.name, span: 3}] : []),
         ...(a?.type ? [{key: 13, label: 'Type de devoir', children: getAssignmentType(AssignmentType[a?.type as unknown as keyof typeof AssignmentType]), span: 3}] : []),
         ...(a?.subject ? [{key: 4, label: 'Matière', children: <Text onClick={() => redirectTo(text.cc.group.course.view.href + a?.subject?.id)} className='course-Link'>

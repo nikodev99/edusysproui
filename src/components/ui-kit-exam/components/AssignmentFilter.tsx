@@ -4,7 +4,7 @@ import {text} from "../../../core/utils/text_display.ts";
 import {ItemType} from "antd/es/menu/interface";
 import {useCallback, useEffect, useMemo, useState} from "react";
 import {useGradeRepo} from "../../../hooks/useGradeRepo.ts";
-import {Classe, Course, Grade, Semester} from "../../../entity";
+import {Classe, Course, Grade, /*Semester*/} from "../../../entity";
 import {useClasse} from "../../../hooks/useClasse.tsx";
 import {useCourseRepo} from "../../../hooks/useCourseRepo.ts";
 import {useSemesterRepo} from "../../../hooks/useSemesterRepo.ts";
@@ -33,7 +33,7 @@ export const AssignmentFilter = (
     const [grades, setGrades] = useState<Grade[]>([])
     const [classes, setClasses] = useState<Classe[]>([])
     const [courses, setCourses] = useState<Course[]>([])
-    const [semesters, setSemesters] = useState<Semester[]>([])
+    //const [semesters, setSemesters] = useState<Semester[]>([])
     const [filterItem, setFilterItem] = useState<AssignmentFilterProps>({academicYearId: academicYear} as AssignmentFilterProps)
     const {useGetAllGrades} = useGradeRepo()
     const {classes: allClasses} = useClasse()
@@ -51,9 +51,10 @@ export const AssignmentFilter = (
                 gradeId:    getOptions(grades,    "id", "section"),
                 classeId:   getOptions(classes,   "id",  "name"),
                 courseId:   getOptions(courses,   "id",  "course"),
-                semesterId: getOptions(semesters, "semesterId", "semesterName"),
+                //TODO Adding the filter by semester
+                //semesterId: getOptions(semesters, "semesterId", "semesterName"),
             } as Record<keyof AssignmentFilterProps, Option[]>),
-        [academicYearOptions, grades, classes, courses, semesters]
+        [academicYearOptions, grades, classes, courses]
     );
 
     const makeOnChange =
@@ -82,7 +83,7 @@ export const AssignmentFilter = (
         if (fetchedGrades) setGrades(fetchedGrades as Grade[]);
         if (allClasses) setClasses(allClasses);
         if (fetchedCourses) setCourses(fetchedCourses as Course[]);
-        if (fetchedSemesters) setSemesters(fetchedSemesters as Semester[]);
+        //if (fetchedSemesters) setSemesters(fetchedSemesters as Semester[]);
     }, [allClasses, fetchedCourses, fetchedGrades, fetchedSemesters]);
 
     console.log('Options: ', options)

@@ -326,6 +326,10 @@ class Datetime {
         return this.date.isBefore(otherDate);
     }
 
+    isBetween(startDate: DateInput | Params, endDate: DateInput | Params): boolean {
+        return this.isAfter(startDate) && this.isBefore(endDate)
+    }
+
     compare(date: DateInput | Params): -1 | 1 | 0 {
         if (this.isBefore(date)) return -1
         if (this.isAfter(date)) return 1

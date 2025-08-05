@@ -1,9 +1,9 @@
-import {z} from "zod";
+import {z, ZodType} from "zod";
 import {schoolMergeSchema} from "./schoolSchema.ts";
 import {dateProcess} from "../commonSchema.ts";
 import Datetime from "../../core/datetime.ts";
 
-export const academicYearSchema = z.object({
+export const academicYearSchema: ZodType = z.object({
     startDate: dateProcess("La date de début est requise"),
     endDate: dateProcess("La date de fin est requise"),
     school: schoolMergeSchema.optional()

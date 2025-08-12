@@ -9,13 +9,15 @@ import {useAcademicYearRepo} from "../../hooks/useAcademicYearRepo.ts";
 import {useEffect, useMemo} from "react";
 import {AcademicYear, Semester} from "../../entity";
 import Datetime from "../../core/datetime.ts";
-import {AcademicYearEditDrawer, SaveAcademicYear} from "../../components/ui-kit-setting";
+import {AcademicYearEditDrawer, SaveAcademicYear, SaveSemesterTemplate} from "../../components/ui-kit-setting";
 import {useToggle} from "../../hooks/useToggle.ts";
 import {useSemesterRepo} from "../../hooks/useSemesterRepo.ts";
+import Marquee from "react-fast-marquee";
+import {loggedUser} from "../../auth/jwt/LoggedUser.ts";
 
 const AcademicYearPage = () => {
     useDocumentTitle({
-        title: "Setting - Année Académique",
+        title: "Année Académique",
         description: "Setting description",
     })
 
@@ -27,17 +29,20 @@ const AcademicYearPage = () => {
     })
 
     const [openSavePane, setOpenSavePane] = useToggle(false)
+    const [openSemesterPane, setOpenSemesterPane] = useToggle(false)
     const [refetch, setRefetch] = useToggle(false)
     const [openEdit, setOpenEdit] = useToggle(false)
     const {useGetAllAcademicYear} = useAcademicYearRepo()
     const {useGetAllSemesters} = useSemesterRepo()
     const academicYears = useGetAllAcademicYear({shouldRefetch: refetch})
-    const semesters = useGetAllSemesters()
+    const semesters = useGetAllSemesters({shouldRefetch: refetch})
 
-    const currentSemester = useMemo(() => semesters?.find(s => Datetime.now().isBetween(s.startDate, s.endDate)), [semesters])
+    const schoolId = useMemo(() => loggedUser.getSchool()?.id, [])
+    const currentSemester = useMemo(() => semesters?.find(s => Datetime.now().isBetween(s?.startDate, s?.endDate)), [semesters])
     const current = useMemo(() => academicYears?.find(a => a.current), [academicYears])
-    const entries = useMemo(() => academicYears?.length || 0, [academicYears])
-    const currentSemesters = useMemo(() => semesters?.filter(s => s.academicYear.current), [semesters])
+    const entries = useMemo(() => academicYears?.length || 0, [academicYears?.length])
+    const semesterCount = useMemo(() => semesters?.length || 0, [semesters?.length])
+    const currentSemesters = useMemo(() => semesters?.filter(s => s.academicYear?.current), [semesters])
 
     const {Text} = Typography
 
@@ -46,7 +51,7 @@ const AcademicYearPage = () => {
             setRefetch()
     }, [refetch, setRefetch]);
 
-    const columns: TableColumnsType<AcademicYear> = [
+    const columns: TableColumnsType<AcademicYear> = useMemo(() => [
         {
             title: 'Année Académique',
             dataIndex: 'academicYear',
@@ -56,13 +61,13 @@ const AcademicYearPage = () => {
             title: 'Début',
             dataIndex: 'startDate',
             key: 'startDate',
-            render: (date) => Datetime.of(date).format("DD-MM-YYYY")
+            render: (date) => Datetime.of(date)?.format("DD-MM-YYYY")
         },
         {
             title: 'Fin',
             dataIndex: 'endDate',
             key: 'endDate',
-            render: (date) => Datetime.of(date).format("DD-MM-YYYY")
+            render: (date) => Datetime.of(date)?.format("DD-MM-YYYY")
         },
         {
             title: 'status',
@@ -74,31 +79,29 @@ const AcademicYearPage = () => {
                 size='small'
             />
         }
-    ]
+    ], [])
 
     const mergeCells = useMemo(() => {
         const newMergedCells: Record<number, number> = {};
-        if (!semesters || semesters.length === 0) {
+        if (!semesters || semesters?.length === 0) {
             return newMergedCells;
         }
 
-        let currentSemesterName = semesters[0].template.semesterName;
+        let currentSemesterName = semesters[0]?.template?.semesterName;
         let currentBlockStart = 0;
 
-        for (let i = 1; i <= semesters.length; i++) {
-            if (i === semesters.length || semesters[i].template.semesterName !== currentSemesterName) {
+        for (let i = 1; i <= semesters?.length; i++) {
+            if (i === semesters?.length || semesters[i]?.template?.semesterName !== currentSemesterName) {
                 newMergedCells[currentBlockStart] = i - currentBlockStart; // Mark the first row of the block with its span
 
-                if (i < semesters.length) {
-                    currentSemesterName = semesters[i].template.semesterName;
+                if (i < semesters?.length) {
+                    currentSemesterName = semesters[i]?.template?.semesterName;
                     currentBlockStart = i;
                 }
             }
         }
         return newMergedCells;
     }, [semesters])
-
-    console.log({mergeCells})
 
     const columnsSemester: TableColumnsType<Semester> = useMemo(() => [
         {
@@ -112,37 +115,39 @@ const AcademicYearPage = () => {
                 }
                 return {rowSpan: 0}
             },
-            render: (semestreName) => <h4>{semestreName}</h4>
+            render: (semestreName) => <Text strong>{semestreName}</Text>
         },
         {
             title: 'Année',
             key: 'academicYear',
+            dataIndex: 'academicYear',
             render: (academicYear: AcademicYear) => {
-                return academicYear.current ?
+                return academicYear?.current ?
                     <Text strong>{academicYear?.academicYear}</Text> :
-                    <em>{academicYear.academicYear}</em>;
+                    <em>{academicYear?.academicYear}</em>;
             },
         },
         {
             title: 'Début',
             key: 'startDate',
-            render: (_text, record) => {
-                return record.startDate ? Datetime.of(record.startDate).fullDay() : '';
+            dataIndex: 'startDate',
+            render: (date) => {
+                return date ? Datetime.of(date).format({format: 'DD-MM-YYYY'}) : '';
             },
         },
         {
             title: 'Fin',
             key: 'endDate',
-            render: (_text, record) => {
-                return record.endDate ? Datetime.of(record.endDate).fullDay() : '';
+            dataIndex: 'endDate',
+            render: (date) => {
+                return date ? Datetime.of(date).format({format: 'DD-MM-YYYY'}) : '';
             },
         },
         {
             title: 'Action',
-            key: 'endDate',
-            render: (_text, record) => {
-                return record.endDate ? Datetime.of(record.endDate).fullDay() : '';
-            },
+            key: 'semesterId',
+            dataIndex: 'semesterId',
+            render: (id) => id
         },
     ], [Text, mergeCells])
     
@@ -151,14 +156,21 @@ const AcademicYearPage = () => {
         setRefetch()
     }
 
+    const handleCloseSemesterPane = () => {
+        setOpenSemesterPane()
+        setRefetch()
+    }
+
+    console.log("FETCHED SEMESTERS: ", semesters)
+
     return(
         <>
             {context}
             {
                 (!currentSemesters || currentSemesters?.length === 0) &&
-                <Alert message={`Veuillez ajouter une subdivision à l'année académique actuelle: ${current?.academicYear} La subdivision en semestres 
+                <Alert message={<Marquee pauseOnHover gradient={false}>Veuillez ajouter une subdivision à l'année académique actuelle:&nbsp;{current?.academicYear}. La subdivision en semestres
                 ou trimestres structure l’année académique pour faciliter la planification, l’évaluation des étudiants et 
-                la gestion administrative.`} showIcon type='warning' />
+                la gestion administrative.</Marquee>} showIcon type='warning' style={{marginTop: '10px'}} />
             }
             <Divider orientation='left'><h3>Manager Années Académiques</h3></Divider>
             <Responsive gutter={[16, 16]}>
@@ -221,22 +233,33 @@ const AcademicYearPage = () => {
                         <Card>
                             <Card.Meta title={
                                 <Flex align='center' gap={10}>
-                                    <h3>{2} Année{entries > 1 ? 's' : ''}</h3>
-                                    <Button type='primary' onClick={() => alert('Ajouter un semestre')}>Ajouter un semestre</Button>
+                                    <h3>{semesterCount ?? 0} Semestre{semesterCount > 1 ? 's' : ''}</h3>
+                                    <Button type='primary' onClick={setOpenSemesterPane}>Ajouter un structure</Button>
                                 </Flex>
                             } style={{marginBottom: '10px'}} />
                             <Table
                                 columns={columnsSemester}
                                 dataSource={semesters}
                                 pagination={false}
-                                rowKey='semesterId'
+                                rowKey='id'
                                 scroll={{y: 300}}
                             />
                         </Card>
                     </Grid>
                 </Grid>
             </Responsive>
-            <SaveAcademicYear open={openSavePane} onClose={handleClosePane} />
+            <SaveAcademicYear
+                open={openSavePane}
+                onClose={handleClosePane}
+                schoolId={schoolId}
+                semesterStructure={currentSemesters && currentSemesters?.length > 0 ? currentSemesters : semesters}
+            />
+            <SaveSemesterTemplate
+                open={openSemesterPane}
+                onClose={handleCloseSemesterPane}
+                semesters={semesters}
+                schoolId={schoolId}
+            />
             <AcademicYearEditDrawer open={openEdit} close={setOpenEdit} data={current as AcademicYear} />
         </>
     )

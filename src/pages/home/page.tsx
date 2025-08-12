@@ -1,4 +1,6 @@
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
+import {useMemo} from "react";
+import {loggedUser} from "../../auth/jwt/LoggedUser.ts";
 
 const Dashboard = () => {
     useDocumentTitle({
@@ -6,8 +8,15 @@ const Dashboard = () => {
         description: "Dashboard description",
     })
 
+    const school = useMemo(() => loggedUser.getSchool(), [])
+
     return (
-        <main>Dashboard</main>
+        <main>
+            Dashboard
+            <div>
+                <pre>{JSON.stringify(school)}</pre>
+            </div>
+        </main>
     )
 }
 

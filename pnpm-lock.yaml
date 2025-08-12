@@ -68,6 +68,9 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
+      react-fast-marquee:
+        specifier: ^1.6.5
+        version: 1.6.5(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-highlight-words:
         specifier: ^0.20.0
         version: 0.20.0(react@18.2.0)
@@ -1778,6 +1781,12 @@ packages:
     peerDependencies:
       react: '>=16.4.0'
       react-dom: '>=16.4.0'
+
+  react-fast-marquee@1.6.5:
+    resolution: {integrity: sha512-swDnPqrT2XISAih0o74zQVE2wQJFMvkx+9VZXYYNSLb/CUcAzU9pNj637Ar2+hyRw6b4tP6xh4GQZip2ZCpQpg==}
+    peerDependencies:
+      react: '>= 16.8.0 || ^18.0.0'
+      react-dom: '>= 16.8.0 || ^18.0.0'
 
   react-highlight-words@0.20.0:
     resolution: {integrity: sha512-asCxy+jCehDVhusNmCBoxDf2mm1AJ//D+EzDx1m5K7EqsMBIHdZ5G4LdwbSEXqZq1Ros0G0UySWmAtntSph7XA==}
@@ -3911,6 +3920,11 @@ snapshots:
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
       tslib: 2.6.3
+
+  react-fast-marquee@1.6.5(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+    dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
 
   react-highlight-words@0.20.0(react@18.2.0):
     dependencies:

@@ -2,10 +2,12 @@ import {z, ZodType} from "zod";
 import {schoolMergeSchema} from "./schoolSchema.ts";
 import {dateProcess} from "../commonSchema.ts";
 import Datetime from "../../core/datetime.ts";
+import {semesterSchema} from "./semesterSchema.ts";
 
 export const academicYearSchema: ZodType = z.object({
     startDate: dateProcess("La date de début est requise"),
     endDate: dateProcess("La date de fin est requise"),
+    semesters: z.array(semesterSchema),
     school: schoolMergeSchema.optional()
 }).refine((data) => {
     return Datetime.of(data.startDate).compare(data.endDate) !== 0

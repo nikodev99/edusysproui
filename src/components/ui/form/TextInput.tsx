@@ -1,4 +1,4 @@
-import {FieldValues} from "react-hook-form";
+import {FieldValues, Path, PathValue} from "react-hook-form";
 import {Button, Form, Input, InputNumber, Space} from "antd";
 import {InputType, TypedInputType} from "../../../core/utils/interfaces.ts";
 import Grid from "../layout/Grid.tsx";
@@ -23,6 +23,7 @@ export const FormInput = <T extends FieldValues>(inputProps: dataEntryProps<T>) 
                                 disabled={disabled}
                                 min={min}
                                 {...field}
+                                defaultValue={defaultValue}
                                 style={{width: '100%'}}
                             />}
                             {inputType === 'password' && <Input.Password
@@ -31,11 +32,13 @@ export const FormInput = <T extends FieldValues>(inputProps: dataEntryProps<T>) 
                                 disabled={disabled}
                                 onFocus={() => clearErrors ? clearErrors(field.name) : null}
                                 {...field}
+                                defaultValue={defaultValue as PathValue<T, Path<T>>}
                             />}
                             {!inputType && <Input
                                 onFocus={() => clearErrors ? clearErrors(field.name) : null}
                                 placeholder={placeholder}
                                 {...field}
+                                defaultValue={defaultValue as PathValue<T, Path<T>>}
                             />}
                             <Button disabled={field.value === defaultValue} htmlType='submit'>{buttonLabel ?? <LuSave/>}</Button>
                         </Space.Compact>
@@ -50,6 +53,7 @@ export const FormInput = <T extends FieldValues>(inputProps: dataEntryProps<T>) 
                                 min={min}
                                 {...field}
                                 style={{width: '100%'}}
+                                defaultValue={defaultValue}
                             />}
                             {inputType === 'password' && <Input.Password
                                 placeholder={placeholder}
@@ -57,12 +61,14 @@ export const FormInput = <T extends FieldValues>(inputProps: dataEntryProps<T>) 
                                 disabled={disabled}
                                 onFocus={() => clearErrors ? clearErrors(field.name) : null}
                                 {...field}
+                                defaultValue={defaultValue as PathValue<T, Path<T>>}
                             />}
                             {!inputType && <Input
                                 onFocus={() => clearErrors ? clearErrors(field.name) : null}
                                 placeholder={placeholder}
                                 addonAfter={addonAfter}
                                 {...field}
+                                defaultValue={defaultValue as PathValue<T, Path<T>>}
                             />}
                         </>
                     )
@@ -73,7 +79,7 @@ export const FormInput = <T extends FieldValues>(inputProps: dataEntryProps<T>) 
 }
 
 const TextInput = <T extends FieldValues>(inputProps :TypedInputType<T>) => {
-    const { hasForm, xs, md, lg, onFinish, inputType} = inputProps
+    const { hasForm, xs, md, lg, onFinish, inputType, hide} = inputProps
 
     const handleFinish = (values: unknown) => {
         if (onFinish) {
@@ -81,17 +87,15 @@ const TextInput = <T extends FieldValues>(inputProps :TypedInputType<T>) => {
         }
     }
 
-    console.log(xs, md, lg)
-
     return(
-        <Grid xs={xs ?? 24} md={md ?? 12} lg={lg ?? 8}>
+        <Grid xs={xs ?? 24} md={md ?? 12} lg={lg ?? 8} style={{display: hide ? 'none' : 'block'}}>
             {hasForm ? (
                     <Form layout="vertical" onFinish={handleFinish}>
                         <FormInput {...inputProps} isCompact={hasForm} inputType={inputType} />
                     </Form>
                 ) :
                 (
-                    <FormInput {...inputProps} inputType={inputType} />
+                    <FormInput {...inputProps} isCompact={false} inputType={inputType} />
                 )
             }
         </Grid>

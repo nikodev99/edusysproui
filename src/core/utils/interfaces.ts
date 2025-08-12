@@ -101,7 +101,7 @@ export interface ZodFormItemProps {
 
 export type FormType<T extends FieldValues> = ZodFormItemProps & ZodControl<T>
 export type FormItemType<T extends FieldValues> = FormType<T> & ZodControlRender<T> & Control<T>
-export type TypedInputType<T extends FieldValues> = Control<T> & FormType<T> & InputProps & ZodSelect<T> & ZodRadio<T> & ZodListControl<T> & {wrapper?: ReactNode}
+export type TypedInputType<T extends FieldValues> = Control<T> & FormType<T> & InputProps & ZodSelect<T> & ZodRadio<T> & ZodListControl<T> & {wrapper?: ReactNode, hide?: boolean}
 export type InputType<T extends FieldValues> = TypedInputType<T> & {isCompact?: boolean}
 export type SelectType<T extends FieldValues> = TypedInputType<T> & {isCompact?: boolean}
 export type DatePickerType<T extends FieldValues> = TypedInputType<T> & {isCompact?: boolean, showTime?: boolean, format?: string}
@@ -561,6 +561,7 @@ export interface SchemaProps<TData extends FieldValues> {
     messageSuccess?: string;
     description?: string;
     explain?: string;
+    marquee?: boolean;
     customForm: ReactNode
     handleForm: UseFormReturn<TData>
 }

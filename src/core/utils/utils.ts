@@ -865,8 +865,8 @@ export const getUniqueness = <T, K>(
     objects: T[],
     keyExtractor: (obj: T) => K,
     uniqueIdentifier: (item: K) => ID
-): K[] => {
-    return Array.from(
+): K[] | undefined => {
+    return objects && objects?.length ? Array.from(
         objects.reduce((map, obj) => {
             const keyObj = keyExtractor(obj);
             const key = uniqueIdentifier(keyObj);
@@ -875,7 +875,7 @@ export const getUniqueness = <T, K>(
             }
             return map;
         }, new Map<ID, K>()).values()
-    )
+    ) : undefined;
 }
 
 export const setStudentList = (students: Enrollment[]) => {

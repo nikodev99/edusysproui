@@ -6,6 +6,7 @@ import {catchError} from "../../data/action/error_catch.ts";
 import {Alert, Button, Flex, Form, Modal, ModalProps} from "antd";
 import {PopConfirm} from "../ui/layout/PopConfirm.tsx";
 import {PostSchemaProps, SchemaProps} from "../../core/utils/interfaces.ts";
+import Marquee from "react-fast-marquee";
 
 type InsertSchemaType<TData extends FieldValues> = SchemaProps<TData>
     & ModalProps
@@ -30,6 +31,7 @@ const InsertModal = <TData extends FieldValues>(
         handleForm,
         explain,
         onSuccess,
+        marquee = false,
         onError
     }: InsertSchemaType<TData>
 ) => {
@@ -77,6 +79,7 @@ const InsertModal = <TData extends FieldValues>(
                 onClose={handleFormCancel}
                 onSuccess={handleFormSuccess}
                 onError={onError}
+                marquee={marquee}
             />
         </Modal>
     );
@@ -95,7 +98,8 @@ const InsertSchema = <TData extends FieldValues>(
         handleForm,
         explain,
         onSuccess,
-        onError
+        onError,
+        marquee = false
     }: InsertSchemaType<TData> & {
         onSuccess?: (response: unknown) => void,
         onError?: (error: string) => void
@@ -153,7 +157,9 @@ const InsertSchema = <TData extends FieldValues>(
         <>
             {successMessage && (<Alert message={successMessage} type="success" showIcon closable onClose={clearMessages}/>)}
             {errorMessage && (<Alert message={errorMessage} type="error" showIcon closable onClose={clearMessages}/>)}
-            {explain && (<Alert style={{ marginTop: '10px' }} message={explain} type="info" showIcon/>)}
+            {explain && (<Alert style={{ marginTop: '10px' }} message={marquee ? (
+                <Marquee pauseOnHover gradient={false}>{explain}</Marquee>
+            ) : explain} type="info" showIcon/>)}
 
             <Form layout="vertical" style={{ marginTop: '15px' }}>
                 {customForm}

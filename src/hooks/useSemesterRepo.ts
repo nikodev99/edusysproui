@@ -19,7 +19,6 @@ export const useSemesterRepo = () => {
 
     const useGetAllSemesters = (options?: RepoOptions) => {
         const {data, refetch} = useFetch(['semester-list', userSchool?.id], getAllSemesters, [userSchool?.id], !!userSchool?.id)
-
         if (options?.shouldRefetch)
             refetch().then(r => r.data)
 

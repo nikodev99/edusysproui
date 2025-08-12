@@ -136,6 +136,7 @@ export const UserProvider = ({children}: UserContextProps) => {
             setRefreshToken(null)
             setShouldRedirectToHome(false)
             setLoginError(null)
+            setUserSchool(null)
         }
     }
 

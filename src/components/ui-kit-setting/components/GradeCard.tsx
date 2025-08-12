@@ -110,7 +110,10 @@ export const GradeCard = ({data, academicYear, size, dataKey, onlyPlanning = fal
                     <Flex vertical>
                         <Flex align='center' gap={16} style={{marginBottom: size && size == 'small' ? '2px' : size ? `${size}px` :'10px'}}>
                             <Avatar size={64} style={{background: MAIN_COLOR}}><AiOutlineBook /></Avatar>
-                            <h2 style={{ margin: 0, color: '#2c3e50' }}>{data.section}</h2>
+                            <Flex justify={'start'} align={'center'} vertical>
+                                <h2 style={{ margin: 0, color: '#2c3e50' }}>{data.section}</h2>
+                                <Text  italic>{data.subSection}</Text>
+                            </Flex>
                         </Flex>
                         {academicYear && <Flex align='center' justify='space-between' gap={10}>
                             <Text type="secondary" style={{ display: 'block', fontSize: '16px' }}>

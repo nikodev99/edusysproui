@@ -3,7 +3,15 @@ import {ReactNode} from "react";
 import {useNavigation} from "../hooks/useNavigation.ts";
 import {LuCirclePlus} from "react-icons/lu";
 
-const EmptyPage = ({title, subTitle, icon, extra, btnLabel, btnUrl}: {title: ReactNode | string, subTitle?: ReactNode | string, icon?: ReactNode, extra?: ReactNode, btnLabel?: string, btnUrl?: string}) => {
+const EmptyPage = ({title, subTitle, icon, extra, btnLabel, btnUrl, mt}: {
+    title: ReactNode | string,
+    subTitle?: ReactNode | string,
+    icon?: ReactNode,
+    extra?: ReactNode,
+    btnLabel?: string,
+    btnUrl?: string,
+    mt?: boolean,
+}) => {
 
     const navigate = useNavigation(btnUrl as string)
 
@@ -19,12 +27,21 @@ const EmptyPage = ({title, subTitle, icon, extra, btnLabel, btnUrl}: {title: Rea
                 title={title}
                 subTitle={subTitle}
                 icon={
-                    icon ? icon :
+                    icon ? icon : (
                         <span>
-                    <img src="public/no-team-2.svg" alt="empty table image"/>
-                </span>
+                            <img src="/public/no-team-2.svg" alt="empty table image"/>
+                        </span>
+                    )
                 }
-                extra={extra ? extra : <Button type='primary' icon={<LuCirclePlus size={15} />} onClick={btnUrl ? goThrough : () => {}}>{btnLabel}</Button>}
+                style={{marginTop: mt ? '80px' : '0'}}
+                extra={extra ? extra : <Button
+                    type='primary'
+                    style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}
+                    onClick={btnUrl ? goThrough : () => {}}
+                >
+                    <LuCirclePlus size={15} />
+                    {btnLabel}
+                </Button>}
             />
         </main>
 

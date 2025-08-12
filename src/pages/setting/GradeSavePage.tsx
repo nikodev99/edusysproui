@@ -9,10 +9,20 @@ import {Alert, Divider, Modal} from "antd";
 import {PlanningForm} from "../../components/forms/PlanningForm.tsx";
 import {useState} from "react";
 import {useToggle} from "../../hooks/useToggle.ts";
+import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
+import {text} from "../../core/utils/text_display.ts";
 
 export const GradeSavePage = () => {
     const [open, setOpen] = useToggle(false)
-    const {useGetAllSemesters} = useSemesterRepo()
+    const {useGetCurrentSemesters} = useSemesterRepo()
+
+    const {context} = useBreadCrumb({
+        bCItems: [
+            {title: 'Setting'},
+            {title: text.settings.group.grade.label, path: text.settings.group.grade.href},
+            {title: text.settings.group.grade.add.label}
+        ]
+    })
 
     const form = useForm<GradeSchema>({
         resolver: zodResolver(gradeSchema),
@@ -29,6 +39,8 @@ export const GradeSavePage = () => {
     console.log('PLANNING ARRAY: ', arr)
 
     return (
+        <>
+        {context}
         <PageWrapper>
             <InsertSchema
                 data={gradeSchema}
@@ -54,5 +66,6 @@ export const GradeSavePage = () => {
                 <PlanningForm control={control} errors={errors} edit={false} parent={'planning'} />
             </Modal>
         </PageWrapper>
+        </>
     )
 }

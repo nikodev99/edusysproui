@@ -1,7 +1,7 @@
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
 import {text} from "../../core/utils/text_display.ts";
-import {Button, Divider, Flex} from "antd";
+import {Alert, Button, Divider, Flex} from "antd";
 import Responsive from "../../components/ui/layout/Responsive.tsx";
 import {useGradeRepo} from "../../hooks/useGradeRepo.ts";
 import Grid from "../../components/ui/layout/Grid.tsx";
@@ -10,6 +10,8 @@ import {GradeCard} from "../../components/ui-kit-setting";
 import {AcademicYear} from "../../entity";
 import {useRedirect} from "../../hooks/useRedirect.ts";
 import {useMemo} from "react";
+import EmptyPage from "../EmptyPage.tsx";
+import Marquee from "react-fast-marquee";
 
 const GradePage = () => {
     useDocumentTitle({
@@ -20,7 +22,7 @@ const GradePage = () => {
     const {context} = useBreadCrumb({
         bCItems: [
             {title: 'Setting'},
-            {title: text.settings.group.academicYear.label}
+            {title: text.settings.group.grade.label}
         ]
     })
 
@@ -37,6 +39,8 @@ const GradePage = () => {
         </Grid>
     )), [academicYear, grades])
 
+    console.log({items})
+
     return(
         <>
             {context}
@@ -46,7 +50,30 @@ const GradePage = () => {
             </Flex>
             <Divider />
             <Responsive gutter={[16, 16]}>
-                {items}
+                {items && items?.length > 0 ? items : (
+                    <Grid xs={24} md={24} lg={24}>
+                        <EmptyPage
+                            title="Aucun grade trouvé dans le système"
+                            subTitle={
+                                <Alert
+                                    type='info'
+                                    showIcon
+                                    message={(
+                                        <Marquee pauseOnHover gradient={false}>
+                                            <span style={{ display: "inline-block", paddingRight: "3rem" }}>
+                                                Les niveaux scolaires sont essentiels car ils organisent l'enseignement en étapes
+                                                adaptées au développement des élèves, permettant une progression pédagogique cohérente,
+                                                une évaluation pertinente et une gestion efficace des ressources de l'école.
+                                            </span>
+                                        </Marquee>
+                                    )}
+                                />
+                            }
+                            btnLabel={text.settings.group.grade.add.label}
+                            btnUrl={text.settings.group.grade.add.href}
+                        />
+                    </Grid>
+                )}
             </Responsive>
         </>
     )

@@ -92,7 +92,7 @@ export interface GuardianProps<T extends FieldValues, Q extends object> extends 
 }
 
 export interface ZodFormItemProps {
-    label?: string
+    label?: string | ReactNode
     validateStatus?: ValidateStatus
     help?: ReactNode
     style?: CSSProperties
@@ -207,7 +207,8 @@ export interface ZodRadio<T extends FieldValues> {
     optionType?: RadioGroupOptionType
     buttonStyle?: RadioGroupButtonStyle
     style?: CSSProperties
-    radioOptions?: CheckboxOptionType<T>[]
+    radioOptions?: CheckboxOptionType<T>[],
+    isValueObject?: boolean
 }
 
 export interface InputProps extends ZodFormItemProps {
@@ -216,7 +217,7 @@ export interface InputProps extends ZodFormItemProps {
     md?: number
     lg?: number
     hasForm?: boolean
-    onFinish?: (values: unknown) => void
+    onFinish?: (values: unknown | unknown[]) => void
     type?: string
     buttonLabel?: ReactNode
     inputType?: string

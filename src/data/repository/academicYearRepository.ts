@@ -20,7 +20,7 @@ export const getAcademicYearFromYear = (schoolId: string, year: number) => {
 }
 
 export const getAcademicYearFromDate = (schoolId: string, date: Date) => {
-    return apiClient.get<AcademicYear>(`/academic/from/${schoolId}`, {
+    return apiClient.get<AcademicYear>(`/academic/from_date/${schoolId}`, {
         params: {
             fromDate: date,
         }

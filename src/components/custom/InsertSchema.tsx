@@ -158,7 +158,11 @@ const InsertSchema = <TData extends FieldValues>(
             {successMessage && (<Alert message={successMessage} type="success" showIcon closable onClose={clearMessages}/>)}
             {errorMessage && (<Alert message={errorMessage} type="error" showIcon closable onClose={clearMessages}/>)}
             {explain && (<Alert style={{ marginTop: '10px' }} message={marquee ? (
-                <Marquee pauseOnHover gradient={false}>{explain}</Marquee>
+                <Marquee pauseOnHover gradient={false}>
+                    <span style={{ display: "inline-block", paddingRight: "3rem" }}>
+                        {explain}
+                    </span>
+                </Marquee>
             ) : explain} type="info" showIcon/>)}
 
             <Form layout="vertical" style={{ marginTop: '15px' }}>

@@ -31,7 +31,7 @@ export const semesterSchema = z.lazy(() => z.object({
 }))
 
 export const templateSemesterSchema = z.object({
-    id: z.number().optional(),
+    id: z.number().optional()
 })
 
 export const allSemesterTemplateSchema = z.object({
@@ -43,5 +43,7 @@ export const allSemesterSchema = z.object({
 })
 
 export const semesterSchemaMerge = z.object({
-    id: z.number({required_error: 'Le semestre est requis'}),
+    semesterId: z.number({required_error: 'Le semestre est requis'}),
+    startDate: dateProcess('Ajouter les dates').optional(),
+    endDate: dateProcess('Ajouter les dates').optional(),
 })

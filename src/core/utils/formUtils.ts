@@ -19,6 +19,7 @@ class FormUtils {
     }
 
     static getErrorMessage<T extends FieldErrors>(fieldName: keyof T, errors: FieldErrors<T>, toEdit: boolean, parent?: string, enroll?: boolean): ReactNode {
+        console.log({fieldName, errors, toEdit, parent, enroll});
         if (toEdit) {
             return (errors?.[fieldName]?.message || '') as ReactNode
         } else {

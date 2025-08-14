@@ -8,6 +8,7 @@ import TextInput from "./TextInput.tsx";
 import DateInput from "./DateInput.tsx";
 import SelectInput from "./SelectInput.tsx";
 import Responsive from "../layout/Responsive.tsx";
+import RadioInput from "./RadioInput.tsx";
 
 export type FieldConfig<T extends FieldValues> = InputType<T> & {name: string}
 
@@ -68,6 +69,8 @@ export const ListTextInput = <T extends FieldValues>(listProps: InputListProps<T
                     return <TextInput.Number key={fieldIndex} {...props} md={props.md} lg={props.lg} hasForm={false} />
                 case 'select':
                     return <SelectInput key={fieldIndex} {...props} md={props.md} lg={props.lg} hasForm={false} />
+                case 'radio':
+                    return <RadioInput key={fieldIndex} {...props} md={props.md} lg={props.lg} hasForm={false} />
                 default:
                     return <TextInput key={fieldIndex} {...props} md={props.md} lg={props.lg} hasForm={false} />
             }
@@ -188,7 +191,7 @@ const ListInput = <T extends FieldValues>(inputProps :TypedInputType<T> & {
 }) => {
     const { hasForm, xs, md, lg, onFinish, inputType} = inputProps
 
-    const handleFinish = (values: unknown) => {
+    const handleFinish = (values: unknown | unknown[]) => {
         if (onFinish) {
             onFinish(values)
         }

@@ -13,7 +13,7 @@ import {TimeInput} from "./TimeInput.tsx";
 interface InputProps<TFieldValues extends FieldValues> {
     inputProps: TypedInputType<TFieldValues> & { itemLabel?: string }
     fieldList?: FieldConfig<TFieldValues>[]
-    type: InputTypeEnum
+    type: InputTypeEnum,
 }
 
 interface FormContentProps<T extends FieldValues> {

@@ -23,8 +23,8 @@ const AcademicYearPage = () => {
 
     const {context} = useBreadCrumb({
         bCItems: [
-            {title: 'Setting'},
-            {title: text.settings.group.academicYear.label}
+            {title: text.org.group.school.label, path: text.org.group.school.href},
+            {title: text.org.group.academicYear.label}
         ]
     })
 

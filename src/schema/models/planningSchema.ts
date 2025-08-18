@@ -2,7 +2,7 @@ import {z} from "zod";
 import {semesterSchemaMerge} from "./semesterSchema.ts";
 import {gradeSchemaMerge} from "./gradeSchema.ts";
 import {dateProcess} from "../commonSchema.ts";
-import Datetime from "../../core/datetime.ts";
+//import Datetime from "../../core/datetime.ts";
 
 export const planningSchema = z.lazy(() => z.object({
     id: z.number().optional(),
@@ -11,17 +11,18 @@ export const planningSchema = z.lazy(() => z.object({
     termEndDate: dateProcess('Date de fin du terme est requise'),
     semester: semesterSchemaMerge,
     grade: gradeSchemaMerge.optional(),
-})).refine((data) => {
+}))/* TODO if faudra vérifié que les dates entré sont dans ce schema soit dans les dates des semestres.
+.refine((data) => {
     return Datetime.of(data.termStartDate).isAfter(data.semester.startDate)
 }, {
-    message: "Votre date ne correspond pas à dates de debut de votre semestre",
+    message: "Votre date ne correspond pas au dates de debut de votre semestre",
     path: ["termStartDate"]
 }).refine(data => {
     return Datetime.of(data.termEndDate).isBefore(data.semester.endDate)
 }, {
-    message: "Votre date ne correspond pas à dates de fin de votre semestre",
+    message: "Votre date ne correspond pas au dates de fin de votre semestre",
     path: ["termEndDate"]
-})
+})*/
 
 export const planningSchemaMerge = z.object({
     id: z.number({required_error: 'Le planning est requis'}),

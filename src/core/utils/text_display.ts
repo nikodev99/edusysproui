@@ -152,37 +152,43 @@ export const raw = {
             }
         }
     },
-    settings: {
-        label: 'Paramètres',
-        href: '/settings',
+    org: {
+        label: 'Organisation',
+        href: '/organization',
         group: {
-            org: {
+            school: {
                 label: 'Organisation',
-                href: '/settings/organization'
-            },
-            customize: {
-                label: 'Customiser',
-                href: '/settings/customize'
+                href: '/organization/school'
             },
             academicYear: {
                 label: 'Année Académique',
-                href: '/settings/academic_year'
+                href: '/organization/academic_year'
             },
             grade: {
                 label: 'Grade',
-                href: '/settings/grades',
+                href: '/organization/grades',
                 add: {
                     label: 'Ajouter un grade',
-                    href: '/settings/grades/new'
+                    href: '/organization/grades/new'
                 }
             },
             department: {
                 label: 'Départements',
-                href: '/settings/departments'
+                href: '/organization/departments'
             },
             user: {
                 label: 'Utilisateurs',
-                href: '/settings/users'
+                href: '/organization/users'
+            },
+        }
+    },
+    settings: {
+        label: 'Paramètres',
+        href: '/settings',
+        group: {
+            customize: {
+                label: 'Customiser',
+                href: '/settings/customize'
             },
         }
     },

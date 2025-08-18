@@ -6,7 +6,7 @@ import {
     LuCog,
     LuContact,
     LuLayoutDashboard,
-    LuLibrary,
+    LuLibrary, LuUniversity,
     LuUsers, LuUsersRound,
 } from "react-icons/lu";
 import {MenuProps} from "antd";
@@ -76,16 +76,23 @@ export const menuItems: Required<MenuProps>['items'][number][] = [
         label: "Rapport/Analyses"
     },
     {
+        key: text.org.href,
+        icon: <LuUniversity />,
+        label: text.org.label,
+        children: [
+            {key: text.org.group.school.href, label: text.org.group.school.label},
+            {key: text.org.group.academicYear.href, label: text.org.group.academicYear.label},
+            {key: text.org.group.grade.href, label: text.org.group.grade.label},
+            {key: text.org.group.department.href, label: text.org.group.department.label},
+            {key: text.org.group.user.href, label: text.org.group.user.label}
+        ]
+    },
+    {
         key: text.settings.href,
         icon: <LuCog />,
         label: text.settings.label,
         children: [
-            {key: text.settings.group.org.href, label: text.settings.group.org.label},
             {key: text.settings.group.customize.href, label: text.settings.group.customize.label},
-            {key: text.settings.group.academicYear.href, label: text.settings.group.academicYear.label},
-            {key: text.settings.group.grade.href, label: text.settings.group.grade.label},
-            {key: text.settings.group.department.href, label: text.settings.group.department.label},
-            {key: text.settings.group.user.href, label: text.settings.group.user.label},
             {key: '/settings/legal_certificate', label: "Certificat Légal"},
             {key: '/settings/general_term', label: "Terme Général"},
             {key: '/settings/special_document', label: "Document Spéciale & Contrat"}

@@ -21,8 +21,8 @@ const GradePage = () => {
 
     const {context} = useBreadCrumb({
         bCItems: [
-            {title: 'Setting'},
-            {title: text.settings.group.grade.label}
+            {title: text.org.group.school.label, path: text.org.group.school.href},
+            {title: text.org.group.grade.label}
         ]
     })
 
@@ -39,7 +39,7 @@ const GradePage = () => {
         </Grid>
     )), [academicYear, grades])
 
-    console.log({items})
+    console.log('Grades: ', grades)
 
     return(
         <>
@@ -69,8 +69,8 @@ const GradePage = () => {
                                     )}
                                 />
                             }
-                            btnLabel={text.settings.group.grade.add.label}
-                            btnUrl={text.settings.group.grade.add.href}
+                            btnLabel={text.org.group.grade.add.label}
+                            btnUrl={text.org.group.grade.add.href}
                         />
                     </Grid>
                 )}

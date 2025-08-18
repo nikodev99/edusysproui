@@ -18,26 +18,8 @@ interface GradeCardProps {
 export const GradeCard = ({data, academicYear, size, dataKey, onlyPlanning = false}: GradeCardProps) => {
     const { Text } = Typography
 
-    const {minTs, maxTs} = useMemo(() => {
-        if (data && data?.planning) {
-            const timestamps: number[] = data?.planning?.flatMap(p => [
-                Datetime.of(p.termStartDate as number[]).TIMESTAMP,
-                Datetime.of(p.termEndDate as number[]).TIMESTAMP
-            ])
-            return {
-                minTs: Math.min(...timestamps),
-                maxTs: Math.max(...timestamps)
-            }
-        }
-        return {
-            minTs: academicYear?.startDate,
-            maxTs: academicYear?.endDate,
-        }
-    }, [academicYear?.endDate, academicYear?.startDate, data])
-
     const timelineItems = useMemo(() => {
         const semesters = data && data?.planning ? groupeBySemester(data?.planning as Planning[]) : {}
-
         return Object.entries(semesters)
             ?.map(([semesterName, plan], index) => {
                 const color = COLOR[index]
@@ -68,17 +50,26 @@ export const GradeCard = ({data, academicYear, size, dataKey, onlyPlanning = fal
                             </div>
 
                             <Flex vertical>
-                                <Flex gap={5} style={{ marginBottom: '8px' }}>
+                                {Datetime.of(p?.termStartDate as number[]).compare(p?.termEndDate as number[]) !== 0 ? (
+                                    <Flex gap={5} style={{ marginBottom: '8px' }}>
+                                        <Flex align='center' gap={10}>
+                                            <AiOutlineCalendar />
+                                            <Text strong>
+                                                Du {Datetime.of(p?.termStartDate as number[]).format('DD/MM/YYYY')}
+                                            </Text>
+                                        </Flex>
+                                        <Text strong>
+                                            au {Datetime.of(p?.termEndDate as number[]).format('DD/MM/YYYY')}
+                                        </Text>
+                                    </Flex>
+                                ) : (
                                     <Flex align='center' gap={10}>
                                         <AiOutlineCalendar />
                                         <Text strong>
-                                            Du {Datetime.of(p?.termStartDate as number[]).format('DD/MM/YYYY')}
+                                            Le {Datetime.of(p?.termStartDate as number[]).format('DD/MM/YYYY')}
                                         </Text>
                                     </Flex>
-                                    <Text strong>
-                                        au {Datetime.of(p?.termEndDate as number[]).format('DD/MM/YYYY')}
-                                    </Text>
-                                </Flex>
+                                )}
                             </Flex>
                             <Tag icon={<AiOutlineClockCircle />} color={color} textColor='#e6e7ed'>
                                 {calculateDuration(p.termStartDate as number[], p.termEndDate as number[])}
@@ -141,7 +132,7 @@ export const GradeCard = ({data, academicYear, size, dataKey, onlyPlanning = fal
                             <h4>Période Académique Complète </h4>
                         </Flex>
                         <Text style={{ fontSize: '16px', color: '#fff' }}>
-                            Du {Datetime.of(minTs as number).fDate()} au {Datetime.of(maxTs as number).fDate()}
+                            Du {Datetime.of(academicYear?.startDate as number[]).fDate()} au {Datetime.of(academicYear?.endDate as number[]).fDate()}
                         </Text>
                     </div>}
 

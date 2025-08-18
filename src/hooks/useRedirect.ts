@@ -46,7 +46,7 @@ export const useRedirect = () => {
                 return redirectTo(text.employee.group.view.href + employeeId)
         },
         toSettings: () => redirectTo(text.settings.href),
-        toSettingOrg: () => redirectTo(text.settings.group.org.href),
-        toSaveGrade: () => redirectTo(text.settings.group.grade.add.href),
+        toOrg: () => redirectTo(text.org.group.school.href),
+        toSaveGrade: () => redirectTo(text.org.group.grade.add.href),
     }
 }

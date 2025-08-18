@@ -303,6 +303,10 @@ export const calculateDuration = (
         parts.push(`${days} jour${days > 1 ? 's' : ''}`);
     }
 
+    if (days === 0) {
+        parts.push('1 jour')
+    }
+
     if (parts.length === 0) {
         return `0 jour`;
     }
@@ -682,7 +686,7 @@ export const setSortFieldName = (sortField: string | string[])=>  {
 
 export const groupeBySemester = (terms: Planning[]) => {
     return terms?.reduce((acc, term) => {
-        const semesterName = term.semester?.semesterName
+        const semesterName = term.semester?.template?.semesterName
         if (!acc[semesterName as string]) {
             acc[semesterName as string] = []
         }

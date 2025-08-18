@@ -9,7 +9,6 @@ import {PlanningForm} from "../../components/forms/PlanningForm.tsx";
 import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
 import {text} from "../../core/utils/text_display.ts";
 import {useMemo} from "react";
-import FormError from "../../components/ui/form/FormError.tsx";
 import {saveGrade} from "../../data/repository/gradeRepository.ts";
 import {loggedUser} from "../../auth/jwt/LoggedUser.ts";
 import {useAcademicYearRepo} from "../../hooks/useAcademicYearRepo.ts";
@@ -20,9 +19,9 @@ export const GradeSavePage = () => {
 
     const {context} = useBreadCrumb({
         bCItems: [
-            {title: 'Setting'},
-            {title: text.settings.group.grade.label, path: text.settings.group.grade.href},
-            {title: text.settings.group.grade.add.label}
+            {title: text.org.group.school.label, path: text.org.group.school.href},
+            {title: text.org.group.grade.label, path: text.org.group.grade.href},
+            {title: text.org.group.grade.add.label}
         ]
     })
 
@@ -50,7 +49,7 @@ export const GradeSavePage = () => {
             },
         }
 
-        //return saveGrade(registeredData)
+        return saveGrade(registeredData)
     }
 
     return (

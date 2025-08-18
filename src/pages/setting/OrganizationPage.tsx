@@ -33,13 +33,12 @@ import {School} from "../../entity";
 export const OrganizationPage = () => {
 
     useDocumentTitle({
-        title: "Setting - Organization",
+        title: "Organization",
         description: "Setting description",
     })
 
     const {context} = useBreadCrumb({
         bCItems: [
-            {title: 'Setting'},
             {title: 'Organisation'}
         ]
     })
@@ -155,7 +154,7 @@ export const OrganizationPage = () => {
                                 </div>
                                 <Flex align='start' justify={"center"} vertical gap={5}>
                                     <p>{academicYear?.academicYear}</p>
-                                    <Link to={text.settings.group.academicYear.href}>Manager</Link>
+                                    <Link to={text.org.group.academicYear.href}>Manager</Link>
                                 </Flex>
                             </Space>
                         </Card>
@@ -171,7 +170,7 @@ export const OrganizationPage = () => {
                                 <Avatar style={{background: '#000C40'}} size={50} icon={<LuUsersRound style={{color: '#fafbff'}} />} />
                                 <Flex align='start' justify='center' vertical gap={5}>
                                     <p>{userCount} Utilisateur{userCount > 1 ? 's' : ''}</p>
-                                    <Link to={text.settings.group.user.href}>Manager</Link>
+                                    <Link to={text.org.group.user.href}>Manager</Link>
                                 </Flex>
                             </Space>
                         </Card>
@@ -187,8 +186,8 @@ export const OrganizationPage = () => {
                                 <Avatar style={{background: '#000C40'}} size={50} icon={<LuGraduationCap style={{color: '#fafbff'}} />} />
                                 <Flex align='start' justify='center' vertical gap={5}>
                                     <p>{grades?.length} grade{grades?.length > 1 ? 's' : ''}</p>
-                                    {grades && <Flex gap={5}>{grades?.map(g => (<Tag>{g.section}</Tag>))}</Flex>}
-                                    <Link to={text.settings.group.grade.href}>Manager</Link>
+                                    {grades && <Flex gap={5}>{grades?.map(g => (<Tag key={`grade-${g.id}`}>{g.section}</Tag>))}</Flex>}
+                                    <Link to={text.org.group.grade.href}>Manager</Link>
                                 </Flex>
                             </Space>
                         </Card>
@@ -204,7 +203,8 @@ export const OrganizationPage = () => {
                                 <Avatar style={{background: '#000C40'}} size={50} icon={<LuBuilding2 style={{color: '#fafbff'}} />} />
                                 <Flex align='start' justify='center' vertical gap={5}>
                                     <p>{departments?.length} Départements{departments?.length > 1 ? 's' : ''}</p>
-                                    <Link to={text.settings.group.department.href}>Manager</Link>
+                                    {departments && <Flex gap={5}>{departments?.map(d => (<Tag key={`code-${d.id}`}>{d.code}</Tag>))}</Flex>}
+                                    <Link to={text.org.group.department.href}>Manager</Link>
                                 </Flex>
                             </Space>
                         </Card>

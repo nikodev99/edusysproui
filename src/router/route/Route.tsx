@@ -167,10 +167,9 @@ export const Route = createBrowserRouter([
                 ]
             },
             {
-                path: 'settings',
+                path: 'organization',
                 children: [
-                    {path: 'organization', element: <OrganizationPage />},
-                    {path: 'customize', element: <SettingCustomizePage />},
+                    {path: 'school', element: <OrganizationPage />},
                     {path: 'academic_year', element: <SettingAcademicYearPage />},
                     {
                         path: 'grades',
@@ -180,7 +179,13 @@ export const Route = createBrowserRouter([
                         ]
                     },
                     {path: 'departments', element: <SettingDepartmentPage />},
-                    {path: 'users', element: <SettingUserPage />},
+                    {path: 'users', element: <SettingUserPage />}
+                ]
+            },
+            {
+                path: 'settings',
+                children: [
+                    {path: 'customize', element: <SettingCustomizePage />},
                 ]
             }
         ]

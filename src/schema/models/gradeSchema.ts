@@ -6,7 +6,7 @@ export const gradeSchema: ZodType = z.object({
     id: z.number().optional(),
     section: z.string({required_error: 'La section est requise'}),
     subSection: z.string().optional(),
-    planning: z.array(planningSchema).optional(),
+    planning: z.array(planningSchema),
     school: schoolMergeSchema.optional(),
 })
 

@@ -24,7 +24,7 @@ export const PlanningForm = <T extends FieldValues>(
     const semesters = useGetCurrentSemesters(academicYear as string, {shouldRefetch: shouldRefetch})
 
     const onlyField = FormUtils.onlyField(edit as boolean, 24, undefined)
-    const form = new FormConfig(errors, edit, false, parent)
+    const form = new FormConfig(errors, edit, false)
 
     const semesterOptions = useMemo(() => semesters?.map(semester => {
         return {
@@ -33,8 +33,6 @@ export const PlanningForm = <T extends FieldValues>(
             id: `option-${semester.semesterId}`,
         }
     }), [semesters])
-
-    console.log("CONTROLLER: ", control)
 
     return <FormContent formItems={[
         {

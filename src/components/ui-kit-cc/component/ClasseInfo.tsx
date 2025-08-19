@@ -21,7 +21,7 @@ import {BestScoredTable} from "../../common/BestScoredTable.tsx";
 import {ScheduleCalendar} from "../../common/ScheduleCalendar.tsx";
 import {useScoreRepo} from "../../../hooks/useScoreRepo.ts";
 import {useAttendanceRepo} from "../../../hooks/useAttendanceRepo.ts";
-import {GradeCard} from "../../ui-kit-setting";
+import {GradeCard} from "../../ui-kit-org";
 
 type ClasseInfoProps = InfoPageProps<Classe> & {
     studentCount?: GenderCounted | null

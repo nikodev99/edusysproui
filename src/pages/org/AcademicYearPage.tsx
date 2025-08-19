@@ -9,7 +9,7 @@ import {useAcademicYearRepo} from "../../hooks/useAcademicYearRepo.ts";
 import {useEffect, useMemo} from "react";
 import {AcademicYear, Semester} from "../../entity";
 import Datetime from "../../core/datetime.ts";
-import {AcademicYearEditDrawer, SaveAcademicYear, SaveSemesterTemplate} from "../../components/ui-kit-setting";
+import {AcademicYearEditDrawer, SaveAcademicYear, SaveSemesterTemplate} from "../../components/ui-kit-org";
 import {useToggle} from "../../hooks/useToggle.ts";
 import {useSemesterRepo} from "../../hooks/useSemesterRepo.ts";
 import Marquee from "react-fast-marquee";
@@ -241,7 +241,7 @@ const AcademicYearPage = () => {
                                 columns={columnsSemester}
                                 dataSource={semesters}
                                 pagination={false}
-                                rowKey='id'
+                                rowKey='semesterId'
                                 scroll={{y: 300}}
                             />
                         </Card>

@@ -25,7 +25,7 @@ import {useGradeRepo} from "../../hooks/useGradeRepo.ts";
 import {useDepartmentRepo} from "../../hooks/useDepartmentRepo.ts";
 import {text} from "../../core/utils/text_display.ts";
 import {Link} from "react-router-dom";
-import {SchoolEditDrawer} from "../../components/ui-kit-setting";
+import {SchoolEditDrawer} from "../../components/ui-kit-org";
 import {useToggle} from "../../hooks/useToggle.ts";
 import {useEffect, useState} from "react";
 import {School} from "../../entity";

@@ -20,6 +20,7 @@ export const GradeForm = <T extends FieldValues>(
     const onlyField = FormUtils.onlyField(edit as boolean, 24, undefined)
 
     const sectionOptions = useMemo(() => enumToObjectArray(SectionType, true), [])
+    const section = useMemo(() => data?.section, [data?.section])
 
     return(
         <FormContent formItems={[
@@ -28,16 +29,18 @@ export const GradeForm = <T extends FieldValues>(
                 inputProps: {
                     lg: onlyField ?? 12,
                     md: onlyField ?? 12,
+                    hasForm: edit,
                     options: sectionOptions as [],
                     label: 'Section\\Niveau',
                     control: control,
                     name: form.name('section') as Path<T>,
                     required: true,
-                    placeholder: SectionType.LYCEE,
+                    placeholder: data ? data?.section : SectionType.LYCEE,
                     validateStatus: form.validate('section'),
                     help: form.error('section'),
-                    selectedValue: (data ? data.section : undefined) as PathValue<T, Path<T>>,
-                    onFinish: edit ? (value: unknown) => handleUpdate?.('section', value) : undefined
+                    selectedValue: (data ? section : undefined) as PathValue<T, Path<T>>,
+                    onFinish: edit ? (value: unknown) => handleUpdate?.('section', value) : undefined,
+                    disabled: edit
                 }
             },
             {
@@ -45,6 +48,7 @@ export const GradeForm = <T extends FieldValues>(
                 inputProps: {
                     lg: onlyField ?? 12,
                     md: onlyField ?? 12,
+                    hasForm: edit,
                     label: 'Sub section\\Sub Niveau',
                     control: control,
                     name: form.name('subSection') as Path<T>,

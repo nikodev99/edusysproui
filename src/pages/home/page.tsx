@@ -15,6 +15,7 @@ const Dashboard = () => {
             Dashboard
             <div>
                 <pre>{JSON.stringify(school)}</pre>
+                {/*<div>{loggedUser.getToken()}</div>*/}
             </div>
         </main>
     )

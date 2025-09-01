@@ -5,10 +5,11 @@ import Grid from "../layout/Grid.tsx";
 import {DatePickerType, TypedInputType} from "../../../core/utils/interfaces.ts";
 import FormItem from "./FormItem.tsx";
 import {LuSave} from "react-icons/lu";
+import Datetime from "../../../core/datetime.ts";
 
 export const FormDateInput = <T extends FieldValues>(datePickerProps: DatePickerType<T>) => {
 
-    const {isCompact, placeholder, buttonLabel, defaultValue, clearErrors, showTime, format, disabled} = datePickerProps
+    const {isCompact, placeholder, buttonLabel, defaultValue, clearErrors, showTime, format, disabled, min, max} = datePickerProps
 
     return(
         <FormItem {...datePickerProps} render={({field}) => (
@@ -27,6 +28,8 @@ export const FormDateInput = <T extends FieldValues>(datePickerProps: DatePicker
                             showHour={showTime}
                             showMinute={showTime}
                             disabled={disabled}
+                            minDate={min ? Datetime.of(min).toDayjs() : undefined}
+                            maxDate={max ? Datetime.of(max).toDayjs() : undefined}
                         />
                         <Button disabled={field.value === defaultValue} htmlType='submit'>{buttonLabel ?? <LuSave />}</Button>
                     </Space.Compact>
@@ -42,6 +45,8 @@ export const FormDateInput = <T extends FieldValues>(datePickerProps: DatePicker
                         showTime={showTime}
                         showHour={showTime}
                         showMinute={showTime}
+                        minDate={min ? Datetime.of(min).toDayjs() : undefined}
+                        maxDate={max ? Datetime.of(max).toDayjs() : undefined}
                     />
                 )}
             </>

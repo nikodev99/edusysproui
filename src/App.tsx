@@ -19,7 +19,10 @@ const App = () => {
     return(
         <UserProvider>
             <ConfigProvider locale={frFR} theme={{
-                token: {colorPrimary: '#000C40'},
+                token: {
+                    colorPrimary: '#000C40',
+                    fontFamily: 'Mulish, Helvetica, sans-serif',
+                },
                 components: {
                     Timeline: {
                         dotBg: 'transparent',

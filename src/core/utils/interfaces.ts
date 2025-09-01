@@ -531,6 +531,8 @@ export interface BigCalendarProps<TEvents extends object = Event> {
     defaultView: View
     startDayTime?: number[]
     endDayTime?: [number, number]
+    startDate?: Date | string | number[]
+    endDate?: Date | string | number[]
     className?: string
     styles?: CSSProperties
     onSelectEvent?: (event: TEvents) => void

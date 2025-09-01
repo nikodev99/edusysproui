@@ -10,6 +10,7 @@ import {loggedUser} from "../auth/jwt/LoggedUser.ts";
 import {useInsert} from "./usePost.ts";
 import {academicYearSchema} from "../schema";
 import {RepoOptions} from "../core/utils/interfaces.ts";
+import {AcademicYear} from "../entity";
 
 export const useAcademicYearRepo = () => {
     const userSchool = useMemo(() => loggedUser.getSchool(), [])
@@ -47,7 +48,7 @@ export const useAcademicYearRepo = () => {
         return fetch.data
     }
     
-    const useGetAllAcademicYear = (options?: RepoOptions) => {
+    const useGetAllAcademicYear = (options?: RepoOptions): AcademicYear[] => {
         const {data, refetch} = useFetch(
             ['academic-year-list', userSchool?.id],
             getAllAcademicYears,
@@ -58,7 +59,7 @@ export const useAcademicYearRepo = () => {
         if(options?.shouldRefetch)
             refetch().then(r => r.data)
 
-        return data
+        return data || []
     }
     
     return {

@@ -161,15 +161,19 @@ export const raw = {
                 href: '/organization/school'
             },
             academicYear: {
-                label: 'Année Académique',
+                label: 'Années Académiques',
                 href: '/organization/academic_year'
             },
             grade: {
-                label: 'Grade',
+                label: 'Grades',
                 href: '/organization/grades',
                 add: {
                     label: 'Ajouter un grade',
                     href: '/organization/grades/new'
+                },
+                edit: {
+                    label: 'Modifier Grade',
+                    href: '/organization/grades/'
                 }
             },
             department: {

@@ -7,7 +7,7 @@ import {useAcademicYearRepo} from "../../hooks/useAcademicYearRepo.ts";
 import {GradeCard} from "../../components/ui-kit-org";
 import {AcademicYear} from "../../entity";
 import {useRedirect} from "../../hooks/useRedirect.ts";
-import {useMemo} from "react";
+import {ReactNode, useMemo} from "react";
 import EmptyPage from "../EmptyPage.tsx";
 import Marquee from "react-fast-marquee";
 import Block from "../../components/view/Block.tsx";
@@ -25,7 +25,7 @@ const GradePage = () => {
         ]
     })
 
-    const {toSaveGrade} = useRedirect()
+    const {toSaveGrade, toEditGrade} = useRedirect()
 
     const {useGetCurrentAcademicYear} = useAcademicYearRepo()
     const {useGetAllGradesWithPlannings} = useGradeRepo()
@@ -40,15 +40,15 @@ const GradePage = () => {
      * or `academicYear` dependencies change.
      *
      * @constant
-     * @type {JSX.Element[]}
+     * @type {Element[]}
      * @memberof Component
      * @param {Array} grades - Array of grade objects used to create GradeCard components.
      * @param {AcademicYear} academicYear - The academic year associated with the grades.
-     * @return {JSX.Element[] | ReactNode[]}
+     * @return {Element[] | ReactNode[]}
      */
-    const items = useMemo(() => grades?.map((grade) => (
-        <GradeCard key={`grade-${grade?.id}`} data={grade} academicYear={academicYear as AcademicYear} />
-    )), [academicYear, grades])
+    const items: ReactNode[] = useMemo(() => grades?.map((grade) => (
+        <GradeCard key={`grade-${grade?.id}`} data={grade} academicYear={academicYear as AcademicYear} toEdit={toEditGrade} />
+    )), [academicYear, grades, toEditGrade])
 
     return(
         <>

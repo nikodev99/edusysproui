@@ -132,7 +132,7 @@ export const ScheduleCalendar = (
                         />
                     ) :
                     (
-                        <VoidData title={<em>Pas de cours ce jour, {Datetime.now().format('dddd DD MMMM YYYY')}</em>} />
+                        <VoidData title={<em>Pas de cours ce jour, {Datetime.now().fullDay()}</em>} />
                     )
             }
 

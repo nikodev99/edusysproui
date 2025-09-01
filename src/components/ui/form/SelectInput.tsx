@@ -7,7 +7,7 @@ import FormItem from "./FormItem.tsx";
 
 export const FormSelect = <T extends FieldValues>(selectProps: SelectType<T>) => {
 
-    const {isCompact, placeholder, options, showSearch, selectedValue, filterOption, mode, clearErrors} = selectProps
+    const {isCompact, placeholder, options, showSearch, selectedValue, filterOption, mode, clearErrors, disabled} = selectProps
 
     return(
         <FormItem {...selectProps} {...(selectedValue ? { defaultValue: selectedValue } : {})} render={({field}) => (
@@ -22,9 +22,10 @@ export const FormSelect = <T extends FieldValues>(selectProps: SelectType<T>) =>
                             filterOption={filterOption as boolean}
                             mode={mode}
                             onFocus={() => clearErrors ? clearErrors(field.name) : null}
+                            disabled={disabled}
                             {...field}
                         />
-                        <Button htmlType='submit' disabled={field.value === selectedValue}><LuSave /></Button>
+                        <Button htmlType='submit' disabled={disabled ? disabled : field.value === selectedValue}><LuSave /></Button>
                     </Space.Compact>
                 ) : (
                     <Select
@@ -35,6 +36,7 @@ export const FormSelect = <T extends FieldValues>(selectProps: SelectType<T>) =>
                         filterOption={filterOption as boolean}
                         onFocus={() => clearErrors ? clearErrors(field.name) : null}
                         mode={mode as "tags"}
+                        disabled={disabled}
                         {...field}
                     />
                 )}

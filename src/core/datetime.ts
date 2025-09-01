@@ -179,6 +179,9 @@ class Datetime {
     get TIMESTAMP(): number {
         return this.date.valueOf();
     }
+    get UNIX(): number {
+        return this.date.unix()
+    }
 
     toDate(): Date {
         return this.date.toDate();

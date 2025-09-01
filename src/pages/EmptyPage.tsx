@@ -29,7 +29,7 @@ const EmptyPage = ({title, subTitle, icon, extra, btnLabel, btnUrl, mt}: {
                 icon={
                     icon ? icon : (
                         <span>
-                            <img src="/public/no-team-2.svg" alt="empty table image"/>
+                            <img src="/no-team-2.svg" alt="empty table image"/>
                         </span>
                     )
                 }

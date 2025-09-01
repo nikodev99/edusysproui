@@ -1,6 +1,7 @@
 import {useParams} from "react-router-dom";
 import {text} from "../core/utils/text_display.ts";
 import {redirectTo} from "../context/RedirectContext.ts";
+import {SectionType} from "../entity/enums/section.ts";
 
 export const useRedirect = () => {
     const {schoolSlug} = useParams<{ schoolSlug: string }>()
@@ -15,9 +16,19 @@ export const useRedirect = () => {
         toViewStudent: (studentId: string) => redirectTo(text.student.group.view.href + studentId),
         toTeacher: () => redirectTo(text.teacher.href),
         toAddTeacher: () => redirectTo(text.teacher.group.add.href),
-        toViewTeacher: (teacherId: string) => redirectTo(text.teacher.group.view.href + teacherId),
+        toViewTeacher: (teacherId: string, teacherSlug?: string) => {
+            if (!teacherSlug) {
+                return redirectTo(text.teacher.group.view.href + teacherId)
+            }
+            return redirectTo(text.teacher.group.view.href + teacherSlug, {state: teacherId})
+        },
         toGuardian: () => redirectTo(text.guardian.href),
-        toViewGuardian: (guardianId: string) => redirectTo(text.guardian.group.view.href + guardianId),
+        toViewGuardian: (guardianId: string, guardianSlug?: string) => {
+            if (guardianSlug) {
+                return redirectTo(text.guardian.group.view.href + guardianSlug, {state: guardianId})
+            }
+            return redirectTo(text.guardian.group.view.href + guardianId)
+        },
         toClasseAndCourse: () => redirectTo(text.cc.href),
         toClassePath: (classeId: string) => redirectTo(text.cc.group.classe.path.view + classeId),
         toAddClasse: () => redirectTo(text.cc.group.classe.add.href),
@@ -42,11 +53,13 @@ export const useRedirect = () => {
         toViewEmployee: (employeeId: string, employeeSlug?: string) => {
             if (employeeSlug)
                 return redirectTo(text.employee.group.view.href + employeeSlug, {state: employeeId})
-            else
-                return redirectTo(text.employee.group.view.href + employeeId)
+            return redirectTo(text.employee.group.view.href + employeeId)
         },
         toSettings: () => redirectTo(text.settings.href),
         toOrg: () => redirectTo(text.org.group.school.href),
         toSaveGrade: () => redirectTo(text.org.group.grade.add.href),
+        toEditGrade: (gradeId: number, gardeSection: SectionType) => redirectTo(
+            text.org.group.grade.edit.href + String(SectionType[gardeSection])?.replace(' ', '_')?.toLowerCase(), {state: gradeId}
+        )
     }
 }

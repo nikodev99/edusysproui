@@ -39,6 +39,7 @@ import GradePage from "../../pages/org/GradePage.tsx";
 import DepartmentPage from "../../pages/org/DepartmentPage.tsx";
 import UserPage from "../../pages/org/UserPage.tsx";
 import {GradeSavePage} from "../../pages/org/GradeSavePage.tsx";
+import GradeEditPage from "../../pages/org/GradeEditPage.tsx";
 
 const DashboardPage = withAuthProtection(Dashboard);
 const ListStudentPage = withAuthProtection(StudentListPage);
@@ -57,6 +58,7 @@ const SettingCustomizePage = withAuthProtection(CustomizePage);
 const SettingAcademicYearPage = withAuthProtection(AcademicYearPage);
 const SettingGradePage = withAuthProtection(GradePage);
 const AddGradePage = withAuthProtection(GradeSavePage);
+const EditGradePage = withAuthProtection(GradeEditPage);
 const SettingDepartmentPage = withAuthProtection(DepartmentPage);
 const SettingUserPage = withAuthProtection(UserPage);
 
@@ -174,8 +176,9 @@ export const Route = createBrowserRouter([
                     {
                         path: 'grades',
                         children: [
-                            {path: '', element: <SettingGradePage />},
-                            {path: text.path.new, element: <AddGradePage />}
+                            {path: text.path.page, element: <SettingGradePage />},
+                            {path: text.path.new, element: <AddGradePage />},
+                            {path: text.path.slug, element: <EditGradePage />}
                         ]
                     },
                     {path: 'departments', element: <SettingDepartmentPage />},

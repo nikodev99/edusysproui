@@ -43,10 +43,9 @@ const CreateUser = ({open, onCancel, personalInfo, userType}: CreateUserProps) =
                     roles: {...data.roles, schoolId: loggedUser.getSchool()?.id}
                 };
 
-                console.log('registerData ', registerData)
-                return await registerUser(registerData as SignupSchema);
+                return registerUser(registerData as SignupSchema);
             }
-            return await registerUser(data);
+            return registerUser(data);
         }
     }
 

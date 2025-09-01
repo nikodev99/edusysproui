@@ -53,7 +53,15 @@ export const FormRadioInput = <T extends FieldValues>(radioProps: SelectType<T> 
             block
             {...field}
             {...(isValueObject ? { onChange: (e) => handleChange(e, field) } : {})}
-            {...(isValueObject ? { value: selectedId } : {value: field.value})}
+            value={
+                isValueObject
+                    ? (selectedId
+                        ? selectedId
+                        : (defaultValue && typeof defaultValue === 'object' && 'id' in defaultValue
+                            ? defaultValue.id
+                            : field.value))
+                    : (defaultValue !== undefined ? defaultValue : field.value)
+            }
         >
             {processedRadioOptions?.map((option, index) => {
                 const RadioComponent = optionType === 'button' ? Radio.Button : Radio;
@@ -68,7 +76,7 @@ export const FormRadioInput = <T extends FieldValues>(radioProps: SelectType<T> 
                 );
             })}
         </Radio.Group>
-    ), [buttonStyle, clearErrors, handleChange, isValueObject, optionType, processedRadioOptions, selectedId, style])
+    ), [buttonStyle, clearErrors, defaultValue, handleChange, isValueObject, optionType, processedRadioOptions, selectedId, style])
 
     return(
         <FormItem key={key} {...radioProps} {...(selectedValue ? { defaultValue: selectedValue } : {})} render={({field}) => (

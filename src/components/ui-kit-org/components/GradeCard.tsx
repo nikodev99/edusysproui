@@ -6,6 +6,7 @@ import {calculateDuration, COLOR, groupeBySemester, MAIN_COLOR} from "../../../c
 import {useMemo} from "react";
 import {LuCornerDownRight} from "react-icons/lu";
 import Tag from "../../ui/layout/Tag.tsx";
+import {SectionType} from "../../../entity/enums/section.ts";
 
 interface GradeCardProps {
     data: Grade,
@@ -13,9 +14,10 @@ interface GradeCardProps {
     size?: 'small' | number,
     dataKey?: string | number,
     onlyPlanning?: boolean,
+    toEdit?: (gradeId: number, gradeSlug: SectionType) => void
 }
 
-export const GradeCard = ({data, academicYear, size, dataKey, onlyPlanning = false}: GradeCardProps) => {
+export const GradeCard = ({data, academicYear, size, dataKey, onlyPlanning = false, toEdit}: GradeCardProps) => {
     const { Text } = Typography
 
     const timelineItems = useMemo(() => {
@@ -157,7 +159,7 @@ export const GradeCard = ({data, academicYear, size, dataKey, onlyPlanning = fal
                             Modifié le: {Datetime.of(data.modifyAt as number[]).fDate()}
                         </Text>
                         {academicYear && <Text type="secondary" style={{ fontSize: '12px' }}>
-                            <Button type='primary' size="small">Modifier</Button>
+                            <Button type='primary' size="small" onClick={() => toEdit?.(data?.id as number, data?.section as SectionType)}>Modifier</Button>
                         </Text>}
                     </Space>
                 </div>

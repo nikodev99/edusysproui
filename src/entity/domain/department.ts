@@ -1,6 +1,6 @@
 import {School} from "./school.ts";
 import {AcademicYear} from "./academicYear.ts";
-import {Teacher} from "./teacher.ts";
+import {Individual} from "./individual.ts";
 
 export interface Department {
     id?: number
@@ -16,7 +16,7 @@ export interface Department {
 export interface DBoss {
     id?: number
     academicYear?: AcademicYear
-    d_boss?: Teacher
+    d_boss?: Individual
     current?: boolean
     startPeriod?:  | number[]
     endPeriod?: Date | number[]

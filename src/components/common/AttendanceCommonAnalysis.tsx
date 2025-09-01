@@ -88,7 +88,7 @@ export const AttendanceCommonAnalysis = (
         }
     ];
 
-    console.log('Composed Data: ', {composeData})
+    console.log('Composed Data: ', {composeData, classe})
 
     const widgetItems: WidgetItem[] = [
         {

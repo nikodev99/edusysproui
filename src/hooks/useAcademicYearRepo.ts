@@ -47,7 +47,7 @@ export const useAcademicYearRepo = () => {
 
         return fetch.data
     }
-    
+
     const useGetAllAcademicYear = (options?: RepoOptions): AcademicYear[] => {
         const {data, refetch} = useFetch(
             ['academic-year-list', userSchool?.id],
@@ -61,12 +61,23 @@ export const useAcademicYearRepo = () => {
 
         return data || []
     }
+
+    const allAcademicYears = useGetAllAcademicYear()
+    const currentAcademicYear = useGetCurrentAcademicYear()
+
+    const academicYearOptions = useMemo(() => allAcademicYears?.map(a => ({
+        value: a.id,
+        label: a.academicYear
+    })), [allAcademicYears])
     
     return {
         useInsertAcademicYear,
         useGetCurrentAcademicYear,
+        currentAcademicYear,
         useGetAcademicYearFromYear,
         useGetAcademicYearFromDate,
-        useGetAllAcademicYear
+        useGetAllAcademicYear,
+        allAcademicYears,
+        academicYearOptions
     }
 }

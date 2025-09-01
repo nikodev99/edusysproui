@@ -1,21 +1,24 @@
 import {z, ZodType} from "zod";
-import {classeTeacherBossSchema} from "./classeTeacherBossSchema.ts";
 import {schoolMergeSchema} from "./schoolSchema.ts";
+import {academicYearSchemaMerge} from "./academicYearSchema.ts";
+import {individualSchemaMerge} from "./individualSchema.ts";
+import {dateProcess} from "../commonSchema.ts";
+
+export const departmentBossSchema = z.object({
+    id: z.number().optional(),
+    academicYear: academicYearSchemaMerge.optional(),
+    boss: individualSchemaMerge.optional(),
+    current: z.boolean().default(true).optional(),
+    startPeriod: dateProcess('Date du début de mandat est requise').optional(),
+    endPeriod: dateProcess('Date de fin de mandat est requise').optional()
+})
 
 export const departmentSchema: ZodType = z.object({
-    id: z.number(),
+    id: z.number().optional(),
     name: z.string(),
     code:z.string(),
-    boss: classeTeacherBossSchema.optional(),
+    d_boss: departmentBossSchema.optional(),
     school: schoolMergeSchema.optional(),
-    createdAt: z.union([
-        z.date().refine(date => !isNaN(date.getTime()), {message: 'Date invalide'}),
-        z.array(z.number()),
-    ]).optional(),
-    modifyAt: z.union([
-        z.date().refine(date => !isNaN(date.getTime()), {message: 'Date invalide'}),
-        z.array(z.number()),
-    ]).optional()
 })
 
 export const departmentSchemaMerge = z.object({

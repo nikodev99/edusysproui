@@ -178,7 +178,15 @@ export const raw = {
             },
             department: {
                 label: 'Départements',
-                href: '/organization/departments'
+                href: '/organization/departments',
+                add: {
+                    label: 'Ajouter Département',
+                    href: '/organization/departments/new'
+                },
+                view: {
+                    label: 'Afficher Département',
+                    href: '/organization/departments/'
+                }
             },
             user: {
                 label: 'Utilisateurs',

@@ -40,6 +40,9 @@ import DepartmentPage from "../../pages/org/DepartmentPage.tsx";
 import UserPage from "../../pages/org/UserPage.tsx";
 import {GradeSavePage} from "../../pages/org/GradeSavePage.tsx";
 import GradeEditPage from "../../pages/org/GradeEditPage.tsx";
+import {DepartmentViewPage} from "../../pages/org/DepartmentViewPage.tsx";
+import {DepartmentAddPage} from "../../pages/org/DepartmentAddPage.tsx";
+import {GradeViewPage} from "../../pages/org/GradeViewPage.tsx";
 
 const DashboardPage = withAuthProtection(Dashboard);
 const ListStudentPage = withAuthProtection(StudentListPage);
@@ -54,13 +57,17 @@ const ListEmployeePage = withAuthProtection(EmployeeListPage);
 const EmployeeAddPage = withAuthProtection(AddEmployeePage);
 const ViewEmployeePage = withAuthProtection(EmployeeViewPage);
 
-const SettingCustomizePage = withAuthProtection(CustomizePage);
-const SettingAcademicYearPage = withAuthProtection(AcademicYearPage);
-const SettingGradePage = withAuthProtection(GradePage);
+const ListAcademicYearPage = withAuthProtection(AcademicYearPage);
+const ListGradePage = withAuthProtection(GradePage);
 const AddGradePage = withAuthProtection(GradeSavePage);
 const EditGradePage = withAuthProtection(GradeEditPage);
-const SettingDepartmentPage = withAuthProtection(DepartmentPage);
-const SettingUserPage = withAuthProtection(UserPage);
+const ViewGradePage = withAuthProtection(GradeViewPage);
+const AddDepartmentPage = withAuthProtection(DepartmentAddPage);
+const ViewDepartmentPage = withAuthProtection(DepartmentViewPage);
+const ListDepartmentPage = withAuthProtection(DepartmentPage);
+const ListUserPage = withAuthProtection(UserPage);
+
+const SettingCustomizePage = withAuthProtection(CustomizePage);
 
 export const Route = createBrowserRouter([
     {
@@ -172,17 +179,25 @@ export const Route = createBrowserRouter([
                 path: 'organization',
                 children: [
                     {path: 'school', element: <OrganizationPage />},
-                    {path: 'academic_year', element: <SettingAcademicYearPage />},
+                    {path: 'academic_year', element: <ListAcademicYearPage />},
                     {
                         path: 'grades',
                         children: [
-                            {path: text.path.page, element: <SettingGradePage />},
+                            {path: text.path.page, element: <ListGradePage />},
                             {path: text.path.new, element: <AddGradePage />},
-                            {path: text.path.slug, element: <EditGradePage />}
+                            {path: text.path.slug, element: <EditGradePage />},
+                            {path: text.path.view, element: <ViewGradePage />}
                         ]
                     },
-                    {path: 'departments', element: <SettingDepartmentPage />},
-                    {path: 'users', element: <SettingUserPage />}
+                    {
+                        path: 'departments',
+                        children: [
+                            {path: text.path.page, element: <ListDepartmentPage />},
+                            {path: text.path.new, element: <AddDepartmentPage />},
+                            {path: text.path.slug, element: <ViewDepartmentPage />},
+                        ]
+                    },
+                    {path: 'users', element: <ListUserPage />}
                 ]
             },
             {

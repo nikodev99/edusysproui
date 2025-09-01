@@ -572,8 +572,13 @@ export const cutStatement = (statement: string, maxLength: number, orElse?: stri
     return undefined
 }
 
-export const joinWord = (word: string, joinCharacter?: string) => {
-    return word.toLowerCase().split(' ').join(joinCharacter)
+export const joinWord = (word: string, joinCharacter: string = '-', removeAccents: boolean = false) => {
+    if (!word) return  ''
+    let s = word.toLowerCase().trim()
+    if (removeAccents) {
+        s = s.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    }
+    return s.replace(/\s+/g, joinCharacter)
 }
 
 export const startsWithVowel = (word?: string): boolean => {

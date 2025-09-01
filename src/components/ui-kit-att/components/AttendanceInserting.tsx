@@ -4,7 +4,7 @@ import Datetime from "../../../core/datetime.ts";
 import {useAttendanceRepo} from "../../../hooks/useAttendanceRepo.ts";
 import {useStudentRepo} from "../../../hooks/useStudentRepo.ts";
 import {Alert, Button, Flex, Form, TableColumnsType} from "antd";
-import {Attendance, Classe, Individual} from "../../../entity";
+import {Attendance, Classe, Individual, Student} from "../../../entity";
 import {AvatarTitle} from "../../ui/layout/AvatarTitle.tsx";
 import RadioInput from "../../ui/form/RadioInput.tsx";
 import {useForm} from "react-hook-form";
@@ -73,7 +73,7 @@ export const AttendanceInserting = (
             }else {
                 if (fetchedStudents && fetchedStudents?.length > 0) {
                     const students = getUniqueness(fetchedStudents, f => f.student, s => s.id)
-                    const individuals = getUniqueness(students, s => s.personalInfo, p => p?.id as number)
+                    const individuals = getUniqueness(students as Student[], s => s.personalInfo, p => p?.id as number)
                     
                     arr = individuals?.map(individual => ({
                         individual: individual

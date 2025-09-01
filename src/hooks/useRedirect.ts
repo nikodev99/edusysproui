@@ -2,6 +2,7 @@ import {useParams} from "react-router-dom";
 import {text} from "../core/utils/text_display.ts";
 import {redirectTo} from "../context/RedirectContext.ts";
 import {SectionType} from "../entity/enums/section.ts";
+import {joinWord} from "../core/utils/utils.ts";
 
 export const useRedirect = () => {
     const {schoolSlug} = useParams<{ schoolSlug: string }>()
@@ -58,8 +59,20 @@ export const useRedirect = () => {
         toSettings: () => redirectTo(text.settings.href),
         toOrg: () => redirectTo(text.org.group.school.href),
         toSaveGrade: () => redirectTo(text.org.group.grade.add.href),
-        toEditGrade: (gradeId: number, gardeSection: SectionType) => redirectTo(
-            text.org.group.grade.edit.href + String(SectionType[gardeSection])?.replace(' ', '_')?.toLowerCase(), {state: gradeId}
+        toEditGrade: (gradeId: number, gardeSection?: SectionType) => redirectTo(
+            text.org.group.grade.edit.href + (
+                gardeSection
+                    ? joinWord(SectionType[gardeSection as unknown as keyof typeof SectionType], '_', true)
+                    : gradeId
+            ),
+            {state: gradeId}
+        ),
+        toAddDepartment: () => redirectTo(text.org.group.department.add.href),
+        toViewDepartment: (departmentId: number, departmentName?: string) => redirectTo(
+            departmentName
+                ? text.org.group.department.view.href + joinWord(departmentName, '_', true)
+                : text.org.group.department.view.href + departmentId
+            , {state: departmentId}
         )
     }
 }

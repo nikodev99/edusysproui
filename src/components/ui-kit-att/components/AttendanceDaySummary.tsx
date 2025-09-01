@@ -33,10 +33,10 @@ export const AttendanceDaySummary = ({data}: {
         const section = attendanceSummary?.sectionStatusCount
         return section ? Object.entries(section).map(([sec, stats]) => ({
             name: setFirstName(SectionType[sec as unknown as keyof typeof SectionType]),
-            présent: findPercent(stats?.PRESENT, allData),
+            "présent": findPercent(stats?.PRESENT, allData),
             absent: findPercent(stats?.ABSENT, allData),
             "en-retard": findPercent(stats?.LATE, allData),
-            excusé: findPercent(stats?.EXCUSED, allData),
+            "excusé": findPercent(stats?.EXCUSED, allData),
         })): []
     }, [attendanceSummary?.sectionStatusCount, allData])
 
@@ -44,10 +44,10 @@ export const AttendanceDaySummary = ({data}: {
         const gender = attendanceSummary?.genderStatusCount
         return gender ? Object.entries(gender).map(([key, stat]) => ({
             name: setFirstName(Gender[key as unknown as keyof typeof Gender]),
-            présent: findPercent(stat?.PRESENT, allData),
+            "présent": findPercent(stat?.PRESENT, allData),
             absent: findPercent(stat?.ABSENT, allData),
             "en-retard": findPercent(stat?.LATE, allData),
-            excusé: findPercent(stat?.EXCUSED, allData),
+            "excusé": findPercent(stat?.EXCUSED, allData),
         })) : []
     }, [attendanceSummary?.genderStatusCount, allData])
 

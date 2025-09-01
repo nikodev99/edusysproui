@@ -29,6 +29,7 @@ import {SchoolEditDrawer} from "../../components/ui-kit-org";
 import {useToggle} from "../../hooks/useToggle.ts";
 import {useEffect, useState} from "react";
 import {School} from "../../entity";
+import {SectionType} from "../../entity/enums/section.ts";
 
 export const OrganizationPage = () => {
 
@@ -87,7 +88,7 @@ export const OrganizationPage = () => {
                     <div>
                         <Text strong>Adresse:</Text>
                         <p>{school?.address?.street}</p>
-                        <p>{school?.address?.city} ({school?.address?.zipCode})</p>
+                        <p>{school?.address?.city} {school?.address?.zipCode ? `(${school?.address?.zipCode})` : ''}</p>
                         <p>{school?.address?.country}</p>
                     </div>
                     <Divider />
@@ -186,7 +187,9 @@ export const OrganizationPage = () => {
                                 <Avatar style={{background: '#000C40'}} size={50} icon={<LuGraduationCap style={{color: '#fafbff'}} />} />
                                 <Flex align='start' justify='center' vertical gap={5}>
                                     <p>{grades?.length} grade{grades?.length > 1 ? 's' : ''}</p>
-                                    {grades && <Flex gap={5}>{grades?.map(g => (<Tag key={`grade-${g.id}`}>{g.section}</Tag>))}</Flex>}
+                                    {grades && <Space>{grades?.map(g => (<Tag key={`grade-${g.id}`}>
+                                        {`${SectionType[g.section as unknown as keyof typeof SectionType]}${g.subSection ? `-${g.subSection}` : ''}`}
+                                    </Tag>))}</Space>}
                                     <Link to={text.org.group.grade.href}>Manager</Link>
                                 </Flex>
                             </Space>
@@ -203,7 +206,7 @@ export const OrganizationPage = () => {
                                 <Avatar style={{background: '#000C40'}} size={50} icon={<LuBuilding2 style={{color: '#fafbff'}} />} />
                                 <Flex align='start' justify='center' vertical gap={5}>
                                     <p>{departments?.length} Départements{departments?.length > 1 ? 's' : ''}</p>
-                                    {departments && <Flex gap={5}>{departments?.map(d => (<Tag key={`code-${d.id}`}>{d.code}</Tag>))}</Flex>}
+                                    {departments && <Space>{departments?.map(d => (<Tag key={`code-${d.id}`}>{d.code}</Tag>))}</Space>}
                                     <Link to={text.org.group.department.href}>Manager</Link>
                                 </Flex>
                             </Space>

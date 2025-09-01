@@ -72,6 +72,12 @@ const GradeEditPage = () => {
 
     const tableColumns: TableColumnsType<Planning> = useMemo(() => [
         {
+            title: '#',
+            key: 'number',
+            width: 7,
+            render: (_, __, index) => `#${index + 1}`,
+        },
+        {
             title: 'Designation',
             dataIndex: 'designation',
             key: 'designation',
@@ -92,6 +98,7 @@ const GradeEditPage = () => {
             title: 'Semestre',
             dataIndex: 'semester',
             key: 'semester',
+            responsive: ['md'],
             render: (semester: Semester) => semester?.template?.semesterName
         },
         {

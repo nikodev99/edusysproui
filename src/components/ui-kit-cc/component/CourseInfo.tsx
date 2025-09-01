@@ -47,7 +47,7 @@ const CourseInfoData = ({infoData, color, classes, academicYear}: CourseInfoType
 
     const maxAge = studentCount?.genders ? Math.max(...studentCount.genders.map(group => group.ageAverage)) : 1
     const allStudents = useCountStudent()
-    const {data, isSuccess} = useCountSomeClasseStudents(classeIds, academicYear ?? '')
+    const {data, isSuccess} = useCountSomeClasseStudents(classeIds as [], academicYear ?? '')
 
     const studentConcerned = findPercent(studentCount?.total as number, allStudents?.total as number)
 

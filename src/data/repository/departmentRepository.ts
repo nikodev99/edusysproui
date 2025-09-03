@@ -1,8 +1,9 @@
 import {Department} from "../../entity";
 import {apiClient} from "../axiosConfig.ts";
+import {DepartmentSchema} from "../../schema";
 
-export const saveDepartment = (department: Department) => {
-    return apiClient.post<Department>('/department', department)
+export const saveDepartment = (department: DepartmentSchema) => {
+    return apiClient.post<DepartmentSchema>('/department', department)
 }
 
 /**

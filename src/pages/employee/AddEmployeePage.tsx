@@ -157,8 +157,6 @@ const AddEmployeePage = () => {
         }
       }
 
-      console.log("DATA: ", data)
-
       startTransition(() => {
         insert(data, [])
             .then(resp => {

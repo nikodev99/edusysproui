@@ -23,11 +23,12 @@ import {PunishmentStatus} from "../../entity/enums/punishmentStatus.ts";
 import {Day} from "../../entity/enums/day.ts";
 import {AxiosError, AxiosResponse} from "axios";
 import {PercentPositionType, ProgressSize} from "antd/es/progress/progress";
-import {CheckboxOptionType, ListProps, TableColumnsType, TableProps} from "antd";
+import {CheckboxOptionType, ListProps, SelectProps, TableColumnsType, TableProps} from "antd";
 import {ItemType} from "antd/es/menu/interface";
 import {z} from "zod";
 import {AssignmentTypeLiteral} from "../../entity/enums/assignmentType.ts";
 import {RadioGroupButtonStyle, RadioGroupOptionType} from "antd/es/radio";
+import {DefaultOptionType} from "antd/es/select";
 import {ButtonType} from "antd/es/button";
 import {UseMutationOptions, UseQueryResult} from "@tanstack/react-query";
 import {Variant} from "antd/es/config-provider";
@@ -101,9 +102,10 @@ export interface ZodFormItemProps {
 
 export type FormType<T extends FieldValues> = ZodFormItemProps & ZodControl<T>
 export type FormItemType<T extends FieldValues> = FormType<T> & ZodControlRender<T> & Control<T>
-export type TypedInputType<T extends FieldValues> = Control<T> & FormType<T> & InputProps & ZodSelect<T> & ZodRadio<T> & ZodListControl<T> & {wrapper?: ReactNode, hide?: boolean}
+export type TypedInputType<T extends FieldValues> = Control<T> & FormType<T> & InputProps & ZodSelect<T> & ZodRadio<T> &
+    ZodListControl<T> & {wrapper?: ReactNode, hide?: boolean}
 export type InputType<T extends FieldValues> = TypedInputType<T> & {isCompact?: boolean}
-export type SelectType<T extends FieldValues> = TypedInputType<T> & {isCompact?: boolean}
+export type SelectType<T extends FieldValues> = TypedInputType<T> & { isCompact?: boolean, }
 export type DatePickerType<T extends FieldValues> = TypedInputType<T> & {isCompact?: boolean, showTime?: boolean, format?: string}
 export type TimeInputType<T extends FieldValues> = TypedInputType<T> & {isCompact?: boolean}
 export type DataType<TData> = TData;
@@ -191,7 +193,7 @@ export interface ZodControlRender<TFieldValues extends FieldValues, TName extend
 }
 
 export interface ZodSelect<T extends FieldValues> {
-    options?: Option[],
+    options?: Options,
     selectedValue?: PathValue<T, Path<T>>
     filterOption?: boolean | ((input: string, option?: { label: string, value: string }) => boolean) | undefined
     showSearch?: boolean
@@ -561,7 +563,7 @@ export type DateExplose = {
 
 export interface SchemaProps<TData extends FieldValues> {
     data: z.ZodSchema<TData>;
-    messageSuccess?: string;
+    messageSuccess?: ReactNode;
     description?: string;
     explain?: string;
     marquee?: boolean;
@@ -577,10 +579,8 @@ export interface PutSchemaProps<TData extends FieldValues, TReturn> {
     putFunc: (data: TData, id: ID) => Promise<AxiosResponse<TReturn, unknown>>
 }
 
-export type Option = {
-    label?: ReactNode;
-    value?: string | number | null;
-}
+export type Option = DefaultOptionType
+export type Options = SelectProps['options']
 
 export type ActionsButtons = {
     createUser?: boolean

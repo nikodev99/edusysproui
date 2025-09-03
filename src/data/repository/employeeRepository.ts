@@ -28,3 +28,11 @@ export const findAllEmployeesSearch = (schoolId: string, searchInput: string) =>
 export const findEmployeeById = (employeeId: string) => {
     return apiClient.get<Employee>(`/employee/${employeeId}`)
 }
+
+export const findEmployeeIndividuals = (schoolId: string, searchInput?: string) => {
+    return apiClient.get<Employee[]>(`/employee/ind/${schoolId}`, {
+        params: {
+            q: searchInput
+        }
+    })
+}

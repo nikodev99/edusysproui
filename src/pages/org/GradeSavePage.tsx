@@ -34,10 +34,7 @@ export const GradeSavePage = () => {
         resolver: zodResolver(gradeSchema),
     })
 
-    const {formState: {errors}, watch, control, clearErrors} = form
-
-    console.log('WATCHER: ', watch())
-    console.log('ERRORS: ', errors)
+    const {formState: {errors}, control, clearErrors} = form
 
     const onSubmit = (data: GradeSchema) => {
         console.log({data})
@@ -71,7 +68,7 @@ export const GradeSavePage = () => {
                         errors={errors}
                         edit={false}
                         parent='planning'
-                        academicYear={currentAcademicYear?.id}
+                        academicYear={currentAcademicYear?.id as string}
                     />
                 </>
                 }

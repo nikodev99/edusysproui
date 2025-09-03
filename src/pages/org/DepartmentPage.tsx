@@ -3,13 +3,15 @@ import PageWrapper from "../../components/view/PageWrapper.tsx";
 import {DepartmentDesc} from "../../components/common/DepartmentDesc.tsx";
 import Responsive from "../../components/ui/layout/Responsive.tsx";
 import Grid from "../../components/ui/layout/Grid.tsx";
-import {Button, Divider, Flex} from "antd";
-import {LuLink} from "react-icons/lu";
+import {Alert, Button, Divider, Flex} from "antd";
+import {LuFileText, LuLink} from "react-icons/lu";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
 import {text} from "../../core/utils/text_display.ts";
-import {cutStatement} from "../../core/utils/utils.ts";
+import {cutStatement, MAIN_COLOR} from "../../core/utils/utils.ts";
 import {useRedirect} from "../../hooks/useRedirect.ts";
+import EmptyPage from "../EmptyPage.tsx";
+import {Link} from "react-router-dom";
 
 const DepartmentPage = () => {
     useDocumentTitle({
@@ -39,7 +41,7 @@ const DepartmentPage = () => {
                 <Button onClick={toAddDepartment} type='primary'>Ajouter un départment</Button>
             </Divider>
             <Responsive gutter={[16, 16]}>
-                {departments.map((department) => (
+                {departments && departments?.length > 0 ? departments.map((department) => (
                     <Grid key={department.id} xs={24} md={12} lg={8}>
                         <DepartmentDesc
                             department={department}
@@ -53,7 +55,25 @@ const DepartmentPage = () => {
                             </Flex>}
                         />
                     </Grid>
-                ))}
+                )): (
+                    <EmptyPage
+                        title={"Aucun département trouvé"}
+                        subTitle={<Alert
+                            type='info'
+                            showIcon
+                            message={"Un département structure et spécialise l'enseignement en regroupant les matières " +
+                                "et les responsables, renforçant la coordination pédagogique, la qualité des formations " +
+                                "et la gestion administrative"}
+                        />}
+                        extra={
+                            <Flex vertical gap={20}>
+                                <span>Appuyer sur le button ci-dessous pour créer un nouveau département</span>
+                                <Link to={text.org.group.department.add.href}>{text.org.group.department.add.label}</Link>
+                            </Flex>
+                        }
+                        icon={<LuFileText size={100} style={{color: MAIN_COLOR}} />}
+                    />
+                )}
             </Responsive>
         </PageWrapper>
         </>

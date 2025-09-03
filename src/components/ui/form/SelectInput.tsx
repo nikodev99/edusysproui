@@ -1,4 +1,4 @@
-import { Button, Form, Select, Space } from "antd";
+import {Button, Form, Select, Space} from "antd";
 import { FieldValues } from "react-hook-form";
 import Grid from "../layout/Grid.tsx";
 import { LuSave } from "react-icons/lu";
@@ -7,41 +7,58 @@ import FormItem from "./FormItem.tsx";
 
 export const FormSelect = <T extends FieldValues>(selectProps: SelectType<T>) => {
 
-    const {isCompact, placeholder, options, showSearch, selectedValue, filterOption, mode, clearErrors, disabled} = selectProps
+    const {
+        isCompact, placeholder, options, showSearch, selectedValue, filterOption, mode, clearErrors, disabled, onSearch,
+        defaultValue, onChange
+    } = selectProps
+
+    const handleFilterOption = (input: string, option?: { label: string; value: string }) => {
+        return typeof filterOption === 'function'
+            ? filterOption
+            : filterOption === true ? (option?.label ?? '').toLowerCase().includes(input.toLowerCase()) : undefined;
+    }
 
     return(
-        <FormItem {...selectProps} {...(selectedValue ? { defaultValue: selectedValue } : {})} render={({field}) => (
-            <>
-                {isCompact ? (
-                    <Space.Compact style={{ width: '100%' }}>
+        <FormItem {...selectProps} defaultValue={defaultValue || selectedValue} render={({field}) => {
+            return(
+                <>
+                    {isCompact ? (
+                        <Space.Compact style={{ width: '100%' }}>
+                            <Select
+                                placeholder={placeholder}
+                                options={options as []}
+                                optionFilterProp='label'
+                                filterOption={handleFilterOption as never}
+                                mode={mode}
+                                onFocus={() => clearErrors ? clearErrors(field.name) : null}
+                                disabled={disabled}
+                                {...field}
+                                value={field.value || selectedValue}
+                                onSearch={onSearch}
+                                showSearch={showSearch}
+                                onChange={onChange}
+                            />
+                            <Button htmlType='submit' disabled={disabled ? disabled : field.value === selectedValue}><LuSave /></Button>
+                        </Space.Compact>
+                    ) : (
                         <Select
-                            showSearch={showSearch}
                             placeholder={placeholder}
-                            options={options}
+                            options={options as []}
                             optionFilterProp='label'
-                            filterOption={filterOption as boolean}
-                            mode={mode}
+                            filterOption={handleFilterOption as never}
                             onFocus={() => clearErrors ? clearErrors(field.name) : null}
+                            mode={mode as "tags"}
                             disabled={disabled}
                             {...field}
+                            value={field.value || selectedValue}
+                            onSearch={onSearch}
+                            showSearch={showSearch}
+                            onChange={onChange}
                         />
-                        <Button htmlType='submit' disabled={disabled ? disabled : field.value === selectedValue}><LuSave /></Button>
-                    </Space.Compact>
-                ) : (
-                    <Select
-                        showSearch={showSearch}
-                        placeholder={placeholder}
-                        options={options}
-                        optionFilterProp='label'
-                        filterOption={filterOption as boolean}
-                        onFocus={() => clearErrors ? clearErrors(field.name) : null}
-                        mode={mode as "tags"}
-                        disabled={disabled}
-                        {...field}
-                    />
-                )}
-            </>
-        )} />
+                    )}
+                </>
+            )
+        }} />
     )
 }
 

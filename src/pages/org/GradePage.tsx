@@ -56,29 +56,28 @@ const GradePage = () => {
             <Divider orientation='right'>
                 <Button onClick={toSaveGrade} type='primary'>Ajouter une grade</Button>
             </Divider>
-            <Block items={
-                items && items?.length > 0 ? items : [
-                    <EmptyPage
-                        title="Aucun grade trouvé dans le système"
-                        subTitle={
-                            <Alert
-                                type='info'
-                                showIcon
-                                message={(
-                                    <Marquee pauseOnHover gradient={false}>
+            {
+                items && items?.length > 0 ? <Block items={items} /> : <EmptyPage
+                    title="Aucun grade trouvé dans le système"
+                    subTitle={
+                        <Alert
+                            type='info'
+                            showIcon
+                            message={(
+                                <Marquee pauseOnHover gradient={false}>
                                         <span style={{ display: "inline-block", paddingRight: "3rem" }}>
                                             Les niveaux scolaires sont essentiels car ils organisent l'enseignement en étapes
                                             adaptées au développement des élèves, permettant une progression pédagogique cohérente,
                                             une évaluation pertinente et une gestion efficace des ressources de l'école.
                                         </span>
-                                    </Marquee>
-                                )}
-                            />
-                        }
-                        btnLabel={text.org.group.grade.add.label}
-                        btnUrl={text.org.group.grade.add.href}
-                    />
-            ]}/>
+                                </Marquee>
+                            )}
+                        />
+                    }
+                    btnLabel={text.org.group.grade.add.label}
+                    btnUrl={text.org.group.grade.add.href}
+                />
+            }
         </>
     )
 }

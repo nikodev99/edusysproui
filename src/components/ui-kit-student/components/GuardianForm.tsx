@@ -1,8 +1,8 @@
 import {GuardianProps} from "../../../core/utils/interfaces.ts";
 import Responsive from "../../ui/layout/Responsive.tsx";
 import Grid from "../../ui/layout/Grid.tsx";
-import {Alert, Button, Checkbox, Collapse, Divider, Modal, SelectProps} from "antd";
-import {useRef, useState} from "react";
+import {Alert, Button, Checkbox, Collapse, Divider, Modal} from "antd";
+import {useState} from "react";
 import { GuardianDetails } from "./GuardianDetails.tsx";
 import {fetchGuardian, fetchSearchedEnrolledStudentsGuardian} from "../../../data";
 import {Guardian} from "../../../entity";
@@ -12,17 +12,31 @@ import AddressForm from "../../forms/AddressForm.tsx";
 import {EnrollmentSchema} from "../../../schema";
 import {setName} from "../../../core/utils/utils.ts";
 import {IndividualForm} from "../../forms/IndividualForm.tsx";
+import {useSearch} from "../../../hooks/useSearch.ts";
 
 export const GuardianForm = ({control, errors, showField, checked, onChecked, value, setValue, isExists, setIsExists, guardian, setGuardian}: GuardianProps<EnrollmentSchema, Guardian>) => {
 
     const [open, setOPen] = useState<boolean>(false)
 
-    const [data, setData] = useState<SelectProps['options']>([]);
+    /*const [data, setData] = useState<SelectProps['options']>([]);
     const timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
     const currentValue = useRef<string>('');
-    const [fetching, setFetching] = useState(false);
+    const [fetching, setFetching] = useState(false);*/
 
-    const fetch = (value: string, callback: (data: { text: string; value: string | undefined }[]) => void) => {
+    const setOptions = (guardians: Guardian[]) => {
+        return guardians?.map((g: Guardian) => ({
+            value: g.id,
+            text: `[${g.personalInfo.telephone}] ${g.personalInfo.lastName} ${g.personalInfo.firstName}`
+        }))
+    }
+
+    const {fetching, options, handleSearch, handleChange} = useSearch({
+        setValue: setValue,
+        fetchFunc: fetchSearchedEnrolledStudentsGuardian as never,
+        setCustomOptions: setOptions as never,
+    })
+
+    /*const fetch = (value: string, callback: (data: { text: string; value: string | undefined }[]) => void) => {
         if (timeout.current) {
             clearTimeout(timeout.current);
             timeout.current = null;
@@ -59,18 +73,16 @@ export const GuardianForm = ({control, errors, showField, checked, onChecked, va
 
     const handleChange = (newValue: string) => {
         setValue(newValue);
-    }
+    }*/
 
     const onModalOpen = () => {
         setOPen(!open)
     }
 
     const onConfirm = () => {
-        console.log("Existing guardian: ", value)
         if (value) {
             fetchGuardian(value)
                 .then(response => {
-                    console.log("Fetch existing guardian: ", response)
                     if (response && response.isSuccess) {
                         setGuardian(response.data as Guardian)
                     }
@@ -94,7 +106,7 @@ export const GuardianForm = ({control, errors, showField, checked, onChecked, va
                            onOk={() => onConfirm()}
                            onCancel={() => onModalOpen()}
                     >
-                        <GuardianDetails data={data} value={value} fetching={fetching} onSearch={handleSearch} onChange={handleChange}/>
+                        <GuardianDetails data={options} value={value} fetching={fetching} onSearch={handleSearch} onChange={handleChange}/>
                     </Modal>
                     {isExists && <>
                             <Alert type='success' message={setName(guardian?.personalInfo)} showIcon />

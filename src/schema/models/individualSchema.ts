@@ -41,5 +41,5 @@ export const teacherIndividualExtend = individualSchema.extend({
 })
 
 export const individualSchemaMerge = z.object({
-    id: z.number({required_error: "Professeur est requis est requis"}),
+    id: z.number({required_error: "Professeur est requis"}),
 })

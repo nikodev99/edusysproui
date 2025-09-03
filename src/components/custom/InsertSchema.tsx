@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {ReactNode, useState} from "react";
 import {FieldValues} from "react-hook-form";
 import {useQueryPost} from "../../hooks/usePost.ts";
 import {useGlobalStore} from "../../core/global/store.ts";
@@ -107,7 +107,7 @@ const InsertSchema = <TData extends FieldValues>(
     }
 ) => {
     const [openConfirm, setOpenConfirm] = useState<boolean>(false);
-    const [successMessage, setSuccessMessage] = useState<string | undefined>(undefined);
+    const [successMessage, setSuccessMessage] = useState<ReactNode | undefined>(undefined);
     const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
 
     const { mutate, isPending } = useQueryPost<TData>(data);
@@ -168,7 +168,7 @@ const InsertSchema = <TData extends FieldValues>(
             <Form layout="vertical" style={{ marginTop: '15px' }}>
                 {customForm}
 
-                <Flex justify="flex-end" gap="small" style={{ marginTop: '20px' }}>
+                <Flex justify="flex-start" gap="small" style={{ marginTop: '20px' }}>
                     {onClose && <Button onClick={handleCancel} disabled={isPending}>
                         {cancelText}
                     </Button>}
@@ -184,7 +184,6 @@ const InsertSchema = <TData extends FieldValues>(
                         <Button
                             disabled={isPending}
                             type="primary"
-                            loading={isPending}
                             onClick={handleConfirmOpen}
                         >
                             {okText}

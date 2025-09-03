@@ -50,4 +50,4 @@ export const timeProcess = (title: string) =>
 
 export const excludeSpecialCharacters= (errors: TypicalErrors) =>
     z.string({required_error: errors.requiredError})
-    .regex(/^[a-zA-Z0-9\s]+$/, {message: errors.regexError})
+    .regex(/^[\p{Script=Latin}\d\s]+$/u, {message: errors.regexError})

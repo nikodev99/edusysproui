@@ -21,12 +21,13 @@ import {
     allSemesterSchema, allSemesterTemplateSchema,
     semesterSchema, semesterTemplateSchema,
 } from "./models/semesterSchema.ts";
+import {departmentSchema} from "./models/departmentSchema.ts";
 
 export {enrollmentSchema} from './models/enrollmentSchema'
 export {classeSchemaMerge, classeSchema} from './models/classeSchema'
 export {courseSchemaMerge, courseSchema} from './models/courseSchema.ts'
 export {gradeSchemaMerge, gradeSchema} from './models/gradeSchema.ts'
-export {departmentSchemaMerge} from './models/departmentSchema.ts'
+export {departmentSchemaMerge,departmentSchema} from './models/departmentSchema.ts'
 export {schoolMergeSchema, schoolSchema} from './models/schoolSchema'
 export {guardianSchema} from './models/guardianSchema'
 export {studentSchema, studentSchemaMerge} from './models/studentSchema'
@@ -73,3 +74,4 @@ export type SemesterSchema = z.infer<typeof semesterSchema>
 export type AllSemesterSchema = z.infer<typeof allSemesterSchema>
 export type SemesterTemplateSchema = z.infer<typeof semesterTemplateSchema>
 export type AllSemesterTemplateSchema = z.infer<typeof allSemesterTemplateSchema>
+export type DepartmentSchema = z.infer<typeof departmentSchema>

@@ -1,4 +1,4 @@
-import {useMemo} from "react";
+import {useCallback, useMemo} from "react";
 import {useFetch} from "./useFetch.ts";
 import {
     getAcademicYearFromDate,
@@ -9,7 +9,7 @@ import {
 import {loggedUser} from "../auth/jwt/LoggedUser.ts";
 import {useInsert} from "./usePost.ts";
 import {academicYearSchema} from "../schema";
-import {RepoOptions} from "../core/utils/interfaces.ts";
+import {Option, RepoOptions} from "../core/utils/interfaces.ts";
 import {AcademicYear} from "../entity";
 
 export const useAcademicYearRepo = () => {
@@ -65,10 +65,13 @@ export const useAcademicYearRepo = () => {
     const allAcademicYears = useGetAllAcademicYear()
     const currentAcademicYear = useGetCurrentAcademicYear()
 
-    const academicYearOptions = useMemo(() => allAcademicYears?.map(a => ({
-        value: a.id,
-        label: a.academicYear
-    })), [allAcademicYears])
+    const academicYearOptions = useCallback((current: boolean = false): Option[] => {
+        const academicYears = current ? [currentAcademicYear] : allAcademicYears
+        return academicYears?.map(a => ({
+            value: a?.id,
+            label: a?.academicYear
+        }))
+    }, [allAcademicYears, currentAcademicYear])
     
     return {
         useInsertAcademicYear,

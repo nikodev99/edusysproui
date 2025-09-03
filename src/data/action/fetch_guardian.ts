@@ -8,6 +8,7 @@ import {
 import {Guardian} from "../../entity";
 import {getShortSortOrder, setSortFieldName} from "../../core/utils/utils.ts";
 import {loggedUser} from "../../auth/jwt/LoggedUser.ts";
+import {AxiosResponse} from "axios";
 
 const schoolId: string = loggedUser.getSchool()?.id as string;
 
@@ -20,22 +21,8 @@ export const fetchEnrolledStudentsGuardians = async (page: number, size: number,
     return await getEnrolledStudentsGuardians(schoolId, page, size)
 }
 
-export const fetchSearchedEnrolledStudentsGuardian = async (searchInput: string) => {
-    try {
-        const resp = await getSearchedEnrolledStudentGuardian(schoolId, searchInput)
-        if (resp && resp.status === 200) {
-            return {
-                isSuccess: true,
-                data: resp.data as Guardian[]
-            }
-        }else {
-            return {
-                isSuccess: false,
-            }
-        }
-    }catch (e: unknown) {
-        return ErrorCatch(e)
-    }
+export const fetchSearchedEnrolledStudentsGuardian = async (searchInput: string): Promise<AxiosResponse<Guardian[], unknown>> => {
+    return await getSearchedEnrolledStudentGuardian(schoolId, searchInput)
 }
 
 export const fetchGuardian = async (guardianId: string) => {

@@ -21,7 +21,7 @@ const App = () => {
             <ConfigProvider locale={frFR} theme={{
                 token: {
                     colorPrimary: '#000C40',
-                    fontFamily: 'Mulish, Helvetica, sans-serif',
+                    fontFamily: '"Work Sans", Helvetica, sans-serif',
                 },
                 components: {
                     Timeline: {

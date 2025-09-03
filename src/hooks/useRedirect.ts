@@ -67,6 +67,7 @@ export const useRedirect = () => {
             ),
             {state: gradeId}
         ),
+        toDepartment: () => redirectTo(text.org.group.department.href),
         toAddDepartment: () => redirectTo(text.org.group.department.add.href),
         toViewDepartment: (departmentId: number, departmentName?: string) => redirectTo(
             departmentName

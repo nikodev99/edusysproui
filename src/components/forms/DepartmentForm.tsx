@@ -1,7 +1,7 @@
 import FormContent from "../ui/form/FormContent.tsx";
 import {FieldValues, Path, PathValue} from "react-hook-form";
 import {FormContentProps, Options} from "../../core/utils/interfaces.ts";
-import {Department, Employee} from "../../entity";
+import {DBoss, Department, Employee} from "../../entity";
 import {FormConfig} from "../../config/FormConfig.ts";
 import {FormUtils} from "../../core/utils/formUtils.ts";
 import {useAcademicYearRepo} from "../../hooks/useAcademicYearRepo.ts";
@@ -16,6 +16,10 @@ type Defaults = { academicYear?: string; dBoss?: number }
 
 type DepartmentFormProps<T extends FieldValues> = FormContentProps<T, Department> & {
     handleUpdate?: (field: keyof Department, value: unknown) => void;
+}
+
+type DepartmentBossFormProps<T extends FieldValues> = FormContentProps<T, DBoss> & {
+    handleUpdate?: (field: keyof DBoss, value: unknown) => void;
     getDefaultValue?: (value: Defaults) => void
 }
 
@@ -60,13 +64,29 @@ export const DepartmentForm = <TData extends FieldValues>(
                     defaultValue: (data ? data.code : undefined) as PathValue<TData, Path<TData>>,
                     onFinish: edit ? (value: unknown) => handleUpdate?.('code', value) : undefined
                 }
+            },
+            {
+                type: InputTypeEnum.TEXTAREA,
+                inputProps: {
+                    lg: onlyField,
+                    md: onlyField,
+                    hasForm: edit,
+                    label: 'Description',
+                    control: control,
+                    name: form.name('purpose') as Path<TData>,
+                    validateStatus: form.validate('purpose'),
+                    help: form.error( 'purpose'),
+                    placeholder: 'Descriptions, Objectif ou importance de département',
+                    defaultValue: (data ? data.purpose : undefined) as PathValue<TData, Path<TData>>,
+                    onFinish: edit ? (value: unknown) => handleUpdate?.('purpose', value) : undefined
+                }
             }
         ]} />
     )
 }
 
 export const DepartmentBossForm = <TData extends FieldValues>(
-    {errors, control, data, edit = false, handleUpdate, getDefaultValue}: DepartmentFormProps<TData>
+    {errors, control, data, edit = false, handleUpdate}: DepartmentBossFormProps<TData>
 ) => {
 
     const [searchValue, setSearchValue] = useState<number | undefined>(undefined)
@@ -91,16 +111,6 @@ export const DepartmentBossForm = <TData extends FieldValues>(
         setCustomOptions: employeeOptions,
     })
 
-    const changeHandler = useCallback((value: string) => {
-        if (getDefaultValue && value && yearOptions.length > 0) {
-            getDefaultValue?.({
-                academicYear: yearOptions[0]?.value as string,
-                dBoss: Number.parseInt(value)
-            })
-            handleChange(value)
-        }
-    }, [getDefaultValue, handleChange, yearOptions])
-
     return <FormContent formItems={[
         {
             type: InputTypeEnum.SELECT,
@@ -111,11 +121,11 @@ export const DepartmentBossForm = <TData extends FieldValues>(
                 options: yearOptions as [],
                 label: 'Année Academique',
                 control: control,
-                name: form.name('academicYear.id', 'boss') as Path<TData>,
-                validateStatus: form.validate('academicYear.id', 'boss'),
-                help: form.error('academicYear.id', 'boss'),
+                name: form.name('id', 'academicYear') as Path<TData>,
+                validateStatus: form.validate('id', 'academicYear'),
+                help: form.error('id', 'academicYear'),
                 selectedValue: yearOptions[0].value as PathValue<TData, Path<TData>>,
-                onFinish: edit ? (value: unknown) => handleUpdate?.("boss", value) : undefined,
+                onFinish: edit ? (value: unknown) => handleUpdate?.("academicYear", value) : undefined,
                 disabled: true
             }
         },
@@ -130,13 +140,13 @@ export const DepartmentBossForm = <TData extends FieldValues>(
                 control: control,
                 filterOption: true,
                 onSearch: handleSearch,
-                onChange: changeHandler,
+                onChange: handleChange,
                 showSearch: true,
-                name: form.name('d_boss.id', 'boss') as Path<TData>,
-                validateStatus: form.validate('d_boss.id', 'boss'),
-                help: form.error('d_boss.id', 'boss'),
-                selectedValue: (data ? data?.boss?.academicYear?.id : searchValue) as PathValue<TData, Path<TData>>,
-                onFinish: edit ? (value: unknown) => handleUpdate?.('boss', value) : undefined,
+                name: form.name('id', 'd_boss') as Path<TData>,
+                validateStatus: form.validate('id', 'd_boss'),
+                help: form.error('id', 'd_boss'),
+                selectedValue: (data ? data?.d_boss?.id : searchValue) as PathValue<TData, Path<TData>>,
+                onFinish: edit ? (value: unknown) => handleUpdate?.('d_boss', value) : undefined,
                 notFoundContent: fetching ? <Spin /> : null,
                 options: options,
             }
@@ -148,12 +158,12 @@ export const DepartmentBossForm = <TData extends FieldValues>(
                 lg: onlyField,
                 label: 'Date de debut',
                 control: control,
-                name: form.name('startPeriod', 'boss') as Path<TData>,
+                name: form.name('startPeriod') as Path<TData>,
                 placeholder: 'Début du mandat',
-                validateStatus: form.validate('startPeriod', 'boss'),
-                help: form.error('startPeriod', 'boss'),
-                defaultValue: data ? data.boss?.startPeriod : undefined,
-                onFinish: edit ? (value: unknown) => handleUpdate?.('boss', value) : undefined,
+                validateStatus: form.validate('startPeriod'),
+                help: form.error('startPeriod'),
+                defaultValue: data ? data.startPeriod : undefined,
+                onFinish: edit ? (value: unknown) => handleUpdate?.('startPeriod', value) : undefined,
             }
         },
         {
@@ -163,12 +173,12 @@ export const DepartmentBossForm = <TData extends FieldValues>(
                 lg: onlyField,
                 label: 'Date de mandat',
                 control: control,
-                name: form.name('endPeriod', 'boss') as Path<TData>,
+                name: form.name('endPeriod') as Path<TData>,
                 placeholder: 'Fin du Période',
-                validateStatus: form.validate('endPeriod', 'boss'),
-                help: form.error('endPeriod', 'boss'),
-                defaultValue: data ? data.boss?.endPeriod : undefined,
-                onFinish: edit ? (value: unknown) => handleUpdate?.('boss', value) : undefined,
+                validateStatus: form.validate('endPeriod'),
+                help: form.error('endPeriod'),
+                defaultValue: data ? data?.endPeriod : undefined,
+                onFinish: edit ? (value: unknown) => handleUpdate?.('endPeriod', value) : undefined,
             }
         }
     ]} />

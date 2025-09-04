@@ -27,6 +27,7 @@ export const departmentSchema: ZodType = z.object({
     }).max(50, {
         message: "L'intitulé doit contenir moins de 50 caractères"
     }),
+    purpose: z.string().max(500, {message: 'Maximum de 500 caractères atteint'}).optional().nullable(),
     boss: departmentBossSchema.optional().nullable(),
     school: schoolMergeSchema.optional(),
 })

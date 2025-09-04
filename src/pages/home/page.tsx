@@ -6,6 +6,7 @@ const Dashboard = () => {
     useDocumentTitle({
         title: "EduSysPro - Dashboard",
         description: "Dashboard description",
+        hasEdu: false,
     })
 
     const school = useMemo(() => loggedUser.getSchool(), [])

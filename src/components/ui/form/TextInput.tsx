@@ -34,6 +34,14 @@ export const FormInput = <T extends FieldValues>(inputProps: dataEntryProps<T>) 
                                 {...field}
                                 defaultValue={defaultValue as PathValue<T, Path<T>>}
                             />}
+                            {inputType === 'text_area' && <Input.TextArea
+                                placeholder={placeholder}
+                                disabled={disabled}
+                                onFocus={() => clearErrors ? clearErrors(field.name) : null}
+                                {...field}
+                                defaultValue={defaultValue as PathValue<T, Path<T>>}
+                                autoSize={{minRows: 3, maxRows: 5}}
+                            />}
                             {!inputType && <Input
                                 onFocus={() => clearErrors ? clearErrors(field.name) : null}
                                 placeholder={placeholder}
@@ -62,6 +70,14 @@ export const FormInput = <T extends FieldValues>(inputProps: dataEntryProps<T>) 
                                 onFocus={() => clearErrors ? clearErrors(field.name) : null}
                                 {...field}
                                 defaultValue={defaultValue as PathValue<T, Path<T>>}
+                            />}
+                            {inputType === 'text_area' && <Input.TextArea
+                                placeholder={placeholder}
+                                disabled={disabled}
+                                onFocus={() => clearErrors ? clearErrors(field.name) : null}
+                                {...field}
+                                defaultValue={defaultValue as PathValue<T, Path<T>>}
+                                autoSize={{minRows: 3, maxRows: 5}}
                             />}
                             {!inputType && <Input
                                 onFocus={() => clearErrors ? clearErrors(field.name) : null}
@@ -112,6 +128,10 @@ TextInput.Password = <T extends FieldValues>(props: Omit<TypedInputType<T>, 'typ
 
 TextInput.Number = <T extends FieldValues>(props: Omit<TypedInputType<T>, 'type'>) => (
     <TextInput {...props} inputType='number' />
+)
+
+TextInput.TextArea = <T extends FieldValues>(props: Omit<TypedInputType<T>, 'type'>) => (
+    <TextInput {...props} inputType='text_area' />
 )
 
 export default TextInput

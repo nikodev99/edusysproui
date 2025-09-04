@@ -67,7 +67,7 @@ const DepartmentPage = () => {
                         />}
                         extra={
                             <Flex vertical gap={20}>
-                                <span>Appuyer sur le button ci-dessous pour créer un nouveau département</span>
+                                <span>Appuyer sur le lien ci-dessous pour créer un nouveau département</span>
                                 <Link to={text.org.group.department.add.href}>{text.org.group.department.add.label}</Link>
                             </Flex>
                         }

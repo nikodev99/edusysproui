@@ -161,13 +161,11 @@ const AcademicYearPage = () => {
         setRefetch()
     }
 
-    console.log("FETCHED SEMESTERS: ", semesters)
-
     return(
         <>
             {context}
             {
-                (!currentSemesters || currentSemesters?.length === 0) &&
+                !current ? <Alert type='warning' showIcon message={'URGENT: Veuillez ajouter une année academique'} /> : (!currentSemesters || currentSemesters?.length === 0) &&
                 <Alert message={<Marquee pauseOnHover gradient={false}>Veuillez ajouter une subdivision à l'année académique actuelle:&nbsp;{current?.academicYear}. La subdivision en semestres
                 ou trimestres structure l’année académique pour faciliter la planification, l’évaluation des étudiants et 
                 la gestion administrative.</Marquee>} showIcon type='warning' style={{marginTop: '10px'}} />
@@ -183,12 +181,12 @@ const AcademicYearPage = () => {
                                     <Button icon={<AiOutlineEdit />} onClick={setOpenEdit} size='small' type='primary'>Modifier</Button>
                                 </Flex>
                             } style={{marginBottom: '10px'}} />
-                            <div>
+                            {current ? <div>
                                 <Text strong>{current?.academicYear}</Text>
                                 <p>Du: {Datetime.of(current?.startDate as []).fDate()}</p>
                                 <p>Au: {Datetime.of(current?.endDate as []).fDate()}</p>
                                 <p><Badge color={'#52c41a'} text={<em style={{color: '#677a67'}}>Actif</em>} /></p>
-                            </div>
+                            </div>: <p><Badge color={'#c41a1a'} text={<em style={{color: '#7a6767'}}>Aucune année academique trouvé</em>} /></p>}
                         </Card>
                     </Grid>
 
@@ -220,12 +218,27 @@ const AcademicYearPage = () => {
                                     {currentSemester && <Button icon={<AiOutlineEdit />} onClick={() => alert('modify the semester')} size='small' type='primary'>Modifier</Button>}
                                 </Flex>
                             } style={{marginBottom: '10px'}} />
-                            {currentSemester ? <div>
-                                <Text strong>{currentSemester?.template?.semesterName}</Text>
-                                <p>Du: {Datetime.of(currentSemester?.startDate as []).fDate()}</p>
-                                <p>Au: {Datetime.of(currentSemester?.endDate as []).fDate()}</p>
-                                <p><Badge color={'#52c41a'} text={<em style={{color: '#677a67'}}>Actif</em>} /></p>
-                            </div> : <Alert type='error' message={`Aucun semestre n’a été trouvé pour cette date : ${Datetime.now().fullDay()}. Vous êtes en période de vacances.`} />}
+                            {current ? currentSemester ? (
+                                    <div>
+                                        <Text strong>{currentSemester?.template?.semesterName}</Text>
+                                        <p>Du: {Datetime.of(currentSemester?.startDate as []).fDate()}</p>
+                                        <p>Au: {Datetime.of(currentSemester?.endDate as []).fDate()}</p>
+                                        <p><Badge color={'#52c41a'} text={<em style={{color: '#677a67'}}>Actif</em>} /></p>
+                                    </div>
+                                ): (
+                                    <Alert
+                                        showIcon
+                                        type='error'
+                                        message={`Aucun semestre courant n’a été trouvé pour cette date : ${Datetime.now().fullDay()}.`}
+                                    />
+                                ): (
+                                    <Alert
+                                        showIcon
+                                        type='error'
+                                        message={`Veuillez ajouter une année académique courante et les semestres`}
+                                    />
+                                )
+                            }
                         </Card>
                     </Grid>
 

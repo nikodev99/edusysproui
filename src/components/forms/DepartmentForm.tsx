@@ -69,7 +69,7 @@ export const DepartmentBossForm = <TData extends FieldValues>(
     {errors, control, data, edit = false, handleUpdate, getDefaultValue}: DepartmentFormProps<TData>
 ) => {
 
-    const [searchValue, setSearchValue] = useState<string | undefined>(undefined)
+    const [searchValue, setSearchValue] = useState<number | undefined>(undefined)
 
     const form = new FormConfig(errors, edit)
     const onlyField = FormUtils.onlyField(edit as boolean, 24, 12)
@@ -81,12 +81,12 @@ export const DepartmentBossForm = <TData extends FieldValues>(
     const employeeOptions = useCallback((data?: Employee[]): Options => {
         return data ? data?.map(d => ({
             label: setFirstName(`${d?.personalInfo?.lastName} ${d?.personalInfo?.firstName}`),
-            value: d?.personalInfo?.id
+            value: d?.personalInfo?.id as number
         })) : [] as Options
     }, [])
 
     const {fetching, options, handleSearch, handleChange} = useSearch({
-        setValue: setSearchValue,
+        setValue: setSearchValue as (value: unknown) => void,
         fetchFunc: fetchEmployeeIndividuals as never,
         setCustomOptions: employeeOptions,
     })

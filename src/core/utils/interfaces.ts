@@ -23,7 +23,7 @@ import {PunishmentStatus} from "../../entity/enums/punishmentStatus.ts";
 import {Day} from "../../entity/enums/day.ts";
 import {AxiosError, AxiosResponse} from "axios";
 import {PercentPositionType, ProgressSize} from "antd/es/progress/progress";
-import {CheckboxOptionType, ListProps, SelectProps, TableColumnsType, TableProps} from "antd";
+import {CheckboxOptionType, ListProps, TableColumnsType, TableProps} from "antd";
 import {ItemType} from "antd/es/menu/interface";
 import {z} from "zod";
 import {AssignmentTypeLiteral} from "../../entity/enums/assignmentType.ts";
@@ -580,7 +580,7 @@ export interface PutSchemaProps<TData extends FieldValues, TReturn> {
 }
 
 export type Option = DefaultOptionType
-export type Options = SelectProps['options']
+export type Options = Option[]
 
 export type ActionsButtons = {
     createUser?: boolean

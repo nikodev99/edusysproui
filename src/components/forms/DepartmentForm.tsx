@@ -10,9 +10,7 @@ import {useCallback, useMemo, useState} from "react";
 import {setFirstName} from "../../core/utils/utils.ts";
 import {useSearch} from "../../hooks/useSearch.ts";
 import {useEmployeeRepo} from "../../hooks/useEmployeeRepo.ts";
-import {Spin} from "antd";
-
-type Defaults = { academicYear?: string; dBoss?: number }
+import {Space, Spin, Typography} from "antd";
 
 type DepartmentFormProps<T extends FieldValues> = FormContentProps<T, Department> & {
     handleUpdate?: (field: keyof Department, value: unknown) => void;
@@ -20,7 +18,6 @@ type DepartmentFormProps<T extends FieldValues> = FormContentProps<T, Department
 
 type DepartmentBossFormProps<T extends FieldValues> = FormContentProps<T, DBoss> & {
     handleUpdate?: (field: keyof DBoss, value: unknown) => void;
-    getDefaultValue?: (value: Defaults) => void
 }
 
 export const DepartmentForm = <TData extends FieldValues>(
@@ -28,6 +25,7 @@ export const DepartmentForm = <TData extends FieldValues>(
 ) => {
     const form = new FormConfig(errors, edit)
     const onlyField = FormUtils.onlyField(edit as boolean, 24, 12)
+    const {Text} = Typography
 
     return(
         <FormContent formItems={[
@@ -71,7 +69,10 @@ export const DepartmentForm = <TData extends FieldValues>(
                     lg: onlyField,
                     md: onlyField,
                     hasForm: edit,
-                    label: 'Description',
+                    label: <Space>
+                        <Text>Description</Text>
+                        <Text italic disabled>Caractères maximum: 500 </Text>
+                    </Space>,
                     control: control,
                     name: form.name('purpose') as Path<TData>,
                     validateStatus: form.validate('purpose'),
@@ -156,7 +157,7 @@ export const DepartmentBossForm = <TData extends FieldValues>(
             inputProps: {
                 md: onlyField,
                 lg: onlyField,
-                label: 'Date de debut',
+                label: 'Date de debut mandat',
                 control: control,
                 name: form.name('startPeriod') as Path<TData>,
                 placeholder: 'Début du mandat',
@@ -171,7 +172,7 @@ export const DepartmentBossForm = <TData extends FieldValues>(
             inputProps: {
                 md: onlyField,
                 lg: onlyField,
-                label: 'Date de mandat',
+                label: 'Date de fin mandat',
                 control: control,
                 name: form.name('endPeriod') as Path<TData>,
                 placeholder: 'Fin du Période',

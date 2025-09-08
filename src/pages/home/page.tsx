@@ -1,6 +1,7 @@
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {useMemo} from "react";
 import {loggedUser} from "../../auth/jwt/LoggedUser.ts";
+import {Typography} from "antd";
 
 const Dashboard = () => {
     useDocumentTitle({
@@ -15,7 +16,7 @@ const Dashboard = () => {
         <main>
             Dashboard
             <div>
-                <pre>{JSON.stringify(school)}</pre>
+                <Typography.Text code>{JSON.stringify(school)}</Typography.Text>
                 {/*<div>{loggedUser.getToken()}</div>*/}
             </div>
         </main>

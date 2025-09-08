@@ -7,13 +7,16 @@ import {Alert, Button, Flex, Form, Modal, ModalProps} from "antd";
 import {PopConfirm} from "../ui/layout/PopConfirm.tsx";
 import {PostSchemaProps, SchemaProps} from "../../core/utils/interfaces.ts";
 import Marquee from "react-fast-marquee";
+import FormSuccess from "../ui/form/FormSuccess.tsx";
+import FormError from "../ui/form/FormError.tsx";
 
 type InsertSchemaType<TData extends FieldValues> = SchemaProps<TData>
     & ModalProps
     & PostSchemaProps<TData>
     & {
         onSuccess?: (response: unknown) => void,
-        onError?: (error: string) => void
+        onError?: (error: string) => void,
+        isNotif?: boolean
     }
 
 const InsertModal = <TData extends FieldValues>(
@@ -32,7 +35,8 @@ const InsertModal = <TData extends FieldValues>(
         explain,
         onSuccess,
         marquee = false,
-        onError
+        onError,
+        isNotif
     }: InsertSchemaType<TData>
 ) => {
     const breakpoints = useGlobalStore.use.modalBreakpoints();
@@ -80,6 +84,8 @@ const InsertModal = <TData extends FieldValues>(
                 onSuccess={handleFormSuccess}
                 onError={onError}
                 marquee={marquee}
+                toReset={true}
+                isNotif={isNotif}
             />
         </Modal>
     );
@@ -99,7 +105,9 @@ const InsertSchema = <TData extends FieldValues>(
         explain,
         onSuccess,
         onError,
-        marquee = false
+        marquee = false,
+        isNotif = false,
+        toReset = true
     }: InsertSchemaType<TData> & {
         onSuccess?: (response: unknown) => void,
         onError?: (error: string) => void
@@ -126,7 +134,7 @@ const InsertSchema = <TData extends FieldValues>(
                 onSuccess: (response) => {
                     if (response.status === 200) {
                         setSuccessMessage(messageSuccess);
-                        handleForm.reset();
+                        toReset ? handleForm.reset() : undefined;
                         onSuccess?.(response);
                     }
                 },
@@ -155,8 +163,18 @@ const InsertSchema = <TData extends FieldValues>(
 
     return (
         <>
-            {successMessage && (<Alert message={successMessage} type="success" showIcon closable onClose={clearMessages}/>)}
-            {errorMessage && (<Alert message={errorMessage} type="error" showIcon closable onClose={clearMessages}/>)}
+            {successMessage && (
+                <>
+                    <FormSuccess message={successMessage} isNotif={isNotif} onClose={clearMessages} />
+                    {isNotif && <Alert message={successMessage} type="success" showIcon closable onClose={clearMessages}/>}
+                </>
+            )}
+            {errorMessage && (
+                <>
+                    <FormError message={successMessage} isNotif={isNotif} onClose={clearMessages} />
+                    {isNotif && <Alert message={errorMessage} type="error" showIcon closable onClose={clearMessages}/>}
+                </>
+            )}
             {explain && (<Alert style={{ marginTop: '10px' }} message={marquee ? (
                 <Marquee pauseOnHover gradient={false}>
                     <span style={{ display: "inline-block", paddingRight: "3rem" }}>

@@ -1,10 +1,10 @@
 import {message as successMassage, notification} from 'antd'
-import {useEffect} from "react";
+import {ReactNode, useEffect} from "react";
 import {text} from "../../../core/utils/text_display.ts";
 import {redirect} from "react-router-dom";
 
 const FormSuccess = ({message, toRedirect, redirectLink, isNotif, type = 'success', onClose}: {
-    message?: string,
+    message?: string | ReactNode,
     toRedirect?: boolean,
     redirectLink?: string,
     isNotif?: boolean,
@@ -38,7 +38,7 @@ const FormSuccess = ({message, toRedirect, redirectLink, isNotif, type = 'succes
                     content: message,
                     duration: 2,
                 }).then(() => {
-                    if (toRedirect){
+                    if (toRedirect && redirectLink){
                         redirect(redirectLink ? redirectLink : text.student.href)
                     }
                 })

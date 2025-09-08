@@ -569,6 +569,7 @@ export interface SchemaProps<TData extends FieldValues> {
     marquee?: boolean;
     customForm: ReactNode
     handleForm: UseFormReturn<TData>
+    toReset?: boolean
 }
 
 export interface PostSchemaProps<TData extends FieldValues> {

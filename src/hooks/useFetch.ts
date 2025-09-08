@@ -44,7 +44,6 @@ const customFetch = async <T>(
 ): Promise<Response<T>> => {
     try {
         const response = await callback(...params);
-        console.log("RESPONSE: ", {response})
         if(response && response.status === 200) {
             return {
                 isSuccess: true,

@@ -1,8 +1,13 @@
 import {message as errorMessage, notification} from 'antd'
-import {useEffect} from "react";
+import {ReactNode, useEffect} from "react";
 import Datetime from "../../../core/datetime.ts";
 
-const FormError = ({message, isNotif}: {message?: string[] | string, isNotif?: boolean}) => {
+const FormError = (
+    {message, isNotif, onClose}: {
+        message?: string[] | string | ReactNode,
+        isNotif?: boolean,
+        onClose?: () => void
+}) => {
     const [messageApi, contextHolder] = errorMessage.useMessage();
     const [api, notifContext] = notification.useNotification();
     
@@ -17,6 +22,7 @@ const FormError = ({message, isNotif}: {message?: string[] | string, isNotif?: b
                 placement: 'topRight',
                 duration: 4,
                 description: Array.isArray(message) ? message.slice(1).join('\n') : undefined,
+                onClose: onClose
             })
         }else {
             if (Array.isArray(message)) {

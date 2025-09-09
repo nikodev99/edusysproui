@@ -3,16 +3,17 @@ import {ActionButton} from "../../ui/layout/ActionButton.tsx";
 import {Classe} from "../../../entity";
 import {LuDot, LuEye} from "react-icons/lu";
 import ListViewer from "../../custom/ListViewer.tsx";
-import {getAllSearchClasses} from "../../../data/repository/classeRepository.ts";
 import {redirectTo} from "../../../context/RedirectContext.ts";
 import {text} from "../../../core/utils/text_display.ts";
 import {AxiosResponse} from "axios";
-import {getAllSchoolClasses} from "../../../data/action/classeAction.ts";
 import {fDatetime} from "../../../core/utils/utils.ts";
 import {DataProps} from "../../../core/utils/interfaces.ts";
 import {SuperWord} from "../../../core/utils/tsxUtils.tsx";
+import {useClasseRepo} from "../../../hooks/useClasseRepo.ts";
 
 export const ClasseList = ({condition}: {condition?: boolean}) => {
+
+    const {getPaginatedClasses, getSearchedClasses} = useClasseRepo()
 
     const throughDetails = (link: string) => {
         redirectTo(`${text.cc.group.classe.view.href}${link}`)
@@ -89,8 +90,8 @@ export const ClasseList = ({condition}: {condition?: boolean}) => {
 
     return (
         <ListViewer
-            callback={getAllSchoolClasses as () => Promise<AxiosResponse<Classe[]>>}
-            searchCallback={getAllSearchClasses as (input: unknown) => Promise<AxiosResponse<Classe[]>>}
+            callback={getPaginatedClasses as () => Promise<AxiosResponse<Classe[]>>}
+            searchCallback={getSearchedClasses as (input: unknown) => Promise<AxiosResponse<Classe[]>>}
             tableColumns={columns}
             dropdownItems={getItems}
             throughDetails={throughDetails}

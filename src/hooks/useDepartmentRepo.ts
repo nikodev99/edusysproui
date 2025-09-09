@@ -3,7 +3,7 @@ import {useFetch} from "./useFetch.ts";
 import {getDepartmentBasics, getPrimaryDepartment, saveDepartment} from "../data/repository/departmentRepository.ts";
 import {Department} from "../entity";
 import {useInsert} from "./usePost.ts";
-import {departmentSchema} from "../schema/models/departmentSchema.ts";
+import {departmentSchema} from "../schema";
 
 export const useDepartmentRepo = () => {
     const schoolId = loggedUser.getSchool()?.id

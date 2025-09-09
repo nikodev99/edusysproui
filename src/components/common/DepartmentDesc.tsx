@@ -6,6 +6,7 @@ import PanelSection from "../ui/layout/PanelSection.tsx";
 import {Department} from "../../entity";
 import {Color, ID} from "../../core/utils/interfaces.ts";
 import {ReactNode} from "react";
+import {isObjectEmpty} from "../../core/utils/utils.ts";
 
 export const DepartmentDesc = (
     {department, key = 1, color, title}: {
@@ -16,18 +17,18 @@ export const DepartmentDesc = (
     }
 ) => {
     return(
-        <PanelSection key={key} title={title ?? `Membre du Department ${department.code}`}>
+        <PanelSection key={key} title={title ?? `Membre du Department ${department?.code}`}>
             <PanelTable title='Organisation Departementale' data={[
-                {statement: 'Department', response: department.name},
-                {statement: 'Code', response: department.code},
+                {statement: 'Department', response: department?.name},
+                {statement: 'Code', response: department?.code},
             ]} panelColor={color} />
             <IndividualDescription
                 personalInfo={department?.boss?.d_boss}
-                show={department?.boss?.d_boss === undefined}
-                redirectLink={text.teacher.group.view.href + department.boss?.d_boss?.id}
+                show={department?.boss?.d_boss === undefined || isObjectEmpty(department?.boss?.d_boss as object)}
+                redirectLink={text.teacher.group.view.href + department?.boss?.d_boss?.id}
                 titles={{panel: 'Chef de department'}}
                 color={color}
-                period={department.boss?.startPeriod}
+                period={department?.boss?.startPeriod}
                 isCurrent={department?.boss?.current}
             />
             {department?.purpose ? <PanelTable title='Objectif' panelColor={color} data={[

@@ -1,7 +1,7 @@
 import {useParams} from "react-router-dom";
 import {useEffect, useLayoutEffect, useState} from "react";
 import {Teacher} from "../../entity";
-import {chooseColor, setLastName, setName} from "../../core/utils/utils.ts";
+import {chooseColor, MAIN_COLOR, setLastName, setName} from "../../core/utils/utils.ts";
 import {count} from "../../data";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {text} from "../../core/utils/text_display.ts";
@@ -53,8 +53,10 @@ const TeacherViewPage = () => {
     const studentCount = useCountStudent()
     const accountExists = useAccountExists(teacher?.personalInfo?.id as number)
 
+    console.log("DATA FETCHED: ", data)
+
     const teacherName = setName(teacher?.personalInfo)
-    const color: string = teacher?.personalInfo?.firstName ? chooseColor(teacher.personalInfo?.firstName) as string  : '#7615c4'
+    const color: string = teacher?.personalInfo?.firstName ? chooseColor(teacher.personalInfo?.firstName) as string  : MAIN_COLOR
 
     useDocumentTitle({
         title: teacherName,

@@ -2,12 +2,11 @@ import {Filter} from "../../common/Filter.tsx";
 import {AssignmentFilterProps} from "../../../data/repository/assignmentRepository.ts";
 import {text} from "../../../core/utils/text_display.ts";
 import {ItemType} from "antd/es/menu/interface";
-import {useCallback, useEffect, useMemo, useState} from "react";
+import {useCallback, useMemo, useState} from "react";
 import {useGradeRepo} from "../../../hooks/useGradeRepo.ts";
-import {Classe, Course, Grade, /*Semester*/} from "../../../entity";
-import {useClasse} from "../../../hooks/useClasse.tsx";
 import {useCourseRepo} from "../../../hooks/useCourseRepo.ts";
-import {useSemesterRepo} from "../../../hooks/useSemesterRepo.ts";
+//import {useSemesterRepo} from "../../../hooks/useSemesterRepo.ts";
+import {useClasseRepo} from "../../../hooks/useClasseRepo.ts";
 
 type FilterType = {
     setFilters: (filters: AssignmentFilterProps) => void,
@@ -30,19 +29,21 @@ export const AssignmentFilter = (
     {academicYear, academicYearOptions, setFilters: emitFilters}: FilterType
 ) => {
 
-    const [grades, setGrades] = useState<Grade[]>([])
-    const [classes, setClasses] = useState<Classe[]>([])
-    const [courses, setCourses] = useState<Course[]>([])
     //const [semesters, setSemesters] = useState<Semester[]>([])
     const [filterItem, setFilterItem] = useState<AssignmentFilterProps>({academicYearId: academicYear} as AssignmentFilterProps)
     const {useGetAllGrades} = useGradeRepo()
-    const {classes: allClasses} = useClasse()
+    const {useGetClasseBasicValues} = useClasseRepo()
     const {useGetBasicCourses} = useCourseRepo()
-    const {useGetAllSemesters} = useSemesterRepo()
+    //const {useGetAllSemesters} = useSemesterRepo()
     
     const fetchedGrades = useGetAllGrades()
     const fetchedCourses = useGetBasicCourses()
-    const fetchedSemesters = useGetAllSemesters()
+    //const fetchedSemesters = useGetAllSemesters()
+    const fetchedClasses = useGetClasseBasicValues()
+
+    const grades = useMemo(() => fetchedGrades ?? [], [fetchedGrades])
+    const classes = useMemo(() => fetchedClasses ?? [], [fetchedClasses])
+    const courses = useMemo(() => fetchedCourses ?? [], [fetchedCourses])
 
     const options = useMemo(
         () =>
@@ -79,16 +80,7 @@ export const AssignmentFilter = (
         [emitFilters]
     );
 
-    useEffect(() => {
-        if (fetchedGrades) setGrades(fetchedGrades as Grade[]);
-        if (allClasses) setClasses(allClasses);
-        if (fetchedCourses) setCourses(fetchedCourses as Course[]);
-        //if (fetchedSemesters) setSemesters(fetchedSemesters as Semester[]);
-    }, [allClasses, fetchedCourses, fetchedGrades, fetchedSemesters]);
-
-    console.log('Options: ', options)
-    console.log('Changes: ', onChanges)
-    console.log('FILTER DANS ASSIGNMENT FILTER: ', filterItem)
+    console.log('COURSES: ', courses)
 
     const handleUpdateFilters = (key: keyof AssignmentFilterProps) => setFilterItem((prev) => {
         const next = { ...prev, [key]: 0 };

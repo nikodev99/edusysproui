@@ -121,37 +121,33 @@ const MarkMean = ({infoData, color}: TeacherInfo) => {
 }
 
 const DepartmentInfo = ({infoData, color}: TeacherInfo) => {
-
-    const [departments, setDepartments] = useState<Department[] | undefined>()
+    
     //TODO the value of the primary department code should be in the settings
     const primaryDepartmentCode = useGlobalStore.use.primaryDepartment()
     const {useGetDepartmentByCode} = useDepartmentRepo()
     const primary = useMemo(() => primaryDepartmentCode, [primaryDepartmentCode])
     const fetchedDepartment = useGetDepartmentByCode(primary, !infoData.courses || infoData.courses?.length === 0)
-    
-    const settingDapartments = useMemo(() => {
+
+    const departments = useMemo(() => {
+        let settingDepartments: Department[];
         if (infoData.courses && infoData.courses?.length !== 0) {
-            return  Array.from(
+            settingDepartments =  Array.from(
                 new Set(infoData.courses?.map((course) => course.department))
             ) as Department[]
             
         }else {
-            return [fetchedDepartment]
+            settingDepartments = [fetchedDepartment]
         }
+
+        return getDistinctArray(settingDepartments, d => d?.id)
     }, [fetchedDepartment, infoData.courses])
 
-    useEffect(() => {
-        setDepartments(
-            getDistinctArray<Department>(
-                settingDapartments, (dep: Department) => dep?.id
-            )
-        )
-    }, [settingDapartments]);
+    console.log("Départment: ", departments)
 
     return(
         <>
             {departments?.map((department: Department) => (
-                <div key={department.id}>
+                <div key={department?.id}>
                     <DepartmentDesc department={department} color={color} />
                 </div>
             ))}

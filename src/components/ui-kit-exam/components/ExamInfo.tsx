@@ -23,6 +23,7 @@ import Section from "../../ui/layout/Section.tsx";
 import {MarksHistogram} from "../../common/MarksHistogram.tsx";
 import VoidData from "../../view/VoidData.tsx";
 import {BestScoredTable} from "../../common/BestScoredTable.tsx";
+import {useMemo} from "react";
 
 type ExamInfoType = InfoPageProps<Assignment> & {
     marks?: Score[]
@@ -99,7 +100,7 @@ const ExamIndividual = ({infoData, color}: ExamInfoType) => {
                         <div><SuperWord input={cutStatement(`${infoData?.examName}`, 30) as string} /></div>
                     </Tooltip>
                 </h2>
-                <p className='subtitle'>Informations Générales sur l'enseignant</p>
+                <p className='subtitle'>Informations Générales</p>
             </div>
         }>
             <PanelTable title='Devoir info' panelColor={color} data={[
@@ -119,24 +120,26 @@ const ExamIndividual = ({infoData, color}: ExamInfoType) => {
 }
 
 const ExamSemester = ({infoData, color}: ExamInfoType) => {
+    const semester = useMemo(() => infoData?.semester?.semester, [infoData?.semester?.semester])
+
     return(
         <PanelSection title='Semestre'>
             <PanelTable title='Semestre' panelColor={color} data={[
-                {statement: 'Semestre', response: infoData?.semester?.semester?.semesterName},
-                {statement: 'Description', response: infoData?.semester?.semester?.description},
+                {statement: 'Semestre', response: semester?.template?.semesterName},
+            ...(semester?.template?.description ? [{statement: 'Description', response: semester?.template?.description}] : []),
                 {statement: 'Planning', response: infoData?.semester?.designation},
                 {statement: 'Début', response: Datetime?.of(infoData?.semester?.termStartDate as number[]).fDate()},
                 {statement: 'Fin', response: Datetime?.of(infoData?.semester?.termEndDate as number[]).fDate()}
             ]} />
             <PanelTable title='Année Scolaire' panelColor={color} data={[
-                {statement: 'Année Scolaire', response: infoData?.semester?.semester?.academicYear?.academicYear},
+                {statement: 'Année Scolaire', response: semester?.academicYear?.academicYear},
                 {
-                    statement: 'Status', response: infoData?.semester?.semester?.academicYear?.current ?
+                    statement: 'Status', response: semester?.academicYear?.current ?
                         <Tag color='success'>en cours</Tag> :
                         <Tag color='processing'>Inactif</Tag>
                 },
-                {statement: 'Début', response: Datetime.of(infoData?.semester?.semester?.academicYear?.startDate as number[]).fDate()},
-                {statement: 'Fin', response: Datetime.of(infoData?.semester?.semester?.academicYear?.endDate as number[]).fDate()},
+                {statement: 'Début', response: Datetime.of(semester?.academicYear?.startDate as number[]).fDate()},
+                {statement: 'Fin', response: Datetime.of(semester?.academicYear?.endDate as number[]).fDate()},
             ]} />
         </PanelSection>
     )

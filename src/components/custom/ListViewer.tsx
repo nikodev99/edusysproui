@@ -264,7 +264,10 @@ const ListViewer = <TData extends object, TError>(
                                 loading={isLoading || isFetching || isRefetching || dataSource === undefined}
                                 onChange={handleSorterChange}
                                 pagination={false}
-                                scroll={{y: 550}}
+                                scroll={{
+                                    y: 550,
+                                    x: 'max-content'
+                                }}
                                 onRow={(record: TData) => ({
                                     onClick: () => onSelectData ? onSelectData(record) : undefined
                                 })}

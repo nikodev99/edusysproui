@@ -1,7 +1,7 @@
 import {useParams} from "react-router-dom";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {useAssignmentRepo} from "../../hooks/useAssignmentRepo.ts";
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useMemo, useState} from "react";
 import {Assignment} from "../../entity";
 import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
 import {text} from "../../core/utils/text_display.ts";
@@ -24,7 +24,6 @@ const ExamViewPage = () => {
 
     const [openDrawer, setOpenDrawer] = useToggle(false)
     const [links, setLinks] = useState<ItemType[]>([])
-    const [assignment, setAssignment] = useState<Assignment | null>(null)
     const [color, setColor] = useState<string>()
     const [items, setItems] = useState<TabItemType[] | undefined>([])
     const [activeTab, setActiveTab] = useState<string | undefined>()
@@ -33,6 +32,12 @@ const ExamViewPage = () => {
     const [messages, setMessages] = useState<{success?: string, error?: string}>({success: '', error: ''})
     const {useGetAssignment} = useAssignmentRepo()
     const {useGetAssignmentScores} = useScoreRepo()
+
+    const {data, isLoading, isSuccess, refetch} = useGetAssignment(id as string)
+
+    const assignment = useMemo(() => isSuccess ? data : {}, [data, isSuccess])
+
+    const {scores, refetch: loadScores} = useGetAssignmentScores(assignment?.id as bigint) ?? []
 
     const {context} = useBreadCrumb({
         bCItems: [
@@ -45,15 +50,8 @@ const ExamViewPage = () => {
         title: assignment?.examName as string,
         description: "Exam description",
     })
-    
-    const {scores, refetch: loadScores} = useGetAssignmentScores(assignment?.id as bigint) ?? []
-    const {data, isLoading, isSuccess, refetch} = useGetAssignment(id as string)
 
     useEffect(() => {
-        if (isSuccess) {
-            setAssignment(data as Assignment)
-        }
-        
         if (refetchScore) {
             loadScores()
             setRefetchScore(false)
@@ -66,7 +64,17 @@ const ExamViewPage = () => {
         }
     }, [isRefetch, refetch]);
 
-    const addTab = () => {
+    const deleteTab = useCallback((key: string) => {
+        setItems(prev => {
+            const items = prev || [];
+            return items.filter(item => item.key !== key);
+        });
+        setActiveTab(current => (current === key ? "0" : current));
+        loadScores()
+        refetch()
+    }, [loadScores, refetch])
+
+    const addTab = useCallback(() => {
         const newActiveKey = '2';
         const newTab: TabItemType = {
             label: <span>Notation <LuX style={{cursor: 'pointer'}} onClick={() => deleteTab(newActiveKey)} /></span>,
@@ -88,17 +96,7 @@ const ExamViewPage = () => {
             return [...(prev || []), newTab]
         });
         setActiveTab(newActiveKey)
-    }
-
-    const deleteTab = (key: string) => {
-        setItems(prev => {
-            const items = prev || [];
-            return items.filter(item => item.key !== key);
-        });
-        setActiveTab(current => (current === key ? "0" : current));
-        loadScores()
-        refetch()
-    }
+    }, [assignment, deleteTab, scores])
 
     const itemType: ItemType[] = [
         ...(assignment?.passed ? [] : [

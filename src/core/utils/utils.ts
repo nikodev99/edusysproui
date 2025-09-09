@@ -33,8 +33,8 @@ export const createElement = (htmlElement: string, parentNode: Element|null, att
 
 export const isString = (value: unknown): value is string => typeof value === 'string'
 
-export const isObjectEmpty = (value: object): boolean => {
-    return Object.keys(value).length === 0
+export const isObjectEmpty = (value?: object): boolean => {
+    return !value ? true : Object.keys(value).length === 0
 }
 
 export const connectToElement = (connector: string, attributes?: {[key: string]: string}) => {
@@ -145,7 +145,6 @@ export const deepEquals = (a: unknown, b: unknown) => {
             // eslint-disable-next-line no-prototype-builtins
             if (!b?.hasOwnProperty(key)) return false
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-expect-error
             if (!deepEquals(a[key], b[key])) return false
         }
         return true

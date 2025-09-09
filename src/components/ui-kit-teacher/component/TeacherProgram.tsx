@@ -25,7 +25,7 @@ export const TeacherProgram = ({infoData, color}: InfoPageProps<Teacher>) => {
 
     const dataFetchFnc = courseExists ? getAllTeacherCourseProgram : getAllTeacherProgram
 
-    const {data, isSuccess, refetch, isLoading, isRefetching, isLoadingError} = useFetch('program-id', dataFetchFnc, [infoData.id, {
+    const {data, isSuccess, refetch, isLoading, isRefetching, isLoadingError} = useFetch('program-id', dataFetchFnc, [infoData?.id, infoData?.schools?.id, {
         classId: classeValue,
         courseId: subjectValue
     }])
@@ -64,13 +64,13 @@ export const TeacherProgram = ({infoData, color}: InfoPageProps<Teacher>) => {
     const items: TimelineItemProps[] = programs
         ? [...programs].reverse().map((t, index, arr) => {
 
-            const isFirstOfSemester = index === arr.length - 1 || t.semester.semesterName !== arr[index + 1].semester.semesterName
+            const isFirstOfSemester = index === arr.length - 1 || t.semester?.template?.semesterName !== arr[index + 1].semester?.template?.semesterName
 
             return {
                 color: t.active ? 'green' : t.passed ? color : undefined,
                 dot: t.active ? <AiFillClockCircle/> : undefined,
                 label: isFirstOfSemester ?
-                    t.semester?.semesterName :
+                    t.semester?.template?.semesterName :
                     t.active ?
                         <span style={{color: 'green'}}>{ISOToday()}</span> :
                         undefined,
@@ -86,7 +86,7 @@ export const TeacherProgram = ({infoData, color}: InfoPageProps<Teacher>) => {
         return [
             {key: 2, label: 'Description', children: item?.description, span: 3},
             {key: 1, label: 'Objective', children: item?.purpose, span: 3},
-            {key: 3, label: 'Semestre' , children: item?.semester?.semesterName, span: 2},
+            {key: 3, label: 'Semestre' , children: item?.semester?.template?.semesterName, span: 2},
             {key: 4, label: 'Status', children: <Tag color='success'>En cours</Tag>},
             //TODO Only the user with teacher role could view the below button
             {key: 5, children: <Button>Cliquer pour passer</Button>, span: 3},

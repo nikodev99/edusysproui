@@ -42,7 +42,7 @@ export const ExamScores = (
             render: () => <Tag>{(assignment?.examName) || (record?.examName)}</Tag>
         },
         {
-            title: 'Notes Obtenue',
+            title: 'Notes Obtenues',
             dataIndex: 'obtainedMark',
             key: 'obtainedMark',
             align: "end",
@@ -59,7 +59,7 @@ export const ExamScores = (
         },
         ...((assignment?.coefficient && assignment?.coefficient > 1) || (record?.coefficient && record?.coefficient > 1) ? [{
             align: 'end' as 'start',
-            title: 'Notes Pondéré',
+            title: 'Notes Pondérés',
             dataIndex: 'obtainedMark',
             key: 'mark-coefficient',
             render: (score: number) => <MarkBadge

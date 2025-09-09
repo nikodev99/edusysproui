@@ -29,7 +29,7 @@ export const getAllCoursesSearch = async (schoolId: string, courseName: string):
 }
 
 export const getAllBasicCourses = (schoolId: string) => {
-    return apiClient.get<Course[]>("/courses/basic" + schoolId)
+    return apiClient.get<Course[]>("/courses/basic/" + schoolId)
 }
 
 export const getCourseById = (courseId: string): Promise<AxiosResponse<Course>> => {

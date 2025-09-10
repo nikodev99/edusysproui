@@ -4,6 +4,7 @@ import {getDepartmentBasics, getPrimaryDepartment, saveDepartment} from "../data
 import {Department} from "../entity";
 import {useInsert} from "./usePost.ts";
 import {departmentSchema} from "../schema";
+import {RepoOptions} from "../core/utils/interfaces.ts";
 
 export const useDepartmentRepo = () => {
     const schoolId = loggedUser.getSchool()?.id
@@ -11,12 +12,17 @@ export const useDepartmentRepo = () => {
     return {
         useInsertDepartment: () => useInsert(departmentSchema, saveDepartment),
 
-        useGetAllDepartments: () => {
+        useGetAllDepartments: (options?: RepoOptions) => {
+            const shouldEnable =
+                options && "enable" in options
+                    ? !!schoolId && options.enable // honor the provided value
+                    : !!schoolId;
+
             const queryData = useFetch(
                 ['departments', schoolId],
                 getDepartmentBasics,
                 [schoolId],
-                !!schoolId
+                shouldEnable,
             )
             
             return queryData.data as Department[] || []

@@ -3,13 +3,14 @@ import {ReactNode} from "react";
 import {useNavigation} from "../hooks/useNavigation.ts";
 import {LuCirclePlus} from "react-icons/lu";
 
-const EmptyPage = ({title, subTitle, icon, extra, btnLabel, btnUrl, mt}: {
+const EmptyPage = ({title, subTitle, icon, extra, btnLabel, btnUrl, btnIcon, mt}: {
     title: ReactNode | string,
     subTitle?: ReactNode | string,
     icon?: ReactNode,
     extra?: ReactNode,
     btnLabel?: string,
     btnUrl?: string,
+    btnIcon?: ReactNode,
     mt?: boolean,
 }) => {
 
@@ -39,7 +40,7 @@ const EmptyPage = ({title, subTitle, icon, extra, btnLabel, btnUrl, mt}: {
                     style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}
                     onClick={btnUrl ? goThrough : () => {}}
                 >
-                    <LuCirclePlus size={15} />
+                    {btnIcon ?? <LuCirclePlus size={15}/>}
                     {btnLabel}
                 </Button>}
             />

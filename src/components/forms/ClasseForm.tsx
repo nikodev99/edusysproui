@@ -1,26 +1,24 @@
 import FormContent from "../ui/form/FormContent.tsx";
 import {InputTypeEnum} from "../../core/shared/sharedEnums.ts";
-import {FormContentProps} from "../../core/utils/interfaces.ts";
+import {FormContentProps, Options} from "../../core/utils/interfaces.ts";
 import {Classe} from "../../entity";
 import {FieldValues, Path, PathValue} from "react-hook-form";
-import {SectionType} from "../../entity/enums/section.ts";
 import {FormConfig} from "../../config/FormConfig.ts";
-import {useGradeRepo} from "../../hooks/useGradeRepo.ts";
+import {useDepartmentRepo} from "../../hooks/useDepartmentRepo.ts";
+import {useMemo} from "react";
 
 export const ClasseForm = <T extends FieldValues>(
-    {control, data, errors}: FormContentProps<T, Classe>
+    {control, data, errors,showField = false, gradeOptions}: FormContentProps<T, Classe> & {gradeOptions: Options}
 ) => {
-    const {useGetAllGrades} = useGradeRepo()
-    
-    const grades = useGetAllGrades() ?? []
-
+    const {useGetAllDepartments} = useDepartmentRepo()
+    const departments = useGetAllDepartments({enable: showField})
     const form = new FormConfig(errors, false)
 
-    const gradeOptions = grades ? grades?.map(g => ({
-        value: g.id,
-        label: SectionType[g.section as unknown as keyof typeof SectionType],
-    })) : []
-    
+    const departmentOptions: Options = useMemo(() => departments && departments?.length > 0 ? departments?.map(d => ({
+        value: d.id,
+        label: d.name
+    })): [], [departments])
+
     return(
         <FormContent formItems={[
             {
@@ -63,6 +61,19 @@ export const ClasseForm = <T extends FieldValues>(
                     selectedValue: (data ? data.grade.id : undefined) as PathValue<T, Path<T>>
                 }
             },
+            ...(showField ? [{
+                type: InputTypeEnum.SELECT,
+                inputProps: {
+                    lg: 12,
+                    options: departmentOptions,
+                    name: 'department.id' as Path<T>,
+                    required: false,
+                    placeholder: 'Département',
+                    validateStatus: form.validate('id', 'grade'),
+                    help: form.error('id', 'grade'),
+                    selectedValue: (data ? data.department.id : undefined) as PathValue<T, Path<T>>
+                }
+            }] as never: []),
             {
                 type: InputTypeEnum.NUMBER,
                 inputProps: {

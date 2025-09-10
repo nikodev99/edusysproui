@@ -1,6 +1,7 @@
 import {School} from "./school.ts";
 import {AcademicYear} from "./academicYear.ts";
 import {Individual} from "./individual.ts";
+import {Grade} from "./grade.ts";
 
 export interface Department {
     id?: number
@@ -8,6 +9,7 @@ export interface Department {
     code?:string
     purpose?: string
     boss?: DBoss
+    grade?: Grade
     school?: School
     createdAt?: Date
     modifyAt?: Date

@@ -3,8 +3,8 @@ import PageWrapper from "../../components/view/PageWrapper.tsx";
 import {DepartmentDesc} from "../../components/common/DepartmentDesc.tsx";
 import Responsive from "../../components/ui/layout/Responsive.tsx";
 import Grid from "../../components/ui/layout/Grid.tsx";
-import {Alert, Button, Divider, Flex} from "antd";
-import {LuFileText, LuLink} from "react-icons/lu";
+import {Alert, Button, Divider, Flex, Tag} from "antd";
+import {LuArrowLeft, LuArrowRight, LuFileText, LuLink, LuUniversity} from "react-icons/lu";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
 import {text} from "../../core/utils/text_display.ts";
@@ -12,6 +12,9 @@ import {cutStatement, MAIN_COLOR} from "../../core/utils/utils.ts";
 import {useRedirect} from "../../hooks/useRedirect.ts";
 import EmptyPage from "../EmptyPage.tsx";
 import {Link} from "react-router-dom";
+import {useMemo} from "react";
+import {useSchoolRepo} from "../../hooks/useSchoolRepo.ts";
+import {anyIsCollege, anyIsUniversity, SectionType} from "../../entity/enums/section.ts";
 
 const DepartmentPage = () => {
     useDocumentTitle({
@@ -27,16 +30,18 @@ const DepartmentPage = () => {
     })
 
     const {toViewDepartment, toAddDepartment} = useRedirect()
-
     const {useGetAllDepartments} = useDepartmentRepo()
-    const departments = useGetAllDepartments()
+    const {schoolSections} = useSchoolRepo()
+    
+    const displayDepartments = useMemo(() => anyIsCollege(schoolSections) || anyIsUniversity(schoolSections), [schoolSections])
 
-    console.log({departments})
+    const departments = useGetAllDepartments({enable: displayDepartments})
 
     return(
         <>
         {context}
         <PageWrapper>
+            {displayDepartments ? (<>
             <Divider orientation="right">
                 <Button onClick={toAddDepartment} type='primary'>Ajouter un départment</Button>
             </Divider>
@@ -74,7 +79,28 @@ const DepartmentPage = () => {
                         icon={<LuFileText size={100} style={{color: MAIN_COLOR}} />}
                     />
                 )}
-            </Responsive>
+            </Responsive></>) : schoolSections?.length ? (
+               <EmptyPage
+                   title={`Aucun département requis pour ce${schoolSections?.length > 1 ? 's' : ''} niveau${schoolSections?.length > 1 ? 'x' : ''}`}
+                   subTitle={<p>
+                       Il n’est pas nécessaire de créer des départements. Le{schoolSections?.length > 1 ? 's' : ''} niveau{schoolSections?.length > 1 ? 'x' : ''} de votre établissement:&nbsp;
+                       {schoolSections?.map((s, i) => (<Tag key={`${s}-${i}`} color={MAIN_COLOR}>{SectionType[s]}</Tag>))}
+                       n’en {schoolSections?.length > 1 ? 'ont' : 'a'} pas besoin.
+                   </p>}
+                   icon={<LuUniversity size={80} />}
+                   btnUrl={text.org.group.school.href}
+                   btnIcon={<LuArrowLeft size={15} />}
+                   btnLabel='Retour'
+               />
+            ): <EmptyPage
+                title={"Votre école n'a aucun grade"}
+                subTitle={<p>Les départements nécessitent des niveaux (grades) afin d’associer matières, enseignants et
+                    ressources à chaque année d’études, organiser les cours et suivre la progression des élèves.</p>}
+                icon={<LuUniversity size={80} />}
+                btnUrl={text.org.group.grade.add.href}
+                btnIcon={<LuArrowRight size={15} />}
+                btnLabel='Ajouter un grade'
+            />}
         </PageWrapper>
         </>
     )

@@ -31,12 +31,12 @@ export const FormSelect = <T extends FieldValues>(selectProps: SelectType<T>) =>
                                 filterOption={handleFilterOption as never}
                                 mode={mode}
                                 onFocus={() => clearErrors ? clearErrors(field.name) : null}
-                                disabled={disabled}
+                                disabled={field.disabled || disabled}
                                 {...field}
                                 value={field.value || selectedValue}
                                 onSearch={onSearch}
                                 showSearch={showSearch}
-                                onChange={onChange}
+                                onChange={field.onChange || onChange}
                             />
                             <Button htmlType='submit' disabled={disabled ? disabled : field.value === selectedValue}><LuSave /></Button>
                         </Space.Compact>
@@ -48,12 +48,12 @@ export const FormSelect = <T extends FieldValues>(selectProps: SelectType<T>) =>
                             filterOption={handleFilterOption as never}
                             onFocus={() => clearErrors ? clearErrors(field.name) : null}
                             mode={mode as "tags"}
-                            disabled={disabled}
+                            disabled={field.disabled || disabled}
                             {...field}
                             value={field.value || selectedValue}
                             onSearch={onSearch}
                             showSearch={showSearch}
-                            onChange={onChange}
+                            onChange={field.onChange || onChange}
                         />
                     )}
                 </>

@@ -5,12 +5,14 @@ import {ClasseTeacherBoss} from "./classeTeacherBoss.ts";
 import {ClasseStudentBoss} from "./classeStudentBoss.ts";
 import {Teacher} from "./teacher.ts";
 import {Enrollment} from "./enrollment.ts";
+import {Department} from "./department.ts";
 
 export interface Classe {
     id: number
     name: string
     category: string
     grade: Grade
+    department: Department
     schedule: Schedule[]
     roomNumber: number
     principalTeacher: ClasseTeacherBoss

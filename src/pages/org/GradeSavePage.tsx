@@ -34,7 +34,9 @@ export const GradeSavePage = () => {
         resolver: zodResolver(gradeSchema),
     })
 
-    const {formState: {errors}, control, clearErrors} = form
+    const {formState: {errors}, control, clearErrors, watch} = form
+
+    console.log("WATCHER: ", watch())
 
     const onSubmit = (data: GradeSchema) => {
         console.log({data})

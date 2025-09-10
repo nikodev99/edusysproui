@@ -11,6 +11,9 @@ import {setFirstName} from "../../core/utils/utils.ts";
 import {useSearch} from "../../hooks/useSearch.ts";
 import {useEmployeeRepo} from "../../hooks/useEmployeeRepo.ts";
 import {Space, Spin, Typography} from "antd";
+import {anyIsUniversity, SectionType} from "../../entity/enums/section.ts";
+import {useSchoolRepo} from "../../hooks/useSchoolRepo.ts";
+import {useGradeRepo} from "../../hooks/useGradeRepo.ts";
 
 type DepartmentFormProps<T extends FieldValues> = FormContentProps<T, Department> & {
     handleUpdate?: (field: keyof Department, value: unknown) => void;
@@ -23,9 +26,20 @@ type DepartmentBossFormProps<T extends FieldValues> = FormContentProps<T, DBoss>
 export const DepartmentForm = <TData extends FieldValues>(
     {errors, control, data, edit = false, handleUpdate}: DepartmentFormProps<TData>
 ) => {
+    const {schoolSections} = useSchoolRepo()
+    const {useGetAllGrades} = useGradeRepo()
+
     const form = new FormConfig(errors, edit)
     const onlyField = FormUtils.onlyField(edit as boolean, 24, 12)
     const {Text} = Typography
+
+    const isUniversity = anyIsUniversity(schoolSections)
+    const grades = useGetAllGrades({enable: isUniversity})
+    
+    const gradeOptions: Options = useMemo(() => grades && grades?.length > 0 ? grades.map(g => ({
+        value: g.id,
+        label: SectionType[g.section as unknown as keyof typeof SectionType]
+    })) : [], [grades])
 
     return(
         <FormContent formItems={[
@@ -63,6 +77,21 @@ export const DepartmentForm = <TData extends FieldValues>(
                     onFinish: edit ? (value: unknown) => handleUpdate?.('code', value) : undefined
                 }
             },
+            ...(isUniversity ? [{
+                type: InputTypeEnum.SELECT,
+                inputProps: {
+                    lg: 12,
+                    options: gradeOptions as [],
+                    label: 'Grade\\Niveau',
+                    control: control,
+                    name: 'grade.id' as Path<TData>,
+                    required: true,
+                    placeholder: 'Lycée',
+                    validateStatus: form.validate('id', 'grade'),
+                    help: form.error('id', 'grade'),
+                    selectedValue: (data ? data?.grade?.id : undefined) as PathValue<TData, Path<TData>>
+                }
+            }] : []),
             {
                 type: InputTypeEnum.TEXTAREA,
                 inputProps: {

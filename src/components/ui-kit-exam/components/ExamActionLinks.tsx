@@ -10,7 +10,7 @@ import {useToggle} from "../../../hooks/useToggle.ts";
 import React, {useEffect, useState, useCallback, useMemo} from "react";
 import {redirectTo} from "../../../context/RedirectContext.ts";
 import {text} from "../../../core/utils/text_display.ts";
-import {useScoreRepo} from "../../../hooks/useScoreRepo.ts";
+import {useScoreRepo} from "../../../hooks/actions/useScoreRepo.ts";
 
 interface ExamActionLinksProps {
     assignment?: Assignment

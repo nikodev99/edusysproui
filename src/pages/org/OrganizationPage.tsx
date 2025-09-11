@@ -2,7 +2,7 @@ import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import Responsive from "../../components/ui/layout/Responsive.tsx";
 import Grid from "../../components/ui/layout/Grid.tsx";
 import {Button, Card, Divider, Space, Typography, Avatar, Flex, Tag} from "antd";
-import {useSchoolRepo} from "../../hooks/useSchoolRepo.ts";
+import {useSchoolRepo} from "../../hooks/actions/useSchoolRepo.ts";
 import {
     AiOutlineDelete,
     AiOutlineEdit,
@@ -19,10 +19,10 @@ import {
     LuPencilOff,
     LuUsersRound
 } from "react-icons/lu";
-import {useAcademicYearRepo} from "../../hooks/useAcademicYearRepo.ts";
-import {useUserRepo} from "../../hooks/useUserRepo.ts";
-import {useGradeRepo} from "../../hooks/useGradeRepo.ts";
-import {useDepartmentRepo} from "../../hooks/useDepartmentRepo.ts";
+import {useAcademicYearRepo} from "../../hooks/actions/useAcademicYearRepo.ts";
+import {useUserRepo} from "../../hooks/actions/useUserRepo.ts";
+import {useGradeRepo} from "../../hooks/actions/useGradeRepo.ts";
+import {useDepartmentRepo} from "../../hooks/actions/useDepartmentRepo.ts";
 import {text} from "../../core/utils/text_display.ts";
 import {Link} from "react-router-dom";
 import {SchoolEditDrawer} from "../../components/ui-kit-org";

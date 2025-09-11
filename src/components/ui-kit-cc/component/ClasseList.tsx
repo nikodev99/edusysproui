@@ -9,7 +9,7 @@ import {AxiosResponse} from "axios";
 import {fDatetime} from "../../../core/utils/utils.ts";
 import {DataProps} from "../../../core/utils/interfaces.ts";
 import {SuperWord} from "../../../core/utils/tsxUtils.tsx";
-import {useClasseRepo} from "../../../hooks/useClasseRepo.ts";
+import {useClasseRepo} from "../../../hooks/actions/useClasseRepo.ts";
 
 export const ClasseList = ({condition}: {condition?: boolean}) => {
 

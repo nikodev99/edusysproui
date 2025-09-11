@@ -14,7 +14,7 @@ import {EmployeeForm} from "../../components/forms/EmployeeForm.tsx";
 import {AttachmentForm} from "../../components/ui-kit-student";
 import {OutputFileEntry} from "@uploadcare/blocks";
 import {redirectTo} from "../../context/RedirectContext.ts";
-import {useEmployeeRepo} from "../../hooks/useEmployeeRepo.ts";
+import {useEmployeeRepo} from "../../hooks/actions/useEmployeeRepo.ts";
 import {loggedUser} from "../../auth/jwt/LoggedUser.ts";
 
 const AddEmployeePage = () => {

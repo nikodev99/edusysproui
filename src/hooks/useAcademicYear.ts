@@ -1,5 +1,5 @@
 import {useEffect, useMemo, useState} from "react";
-import {useAcademicYearRepo} from "./useAcademicYearRepo.ts";
+import {useAcademicYearRepo} from "./actions/useAcademicYearRepo.ts";
 import Datetime from "../core/datetime.ts";
 
 export const useAcademicYear = (timestamp?: number) => {

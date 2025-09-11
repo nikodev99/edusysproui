@@ -5,13 +5,13 @@ import {Alert, Badge, Button, Card, Divider, Flex, Table, TableColumnsType, Typo
 import Responsive from "../../components/ui/layout/Responsive.tsx";
 import {AiOutlineEdit} from "react-icons/ai";
 import Grid from "../../components/ui/layout/Grid.tsx";
-import {useAcademicYearRepo} from "../../hooks/useAcademicYearRepo.ts";
+import {useAcademicYearRepo} from "../../hooks/actions/useAcademicYearRepo.ts";
 import {useEffect, useMemo} from "react";
 import {AcademicYear, Semester} from "../../entity";
 import Datetime from "../../core/datetime.ts";
 import {AcademicYearEditDrawer, SaveAcademicYear, SaveSemesterTemplate} from "../../components/ui-kit-org";
 import {useToggle} from "../../hooks/useToggle.ts";
-import {useSemesterRepo} from "../../hooks/useSemesterRepo.ts";
+import {useSemesterRepo} from "../../hooks/actions/useSemesterRepo.ts";
 import Marquee from "react-fast-marquee";
 import {loggedUser} from "../../auth/jwt/LoggedUser.ts";
 

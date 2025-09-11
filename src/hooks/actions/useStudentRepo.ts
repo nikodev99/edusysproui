@@ -1,8 +1,8 @@
-import {GenderCounted, Pageable} from "../core/utils/interfaces.ts";
-import {useFetch, useRawFetch} from "./useFetch.ts";
+import {GenderCounted, Pageable} from "../../core/utils/interfaces.ts";
+import {useFetch, useRawFetch} from "../useFetch.ts";
 import {UseQueryResult} from "@tanstack/react-query";
-import {Enrollment} from "../entity";
-import {fetchEnrolledStudents} from "../data";
+import {Enrollment} from "../../entity";
+import {fetchEnrolledStudents} from "../../data";
 import {
     countClasseStudents,
     countSomeClasseStudents,
@@ -13,13 +13,13 @@ import {
     getRandomStudentClassmate,
     getStudentById,
     searchEnrolledStudents
-} from "../data/repository/studentRepository.ts";
-import {fetchEnrolledClasseStudents} from "../data/action/studentAction.ts";
+} from "../../data/repository/studentRepository.ts";
+import {fetchEnrolledClasseStudents} from "../../data/action/studentAction.ts";
 import {useEffect, useState} from "react";
-import {loggedUser} from "../auth/jwt/LoggedUser.ts";
+import {useGlobalStore} from "../../core/global/store.ts";
 
 export const useStudentRepo = () => {
-    const userSchool = loggedUser.getSchool()
+    const schoolId = useGlobalStore(state => state.schoolId)
 
     /**
      * Fetches paginated enrolled students.
@@ -52,10 +52,10 @@ export const useStudentRepo = () => {
         searchInput: string
     ): UseQueryResult<Enrollment[], unknown> => {
         return useFetch(
-            ['students-search', userSchool?.id, searchInput],
+            ['students-search', schoolId, searchInput],
             searchEnrolledStudents,
-            [userSchool?.id, searchInput],
-            !!userSchool?.id && !!searchInput
+            [schoolId, searchInput],
+            !!schoolId && !!searchInput
         );
     };
 
@@ -153,10 +153,10 @@ export const useStudentRepo = () => {
         classeId: string
     ): UseQueryResult<Enrollment[], unknown> => {
         return useFetch(
-            ['random-classmate', userSchool?.id, studentId, classeId],
+            ['random-classmate', schoolId, studentId, classeId],
             getRandomStudentClassmate,
-            [userSchool?.id, studentId, classeId],
-            !!userSchool?.id && !!studentId && !!classeId
+            [schoolId, studentId, classeId],
+            !!schoolId && !!studentId && !!classeId
         );
     };
 
@@ -230,7 +230,7 @@ export const useStudentRepo = () => {
         const [count, setCount] = useState<GenderCounted>()
         const fetch = useRawFetch();
         useEffect(() => {
-            fetch(countStudent, [userSchool?.id])
+            fetch(countStudent, [schoolId])
                 .then(resp => {
                     if (resp.isSuccess) {
                         setCount(resp.data as GenderCounted)

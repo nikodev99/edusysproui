@@ -1,9 +1,9 @@
-import {loggedUser} from "../auth/jwt/LoggedUser.ts";
-import {useFetch} from "./useFetch.ts";
-import {countAllUsers, getAllUsers} from "../data/repository/userRepository.ts";
+import {useFetch} from "../useFetch.ts";
+import {countAllUsers, getAllUsers} from "../../data/repository/userRepository.ts";
+import {useGlobalStore} from "../../core/global/store.ts";
 
 export const useUserRepo = () => {
-    const schoolId = loggedUser.getSchool()?.id
+    const schoolId = useGlobalStore(state => state.schoolId)
 
     return {
         useGetAllUsers: () => useFetch(['users', schoolId], getAllUsers, [schoolId], !!schoolId),

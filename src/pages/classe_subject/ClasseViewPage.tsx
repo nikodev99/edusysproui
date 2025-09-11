@@ -26,7 +26,7 @@ import {
 import {SuperWord} from "../../core/utils/tsxUtils.tsx";
 import {useToggle} from "../../hooks/useToggle.ts";
 import {useAcademicYear} from "../../hooks/useAcademicYear.ts";
-import {useStudentRepo} from "../../hooks/useStudentRepo.ts";
+import {useStudentRepo} from "../../hooks/actions/useStudentRepo.ts";
 
 const ClasseViewPage = () => {
 

@@ -14,8 +14,8 @@ import {ViewRoot} from "../../components/custom/ViewRoot.tsx";
 import {CourseExam, CourseInfo, CourseSchedule} from "../../components/ui-kit-cc";
 import {Color} from "../../core/utils/interfaces.ts";
 import {useAcademicYear} from "../../hooks/useAcademicYear.ts";
-import {useScheduleRepo} from "../../hooks/useScheduleRepo.ts";
-import {useCourseRepo} from "../../hooks/useCourseRepo.ts";
+import {useScheduleRepo} from "../../hooks/actions/useScheduleRepo.ts";
+import {useCourseRepo} from "../../hooks/actions/useCourseRepo.ts";
 import {CourseEditDrawer} from "../../components/ui-kit-cc/component/CourseEditDrawer.tsx";
 import {useToggle} from "../../hooks/useToggle.ts";
 

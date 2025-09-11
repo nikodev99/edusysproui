@@ -11,10 +11,10 @@ import {
     getClassePoorStudents,
     getCourseBestStudentsByCourse,
     getCoursePoorStudents
-} from "../data/repository/scoreRepository.ts";
-import {useFetch, useRawFetch} from "./useFetch.ts";
-import {Pageable} from "../core/utils/interfaces.ts";
-import {Score} from "../entity";
+} from "../../data/repository/scoreRepository.ts";
+import {useFetch, useRawFetch} from "../useFetch.ts";
+import {Pageable} from "../../core/utils/interfaces.ts";
+import {Score} from "../../entity";
 import {useCallback, useEffect, useState} from "react";
 import {AxiosResponse} from "axios";
 

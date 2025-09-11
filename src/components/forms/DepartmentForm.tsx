@@ -4,16 +4,16 @@ import {FormContentProps, Options} from "../../core/utils/interfaces.ts";
 import {DBoss, Department, Employee} from "../../entity";
 import {FormConfig} from "../../config/FormConfig.ts";
 import {FormUtils} from "../../core/utils/formUtils.ts";
-import {useAcademicYearRepo} from "../../hooks/useAcademicYearRepo.ts";
+import {useAcademicYearRepo} from "../../hooks/actions/useAcademicYearRepo.ts";
 import {InputTypeEnum} from "../../core/shared/sharedEnums.ts";
 import {useCallback, useMemo, useState} from "react";
 import {setFirstName} from "../../core/utils/utils.ts";
 import {useSearch} from "../../hooks/useSearch.ts";
-import {useEmployeeRepo} from "../../hooks/useEmployeeRepo.ts";
+import {useEmployeeRepo} from "../../hooks/actions/useEmployeeRepo.ts";
 import {Space, Spin, Typography} from "antd";
 import {anyIsUniversity, SectionType} from "../../entity/enums/section.ts";
-import {useSchoolRepo} from "../../hooks/useSchoolRepo.ts";
-import {useGradeRepo} from "../../hooks/useGradeRepo.ts";
+import {useSchoolRepo} from "../../hooks/actions/useSchoolRepo.ts";
+import {useGradeRepo} from "../../hooks/actions/useGradeRepo.ts";
 
 type DepartmentFormProps<T extends FieldValues> = FormContentProps<T, Department> & {
     handleUpdate?: (field: keyof Department, value: unknown) => void;
@@ -33,7 +33,7 @@ export const DepartmentForm = <TData extends FieldValues>(
     const onlyField = FormUtils.onlyField(edit as boolean, 24, 12)
     const {Text} = Typography
 
-    const isUniversity = anyIsUniversity(schoolSections)
+    const isUniversity = useMemo(() => anyIsUniversity(schoolSections), [schoolSections])
     const grades = useGetAllGrades({enable: isUniversity})
     
     const gradeOptions: Options = useMemo(() => grades && grades?.length > 0 ? grades.map(g => ({
@@ -85,7 +85,7 @@ export const DepartmentForm = <TData extends FieldValues>(
                     label: 'Grade\\Niveau',
                     control: control,
                     name: 'grade.id' as Path<TData>,
-                    required: true,
+                    required: isUniversity,
                     placeholder: 'Lycée',
                     validateStatus: form.validate('id', 'grade'),
                     help: form.error('id', 'grade'),

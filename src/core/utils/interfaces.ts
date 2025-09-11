@@ -627,3 +627,14 @@ export interface RepoOptions {
     shouldRefetch?: boolean
     enable?: boolean
 }
+
+export interface StoreState<TData extends object> {
+    all: TData[]
+    one: TData
+    current?: TData
+    options?: Options
+    loading?: boolean
+    error?: unknown
+    fetchAll?: () => Promise<AxiosResponse<TData[], unknown>>
+    searchAll?: (input?: string) => Promise<AxiosResponse<TData[], unknown>>
+}

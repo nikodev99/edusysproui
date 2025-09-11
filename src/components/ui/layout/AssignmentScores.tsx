@@ -2,7 +2,7 @@ import {Collapse, Skeleton, TableColumnsType, TablePaginationConfig} from "antd"
 import {Assignment, Score} from "../../../entity";
 import {useEffect, useRef, useState} from "react";
 import {ScoreItem} from "./ScoreItem.tsx";
-import {useScoreRepo} from "../../../hooks/useScoreRepo.ts";
+import {useScoreRepo} from "../../../hooks/actions/useScoreRepo.ts";
 
 interface AssignmentScoresProps {
     assignmentId?: bigint | number | undefined

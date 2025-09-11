@@ -1,26 +1,26 @@
-import {Counted, CountType, GenderCounted, Pageable} from "../core/utils/interfaces.ts";
-import {useFetch, useRawFetch} from "./useFetch.ts";
-import {fetchTeachers} from "../data";
+import {Counted, CountType, GenderCounted, Pageable} from "../../core/utils/interfaces.ts";
+import {useFetch, useRawFetch} from "../useFetch.ts";
+import {fetchTeachers} from "../../data";
 import {
     countAllTeachers,
     getNumberOfStudentTaughtByClasse,
     getNumberOfStudentTaughtByTeacher,
     getSearchedTeachers, getTeachersBasicValues,
     getTeacherById, getTeacherSchedule, getTeacherScheduleByDay, getTeacherBasicValues
-} from "../data/repository/teacherRepository.ts";
+} from "../../data/repository/teacherRepository.ts";
 import {useEffect, useState} from "react";
-import {SectionType} from "../entity/enums/section.ts";
-import {Teacher} from "../entity";
-import {loggedUser} from "../auth/jwt/LoggedUser.ts";
+import {SectionType} from "../../entity/enums/section.ts";
+import {Teacher} from "../../entity";
+import {useGlobalStore} from "../../core/global/store.ts";
 
 export const useTeacherRepo = () => {
-    const userSchool = loggedUser.getSchool()
+    const schoolId = useGlobalStore(state => state.schoolId)
 
     const useGetAllTeachers = (pageable: Pageable, sortField: string, sortOrder: string) => useFetch(
         ['teacher-list'],
         fetchTeachers,
-        [userSchool?.id, pageable.page, pageable.size, sortField, sortOrder],
-        !!userSchool?.id && !!pageable.size,
+        [schoolId, pageable.page, pageable.size, sortField, sortOrder],
+        !!schoolId && !!pageable.size,
     )
     
     const useGetSearchedTeachers = (input: string) => useFetch(
@@ -55,10 +55,10 @@ export const useTeacherRepo = () => {
     }
 
     const useGetTeacher = (teacherId: string) => useFetch(
-        ['teacher', teacherId, userSchool?.id],
+        ['teacher', teacherId, schoolId],
         getTeacherById,
-        [teacherId, userSchool?.id],
-        !!teacherId && !!userSchool?.id
+        [teacherId, schoolId],
+        !!teacherId && !!schoolId
     )
 
     const useGetTeacherSchedules = (teacherId: string,  allDay: boolean = false) => useFetch(
@@ -107,7 +107,7 @@ export const useTeacherRepo = () => {
         const fetch = useRawFetch()
 
         useEffect(() => {
-            fetch(countAllTeachers, [userSchool?.id])
+            fetch(countAllTeachers, [schoolId])
                 .then(resp => {
                     if (resp.isSuccess) {
                         setCount(resp.data as GenderCounted)

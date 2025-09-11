@@ -5,16 +5,16 @@ import {FieldValues, Path, PathValue} from "react-hook-form";
 import FormContent from "../ui/form/FormContent.tsx";
 import {InputTypeEnum} from "../../core/shared/sharedEnums.ts";
 import {FormUtils} from "../../core/utils/formUtils.ts";
-import {useClasseRepo} from "../../hooks/useClasseRepo.ts";
-import {useCourseRepo} from "../../hooks/useCourseRepo.ts";
+import {useClasseRepo} from "../../hooks/actions/useClasseRepo.ts";
+import {useCourseRepo} from "../../hooks/actions/useCourseRepo.ts";
 import {useEffect, useMemo, useState} from "react";
 import {SectionType} from "../../entity/enums/section.ts";
-import {usePlanningRepo} from "../../hooks/usePlanningRepo.ts";
-import {useTeacherRepo} from "../../hooks/useTeacherRepo.ts";
+import {usePlanningRepo} from "../../hooks/actions/usePlanningRepo.ts";
+import {useTeacherRepo} from "../../hooks/actions/useTeacherRepo.ts";
 import {enumToObjectArray, setFirstName} from "../../core/utils/utils.ts";
 import {AssignmentType, AssignmentTypeLiteral} from "../../entity/enums/assignmentType.ts";
-import {useExamRepo} from "../../hooks/useExamRepo.ts";
-import {useAcademicYearRepo} from "../../hooks/useAcademicYearRepo.ts";
+import {useExamRepo} from "../../hooks/actions/useExamRepo.ts";
+import {useAcademicYearRepo} from "../../hooks/actions/useAcademicYearRepo.ts";
 
 export const AssignmentForm = <T extends FieldValues, Q>(
     {control, data, errors, edit, selectedClasse, handleUpdate, disabled = false}: FormContentProps<T, Assignment> & {

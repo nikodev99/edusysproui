@@ -1,4 +1,4 @@
-import {useAcademicYearRepo} from "../../hooks/useAcademicYearRepo.ts";
+import {useAcademicYearRepo} from "../../hooks/actions/useAcademicYearRepo.ts";
 import {AcademicYear} from "../../entity";
 import {SelectEntityProps} from "../../core/utils/interfaces.ts";
 import {CustomEntitySelect} from "../custom/CustomEntitySelect.tsx";

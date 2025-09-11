@@ -1,13 +1,13 @@
-import {loggedUser} from "../auth/jwt/LoggedUser.ts";
-import {useFetch} from "./useFetch.ts";
-import {getDepartmentBasics, getPrimaryDepartment, saveDepartment} from "../data/repository/departmentRepository.ts";
-import {Department} from "../entity";
-import {useInsert} from "./usePost.ts";
-import {departmentSchema} from "../schema";
-import {RepoOptions} from "../core/utils/interfaces.ts";
+import {useFetch} from "../useFetch.ts";
+import {getDepartmentBasics, getPrimaryDepartment, saveDepartment} from "../../data/repository/departmentRepository.ts";
+import {Department} from "../../entity";
+import {useInsert} from "../usePost.ts";
+import {departmentSchema} from "../../schema";
+import {RepoOptions} from "../../core/utils/interfaces.ts";
+import {useGlobalStore} from "../../core/global/store.ts";
 
 export const useDepartmentRepo = () => {
-    const schoolId = loggedUser.getSchool()?.id
+    const schoolId = useGlobalStore(state => state.schoolId)
     
     return {
         useInsertDepartment: () => useInsert(departmentSchema, saveDepartment),

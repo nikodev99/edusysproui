@@ -1,14 +1,14 @@
-import {Planning} from "../entity";
+import {Planning} from "../../entity";
 import {useEffect, useState} from "react";
-import {useRawFetch} from "./useFetch.ts";
-import {getAllPlannings, getGradePlannings, savePlanning} from "../data/repository/planningRepository.ts";
-import {SectionType} from "../entity/enums/section.ts";
-import {loggedUser} from "../auth/jwt/LoggedUser.ts";
-import {useInsert} from "./usePost.ts";
-import {planningSchema} from "../schema";
+import {useRawFetch} from "../useFetch.ts";
+import {getAllPlannings, getGradePlannings, savePlanning} from "../../data/repository/planningRepository.ts";
+import {SectionType} from "../../entity/enums/section.ts";
+import {useInsert} from "../usePost.ts";
+import {planningSchema} from "../../schema";
+import {useGlobalStore} from "../../core/global/store.ts";
 
 export const usePlanningRepo = () => {
-    const userSchool = loggedUser.getSchool()
+    const schoolId = useGlobalStore(state => state.schoolId)
 
     return {
         useSavePlanning: () => useInsert(planningSchema, savePlanning),
@@ -19,7 +19,7 @@ export const usePlanningRepo = () => {
 
             useEffect(() => {
                 if (academicYear)
-                    fetch(getAllPlannings, [userSchool?.id, academicYear])
+                    fetch(getAllPlannings, [schoolId, academicYear])
                         .then(resp => {
                             if (resp.isSuccess) {
                                 setPlannings(resp.data as Planning[])
@@ -36,7 +36,7 @@ export const usePlanningRepo = () => {
 
             useEffect(() => {
                 if (section)
-                    fetch(getGradePlannings, [userSchool?.id, section])
+                    fetch(getGradePlannings, [schoolId, section])
                         .then(resp => {
                             if (resp.isSuccess) {
                                 setPlannings(resp.data as Planning[])

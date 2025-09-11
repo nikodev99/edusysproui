@@ -1,20 +1,20 @@
-import {loggedUser} from "../auth/jwt/LoggedUser.ts";
-import {useFetch} from "./useFetch.ts";
+import {useFetch} from "../useFetch.ts";
 import {
     findAllEmployees,
     findAllEmployeesSearch,
     findEmployeeById, findEmployeeIndividuals,
     insertEmployee
-} from "../data/repository/employeeRepository.ts";
-import {Pageable, SortCriteria} from "../core/utils/interfaces.ts";
-import {Employee} from "../entity";
-import {useInsert} from "./usePost.ts";
-import {employeeSchema} from "../schema/models/employeeSchema.ts";
+} from "../../data/repository/employeeRepository.ts";
+import {Pageable, SortCriteria} from "../../core/utils/interfaces.ts";
+import {Employee} from "../../entity";
+import {useInsert} from "../usePost.ts";
+import {employeeSchema} from "../../schema/models/employeeSchema.ts";
 import {useMemo} from "react";
-import {setFirstName} from "../core/utils/utils.ts";
+import {setFirstName} from "../../core/utils/utils.ts";
+import {useGlobalStore} from "../../core/global/store.ts";
 
 export const useEmployeeRepo = () => {
-    const school = loggedUser.getSchool()
+    const schoolId = useGlobalStore(state => state.schoolId)
 
     const useInsertEmployee = () => useInsert(employeeSchema, insertEmployee, {
         mutationKey: ['employee-post'],
@@ -26,19 +26,19 @@ export const useEmployeeRepo = () => {
             ?.join(',')
 
         return useFetch<Employee[], unknown>(
-            ['employee-list', school?.id],
+            ['employee-list', schoolId],
             findAllEmployees,
-            [school?.id, pageable, criteria],
-            !!school?.id && !!pageable.size
+            [schoolId, pageable, criteria],
+            !!schoolId && !!pageable.size
         )
     }
 
     const useGetEmployeeSearched = (searchInput: string) =>
         useFetch<Employee[], unknown>(
-            ['employee-searched', school?.id, searchInput],
+            ['employee-searched', schoolId, searchInput],
             findAllEmployeesSearch,
-            [school?.id, searchInput],
-            !!school?.id && !!searchInput
+            [schoolId, searchInput],
+            !!schoolId && !!searchInput
     )
 
     const useGetEmployee = (employeeId: string) =>
@@ -51,14 +51,14 @@ export const useEmployeeRepo = () => {
 
     const useGetEmployeeIndividuals = (searchInput?: string, isSearchable: boolean = true) =>
         useFetch<Employee[], unknown>(
-            ['employee-individuals', school?.id, searchInput],
+            ['employee-individuals', schoolId, searchInput],
             findEmployeeIndividuals,
-            [school?.id, searchInput],
-            isSearchable ? !!searchInput && !!school?.id: !!school?.id
+            [schoolId, searchInput],
+            isSearchable ? !!searchInput && !!schoolId: !!schoolId
     )
 
     const fetchEmployeeIndividuals = (searchValue?: string) =>
-        findEmployeeIndividuals(school?.id as string, searchValue)
+        findEmployeeIndividuals(schoolId as string, searchValue)
 
     const employeeIndividuals = useGetEmployeeIndividuals()?.data
 

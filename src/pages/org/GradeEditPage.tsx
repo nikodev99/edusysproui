@@ -1,5 +1,5 @@
 import {useLocation} from "react-router-dom";
-import {useGradeRepo} from "../../hooks/useGradeRepo.ts";
+import {useGradeRepo} from "../../hooks/actions/useGradeRepo.ts";
 import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
 import {text} from "../../core/utils/text_display.ts";
 import Responsive from "../../components/ui/layout/Responsive.tsx";

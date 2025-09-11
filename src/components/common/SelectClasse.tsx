@@ -1,6 +1,6 @@
 import {SelectEntityProps} from "../../core/utils/interfaces.ts";
 import {Classe} from "../../entity";
-import {useClasseRepo} from "../../hooks/useClasseRepo.ts";
+import {useClasseRepo} from "../../hooks/actions/useClasseRepo.ts";
 import {CustomEntitySelect} from "../custom/CustomEntitySelect.tsx";
 
 type SelectClassesProps = {

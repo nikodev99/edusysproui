@@ -11,7 +11,7 @@ import {text} from "../../core/utils/text_display.ts";
 import {useMemo} from "react";
 import {saveGrade} from "../../data/repository/gradeRepository.ts";
 import {loggedUser} from "../../auth/jwt/LoggedUser.ts";
-import {useAcademicYearRepo} from "../../hooks/useAcademicYearRepo.ts";
+import {useAcademicYearRepo} from "../../hooks/actions/useAcademicYearRepo.ts";
 
 export const GradeSavePage = () => {
     const {useGetCurrentAcademicYear} = useAcademicYearRepo()

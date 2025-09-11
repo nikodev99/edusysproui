@@ -1,14 +1,14 @@
-import {useFetch, useRawFetch} from "./useFetch.ts";
-import {Pageable} from "../core/utils/interfaces.ts";
-import {getAllSchoolCourses} from "../data/action/courseAction.ts";
+import {useFetch, useRawFetch} from "../useFetch.ts";
+import {Pageable} from "../../core/utils/interfaces.ts";
+import {getAllSchoolCourses} from "../../data/action/courseAction.ts";
 import {UseQueryResult} from "@tanstack/react-query";
-import {Course} from "../entity";
-import {getAllBasicCourses, getAllCoursesSearch, getCourseById} from "../data/repository/courseRepository.ts";
+import {Course} from "../../entity";
+import {getAllBasicCourses, getAllCoursesSearch, getCourseById} from "../../data/repository/courseRepository.ts";
 import {useEffect, useState} from "react";
-import {loggedUser} from "../auth/jwt/LoggedUser.ts";
+import {useGlobalStore} from "../../core/global/store.ts";
 
 export const useCourseRepo = () => {
-    const userSchool = loggedUser.getSchool()
+    const schoolId = useGlobalStore(state => state.schoolId)
 
     const useGetAllCourses = (
         pageable: Pageable,
@@ -19,7 +19,7 @@ export const useCourseRepo = () => {
     }
 
     const useGetAllCourseSearched = (courseName: string): UseQueryResult<Course[], unknown> => {
-        return useFetch(['course-list', courseName], getAllCoursesSearch, [userSchool?.id, courseName], !!userSchool?.id && !!courseName);
+        return useFetch(['course-list', courseName], getAllCoursesSearch, [schoolId, courseName], !!schoolId && !!courseName);
     }
 
     const useGetCourse = (courseId: number): UseQueryResult<Course, unknown> => {
@@ -31,7 +31,7 @@ export const useCourseRepo = () => {
         const fetch = useRawFetch()
 
         useEffect(() => {
-            fetch(getAllBasicCourses, [userSchool?.id])
+            fetch(getAllBasicCourses, [schoolId])
                 .then(resp => {
                     if (resp) {
                         setCourses(resp.data as Course[])

@@ -17,7 +17,7 @@ import Tag from "../../components/ui/layout/Tag.tsx";
 import {ActionButton} from "../../components/ui/layout/ActionButton.tsx";
 import {setFirstName} from "../../core/utils/utils.ts";
 import {AssignmentFilter, ExamActionLinks} from "../../components/ui-kit-exam";
-import {useAcademicYearRepo} from "../../hooks/useAcademicYearRepo.ts";
+import {useAcademicYearRepo} from "../../hooks/actions/useAcademicYearRepo.ts";
 import {AssignmentTypeLiteral, typeColors} from "../../entity/enums/assignmentType.ts";
 import {ItemType} from "antd/es/menu/interface";
 

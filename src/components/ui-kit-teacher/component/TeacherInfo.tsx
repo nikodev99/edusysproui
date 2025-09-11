@@ -27,12 +27,12 @@ import {useGlobalStore} from "../../../core/global/store.ts";
 import {DatedListItem} from "../../ui/layout/DatedListItem.tsx";
 import {DepartmentDesc} from "../../common/DepartmentDesc.tsx";
 import Datetime from "../../../core/datetime.ts";
-import {useScoreRepo} from "../../../hooks/useScoreRepo.ts";
+import {useScoreRepo} from "../../../hooks/actions/useScoreRepo.ts";
 import {MarksHistogram} from "../../common/MarksHistogram.tsx";
 import {TeacherIndividual} from "../../common/TeacherIndividual.tsx";
-import {useTeacherRepo} from "../../../hooks/useTeacherRepo.ts";
+import {useTeacherRepo} from "../../../hooks/actions/useTeacherRepo.ts";
 import {ScheduleCalendar} from "../../common/ScheduleCalendar.tsx";
-import {useDepartmentRepo} from "../../../hooks/useDepartmentRepo.ts";
+import {useDepartmentRepo} from "../../../hooks/actions/useDepartmentRepo.ts";
 
 type TeacherInfo = InfoPageProps<Teacher>
 

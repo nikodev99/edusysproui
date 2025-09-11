@@ -19,8 +19,8 @@ import VoidData from "../../view/VoidData.tsx";
 import {TeacherList} from "../../common/TeacherList.tsx";
 import {BestScoredTable} from "../../common/BestScoredTable.tsx";
 import {ScheduleCalendar} from "../../common/ScheduleCalendar.tsx";
-import {useScoreRepo} from "../../../hooks/useScoreRepo.ts";
-import {useAttendanceRepo} from "../../../hooks/useAttendanceRepo.ts";
+import {useScoreRepo} from "../../../hooks/actions/useScoreRepo.ts";
+import {useAttendanceRepo} from "../../../hooks/actions/useAttendanceRepo.ts";
 import {GradeCard} from "../../ui-kit-org";
 
 type ClasseInfoProps = InfoPageProps<Classe> & {

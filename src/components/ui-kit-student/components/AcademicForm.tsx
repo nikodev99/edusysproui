@@ -3,8 +3,8 @@ import Responsive from "../../ui/layout/Responsive.tsx";
 import {useMemo} from "react";
 import SelectInput from "../../ui/form/SelectInput.tsx";
 import {EnrollmentSchema} from "../../../schema";
-import {useAcademicYearRepo} from "../../../hooks/useAcademicYearRepo.ts";
-import {useClasseRepo} from "../../../hooks/useClasseRepo.ts";
+import {useAcademicYearRepo} from "../../../hooks/actions/useAcademicYearRepo.ts";
+import {useClasseRepo} from "../../../hooks/actions/useClasseRepo.ts";
 
 export const AcademicForm = ({control, errors}: ZodProps<EnrollmentSchema>) => {
 

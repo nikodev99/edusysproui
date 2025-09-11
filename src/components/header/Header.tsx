@@ -4,7 +4,7 @@ import Search from "antd/es/input/Search";
 import AvatarDropdown from "./AvatarDropdown.tsx";
 import NotificationDropdown from "./NotificationDropdown.tsx";
 import {LuBell, LuMenu, LuUser} from "react-icons/lu";
-import {useAcademicYearRepo} from "../../hooks/useAcademicYearRepo.ts";
+import {useAcademicYearRepo} from "../../hooks/actions/useAcademicYearRepo.ts";
 
 
 const Header = ({onCollapsed}: {onCollapsed: () => void}) => {

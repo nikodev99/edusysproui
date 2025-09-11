@@ -1,8 +1,8 @@
 import {Table} from "../../ui/layout/Table.tsx";
 import PageWrapper from "../../view/PageWrapper.tsx";
 import Datetime from "../../../core/datetime.ts";
-import {useAttendanceRepo} from "../../../hooks/useAttendanceRepo.ts";
-import {useStudentRepo} from "../../../hooks/useStudentRepo.ts";
+import {useAttendanceRepo} from "../../../hooks/actions/useAttendanceRepo.ts";
+import {useStudentRepo} from "../../../hooks/actions/useStudentRepo.ts";
 import {Alert, Button, Flex, Form, TableColumnsType} from "antd";
 import {Attendance, Classe, Individual, Student} from "../../../entity";
 import {AvatarTitle} from "../../ui/layout/AvatarTitle.tsx";

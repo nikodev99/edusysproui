@@ -4,7 +4,7 @@ import {FormContentProps, Options} from "../../core/utils/interfaces.ts";
 import {Classe} from "../../entity";
 import {FieldValues, Path, PathValue} from "react-hook-form";
 import {FormConfig} from "../../config/FormConfig.ts";
-import {useDepartmentRepo} from "../../hooks/useDepartmentRepo.ts";
+import {useDepartmentRepo} from "../../hooks/actions/useDepartmentRepo.ts";
 import {useMemo} from "react";
 
 export const ClasseForm = <T extends FieldValues>(
@@ -67,7 +67,7 @@ export const ClasseForm = <T extends FieldValues>(
                     lg: 12,
                     options: departmentOptions,
                     name: 'department.id' as Path<T>,
-                    required: false,
+                    required: showField,
                     placeholder: 'Département',
                     validateStatus: form.validate('id', 'grade'),
                     help: form.error('id', 'grade'),

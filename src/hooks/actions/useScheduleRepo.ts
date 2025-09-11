@@ -1,12 +1,12 @@
-import {useFetch} from "./useFetch.ts";
+import {useFetch} from "../useFetch.ts";
 import {
     getAllClasseSchedule,
     getAllCourseSchedule,
     getCourseHoursByClasse, getCourseHoursByTeacher
-} from "../data/repository/scheduleRepository.tsx";
+} from "../../data/repository/scheduleRepository.tsx";
 import {UseQueryResult} from "@tanstack/react-query";
-import {Schedule} from "../entity";
-import {ScheduleHoursBy} from "../core/utils/interfaces.ts";
+import {Schedule} from "../../entity";
+import {ScheduleHoursBy} from "../../core/utils/interfaces.ts";
 
 export const useScheduleRepo = () => {
     const useGetAllClasseSchedule = (classeId: number): UseQueryResult<Schedule[], unknown> => {

@@ -1,4 +1,4 @@
-import {useDepartmentRepo} from "../../hooks/useDepartmentRepo.ts";
+import {useDepartmentRepo} from "../../hooks/actions/useDepartmentRepo.ts";
 import PageWrapper from "../../components/view/PageWrapper.tsx";
 import {DepartmentDesc} from "../../components/common/DepartmentDesc.tsx";
 import Responsive from "../../components/ui/layout/Responsive.tsx";
@@ -13,7 +13,7 @@ import {useRedirect} from "../../hooks/useRedirect.ts";
 import EmptyPage from "../EmptyPage.tsx";
 import {Link} from "react-router-dom";
 import {useMemo} from "react";
-import {useSchoolRepo} from "../../hooks/useSchoolRepo.ts";
+import {useSchoolRepo} from "../../hooks/actions/useSchoolRepo.ts";
 import {anyIsCollege, anyIsUniversity, SectionType} from "../../entity/enums/section.ts";
 
 const DepartmentPage = () => {

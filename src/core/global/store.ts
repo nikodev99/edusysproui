@@ -8,6 +8,7 @@ import {getClassesBasicValues} from "../../data/repository/classeRepository.ts";
 import {countStudent} from "../../data/repository/studentRepository.ts";
 import {GenderCounted} from "../utils/interfaces.ts";
 import {countAllTeachers} from "../../data/repository/teacherRepository.ts";
+import {loggedUser} from "../../auth/jwt/LoggedUser.ts";
 
 type WithSelectors<S> = S extends { getState: () => infer T }
     ? S & { use: { [K in keyof T]: () => T[K] } }
@@ -44,7 +45,8 @@ export const useGlobalStore = createSelectors(create(combine({
     countAllClasse: 0 as number,
     countAllStudent: 0,
     countClasseStudent: 0,
-    countGradeStudent: 0
+    countGradeStudent: 0,
+    schoolId: loggedUser.getSchool()?.id as string
 }, (set) => ({
     updateAcademicYear (academicYear: string) {
         set({academicYear: academicYear});

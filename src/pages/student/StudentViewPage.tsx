@@ -16,7 +16,7 @@ import {
 import {LuCircleUser, LuTrash, LuUserPlus} from "react-icons/lu";
 import {redirectTo} from "../../context/RedirectContext.ts";
 import {ViewRoot} from "../../components/custom/ViewRoot.tsx";
-import {useStudentRepo} from "../../hooks/useStudentRepo.ts";
+import {useStudentRepo} from "../../hooks/actions/useStudentRepo.ts";
 
 const StudentViewPage = () => {
 

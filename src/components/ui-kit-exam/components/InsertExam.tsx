@@ -1,7 +1,7 @@
 import Responsive from "../../ui/layout/Responsive.tsx";
 import Grid from "../../ui/layout/Grid.tsx";
 import PageWrapper from "../../view/PageWrapper.tsx";
-import {useAssignmentRepo} from "../../../hooks/useAssignmentRepo.ts";
+import {useAssignmentRepo} from "../../../hooks/actions/useAssignmentRepo.ts";
 import {useEffect, useState} from "react";
 import {Assignment} from "../../../entity";
 import {AssignmentSchedule} from "../../common/AssignmentSchedule.tsx";
@@ -15,7 +15,7 @@ import {useToggle} from "../../../hooks/useToggle.ts";
 import {Typography} from "antd";
 import {AssignmentForm} from "../../forms/AssignmentForm.tsx";
 import Datetime from "../../../core/datetime.ts";
-import {useAcademicYearRepo} from "../../../hooks/useAcademicYearRepo.ts";
+import {useAcademicYearRepo} from "../../../hooks/actions/useAcademicYearRepo.ts";
 
 const InsertExam = () => {
     const {Title} = Typography

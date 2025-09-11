@@ -4,7 +4,7 @@ import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
 import {text} from "../../core/utils/text_display.ts";
 import {useEffect, useMemo, useState} from "react";
 import {Employee} from "../../entity";
-import {useEmployeeRepo} from "../../hooks/useEmployeeRepo.ts";
+import {useEmployeeRepo} from "../../hooks/actions/useEmployeeRepo.ts";
 import {chooseColor, setName} from "../../core/utils/utils.ts";
 import ViewHeader from "../../components/ui/layout/ViewHeader.tsx";
 import {Tag} from "antd";

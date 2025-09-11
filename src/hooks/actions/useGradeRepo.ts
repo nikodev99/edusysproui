@@ -1,30 +1,30 @@
-import {Grade} from "../entity";
-import {useFetch} from "./useFetch.ts";
+import {Grade} from "../../entity";
+import {useFetch} from "../useFetch.ts";
 import {
     getAllSchoolGrades,
     getGradeById,
     getGradesWithPlanning,
     saveGrade
-} from "../data/repository/gradeRepository.ts";
-import {loggedUser} from "../auth/jwt/LoggedUser.ts";
-import {useInsert} from "./usePost.ts";
-import {gradeSchema} from "../schema";
-import {Options, RepoOptions} from "../core/utils/interfaces.ts";
+} from "../../data/repository/gradeRepository.ts";
+import {useInsert} from "../usePost.ts";
+import {gradeSchema} from "../../schema";
+import {Options, RepoOptions} from "../../core/utils/interfaces.ts";
 import {useMemo} from "react";
-import {SectionType} from "../entity/enums/section.ts";
+import {SectionType} from "../../entity/enums/section.ts";
+import {useGlobalStore} from "../../core/global/store.ts";
 
 export const useGradeRepo = () => {
-    const userSchool = loggedUser.getSchool()
+    const schoolId = useGlobalStore(state => state.schoolId)
 
     const useInsertGrade = () =>
         useInsert(gradeSchema, saveGrade)
 
     const useGetAllGrades = (options?: RepoOptions) => {
-        const enabled = useMemo(() => !!userSchool?.id && (options?.enable !== undefined ? options?.enable : true), [options?.enable])
+        const enabled = useMemo(() => !!schoolId && (options?.enable !== undefined ? options?.enable : true), [options?.enable])
         const {data} = useFetch(
-            ['grades-list', userSchool?.id],
+            ['grades-list', schoolId],
             getAllSchoolGrades,
-            [userSchool?.id,],
+            [schoolId,],
             enabled
         )
         return data as Grade[] || []
@@ -32,14 +32,14 @@ export const useGradeRepo = () => {
 
     const useGetAllGradesWithPlannings = (academicYearId: string, options?: RepoOptions) => {
         const shouldEnable = useMemo(() => options && 'enable' in options
-            ? !!userSchool?.id && !!academicYearId && !!options.enable
-            : !!userSchool?.id && !!academicYearId,
+            ? !!schoolId && !!academicYearId && !!options.enable
+            : !!schoolId && !!academicYearId,
         [academicYearId, options])
 
         const {data} = useFetch(
             ['grades', academicYearId],
             getGradesWithPlanning,
-            [userSchool?.id, academicYearId],
+            [schoolId, academicYearId],
             shouldEnable
         )
         return data as Grade[] || []

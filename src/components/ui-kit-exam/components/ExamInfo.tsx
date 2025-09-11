@@ -4,7 +4,7 @@ import Block from "../../view/Block.tsx";
 import {InitMarkType, SuperWord} from "../../../core/utils/tsxUtils.tsx";
 import {Widgets} from "../../ui/layout/Widgets.tsx";
 import {text} from "../../../core/utils/text_display.ts";
-import {useStudentRepo} from "../../../hooks/useStudentRepo.ts";
+import {useStudentRepo} from "../../../hooks/actions/useStudentRepo.ts";
 import {cutStatement, findPercent, sumInArray} from "../../../core/utils/utils.ts";
 import PanelSection from "../../ui/layout/PanelSection.tsx";
 import {Tag as AntTag, Tooltip} from "antd";
@@ -17,7 +17,7 @@ import {
     getAssignmentType,
     typeColors
 } from "../../../entity/enums/assignmentType.ts";
-import {useTeacherRepo} from "../../../hooks/useTeacherRepo.ts";
+import {useTeacherRepo} from "../../../hooks/actions/useTeacherRepo.ts";
 import {TeacherIndividual} from "../../common/TeacherIndividual.tsx";
 import Section from "../../ui/layout/Section.tsx";
 import {MarksHistogram} from "../../common/MarksHistogram.tsx";

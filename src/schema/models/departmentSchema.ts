@@ -3,6 +3,7 @@ import {schoolMergeSchema} from "./schoolSchema.ts";
 import {academicYearSchemaMerge} from "./academicYearSchema.ts";
 import {individualSchemaMerge} from "./individualSchema.ts";
 import {dateProcess, excludeSpecialCharacters} from "../commonSchema.ts";
+import {gradeSchemaMerge} from "./gradeSchema.ts";
 
 export const departmentBossSchema = z.object({
     id: z.number().optional().nullable(),
@@ -28,6 +29,7 @@ export const departmentSchema: ZodType = z.object({
         message: "L'intitulé doit contenir moins de 50 caractères"
     }),
     purpose: z.string().max(500, {message: 'Maximum de 500 caractères atteint'}).optional().nullable(),
+    grade: gradeSchemaMerge.optional().nullable(),
     boss: departmentBossSchema.optional().nullable(),
     school: schoolMergeSchema.optional(),
 })

@@ -3,10 +3,10 @@ import {AssignmentFilterProps} from "../../../data/repository/assignmentReposito
 import {text} from "../../../core/utils/text_display.ts";
 import {ItemType} from "antd/es/menu/interface";
 import {useCallback, useMemo, useState} from "react";
-import {useGradeRepo} from "../../../hooks/useGradeRepo.ts";
-import {useCourseRepo} from "../../../hooks/useCourseRepo.ts";
+import {useGradeRepo} from "../../../hooks/actions/useGradeRepo.ts";
+import {useCourseRepo} from "../../../hooks/actions/useCourseRepo.ts";
 //import {useSemesterRepo} from "../../../hooks/useSemesterRepo.ts";
-import {useClasseRepo} from "../../../hooks/useClasseRepo.ts";
+import {useClasseRepo} from "../../../hooks/actions/useClasseRepo.ts";
 
 type FilterType = {
     setFilters: (filters: AssignmentFilterProps) => void,

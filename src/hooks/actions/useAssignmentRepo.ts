@@ -1,6 +1,6 @@
-import {useFetch} from "./useFetch.ts";
+import {useFetch} from "../useFetch.ts";
 import {UseQueryResult} from "@tanstack/react-query";
-import {Assignment} from "../entity";
+import {Assignment} from "../../entity";
 import {
     getAllClasseAssignments,
     getAllClasseAssignmentsBySubject,
@@ -9,8 +9,8 @@ import {
     getAllTeacherCourseAssignments, getAssignmentById,
     getSomeTeacherAssignments,
     getTeacherAssignments
-} from "../data/repository/assignmentRepository.ts";
-import {ID, IDS} from "../core/utils/interfaces.ts";
+} from "../../data/repository/assignmentRepository.ts";
+import {ID, IDS} from "../../core/utils/interfaces.ts";
 
 export const useAssignmentRepo = () => {
     const useGetAllClasseAssignments = (classeId: number, academicYear: string, courseId?: number): UseQueryResult<Assignment[], unknown> => {

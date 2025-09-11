@@ -1,5 +1,6 @@
 import {z} from "zod";
 import {gradeSchemaMerge} from "./gradeSchema.ts";
+import {departmentSchemaMerge} from "./departmentSchema.ts";
 
 export const classeSchema = z.object({
     name: z.string({required_error: 'Le nom de la classe est requis'}).min(2, {
@@ -7,6 +8,7 @@ export const classeSchema = z.object({
     }),
     category: z.string().optional(),
     grade: gradeSchemaMerge,
+    department: departmentSchemaMerge.optional().nullable(),
     roomNumber: z.number().optional(),
     monthCost: z.number({required_error: 'Le montant par mois de la classe est requis'}),
 })

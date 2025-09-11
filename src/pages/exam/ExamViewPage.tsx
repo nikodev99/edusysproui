@@ -1,6 +1,6 @@
 import {useParams} from "react-router-dom";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
-import {useAssignmentRepo} from "../../hooks/useAssignmentRepo.ts";
+import {useAssignmentRepo} from "../../hooks/actions/useAssignmentRepo.ts";
 import {useCallback, useEffect, useMemo, useState} from "react";
 import {Assignment} from "../../entity";
 import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
@@ -17,7 +17,7 @@ import {Flex, Space} from "antd";
 import Tag from "../../components/ui/layout/Tag.tsx";
 import {ItemType} from "antd/es/menu/interface";
 import {TabItemType} from "../../core/utils/interfaces.ts";
-import {useScoreRepo} from "../../hooks/useScoreRepo.ts";
+import {useScoreRepo} from "../../hooks/actions/useScoreRepo.ts";
 
 const ExamViewPage = () => {
     const {id} = useParams()

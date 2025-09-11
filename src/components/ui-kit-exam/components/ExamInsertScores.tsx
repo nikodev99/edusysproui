@@ -1,5 +1,5 @@
 import {Assignment, Individual, Score, Student} from "../../../entity";
-import {useStudentRepo} from "../../../hooks/useStudentRepo.ts";
+import {useStudentRepo} from "../../../hooks/actions/useStudentRepo.ts";
 import {useForm} from "react-hook-form";
 import {scoreSchema, ScoreSchema} from "../../../schema";
 import {zodResolver} from "@hookform/resolvers/zod";

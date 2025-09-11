@@ -1,11 +1,11 @@
-import {loggedUser} from "../auth/jwt/LoggedUser.ts";
-import {School} from "../entity";
-import {useFetch} from "./useFetch.ts";
-import {getSchool, getSchoolSections} from "../data/repository/schoolRepository.ts";
-import {SectionType} from "../entity/enums/section.ts";
+import {School} from "../../entity";
+import {useFetch} from "../useFetch.ts";
+import {getSchool, getSchoolSections} from "../../data/repository/schoolRepository.ts";
+import {SectionType} from "../../entity/enums/section.ts";
+import {useGlobalStore} from "../../core/global/store.ts";
 
 export const useSchoolRepo = () => {
-    const schoolId = loggedUser.getSchool()?.id
+    const schoolId = useGlobalStore(state => state.schoolId)
 
     const useGetSchool = (refetch: boolean = false): School | undefined => {
         const schoolRes = useFetch(['school', schoolId], getSchool, [schoolId], !!schoolId)

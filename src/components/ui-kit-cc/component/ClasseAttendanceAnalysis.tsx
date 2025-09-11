@@ -5,7 +5,7 @@ import {
 import {Classe} from "../../../entity";
 import {useEffect, useState} from "react";
 import {ClasseAttendanceTable} from "./ClasseAttendanceTable.tsx";
-import {useAttendanceRepo} from "../../../hooks/useAttendanceRepo.ts";
+import {useAttendanceRepo} from "../../../hooks/actions/useAttendanceRepo.ts";
 import {AttendanceCommonAnalysis} from "../../common/AttendanceCommonAnalysis.tsx";
 
 type AnalysisProps = InfoPageProps<Classe>

@@ -5,7 +5,7 @@ import {classeSchema, ClasseSchema} from "../../../schema";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {addClasse} from "../../../data/repository/classeRepository.ts";
 import {InsertModal} from "../../custom/InsertSchema.tsx";
-import {useGradeRepo} from "../../../hooks/useGradeRepo.ts";
+import {useGradeRepo} from "../../../hooks/actions/useGradeRepo.ts";
 import {useMemo} from "react";
 import {isUniversity, SectionType} from "../../../entity/enums/section.ts";
 

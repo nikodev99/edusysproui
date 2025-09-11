@@ -4,7 +4,7 @@ import {firstLetter, getUniqueness, setFirstName, startsWithVowel} from "../../.
 import {TableColumnsType} from "antd";
 import {useState, useMemo, useRef, useEffect} from "react";
 import {AttendanceAnalysis} from "./AttendanceAnalysis.tsx";
-import {useAttendanceRepo} from "../../../hooks/useAttendanceRepo.ts";
+import {useAttendanceRepo} from "../../../hooks/actions/useAttendanceRepo.ts";
 import {AutoScrollTable} from "../../ui/layout/AutoScrollTable.tsx";
 import { attendanceTag } from "../../../entity/enums/attendanceStatus.ts";
 import { AttendanceRecord } from "../../../core/utils/interfaces.ts";

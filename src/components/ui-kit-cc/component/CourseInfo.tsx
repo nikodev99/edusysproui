@@ -11,18 +11,18 @@ import {Progress, TableColumnsType} from "antd";
 import {useClasse} from "../../../hooks/useClasse.tsx";
 import {text} from "../../../core/utils/text_display.ts";
 import {TeacherList} from "../../common/TeacherList.tsx";
-import {useScheduleRepo} from "../../../hooks/useScheduleRepo.ts";
+import {useScheduleRepo} from "../../../hooks/actions/useScheduleRepo.ts";
 import Datetime from "../../../core/datetime.ts";
 import {ScheduleCalendar} from "../../common/ScheduleCalendar.tsx";
 import {ShapePieChart} from "../../graph/ShapePieChart.tsx";
 import {Table} from "../../ui/layout/Table.tsx";
-import {useScoreRepo} from "../../../hooks/useScoreRepo.ts";
+import {useScoreRepo} from "../../../hooks/actions/useScoreRepo.ts";
 import {BestScoredTable} from "../../common/BestScoredTable.tsx";
 import {AiOutlineArrowDown} from "react-icons/ai";
-import {useStudentRepo} from "../../../hooks/useStudentRepo.ts";
+import {useStudentRepo} from "../../../hooks/actions/useStudentRepo.ts";
 import {Gender} from "../../../entity/enums/gender.tsx";
 import PanelTable from "../../ui/layout/PanelTable.tsx";
-import {useTeacherRepo} from "../../../hooks/useTeacherRepo.ts";
+import {useTeacherRepo} from "../../../hooks/actions/useTeacherRepo.ts";
 import {MarksHistogram} from "../../common/MarksHistogram.tsx";
 
 type CourseInfoType = InfoPageProps<Course> & {

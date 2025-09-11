@@ -17,7 +17,7 @@ import {Dayjs} from "dayjs";
 import {Widgets} from "../../ui/layout/Widgets.tsx";
 import {SuperWord} from "../../../core/utils/tsxUtils.tsx";
 import {BarChart} from "../../graph/BarChart.tsx";
-import {useAttendanceRepo} from "../../../hooks/useAttendanceRepo.ts";
+import {useAttendanceRepo} from "../../../hooks/actions/useAttendanceRepo.ts";
 
 interface AnalysisProps {
     enrollment: Enrollment;

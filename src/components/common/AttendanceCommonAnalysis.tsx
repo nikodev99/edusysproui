@@ -17,7 +17,7 @@ import {BarChart} from "../graph/BarChart.tsx";
 import {LineChart} from "../graph/LineChart.tsx";
 import VoidData from "../view/VoidData.tsx";
 import {Avatar} from "../ui/layout/Avatar.tsx";
-import {useAttendanceRepo} from "../../hooks/useAttendanceRepo.ts";
+import {useAttendanceRepo} from "../../hooks/actions/useAttendanceRepo.ts";
 import {AttendanceDaySummary} from "../ui-kit-att";
 
 interface AttendanceAnalysisProps {

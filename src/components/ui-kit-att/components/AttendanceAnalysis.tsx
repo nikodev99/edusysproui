@@ -1,5 +1,5 @@
 import {AttendanceCommonAnalysis} from "../../common/AttendanceCommonAnalysis.tsx";
-import {useAttendanceRepo} from "../../../hooks/useAttendanceRepo.ts";
+import {useAttendanceRepo} from "../../../hooks/actions/useAttendanceRepo.ts";
 import {text} from "../../../core/utils/text_display.ts";
 import {AttendanceSummary} from "../../../core/utils/interfaces.ts";
 import Datetime from "../../../core/datetime.ts";

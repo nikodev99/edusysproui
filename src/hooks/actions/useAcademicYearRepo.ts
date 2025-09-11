@@ -1,25 +1,27 @@
-import {useCallback, useMemo} from "react";
-import {useFetch} from "./useFetch.ts";
+import {useCallback} from "react";
+import {useFetch} from "../useFetch.ts";
 import {
     getAcademicYearFromDate,
     getAcademicYearFromYear,
     getAllAcademicYears,
     getCurrentAcademicYear, saveAcademicYear
-} from "../data/repository/academicYearRepository.ts";
-import {loggedUser} from "../auth/jwt/LoggedUser.ts";
-import {useInsert} from "./usePost.ts";
-import {academicYearSchema} from "../schema";
-import {Option, RepoOptions} from "../core/utils/interfaces.ts";
-import {AcademicYear} from "../entity";
+} from "../../data/repository/academicYearRepository.ts";
+import {useInsert} from "../usePost.ts";
+import {academicYearSchema} from "../../schema";
+import {Option, RepoOptions} from "../../core/utils/interfaces.ts";
+import {AcademicYear} from "../../entity";
+import {useGlobalStore} from "../../core/global/store.ts";
 
 export const useAcademicYearRepo = () => {
-    const userSchool = useMemo(() => loggedUser.getSchool(), [])
+    const schoolId = useGlobalStore.getState().schoolId
+
+    console.log({schoolId})
 
     const useInsertAcademicYear = () =>
         useInsert(academicYearSchema, saveAcademicYear)
 
     const useGetCurrentAcademicYear = (shouldRefetch: boolean = false) => {
-        const {data, refetch} = useFetch(['current-academic-year', userSchool?.id], getCurrentAcademicYear, [userSchool?.id], !!userSchool?.id)
+        const {data, refetch} = useFetch(['current-academic-year', schoolId], getCurrentAcademicYear, [schoolId], !!schoolId)
         if (shouldRefetch) {
             refetch().then(r => r.data)
         }
@@ -28,10 +30,10 @@ export const useAcademicYearRepo = () => {
     
     const useGetAcademicYearFromYear = (year: number, options?: RepoOptions) => {
         const fetch = useFetch(
-            ['academicYear-by-year', userSchool?.id, year],
+            ['academicYear-by-year', schoolId, year],
             getAcademicYearFromYear,
-            [userSchool?.id, year],
-            options?.enable ? options?.enable && !!userSchool?.id : !!userSchool?.id
+            [schoolId, year],
+            options?.enable ? options?.enable && !!schoolId : !!schoolId
         )
         
         return fetch.data
@@ -39,10 +41,10 @@ export const useAcademicYearRepo = () => {
 
     const useGetAcademicYearFromDate = (date: Date, options?: RepoOptions) => {
         const fetch = useFetch(
-            ['academicYear-by-date', userSchool?.id, date],
+            ['academicYear-by-date', schoolId, date],
             getAcademicYearFromDate,
-            [userSchool?.id, date],
-            options?.enable ? options?.enable && !!userSchool?.id : !!userSchool?.id,
+            [schoolId, date],
+            options?.enable ? options?.enable && !!schoolId : !!schoolId,
         )
 
         return fetch.data
@@ -50,10 +52,10 @@ export const useAcademicYearRepo = () => {
 
     const useGetAllAcademicYear = (options?: RepoOptions): AcademicYear[] => {
         const {data, refetch} = useFetch(
-            ['academic-year-list', userSchool?.id],
+            ['academic-year-list', schoolId],
             getAllAcademicYears,
-            [userSchool?.id],
-            options?.enable ? options?.enable && !!userSchool?.id : !!userSchool?.id,
+            [schoolId],
+            options?.enable ? options?.enable && !!schoolId : !!schoolId,
         )
 
         if(options?.shouldRefetch)

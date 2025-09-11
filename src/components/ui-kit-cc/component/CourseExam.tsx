@@ -1,8 +1,8 @@
 import {AssignmentView} from "../../common/AssignmentView.tsx";
-import {useAssignmentRepo} from "../../../hooks/useAssignmentRepo.ts";
+import {useAssignmentRepo} from "../../../hooks/actions/useAssignmentRepo.ts";
 import {InfoPageProps} from "../../../core/utils/interfaces.ts";
 import {Course} from "../../../entity";
-import {useScoreRepo} from "../../../hooks/useScoreRepo.ts";
+import {useScoreRepo} from "../../../hooks/actions/useScoreRepo.ts";
 
 export const CourseExam = ({infoData, academicYear}: InfoPageProps<Course>) => {
     const {useGetAllCourseAssignments} = useAssignmentRepo()

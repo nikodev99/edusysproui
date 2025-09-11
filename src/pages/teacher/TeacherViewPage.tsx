@@ -28,8 +28,8 @@ import {
 } from "../../components/ui-kit-teacher";
 import {useToggle} from "../../hooks/useToggle.ts";
 import {ViewRoot} from "../../components/custom/ViewRoot.tsx";
-import {useTeacherRepo} from "../../hooks/useTeacherRepo.ts";
-import {useStudentRepo} from "../../hooks/useStudentRepo.ts"
+import {useTeacherRepo} from "../../hooks/actions/useTeacherRepo.ts";
+import {useStudentRepo} from "../../hooks/actions/useStudentRepo.ts"
 import {useAccount} from "../../hooks/useAccount.ts";
 
 type ActionsButtons = {

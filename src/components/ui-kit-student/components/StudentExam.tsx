@@ -9,8 +9,8 @@ import PageError from "../../../pages/errors/PageError.tsx";
 import {ColumnGroupType} from "antd/es/table";
 import {AutoScrollTable} from "../../ui/layout/AutoScrollTable.tsx";
 import {AssignmentView} from "../../common/AssignmentView.tsx";
-import {useAssignmentRepo} from "../../../hooks/useAssignmentRepo.ts";
-import {useScoreRepo} from "../../../hooks/useScoreRepo.ts";
+import {useAssignmentRepo} from "../../../hooks/actions/useAssignmentRepo.ts";
+import {useScoreRepo} from "../../../hooks/actions/useScoreRepo.ts";
 import {InitMarkType} from "../../../core/utils/tsxUtils.tsx";
 
 interface StudentExamProps {

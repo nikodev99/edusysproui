@@ -190,7 +190,15 @@ export const raw = {
             },
             user: {
                 label: 'Utilisateurs',
-                href: '/organization/users'
+                href: '/organization/users',
+                add: {
+                    label: 'Ajouter Utilisateurs',
+                    href: '/organization/users/new'
+                },
+                view: {
+                    label: 'Afficher Utilisateurs',
+                    href: '/organization/users/'
+                }
             },
         }
     },

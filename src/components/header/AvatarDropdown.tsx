@@ -3,7 +3,6 @@ import {LuCog, LuLogOut, LuShoppingCart, LuUser} from "react-icons/lu";
 import {firstWord, getSlug} from "../../core/utils/utils.ts";
 import {useAuth} from "../../hooks/useAuth.ts";
 import {useRedirect} from "../../hooks/useRedirect.ts";
-import {Individual} from "../../entity";
 import {UserType} from "../../auth/dto/user.ts";
 
 const AvatarDropdown = () => {
@@ -12,7 +11,7 @@ const AvatarDropdown = () => {
     const {toViewEmployee, toViewTeacher, toViewGuardian} = useRedirect()
 
     const redirectToProfile = () => {
-        const userSlug = getSlug({firstName: user?.firstName, lastName: user?.lastName} as Individual)
+        const userSlug = getSlug({firstName: user?.firstName, lastName: user?.lastName})
         switch (user?.userType) {
             case UserType.TEACHER:
                 return toViewTeacher(user?.userId as string)

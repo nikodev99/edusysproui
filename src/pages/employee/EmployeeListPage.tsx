@@ -32,27 +32,27 @@ const EmployeeListPage = () => {
         }
     ])
 
-    const redirectToView = (id: string, employee?: Employee) => {
-        const slug:string | undefined = employee?.personalInfo ? getSlug(employee?.personalInfo) : undefined
-        toViewEmployee(id, slug)
+    const redirectToView = (id: string | number, employee?: Employee) => {
+        const slug:string | undefined = employee?.personalInfo ? getSlug({personalInfo: employee?.personalInfo}) : undefined
+        toViewEmployee(id as string, slug)
     }
 
-    const getItems = (employee: Employee) => {
+    const getItems = (employee?: Employee) => {
         return [
             {
-                key: `details-${employee.id}`,
+                key: `details-${employee?.id}`,
                 icon: <LuEye size={20}/>,
                 label: 'Voir Profile',
-                onClick: () => redirectToView(employee?.id, employee)
+                onClick: () => redirectToView(employee?.id as string, employee)
             },
             {
-                key: `account-${employee.id}`,
+                key: `account-${employee?.id}`,
                 icon: <BiSolidUserAccount size={20}/>,
                 label: 'Compte Employee',
                 onClick: () => alert('Création de compte')
             },
             {
-                key: `delete-${employee.id}`,
+                key: `delete-${employee?.id}`,
                 icon: <AiOutlineUserDelete size={20}/>,
                 label: 'Retirer l\'Employé',
                 danger: true
@@ -81,7 +81,7 @@ const EmployeeListPage = () => {
                 <AvatarTitle
                     personalInfo={record?.personalInfo}
                     link={text.employee.group.view.href + record?.id}
-                    slug={getSlug(record?.personalInfo)}
+                    slug={getSlug({personalInfo: record?.personalInfo})}
                 />
             )
         },
@@ -148,6 +148,7 @@ const EmployeeListPage = () => {
                 searchCallback={fetchSearchedEmployees as () => Promise<never>}
                 tableColumns={columns}
                 cardData={cardData}
+                dropdownItems={(_url?: string, record?: Employee) => getItems(record)}
                 throughDetails={redirectToView}
                 fetchId={"employees-list"}
             />

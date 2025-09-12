@@ -74,6 +74,13 @@ export const useRedirect = () => {
                 ? text.org.group.department.view.href + joinWord(departmentName, '_', true)
                 : text.org.group.department.view.href + departmentId
             , {state: departmentId}
+        ),
+        toSaveUser: () => redirectTo(text.org.group.user.add.href),
+        toViewUser: (userId: number, userName?: string) => redirectTo(
+            userName
+                ? text.org.group.user.view.href + joinWord(userName, '_', true)
+                : text.org.group.user.view.href + userId,
+            {state: userId}
         )
     }
 }

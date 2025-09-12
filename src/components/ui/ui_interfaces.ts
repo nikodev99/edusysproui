@@ -4,12 +4,13 @@ import {PieSectorDataItem} from "recharts/types/polar/Pie";
 import {CurveType} from "recharts/types/shape/Curve";
 import {Individual} from "../../entity";
 
-export interface AvatarProps {
+export interface AvatarProps<TData extends object> {
     personalInfo?: Individual
     image?: string,
     firstName?: string,
     lastName?: string,
     reference?: string
+    toView?: (id?: string | number, record?: TData) => void
 }
 
 export type PieChartDataEntry = {

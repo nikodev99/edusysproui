@@ -1,4 +1,4 @@
-import {createBrowserRouter} from "react-router-dom";
+import {createBrowserRouter, Navigate} from "react-router-dom";
 import PageLayout from "../../pages/PageLayout.tsx";
 import PageError from "../../pages/errors/PageError.tsx";
 import Dashboard from "../../pages/home/page.tsx";
@@ -37,12 +37,14 @@ import CustomizePage from "../../pages/setting/CustomizePage.tsx";
 import AcademicYearPage from "../../pages/org/AcademicYearPage.tsx";
 import GradePage from "../../pages/org/GradePage.tsx";
 import DepartmentPage from "../../pages/org/DepartmentPage.tsx";
-import UserPage from "../../pages/org/UserPage.tsx";
+import UserListPage from "../../pages/org/UserListPage.tsx";
 import {GradeSavePage} from "../../pages/org/GradeSavePage.tsx";
 import GradeEditPage from "../../pages/org/GradeEditPage.tsx";
 import {DepartmentViewPage} from "../../pages/org/DepartmentViewPage.tsx";
 import {DepartmentAddPage} from "../../pages/org/DepartmentAddPage.tsx";
 import {GradeViewPage} from "../../pages/org/GradeViewPage.tsx";
+import RegisterPage from "../../pages/user/RegisterPage.tsx";
+import UserViewPage from "../../pages/org/UserViewPage.tsx";
 
 const DashboardPage = withAuthProtection(Dashboard);
 const ListStudentPage = withAuthProtection(StudentListPage);
@@ -65,7 +67,8 @@ const ViewGradePage = withAuthProtection(GradeViewPage);
 const AddDepartmentPage = withAuthProtection(DepartmentAddPage);
 const ViewDepartmentPage = withAuthProtection(DepartmentViewPage);
 const ListDepartmentPage = withAuthProtection(DepartmentPage);
-const ListUserPage = withAuthProtection(UserPage);
+const ListUserPage = withAuthProtection(UserListPage);
+const ViewUserPage = withAuthProtection(UserViewPage);
 
 const SettingCustomizePage = withAuthProtection(CustomizePage);
 
@@ -76,7 +79,8 @@ export const Route = createBrowserRouter([
             <LoginPage />
         </NavigationHandler>,
         children: [
-            {path: 'login', element: <LoginPage />}
+            {path: 'login', element: <LoginPage />},
+            {path: 'register', element: <RegisterPage />}
         ]
     },
     {
@@ -178,6 +182,10 @@ export const Route = createBrowserRouter([
             {
                 path: 'organization',
                 children: [
+                    {
+                        index: true,
+                        element: <Navigate to='/' replace />
+                    },
                     {path: 'school', element: <OrganizationPage />},
                     {path: 'academic_year', element: <ListAcademicYearPage />},
                     {
@@ -197,7 +205,13 @@ export const Route = createBrowserRouter([
                             {path: text.path.slug, element: <ViewDepartmentPage />},
                         ]
                     },
-                    {path: 'users', element: <ListUserPage />}
+                    {
+                        path: 'users',
+                        children: [
+                            {path: text.path.page, element: <ListUserPage />},
+                            {path: text.path.slug, element: <ViewUserPage />}
+                        ]
+                    }
                 ]
             },
             {

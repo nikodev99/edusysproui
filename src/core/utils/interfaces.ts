@@ -271,7 +271,7 @@ export interface StudentListDataType {
 }
 
 export interface DataProps<TData extends object> {
-    id?: string | number
+    id: string | number
     lastName?: string
     firstName?: string
     gender?: Gender
@@ -279,7 +279,7 @@ export interface DataProps<TData extends object> {
     reference?: string
     tag?: string | ReactNode
     description?: string | ReactNode | string[] | ReactNode[]
-    record?: TData
+    record: TData
 }
 
 export interface ListViewerProps<TData extends object, TError> {
@@ -287,8 +287,8 @@ export interface ListViewerProps<TData extends object, TError> {
     searchCallback?: (...args: unknown[]) => Promise<AxiosResponse<TData[]>>
     tableColumns?: TableColumnsType<TData>
     displayItem?: 1 | 2 | 3 | 4,
-    dropdownItems?: (url: string) => ItemType[]
-    throughDetails?: (id: string, record?:TData) => void
+    dropdownItems?: (url?: string, record?: TData) => ItemType[]
+    throughDetails?: (id: string | number, record?:TData) => void
     hasCount?: boolean,
     countTitle?: string,
     fetchId?: string | string[]

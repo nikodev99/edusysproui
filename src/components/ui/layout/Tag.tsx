@@ -1,6 +1,6 @@
-import {ReactNode} from "react";
+import {ReactNode, useMemo} from "react";
 import '../ui.scss'
-import {LuBadgeAlert, LuBadgeCheck, LuClock4} from "react-icons/lu";
+import {LuBadgeAlert, LuBadgeCheck, LuBadgeHelp, LuBadgeInfo} from "react-icons/lu";
 import {Color} from "../../../core/utils/interfaces.ts";
 
 interface TagProps {
@@ -11,25 +11,24 @@ interface TagProps {
 }
 
 const Tag = ({color, children, icon, textColor}: TagProps) => {
+    const isOtherColor = useMemo(() => 
+        color && color !== 'success' && color !== 'danger' && color !== 'warning' && color !== 'processing', [color])
+    
+    const customIcon = useMemo(() => {
+        if (isOtherColor)
+            return undefined
 
-    let customIcon: ReactNode;
-
-    switch(color) {
-        case 'success':
-            customIcon = <LuBadgeCheck />
-            break
-        case 'danger':
-            customIcon = <LuBadgeAlert />
-            break
-        case 'warning':
-            customIcon = <LuClock4 />
-            break
-        default:
-            customIcon = <LuClock4 />
-
-    }
-
-    const isOtherColor = color && color !== 'success' && color !== 'danger' && color !== 'warning' && color !== 'processing'
+        switch(color) {
+            case 'success':
+                return <LuBadgeCheck />
+            case 'danger':
+                return <LuBadgeAlert />
+            case 'warning':
+                return <LuBadgeHelp />
+            default:
+                return <LuBadgeInfo />
+        }
+    }, [color, isOtherColor])
 
     return (
         <div

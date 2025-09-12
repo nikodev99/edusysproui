@@ -12,12 +12,13 @@ const Dashboard = () => {
 
     const school = useMemo(() => loggedUser.getSchool(), [])
 
+    console.log(loggedUser.getToken())
+
     return (
         <main>
             Dashboard
             <div>
                 <Typography.Text code>{JSON.stringify(school)}</Typography.Text>
-                {/*<div>{loggedUser.getToken()}</div>*/}
             </div>
         </main>
     )

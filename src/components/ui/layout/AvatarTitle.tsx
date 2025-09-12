@@ -5,7 +5,7 @@ import {AvatarProps} from "../ui_interfaces.ts";
 import {SuperWord} from "../../../core/utils/tsxUtils.tsx";
 import {redirectTo} from "../../../context/RedirectContext.ts";
 
-type AvatarTitleProps = AvatarProps & {
+type AvatarTitleProps<TData extends object> = AvatarProps<TData> & {
     setColor?: (color: string) => void;
     gap?: number
     size?: number
@@ -14,7 +14,9 @@ type AvatarTitleProps = AvatarProps & {
     slug?: string
 }
 
-export const AvatarTitle = ({personalInfo, image, reference, lastName, firstName, setColor, gap, size, isUpper, link, slug}: AvatarTitleProps)=>  {
+export const AvatarTitle = <T extends object>(
+    {personalInfo, image, reference, lastName, firstName, setColor, gap, size, isUpper, link, slug, toView}: AvatarTitleProps<T>
+)=>  {
 
     image = image ?? personalInfo?.image
     lastName = lastName ?? personalInfo?.lastName
@@ -38,8 +40,7 @@ export const AvatarTitle = ({personalInfo, image, reference, lastName, firstName
             }
             return redirectTo(link)
         }
-
-        console.log(link)
+        toView?.()
     }
 
     return(

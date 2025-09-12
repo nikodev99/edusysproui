@@ -1,16 +1,58 @@
 import {useFetch} from "../useFetch.ts";
-import {countAllUsers, getAllUsers} from "../../data/repository/userRepository.ts";
+import {countAllUsers, getAllSearchedUsers, getAllUsers} from "../../data/repository/userRepository.ts";
 import {useGlobalStore} from "../../core/global/store.ts";
+import {getShortSortOrder, setSortFieldName} from "../../core/utils/utils.ts";
 
 export const useUserRepo = () => {
     const schoolId = useGlobalStore(state => state.schoolId)
 
-    return {
-        useGetAllUsers: () => useFetch(['users', schoolId], getAllUsers, [schoolId], !!schoolId),
+    const useGetAllUsers = () => useFetch(['users', schoolId], getAllUsers, [schoolId], !!schoolId)
 
-        useCountUsers: () => {
-            const count = useFetch(['users-count', schoolId], countAllUsers, [schoolId], !!schoolId)
-            return count.data as number
+    const getPaginatedUsers = async (page: number, size: number, sortField?: string, sortOrder?: string) => {
+        if (sortField && sortOrder) {
+            sortOrder = getShortSortOrder(sortOrder);
+            sortField = sortedField(sortField);
+            return await getAllUsers(schoolId, {page: page, size: size}, `${sortField}:${sortOrder}`);
         }
+        return await getAllUsers(schoolId, {page: page, size: size});
+    }
+
+    const useGetSearchedUsers = (input?: string) => useFetch(
+        ['users-searched', schoolId],
+        getAllSearchedUsers,
+        [schoolId, input],
+        !!schoolId && !!input
+    )
+
+    const getSearchedUsers = (input: string) => getAllSearchedUsers(schoolId, input);
+
+    const useCountUsers = () => {
+        const count = useFetch(['users-count', schoolId], countAllUsers, [schoolId], !!schoolId)
+        return count.data as number
+    }
+
+    return {
+        useGetAllUsers,
+        getPaginatedUsers,
+        useGetSearchedUsers,
+        getSearchedUsers,
+        useCountUsers,
+    }
+}
+
+const sortedField = (sortField: string | string[]) => {
+    switch (setSortFieldName(sortField)) {
+        case 'username':
+            return 'u.username'
+        case 'firstName':
+            return 'i.firstName'
+        case 'lastName':
+            return 'i.lastName'
+        case 'lastLogin':
+            return 'u.lastLogin'
+        case 'userType':
+            return 'u.userType'
+        default:
+            return undefined;
     }
 }

@@ -14,7 +14,7 @@ import {fDatetime} from "../../../core/utils/utils.ts";
 
 export const CourseList = ({condition}: {condition?: boolean}) => {
 
-    const throughDetails = (link: string) => {
+    const throughDetails = (link: string | number) => {
         redirectTo(`${text.cc.group.course.view.href}${link}`)
     }
 
@@ -95,7 +95,7 @@ export const CourseList = ({condition}: {condition?: boolean}) => {
             reference: d.abbr,
             tag: <Tag style={{marginTop: '5px'}} color='cyan'>{d.department?.code}</Tag>,
             description: d.department?.name
-        }))
+        })) as DataProps<Course>[]
     }
 
     return(
@@ -104,9 +104,9 @@ export const CourseList = ({condition}: {condition?: boolean}) => {
             searchCallback={getAllCoursesSearch as (input: unknown) => Promise<AxiosResponse<Course[]>>}
             tableColumns={columns}
             cardData={toCardData}
-            dropdownItems={getItems}
+            dropdownItems={(url?: string) =>getItems(url as string)}
             throughDetails={throughDetails}
-            countTitle='Course'
+            countTitle='Cour'
             fetchId='course-list'
             cardNotAvatar={true}
             level={5}

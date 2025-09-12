@@ -13,7 +13,7 @@ interface CardListProps<TData extends object> {
     content: DataProps<TData>[]
     isActive: boolean
     isLoading: boolean
-    dropdownItems?: (url: string) => ItemType[]
+    dropdownItems?: (url?: string, record?: TData) => ItemType[]
     throughDetails: (id: string, record?: TData) => void
     avatarLess?: boolean
     titleLevel?: 1 | 4 | 5 | 2 | 3
@@ -45,7 +45,7 @@ const CardList = <TData extends object>(
                             <Card loading={!content || isLoading} className='card__list' onClick={() => onSelectData?.(c?.record as never)}>
                                 {dropdownItems && <ActionButton
                                     icon={<AiOutlineMore className='cardIcon' size={30} />}
-                                    items={dropdownItems(c?.id as string)}
+                                    items={dropdownItems(c.id as string, c.record)}
                                     placement="bottom"
                                 />}
                                 <div>

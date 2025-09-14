@@ -1,5 +1,11 @@
 import {useFetch} from "../useFetch.ts";
-import {countAllUsers, getAllSearchedUsers, getAllUsers} from "../../data/repository/userRepository.ts";
+import {
+    countAllUsers,
+    getAllSearchedUsers,
+    getAllUsers,
+    getUserById,
+    getUserLogins
+} from "../../data/repository/userRepository.ts";
 import {useGlobalStore} from "../../core/global/store.ts";
 import {getShortSortOrder, setSortFieldName} from "../../core/utils/utils.ts";
 
@@ -26,6 +32,18 @@ export const useUserRepo = () => {
 
     const getSearchedUsers = (input: string) => getAllSearchedUsers(schoolId, input);
 
+    const useGetUser = (userId: number) => useFetch(
+        ['user', schoolId, userId],
+        getUserById,
+        [userId, schoolId],
+        !!userId && !!schoolId
+    )
+
+    const useGetUserLogins = (userId: number) => {
+        const {data} = useFetch(['user-logins', userId], getUserLogins, [userId], !!userId)
+        return data
+    }
+
     const useCountUsers = () => {
         const count = useFetch(['users-count', schoolId], countAllUsers, [schoolId], !!schoolId)
         return count.data as number
@@ -36,6 +54,8 @@ export const useUserRepo = () => {
         getPaginatedUsers,
         useGetSearchedUsers,
         getSearchedUsers,
+        useGetUser,
+        useGetUserLogins,
         useCountUsers,
     }
 }

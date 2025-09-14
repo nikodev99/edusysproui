@@ -30,7 +30,7 @@ export const Avatar = ({image, firstText, lastText, size, setColor, onClick}: Av
                     size={size}
                     onClick={onClick}
                 >
-                    {`${lastText ? lastText?.charAt(0): ''}${firstText ? firstText?.charAt(0) : ''}`}
+                    {`${lastText ? lastText?.charAt(0)?.toUpperCase(): ''}${firstText ? firstText?.charAt(0)?.toUpperCase() : ''}`}
                 </AntAvatar>
         }
         </>

@@ -8,9 +8,10 @@ interface TagProps {
     color?: 'success' | 'warning' | 'danger' | 'processing' | Color;
     icon?: ReactNode;
     textColor?: Color;
+    white?: boolean;
 }
 
-const Tag = ({color, children, icon, textColor}: TagProps) => {
+const Tag = ({color, children, icon, textColor, white}: TagProps) => {
     const isOtherColor = useMemo(() => 
         color && color !== 'success' && color !== 'danger' && color !== 'warning' && color !== 'processing', [color])
     
@@ -35,7 +36,7 @@ const Tag = ({color, children, icon, textColor}: TagProps) => {
             className={`tag__wrapper ${isOtherColor ? '' : color}`}
             style={isOtherColor ? {backgroundColor: color} : undefined}
         >
-            <div className='tagged' style={textColor ? {color: textColor} : undefined}>
+            <div className='tagged' style={textColor || white ? {color: textColor ?? '#dddde1'} : undefined}>
                 {icon ? icon : customIcon}
                 {children}
             </div>

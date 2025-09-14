@@ -5,7 +5,7 @@ import {AvatarProps} from "../ui_interfaces.ts";
 import {SuperWord} from "../../../core/utils/tsxUtils.tsx";
 import {redirectTo} from "../../../context/RedirectContext.ts";
 
-type AvatarTitleProps<TData extends object> = AvatarProps<TData> & {
+type AvatarTitleProps = AvatarProps & {
     setColor?: (color: string) => void;
     gap?: number
     size?: number
@@ -14,8 +14,8 @@ type AvatarTitleProps<TData extends object> = AvatarProps<TData> & {
     slug?: string
 }
 
-export const AvatarTitle = <T extends object>(
-    {personalInfo, image, reference, lastName, firstName, setColor, gap, size, isUpper, link, slug, toView}: AvatarTitleProps<T>
+export const AvatarTitle = (
+    {personalInfo, image, reference, lastName, firstName, setColor, gap, size, isUpper, link, slug, toView}: AvatarTitleProps
 )=>  {
 
     image = image ?? personalInfo?.image
@@ -55,7 +55,7 @@ export const AvatarTitle = <T extends object>(
             />
             <Flex className="legal" vertical justify='center'>
                 <span
-                    className={`title ${link ? 'linked' : ''}`}
+                    className={`title ${link || toView ? 'linked' : ''}`}
                     onClick={handleRedirect}
                 >
                     {avatarText}

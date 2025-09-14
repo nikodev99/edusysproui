@@ -14,6 +14,14 @@ export interface UserProfileToken {
     user: UserProfile
 }
 
+export interface UserActiveLogin {
+    loginId: number
+    clientIp: string
+    createdAt: string | number | Date
+    device: string
+    browser: string
+}
+
 export interface LoginRequest {
     username: string
     password: string

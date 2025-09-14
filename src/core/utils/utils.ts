@@ -8,6 +8,7 @@ import {Day} from "../../entity/enums/day.ts";
 import {Gender} from "../../entity/enums/gender.tsx";
 import {Assignment, Enrollment, Individual, Planning, Schedule} from "../../entity";
 import Datetime from "../datetime.ts";
+import {BROWSERS} from "./browser.ts";
 
 export const createElement = (htmlElement: string, parentNode: Element|null, attributes?: {[key: string]: string}, content?: string) => {
 
@@ -682,10 +683,29 @@ export const getSlug = ({personalInfo, firstName, lastName}: {personalInfo?: Ind
     return (`${first}_${last}`)?.toLowerCase()
 }
 
+export const setTitle = ({personalInfo, firstName, lastName}: {personalInfo?: Individual, firstName?: string, lastName?: string}) => {
+    const first = firstWord(personalInfo?.firstName ?? firstName)
+    const last = firstWord(personalInfo?.lastName ?? lastName)
+    return `${first} ${last}`
+}
+
 export const setSortFieldName = (sortField: string | string[])=>  {
     return Array.isArray(sortField)
         ? sortField[sortField.length - 1]
         : sortField
+}
+
+export const getBrowser = (fetchedBrowser?: string): string | undefined => {
+    if(!fetchedBrowser) return undefined
+    let browser: string | undefined = undefined
+    for(const b of BROWSERS) {
+        if (fetchedBrowser?.toLowerCase().includes(b.toLowerCase())) {
+            browser = b
+            break
+        }
+    }
+
+    return browser
 }
 
 export const groupeBySemester = (terms: Planning[]) => {

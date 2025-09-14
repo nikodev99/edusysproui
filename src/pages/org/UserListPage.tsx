@@ -13,9 +13,9 @@ import Tag from "../../components/ui/layout/Tag.tsx"
 import {
     LuCircleCheckBig, LuCircleDot,
     LuEllipsisVertical,
-    LuKeyRound,
+    LuKeyRound, LuLock, LuLockOpen,
     LuSheet,
-    LuTable2,
+    LuTable2, LuToggleLeft, LuToggleRight,
     LuUserCog,
     LuUserPen,
     LuUserRoundPlus
@@ -72,6 +72,19 @@ const UserListPage = () => {
             },
             { type: 'divider' },
             {
+                key: `enable-${usr?.id}`,
+                icon: usr?.enabled ? <LuToggleRight /> : <LuToggleLeft />,
+                label: usr?.enabled ? 'Désactivé' : 'Activé',
+                onClick: () => alert('Création de compte')
+            },
+            {
+                key: `lock-${usr?.id}`,
+                icon: usr?.accountNonLocked ? <LuLock /> : <LuLockOpen />,
+                label: usr?.accountNonLocked ? 'Vérrouiller' : 'Déverrouiller',
+                onClick: () => alert('Création de compte')
+            },
+            { type: 'divider' },
+            {
                 key: `reset-${usr?.id}`,
                 icon: <LuKeyRound />,
                 label: <Tooltip title={'yeye'}>Réinitialiser mot de passe</Tooltip>,
@@ -81,7 +94,8 @@ const UserListPage = () => {
                 key: `delete-${usr?.id}`,
                 icon: <AiOutlineUserDelete />,
                 label: 'Retirer Utilisateur',
-                danger: true
+                danger: true,
+                disabled: isAdmin(usr?.roles as []) && usr?.username === user?.username,
             }
         ]
     }, [toView, user?.username])
@@ -116,8 +130,7 @@ const UserListPage = () => {
                     firstName={record?.firstName}
                     lastName={record?.lastName}
                     reference={record?.email ?? record?.username}
-                    link={text.org.group.user.view.href}
-                    slug={getSlug({firstName: record?.firstName, lastName: record?.lastName})}
+                    toView={() => toView(record?.id, record)}
                 />
             )
         },

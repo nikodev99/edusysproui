@@ -5,33 +5,27 @@ import {useRedirect} from "../../hooks/useRedirect.ts";
 import {getSlug, MAIN_COLOR} from "../../core/utils/utils.ts";
 import {DataProps} from "../../core/utils/interfaces.ts";
 import {User} from "../../auth/dto/user.ts";
-import {Space, TableColumnsType, Tooltip, Typography} from "antd";
-import {isAdmin, Role, RoleEnum} from "../../auth/dto/role.ts";
+import {Space, TableColumnsType, Typography} from "antd";
+import {Role, RoleEnum} from "../../auth/dto/role.ts";
 import {AvatarTitle} from "../../components/ui/layout/AvatarTitle.tsx";
 import {ActionButton} from "../../components/ui/layout/ActionButton.tsx";
 import Tag from "../../components/ui/layout/Tag.tsx"
 import {
     LuCircleCheckBig, LuCircleDot,
     LuEllipsisVertical,
-    LuKeyRound, LuLock, LuLockOpen,
-    LuSheet,
-    LuTable2, LuToggleLeft, LuToggleRight,
-    LuUserCog,
-    LuUserPen,
+    LuTable2, LuUserCog,
     LuUserRoundPlus
 } from "react-icons/lu";
-import {AiOutlineUserDelete} from "react-icons/ai";
-import {useCallback, useMemo} from "react";
+import {useCallback, useMemo, useState} from "react";
 import {useBreadcrumbItem} from "../../hooks/useBreadCrumb.tsx";
 import {text} from "../../core/utils/text_display.ts";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import Datetime from "../../core/datetime.ts";
-import {loggedUser} from "../../auth/jwt/LoggedUser.ts";
+import {UserActionLinks} from "../../components/ui-kit-org/components/UserActionLinks.tsx";
+import {ItemType} from "antd/es/menu/interface";
 
 const UserListPage = () => {
     const {toSaveUser, toViewUser} = useRedirect()
-
-    const user = loggedUser.getUser()
 
     const breadCrumb = useBreadcrumbItem([
         {title: text.org.group.school.label, path: text.org.group.school.href},
@@ -43,6 +37,8 @@ const UserListPage = () => {
         description: "User description"
     })
 
+    const [linkButtons, setLinkButtons] = useState<ItemType[]>([])
+    const [selectedUser, setSelectedUser] = useState<User | undefined>(undefined)
     const {getPaginatedUsers, getSearchedUsers} = useUserRepo()
 
     const toView = useCallback((id: string | number, record?: User) => {
@@ -58,47 +54,9 @@ const UserListPage = () => {
                 label: 'Manager Utilisateur',
                 onClick: () => toView(usr?.id as number, usr),
             },
-            {
-                key: `account-${usr?.id}`,
-                icon: <LuUserPen />,
-                label: 'Manager Roles',
-                onClick: () => alert('Création de compte')
-            },
-            {
-                key: `activity-${usr?.id}`,
-                icon: <LuSheet />,
-                label: 'Voir Activité',
-                onClick: () => alert('Création de compte')
-            },
-            { type: 'divider' },
-            {
-                key: `enable-${usr?.id}`,
-                icon: usr?.enabled ? <LuToggleRight /> : <LuToggleLeft />,
-                label: usr?.enabled ? 'Désactivé' : 'Activé',
-                onClick: () => alert('Création de compte')
-            },
-            {
-                key: `lock-${usr?.id}`,
-                icon: usr?.accountNonLocked ? <LuLock /> : <LuLockOpen />,
-                label: usr?.accountNonLocked ? 'Vérrouiller' : 'Déverrouiller',
-                onClick: () => alert('Création de compte')
-            },
-            { type: 'divider' },
-            {
-                key: `reset-${usr?.id}`,
-                icon: <LuKeyRound />,
-                label: <Tooltip title={'yeye'}>Réinitialiser mot de passe</Tooltip>,
-                disabled: isAdmin(usr?.roles as []) && usr?.username !== user?.username,
-            },
-            {
-                key: `delete-${usr?.id}`,
-                icon: <AiOutlineUserDelete />,
-                label: 'Retirer Utilisateur',
-                danger: true,
-                disabled: isAdmin(usr?.roles as []) && usr?.username === user?.username,
-            }
+            ...linkButtons
         ]
-    }, [toView, user?.username])
+    }, [linkButtons, toView])
 
     const cardData = (data: User[]) => data?.map(u => ({
         id: u?.id,
@@ -225,7 +183,14 @@ const UserListPage = () => {
                 pageCount: 'userPageCount'
             }}
             fetchId={"users-list"}
+            onSelectData={setSelectedUser}
         />
+        <section>
+            <UserActionLinks
+                user={selectedUser}
+                getItems={setLinkButtons}
+            />
+        </section>
     </>
 }
 

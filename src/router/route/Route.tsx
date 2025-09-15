@@ -45,6 +45,7 @@ import {DepartmentAddPage} from "../../pages/org/DepartmentAddPage.tsx";
 import {GradeViewPage} from "../../pages/org/GradeViewPage.tsx";
 import RegisterPage from "../../pages/user/RegisterPage.tsx";
 import UserViewPage from "../../pages/org/UserViewPage.tsx";
+import UserSavePage from "../../pages/org/UserSavePage.tsx";
 
 const DashboardPage = withAuthProtection(Dashboard);
 const ListStudentPage = withAuthProtection(StudentListPage);
@@ -69,6 +70,7 @@ const ViewDepartmentPage = withAuthProtection(DepartmentViewPage);
 const ListDepartmentPage = withAuthProtection(DepartmentPage);
 const ListUserPage = withAuthProtection(UserListPage);
 const ViewUserPage = withAuthProtection(UserViewPage);
+const SaveUserPage = withAuthProtection(UserSavePage)
 
 const SettingCustomizePage = withAuthProtection(CustomizePage);
 
@@ -209,7 +211,8 @@ export const Route = createBrowserRouter([
                         path: 'users',
                         children: [
                             {path: text.path.page, element: <ListUserPage />},
-                            {path: text.path.slug, element: <ViewUserPage />}
+                            {path: text.path.slug, element: <ViewUserPage />},
+                            {path: text.path.new, element: <SaveUserPage/>}
                         ]
                     }
                 ]

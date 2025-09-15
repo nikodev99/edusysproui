@@ -81,7 +81,7 @@ const ExamListPage = () => {
         }
     }, [filters, isRefetch, searchQuery]);
 
-    const getItems = (id: string) => {
+    const getItems = (id?: string) => {
         return [
             {
                 key: `details-${id}`,

@@ -5,7 +5,6 @@ import {text} from "../../core/utils/text_display.ts";
 import {getBrowser, MAIN_COLOR, setTitle} from "../../core/utils/utils.ts"
 import ViewHeader from "../../components/ui/layout/ViewHeader.tsx";
 import {useMemo, useState} from "react";
-import {useToggle} from "../../hooks/useToggle.ts";
 import {Card, Flex, Button, Space, Divider, Typography, Progress} from "antd";
 import Responsive from "../../components/ui/layout/Responsive.tsx";
 import Grid from "../../components/ui/layout/Grid.tsx";
@@ -14,15 +13,15 @@ import Tag from "../../components/ui/layout/Tag.tsx";
 import {RoleEnum} from "../../auth/dto/role.ts";
 import Datetime from "../../core/datetime.ts";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
-import {UserActionLinks} from "../../components/ui-kit-org/components/UserActionLinks.tsx";
+import {UserActionLinks} from "../../components/ui-kit-org";
+import {ItemType} from "antd/es/menu/interface";
 
 const UserViewPage = () => {
 
     const location = useLocation()
     const {state: userId} = location
 
-    const [openDrawer, setOpenDrawer] = useToggle(false)
-
+    const [linkButtons, setLinkButtons] = useState<ItemType[]>([])
     const {useGetUser, useGetUserLogins} = useUserRepo()
     const {data: user, isLoading} = useGetUser(userId)
     const logins = useGetUserLogins(userId)
@@ -49,14 +48,14 @@ const UserViewPage = () => {
             logins?.sort((a, b) => Datetime.of(a.createdAt).diffSecond(b.createdAt))?.[0] ?? null,
     [logins])
 
-    console.log("USER: ", user)
+    console.log("USER: ", logins)
 
     return (
         <>
             {context}
             <ViewHeader
                 isLoading={isLoading}
-                setEdit={setOpenDrawer}
+                setEdit={() => console.log('Edit')}
                 hasEdit={false}
                 closeState={false}
                 avatarProps={{
@@ -65,11 +64,11 @@ const UserViewPage = () => {
                     reference: user?.email ?? user?.username,
                 }}
                 blockProps={[
-                    {title: 'Identifiant', mention: user?.username},
+                    {title: 'Identifiant', mention: <Typography.Text editable>{user?.username}</Typography.Text>},
                     {title: 'Téléphone', mention: user?.phoneNumber}
                 ]}
                 addMargin={{position: 'top', size: 50}}
-                items={[]}
+                items={linkButtons}
             />
             <section style={{marginTop: '20px'}}>
                 <Responsive gutter={[16, 16]}>
@@ -143,7 +142,10 @@ const UserViewPage = () => {
                 </Responsive>
             </section>
             <section>
-                {/*<UserActionLinks open={} show={} setActions={} />*/}
+                <UserActionLinks
+                    user={user}
+                    getItems={setLinkButtons}
+                />
             </section>
         </>
     )

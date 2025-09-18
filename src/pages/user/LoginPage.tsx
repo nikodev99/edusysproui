@@ -10,7 +10,7 @@ import React from "react";
 const LoginPage = () => {
     const { loginUser, loginError, clearLoginError } = useAuth()
 
-    const {control, formState: {errors}, handleSubmit, watch} = useForm<LoginSchema>({
+    const {control, formState: {errors}, handleSubmit} = useForm<LoginSchema>({
         resolver: zodResolver(loginSchema),
     })
 
@@ -34,19 +34,16 @@ const LoginPage = () => {
         }
     }
 
-    console.log("WATCHER: ", watch())
-    console.log("ERROE MESSAGE: ", loginError)
-
     return(
         <div className='login__page__wrapper'>
             <div className="login__page__logo__wrapper">
                 <img src="/edusyspro.svg" alt="logo" className="login__page__logo"/>
             </div>
             <Card title="Connexion" bordered={false} className="login__page__card">
-                {loginError && (
+                {loginError?.message && (
                     <Alert
-                        message="Authentication Error"
-                        description={loginError}
+                        message={loginError.type ?? "Authentication Error"}
+                        description={loginError?.message}
                         type="error"
                         showIcon
                         closable

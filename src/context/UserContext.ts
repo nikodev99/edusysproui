@@ -15,10 +15,10 @@ export type UserAuthContext = {
     refresh: () => Promise<boolean>
     logoutUser: () => void
     isLoggedIn: () => boolean
-    shouldRedirectToHome: boolean
-    clearRedirectFlag: () => void
+    shouldRedirectToHome: () => boolean
+    shouldPickSchool: () => boolean
 
-    loginError: string | null
+    loginError: { type: string | null, message: string | null } | null
     clearLoginError: () => void
 }
 

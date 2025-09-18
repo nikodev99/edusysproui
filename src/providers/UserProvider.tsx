@@ -6,23 +6,24 @@ import {UserContext, UserContextProps} from "../context/UserContext.ts";
 import {jwtTokenManager} from "../auth/jwt/JWTToken.tsx";
 import {loggedUser} from "../auth/jwt/LoggedUser.ts";
 import {School} from "../entity";
-import {AxiosResponse} from "axios";
 import {SignupSchema} from "../schema";
+import {isAxiosError} from "axios";
 
 export const UserProvider = ({children}: UserContextProps) => {
     const [token, setToken] = useState<string | null>(null)
     const [refreshToken, setRefreshToken] = useState<string | null>(null)
     const [user, setUser] = useState<UserProfile | null>(null)
     const [isReady, setIsReady] = useState(false)
-    const [shouldRedirectToHome, setShouldRedirectToHome] = useState(false)
-    const [loginError, setLoginError] = useState<string | null>(null)
+    const [errorMessage, setErrorMessage] = useState<string | null>(null)
     const [userSchool, setUserSchool] = useState<School | null>(null)
+    const [errorType, setErrorType] = useState<string | null>(null)
 
     useEffect(() => {
         const initAuth = async () => {
             const cachedUser = loggedUser.getUser()
             const token = loggedUser.getToken()
             const refreshToken = loggedUser.getRefreshToken()
+            const school = loggedUser.getSchool()
 
             if (cachedUser && token) {
                 const isValidToken = await jwtTokenManager.isValidToken()
@@ -32,6 +33,7 @@ export const UserProvider = ({children}: UserContextProps) => {
                     setUser(cachedUser as UserProfile)
                     setToken(token as string)
                     setRefreshToken(refreshToken as string)
+                    setUserSchool(school as School)
                 }else {
                     await performLogout(false)
                 }
@@ -41,23 +43,6 @@ export const UserProvider = ({children}: UserContextProps) => {
 
         initAuth().then()
     }, [])
-
-    useEffect(() => {
-        const initSchool = async () => {
-            const school = loggedUser.getSchool()
-            if (school) {
-                setUserSchool(school)
-            }else if (user) {
-                const schools = user.schools
-                if (Array.isArray(schools) && schools.length === 1) {
-                    loggedUser.setSchool(schools[0])
-                    setUserSchool(schools[0])
-                }
-            }
-        }
-        
-        initSchool().then()
-    }, [user]);
 
     const register = (data: SignupSchema) => {
         try {
@@ -69,27 +54,51 @@ export const UserProvider = ({children}: UserContextProps) => {
     }
 
     const login = async (data: LoginRequest) => {
-        setLoginError(null)
+        setErrorMessage(null)
+        setErrorType(null)
         try {
             const resp = await loginApi(data)
-            if (resp && resp?.status === 200) {
-                return cashedLoggedUser(resp)
+
+            if (resp && 'status' in resp && resp.status >= 200 && resp.status < 300) {
+                if ('data' in resp) {
+                    return cashedLoggedUser(resp.data)
+                }
+                setErrorMessage("Votre compte n'existe pas")
+                return false
             }else {
-                setLoginError("Username ou mot de passe invalide(s) !")
+                setErrorMessage("Username ou mot de passe invalide(s) !")
                 return false
             }
         }catch(error) {
-            setLoginError("An error occurred while logging in, please try again...")
+            if (isAxiosError(error)) {
+                const response = error.response
+                if (response && 'status' in response) {
+                    setErrorType(response.data?.message)
+                    switch (response.status) {
+                        case 423:
+                            setErrorMessage("Votre compte n'est pas activé. Veuillez contacter l'administrateur pour activer votre compte.")
+                            return false
+                        case 403:
+                            setErrorMessage("Votre compte a été verrouillé. Veuillez contacter l'administrateur pour déverrouiller votre compte.")
+                            return false
+                        default:
+                            setErrorMessage("Username ou mot de passe invalide(s) !")
+                            return false
+                    }
+                }
+            }
+            setErrorMessage("Une erreur s'est produite lors de la connexion. Veuillez réessayer...")
             return false
         }
     }
 
     const handleRefreshToken = async () => {
-        setLoginError(null)
+        setErrorMessage(null)
+        setErrorType(null)
         try {
             const response = await tokenRefresh()
-            if (response && response?.status === 200) {
-                const success = cashedLoggedUser(response)
+            if (response && response?.status === 200 && 'data' in response) {
+                const success = cashedLoggedUser(response.data)
                 if (success) {
                     jwtTokenManager.clearCache()
                     jwtTokenManager.refreshTokenCache()
@@ -97,17 +106,27 @@ export const UserProvider = ({children}: UserContextProps) => {
                 }
                 return false
             }else {
-                setLoginError("An error occurred while refreshing your token, please try again...")
+                setErrorMessage("An error occurred while refreshing your token, please try again...")
+                setErrorType("Refresh Error")
                 return false
             }
         }catch (error) {
             console.error("Error during token refresh:", error)
+            setErrorType("Refresh Error")
             return false
         }
     }
 
     const isLoggedIn = () => {
         return !!user
+    }
+
+    const shouldPickSchools = () => {
+        return userSchool === null
+    }
+
+    const shouldRedirectToHome = () => {
+        return !!userSchool
     }
 
     /**
@@ -134,26 +153,33 @@ export const UserProvider = ({children}: UserContextProps) => {
             setUser(null)
             setToken(null)
             setRefreshToken(null)
-            setShouldRedirectToHome(false)
-            setLoginError(null)
+            setErrorMessage(null)
+            setErrorType(null)
             setUserSchool(null)
         }
     }
 
-    const cashedLoggedUser = (resp: AxiosResponse<UserProfileToken>) => {
+    const cashedLoggedUser = (data: UserProfileToken) => {
         try {
             // Update storage first
-            loggedUser.setToken(resp.data.accessToken)
-            loggedUser.setRefreshToken(resp.data.refreshToken)
+            loggedUser.setToken(data.accessToken)
+            loggedUser.setRefreshToken(data.refreshToken)
 
-            const userProfile = toUser(resp?.data)
+            const userProfile = toUser(data)
+
             loggedUser.setUser(userProfile)
+
+            if (userProfile.schools.length === 1) {
+                loggedUser.setSchool(userProfile.schools[0])
+                setUserSchool(userProfile.schools[0])
+            }else {
+                setUserSchool(null)
+            }
 
             // Update React state
             setUser(userProfile)
-            setToken(resp.data.accessToken)
-            setRefreshToken(resp.data.refreshToken)
-            setShouldRedirectToHome(true)
+            setToken(data.accessToken)
+            setRefreshToken(data.refreshToken)
 
             return true
         } catch (error) {
@@ -178,9 +204,9 @@ export const UserProvider = ({children}: UserContextProps) => {
             logoutUser: logout,
             isLoggedIn: isLoggedIn,
             shouldRedirectToHome: shouldRedirectToHome,
-            clearRedirectFlag: () => setShouldRedirectToHome(false),
-            loginError,
-            clearLoginError: () => setLoginError(null)
+            shouldPickSchool: shouldPickSchools,
+            loginError: {type: errorType, message: errorMessage},
+            clearLoginError: () => setErrorMessage(null)
         }}>
             {isReady ? children : null}
         </UserContext.Provider>

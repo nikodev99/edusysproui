@@ -4,14 +4,10 @@ import {loggedUser} from "../jwt/LoggedUser.ts";
 import {SignupSchema} from "../../schema";
 
 export const loginApi = async (login: LoginRequest) => {
-    try {
-        return await apiClient.post<UserProfileToken>('/auth/login', {
-            username: login.username,
-            password: login.password
-        })
-    }catch (error) {
-        return false
-    }
+    return await apiClient.post<UserProfileToken>('/auth/login', {
+        username: login.username,
+        password: login.password
+    })
 }
 
 export const tokenRefresh = async () => {
@@ -28,8 +24,6 @@ export const tokenRefresh = async () => {
 }
 
 export const signupApi = async (data: SignupSchema) => {
-    console.log("DATA: ", data)
-
     try {
         return await apiClient.post<SignupSchema>('/auth/register', data)
     }catch (error) {

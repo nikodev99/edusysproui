@@ -10,6 +10,8 @@ export interface UserProfileToken {
     username: string
     email: string
     phoneNumber: string
+    enabled: boolean
+    accountNonLocked: boolean
     roles: Role[]
     user: UserProfile
 }

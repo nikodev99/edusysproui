@@ -11,8 +11,7 @@ import {AvatarTitle} from "../../components/ui/layout/AvatarTitle.tsx";
 import {ActionButton} from "../../components/ui/layout/ActionButton.tsx";
 import Tag from "../../components/ui/layout/Tag.tsx"
 import {
-    LuCircleCheckBig, LuCircleDot,
-    LuEllipsisVertical,
+    LuCircleCheckBig, LuEllipsisVertical, LuLockKeyhole,
     LuTable2, LuUserCog,
     LuUserRoundPlus
 } from "react-icons/lu";
@@ -21,7 +20,7 @@ import {useBreadcrumbItem} from "../../hooks/useBreadCrumb.tsx";
 import {text} from "../../core/utils/text_display.ts";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import Datetime from "../../core/datetime.ts";
-import {UserActionLinks} from "../../components/ui-kit-org/components/UserActionLinks.tsx";
+import {UserActionLinks} from "../../components/ui-kit-org";
 import {ItemType} from "antd/es/menu/interface";
 
 const UserListPage = () => {
@@ -37,6 +36,7 @@ const UserListPage = () => {
         description: "User description"
     })
 
+    const [refetch, setRefetch] = useState(false)
     const [linkButtons, setLinkButtons] = useState<ItemType[]>([])
     const [selectedUser, setSelectedUser] = useState<User | undefined>(undefined)
     const {getPaginatedUsers, getSearchedUsers} = useUserRepo()
@@ -123,11 +123,11 @@ const UserListPage = () => {
             render: (enabled: boolean, record) => {
                 const enabledTag = enabled
                     ? <Tag icon={<LuCircleCheckBig />} color='success'>Activé</Tag>
-                    : <Tag icon={<LuCircleDot />} color='danger'>Désactivé</Tag>
+                    : <Tag icon={<LuLockKeyhole />} color='danger'>Désactivé</Tag>
 
                 const lockedTag = record?.accountNonLocked
                     ? <Tag icon={<LuCircleCheckBig />} color='success'>disponible</Tag>
-                    : <Tag icon={<LuCircleDot />} color='danger'>Vérrouillé</Tag>
+                    : <Tag icon={<LuLockKeyhole />} color='danger'>Vérrouillé</Tag>
 
                 return <Space>
                     {enabledTag} {lockedTag}
@@ -141,7 +141,9 @@ const UserListPage = () => {
             responsive: ['md'],
             sorter: true,
             showSorterTooltip: false,
-            render: lastLogin => Datetime.of(lastLogin).format({format: 'DD MMM YYYY - HH:mm'})
+            render: lastLogin => lastLogin
+                ? Datetime.of(lastLogin).format({format: 'DD MMM YYYY - HH:mm'})
+                : "-"
         },
         {
             title: <LuTable2 />,
@@ -184,11 +186,13 @@ const UserListPage = () => {
             }}
             fetchId={"users-list"}
             onSelectData={setSelectedUser}
+            refetchCondition={refetch}
         />
         <section>
             <UserActionLinks
                 user={selectedUser}
                 getItems={setLinkButtons}
+                setRefresh={setRefetch}
             />
         </section>
     </>

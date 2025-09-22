@@ -1,4 +1,4 @@
-export {addStudent, updateStudent} from './action/enrollAction.ts'
+export {addStudent} from './action/enrollAction.ts'
 
 export {findClassesBasicValue} from './action/classeAction.ts'
 

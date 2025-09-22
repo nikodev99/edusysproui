@@ -4,11 +4,11 @@ import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
 import {text} from "../../core/utils/text_display.ts";
 import {getBrowser, MAIN_COLOR, setTitle} from "../../core/utils/utils.ts"
 import ViewHeader from "../../components/ui/layout/ViewHeader.tsx";
-import {useMemo, useState} from "react";
-import {Card, Flex, Button, Space, Divider, Typography, Progress} from "antd";
+import {useEffect, useMemo, useState} from "react";
+import {Card, Flex, Space, Divider, Typography, Progress} from "antd";
 import Responsive from "../../components/ui/layout/Responsive.tsx";
 import Grid from "../../components/ui/layout/Grid.tsx";
-import {LuLaptopMinimal, LuPlus} from "react-icons/lu";
+import {LuLaptopMinimal} from "react-icons/lu";
 import Tag from "../../components/ui/layout/Tag.tsx";
 import {RoleEnum} from "../../auth/dto/role.ts";
 import Datetime from "../../core/datetime.ts";
@@ -22,8 +22,9 @@ const UserViewPage = () => {
     const {state: userId} = location
 
     const [linkButtons, setLinkButtons] = useState<ItemType[]>([])
+    const [shouldRefetch, setShouldRefetch] = useState<boolean>(false)
     const {useGetUser, useGetUserLogins} = useUserRepo()
-    const {data: user, isLoading} = useGetUser(userId)
+    const {data: user, isLoading, refetch} = useGetUser(userId)
     const logins = useGetUserLogins(userId)
 
     const userName = useMemo(() =>
@@ -48,7 +49,14 @@ const UserViewPage = () => {
             logins?.sort((a, b) => Datetime.of(a.createdAt).diffSecond(b.createdAt))?.[0] ?? null,
     [logins])
 
-    console.log("USER: ", logins)
+    useEffect(() => {
+        const init = async () => {
+            if (shouldRefetch)
+                refetch().then()
+        }
+        
+        init().then(() => setShouldRefetch(false))
+    }, [refetch, shouldRefetch])
 
     return (
         <>
@@ -67,7 +75,6 @@ const UserViewPage = () => {
                     {title: 'Identifiant', mention: <Typography.Text editable>{user?.username}</Typography.Text>},
                     {title: 'Téléphone', mention: user?.phoneNumber}
                 ]}
-                addMargin={{position: 'top', size: 50}}
                 items={linkButtons}
             />
             <section style={{marginTop: '20px'}}>
@@ -75,19 +82,11 @@ const UserViewPage = () => {
                     <Grid xs={24} md={12} lg={6}>
                         <Card>
                             <Card.Meta title='Roles' style={{marginBottom: '10px'}} />
-                            <Flex vertical>
-                                <div style={{marginBottom: '10px'}}>
-                                    <Button type='link'>
-                                        <LuPlus />
-                                        Ajouter un role
-                                    </Button>
-                                </div>
-                                <Space wrap>
-                                    {user?.roles?.map((role, index) => (
-                                        <Tag key={index} color={MAIN_COLOR} white>{RoleEnum[role]}</Tag>
-                                    ))}
-                                </Space>
-                            </Flex>
+                            <Space wrap>
+                                {user?.roles?.map((role, index) => (
+                                    <Tag key={index} color={MAIN_COLOR} white>{RoleEnum[role]}</Tag>
+                                ))}
+                            </Space>
                         </Card>
                     </Grid>
                     <Grid xs={24} md={12} lg={9}>
@@ -101,11 +100,15 @@ const UserViewPage = () => {
                             <Flex align='center' gap={10}>
                                 <LuLaptopMinimal size={50} />
                                 <div>
-                                    <p>{Datetime.of(user?.lastLogin as number).fDatetime({format: 'dddd D MMMM YYYY à HH:mm:ss'})}</p>
+                                    <p>{
+                                        user?.lastLogin
+                                            ? Datetime.of(user?.lastLogin as number).fDatetime({format: 'dddd D MMMM YYYY à HH:mm:ss'})
+                                            : '-'
+                                    }</p>
                                     {login && (<Space split={<Divider type='vertical' />} wrap>
-                                        <p>IP: {login.clientIp}</p>
-                                        <p>Browser: {getBrowser(login.browser)}</p>
-                                        <p>OS: {login.device}</p>
+                                        <p>IP: {login?.clientIp && login.clientIp}</p>
+                                        <p>Browser: {getBrowser(login?.browser && login.browser)}</p>
+                                        <p>OS: {login?.device && login.device}</p>
                                     </Space>)}
                                 </div>
                             </Flex>
@@ -145,6 +148,7 @@ const UserViewPage = () => {
                 <UserActionLinks
                     user={user}
                     getItems={setLinkButtons}
+                    setRefresh={setShouldRefetch}
                 />
             </section>
         </>

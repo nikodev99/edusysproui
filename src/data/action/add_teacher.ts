@@ -3,7 +3,7 @@ import {ErrorCatch} from "./error_catch.ts";
 import {AxiosResponse} from "axios";
 import {Teacher} from "../../entity";
 import {insertTeacher} from "../repository/teacherRepository.ts";
-import {Response as CustomResponse} from "./response.ts";
+import {ResponseRepo as CustomResponse} from "./responseRepo.ts";
 
 export const addTeacher = async (values: TeacherSchema): Promise<CustomResponse<Teacher>> => {
     const validateFields = teacherSchema.safeParse(values)

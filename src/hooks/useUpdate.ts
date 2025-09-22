@@ -9,7 +9,7 @@ import {
     UseQueryOptions,
     UseUpdateReturn
 } from "../core/utils/interfaces.ts";
-import {Response} from "../data/action/response.ts";
+import {ResponseRepo} from "../data/action/responseRepo.ts";
 import {catchError, ErrorCatch} from "../data/action/error_catch.ts";
 import {useState} from "react";
 
@@ -45,7 +45,7 @@ export const usePut = async <TData, TParams extends readonly unknown[] = []>(
     data: TData,
     id?: ID,
     params?: TParams
-): Promise<Response<TData>> => {
+): Promise<ResponseRepo<TData>> => {
     try {
         const resp: AxiosResponse<TData> = await putFn(data, id, ...params as never)
         if (resp.status !== 200) {

@@ -1,5 +1,5 @@
-import {Alert, Badge, Button, Card, Divider, Flex, Modal, Select, Space} from "antd";
-import {useMemo, useState} from "react";
+import {Alert, Badge, Button, Card, Divider, Flex, message, Modal, Select, Space} from "antd";
+import {ReactNode, useEffect, useMemo, useState} from "react";
 import FormSuccess from "../../ui/form/FormSuccess.tsx";
 import FormError from "../../ui/form/FormError.tsx";
 import {User} from "../../../auth/dto/user.ts";
@@ -9,45 +9,118 @@ import {enumToObjectArray, MAIN_COLOR} from "../../../core/utils/utils.ts";
 import {LuMinus} from "react-icons/lu";
 import {ModalConfirmButton} from "../../ui/layout/ModalConfirmButton.tsx";
 import {PatchUpdate} from "../../../core/PatchUpdate.ts";
-import {UpdateType} from "../../../core/shared/sharedEnums.ts";
+import {setAccountRoles} from "../../../data/repository/userRepository.ts";
 
-export const UserRoles = ({user, open, close}: {
+export const UserRoles = ({user, open, close, setRefresh}: {
     user: User,
     open: boolean,
     close: () => void,
+    setRefresh?: (value: boolean) => void
 }) => {
     const [roles, setRoles] = useState<Role[]>([])
+    const [roleToDelete, setRoleToDelete] = useState<Role[]>([])
     const [successMessage, setSuccessMessage] = useState<string | undefined>(undefined)
     const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined)
 
     const options = useMemo(() => enumToObjectArray(RoleEnum, true), [])
+    const accountRoles = useMemo(() => {
+        const userRoles = user?.roles
+        if (roleToDelete && roleToDelete.length > 0) {
+            return userRoles?.filter(r => !roleToDelete.includes(r))
+        }
+        return userRoles
+    }, [roleToDelete, user?.roles])
+
+    useEffect(() => {
+        setRoles(user?.roles)
+
+        if (open) {
+            setErrorMessage(undefined)
+            setSuccessMessage(undefined)
+            setRefresh && setRefresh(false)
+        }
+    }, [open, setRefresh, setErrorMessage, setSuccessMessage, user?.roles])
+
+    const tagRender = (props: { label: ReactNode }) => {
+        const { label } = props;
+
+        return (
+            <span style={{marginRight: '3px'}}>
+                <Tag color={MAIN_COLOR} white>{label}</Tag>
+            </span>
+        );
+    };
 
     const handleChange = (value: unknown) => {
-        setRoles(value as [])
+        if (Array.isArray(value) && (!value || value?.length === 0)) {
+            message.warning("L’utilisateur doit conserver au moins un rôle.").then(r => r);
+            return;
+        }
+
+        setRoles(value as []);
     }
 
-    const handleFinish = async () => {
-        await PatchUpdate.set(
-            'roles',
-            roles,
-            user?.id,
-            () => setSuccessMessage("Devoir traité avec succès"),
+    const handleRemove = (role: Role) => {
+        setRoleToDelete(prev => {
+            // if already queued for deletion, do nothing
+            if (prev.some(p => p === role)) return prev;
+
+            const currentUserRoles = user?.roles ?? [];
+
+            // build the candidate delete list
+            const newRoleToDelete = [...prev, role];
+
+            // roles that would remain if we applied the deletion
+            const remainingRoles = currentUserRoles.filter(
+                r => !newRoleToDelete.some(rd => rd === r)
+            );
+
+            if (remainingRoles.length === 0) {
+                message.warning('L’utilisateur doit conserver au moins un rôle.').then(r => r);
+                return prev;
+            }
+
+            return newRoleToDelete;
+        });
+    }
+
+    const handleAddRoles = async () => {
+        setRefresh?.(false)
+        setRoleToDelete([])
+        await PatchUpdate.setWithCustom(
+            setAccountRoles as () => never,
+            () => setSuccessMessage("Les roles ont été mis à jour avec succès"),
             setErrorMessage,
-            UpdateType.ASSIGNMENT
+            [user?.account, roles]
         )
     }
 
-    const handleRemoveRole = async () => {
+    const handleRemoveRoles = async () => {
+        setRefresh?.(false)
+        setRoleToDelete([])
+        await PatchUpdate.setWithCustom(
+            setAccountRoles as () => never,
+            () => setSuccessMessage("Les roles ont été mis à jour avec succès"),
+            setErrorMessage,
+            [user?.account, accountRoles]
+        )
+    }
 
+    const handleCloseModal = () => {
+        setErrorMessage(undefined)
+        setSuccessMessage(undefined)
+        setRoleToDelete([])
+        setRefresh?.(true)
+        close()
     }
 
     return (
         <>
         {successMessage && <FormSuccess message={successMessage} isNotif={true} />}
         {errorMessage && <FormError message={errorMessage} isNotif={true} />}
-        <Modal open={open} onCancel={close} title='Gestion des roles' footer={null}>
-            {successMessage && <Alert type={'success'} message={successMessage} />}
-            {errorMessage && <Alert type={'error'} message={errorMessage} />}
+        <Modal open={open} onCancel={handleCloseModal} title='Gestion des roles' footer={null}>
+            {successMessage && <Alert type={'success'} message={successMessage} closeIcon showIcon style={{marginBottom: '10px'}} />}
+            {errorMessage && <Alert type={'error'} message={errorMessage} closeIcon showIcon style={{marginBottom: '10px'}} />}
             <Card>
                 <Card.Meta title="Ajouter roles à l'utilisateur" style={{marginBottom: '20px'}} />
                 <Select
@@ -56,13 +129,14 @@ export const UserRoles = ({user, open, close}: {
                     placeholder="Selectionner les roles"
                     onChange={handleChange}
                     options={options}
-                    defaultValue={user?.roles}
+                    tagRender={tagRender}
+                    value={roles}
                 />
                 <Flex style={{marginTop: '20px'}} justify='flex-end' gap={10}>
                     <ModalConfirmButton
-                        handleFunc={handleFinish}
+                        handleFunc={handleAddRoles}
                         title='Souhaitez vous poursuivre ?'
-                        content="Soyez assurer lorsque vous cliquerez sur OUI, vous n'aurez plus la possibilité de modifier quoi que ce soit pour ce devoir"
+                        content="Soyez assurer lorsque vous cliquerez sur OUI, vous confirmerez que la sauvegarde des roles de l'utilisateur avec les roles précédemment ajoutés"
                         tooltipTxt='Cliqué pour terminer'
                         btnTxt='Confirmer'
                         btnProps={{type: 'primary'}}
@@ -73,11 +147,11 @@ export const UserRoles = ({user, open, close}: {
             <Card>
                 <Card.Meta title="Rétiré roles à l'utilisateur" style={{marginBottom: '20px'}} />
                 <Space wrap>
-                    {user?.roles?.map((role: Role) => (
+                    {accountRoles?.map((role: Role) => (
                         <Badge key={`role-${role}`} status='error' count={
                             <p
                                 style={{border: '1px solid #ff4d4f', borderRadius: '40%', cursor: 'pointer' }}
-                                onClick={() => alert('Suprimé le role')}
+                                onClick={() => handleRemove(role)}
                             >
                                 <LuMinus style={{color: '#ff4d4f'}} />
                             </p>
@@ -88,9 +162,9 @@ export const UserRoles = ({user, open, close}: {
                 </Space>
                 <Flex style={{marginTop: '20px'}} justify='flex-end' gap={10}>
                     <ModalConfirmButton
-                        handleFunc={() => alert('Traité')}
+                        handleFunc={handleRemoveRoles}
                         title='Souhaitez vous poursuivre ?'
-                        content="Soyez assurer lorsque vous cliquerez sur OUI, vous n'aurez plus la possibilité de modifier quoi que ce soit pour ce devoir"
+                        content="Soyez assurer lorsque vous cliquerez sur OUI, vous confirmerez que la sauvegarde des roles de l'utilisateur sans les roles précédemment supprimés"
                         tooltipTxt='Cliqué pour terminer'
                         btnTxt='Confirmer'
                         btnProps={{type: 'primary'}}

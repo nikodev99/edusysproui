@@ -53,6 +53,7 @@ export interface UserProfile {
 
 export interface User {
     id: number
+    account: number
     username: string
     email: string
     firstName: string

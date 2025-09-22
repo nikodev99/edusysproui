@@ -1,6 +1,6 @@
 import {AxiosError, AxiosResponse} from "axios";
 import {useMutation} from "@tanstack/react-query";
-import {Response} from "../data/action/response.ts";
+import {ResponseRepo} from "../data/action/responseRepo.ts";
 import {catchError, ErrorCatch} from "../data/action/error_catch.ts";
 import {z} from "zod";
 import {useState} from "react";
@@ -52,7 +52,7 @@ export const usePost = async <TData, TParams extends readonly unknown[] = []>(
     postFn: PostFunction<TData, TParams>,
     data: TData,
     params: TParams
-): Promise<Response<TData>> => {
+): Promise<ResponseRepo<TData>> => {
     try {
         const resp: AxiosResponse<TData> = await postFn(data, ...params)
         if (resp.status !== 200) {

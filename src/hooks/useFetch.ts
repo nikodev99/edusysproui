@@ -6,7 +6,7 @@ import {
     UseQueryResult
 } from "@tanstack/react-query";
 import {AxiosResponse} from "axios";
-import {Response} from "../data/action/response.ts"
+import {ResponseRepo} from "../data/action/responseRepo.ts"
 import {ErrorCatch} from "../data/action/error_catch.ts";
 import {useCallback} from "react";
 
@@ -41,7 +41,7 @@ export const fetchFunc = <T extends object>(callback: (...args: any[]) => Promis
 const customFetch = async <T>(
     callback: (...args: any[]) => Promise<AxiosResponse<T>>,
     params: any[] = []
-): Promise<Response<T>> => {
+): Promise<ResponseRepo<T>> => {
     try {
         const response = await callback(...params);
         if(response && response.status === 200) {

@@ -75,6 +75,7 @@ export const useRedirect = () => {
                 : text.org.group.department.view.href + departmentId
             , {state: departmentId}
         ),
+        toUserList: () => redirectTo(text.org.group.user.href),
         toSaveUser: () => redirectTo(text.org.group.user.add.href),
         toViewUser: (userId: number, userName?: string) => redirectTo(
             userName

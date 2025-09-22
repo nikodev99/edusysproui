@@ -1,7 +1,7 @@
 import {Course} from "../../entity";
 import {ErrorCatch} from "./error_catch.ts";
 import {getAllBasicCourses, getAllCourses} from "../repository/courseRepository.ts";
-import {Response} from "./response.ts";
+import {ResponseRepo} from "./responseRepo.ts";
 import {AxiosResponse} from "axios";
 import {getShortSortOrder, setSortFieldName} from "../../core/utils/utils.ts";
 import {loggedUser} from "../../auth/jwt/LoggedUser.ts";
@@ -17,7 +17,7 @@ export const getAllSchoolCourses = async (page: number, size: number, sortField?
     return await getAllCourses(schoolId, {page: page, size: size})
 }
 
-export const fetchAllCourses = async (): Promise<Response<Course[]>> => {
+export const fetchAllCourses = async (): Promise<ResponseRepo<Course[]>> => {
     try {
         const resp = await getAllBasicCourses(schoolId)
         if (resp && 'data' in resp) {

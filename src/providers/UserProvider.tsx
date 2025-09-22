@@ -44,6 +44,8 @@ export const UserProvider = ({children}: UserContextProps) => {
         initAuth().then()
     }, [])
 
+    console.log("SCHOOL: ", userSchool)
+
     const register = (data: SignupSchema) => {
         try {
             return signupApi(data)
@@ -166,20 +168,19 @@ export const UserProvider = ({children}: UserContextProps) => {
             loggedUser.setRefreshToken(data.refreshToken)
 
             const userProfile = toUser(data)
-
+            const schools = userProfile?.schools || []
+            const school = schools?.length === 1 ? schools[0] : null
             loggedUser.setUser(userProfile)
 
-            if (userProfile.schools.length === 1) {
-                loggedUser.setSchool(userProfile.schools[0])
-                setUserSchool(userProfile.schools[0])
-            }else {
-                setUserSchool(null)
+            if (school) {
+                loggedUser.setSchool(school)
             }
 
             // Update React state
             setUser(userProfile)
             setToken(data.accessToken)
             setRefreshToken(data.refreshToken)
+            setUserSchool(school)
 
             return true
         } catch (error) {

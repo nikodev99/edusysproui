@@ -6,9 +6,11 @@ import {classeSchema, ClasseSchema} from "../../../schema";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {ClasseForm} from "../../forms/ClasseForm.tsx";
 import {updateClasseValues} from "../../../data/repository/classeRepository.ts";
+import {useGradeRepo} from "../../../hooks/actions/useGradeRepo.ts";
 
 export const ClasseEditDrawer = ({open, close, data}: EditProps<Classe>) => {
 
+    const {gradeOptions} = useGradeRepo()
     const form = useForm<ClasseSchema>({
         resolver: zodResolver(classeSchema)
     })
@@ -18,7 +20,7 @@ export const ClasseEditDrawer = ({open, close, data}: EditProps<Classe>) => {
     return(
         <UpdateSchema
             data={classeSchema}
-            customForm={<ClasseForm control={control} data={data} errors={errors} />}
+            customForm={<ClasseForm control={control} data={data} errors={errors} gradeOptions={gradeOptions} />}
             handleForm={form}
             id={data?.id}
             putFunc={updateClasseValues}

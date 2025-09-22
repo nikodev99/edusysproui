@@ -3,7 +3,6 @@ import {AxiosResponse} from "axios";
 import {Enrollment} from "../../entity";
 import {apiClient, request} from "../axiosConfig.ts";
 import {EnrollmentSchema} from "../../schema";
-import {UpdateType} from "../../core/shared/sharedEnums.ts";
 
 export const enrollStudent = (data: EnrollmentSchema): Promise<AxiosResponse<Enrollment>> => {
     return request({
@@ -86,50 +85,6 @@ export const getAllStudentClassmate = (studentId: string, classeId: number, acad
             academicYearId: academicYearId,
             page: pageable.page,
             size: pageable.size,
-        }
-    })
-}
-
-export const updateStudentByField = <T>(field: keyof T, value: unknown, studentId: string | number | bigint, type?: UpdateType) => {
-    let url: string
-    switch (type) {
-        case UpdateType.ADDRESS:
-            url = '/student/address'
-            break
-        case UpdateType.HEALTH:
-            url = '/student/health'
-            break
-        case UpdateType.GUARDIAN:
-            url = '/student/guardian'
-            break
-        case UpdateType.INFO:
-            url = '/student/info'
-            break
-        case UpdateType.TEACHER:
-            url = '/teachers'
-            break
-        case UpdateType.ASSIGNMENT:
-            url = '/assignment'
-            break
-        case UpdateType.EMPLOYEE:
-            url = '/employee'
-            break
-        case UpdateType.SCHOOL:
-            url = '/school'
-            break
-        case UpdateType.ACADEMIC_YEAR:
-            url = '/academic'
-            break
-        default:
-            url = '/student'
-            break
-    }
-    return request({
-        method: 'PATCH',
-        url: `${url}/${studentId}`,
-        data: {
-            field: field,
-            value: value,
         }
     })
 }

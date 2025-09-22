@@ -33,7 +33,7 @@ export const UpdateSchema = <TData extends FieldValues, TReturn extends object>(
         mutate({putFn: putFunc, data: data, params: [], id: id}, {
             onSuccess: response => {
                 if (response && 'data' in response && response.status === 200) {
-                    setSuccessMessage(messageSuccess ?? response?.data?.updated as string)
+                    setSuccessMessage(messageSuccess ?? response?.data?.updated)
                     if (resp) {
                         resp(response?.data as never)
                     }

@@ -3,7 +3,7 @@ import {RouterProvider} from "react-router-dom";
 import {Route} from "./router";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import frFR from "antd/locale/fr_FR";
-import {ConfigProvider} from "antd";
+import {ConfigProvider, App as AntdApp} from "antd";
 import {UserProvider} from "./providers/UserProvider.tsx";
 
 const App = () => {
@@ -29,9 +29,11 @@ const App = () => {
                     }
                 }
             }}>
-                <QueryClientProvider client={queryClient}>
-                    <RouterProvider router={Route} />
-                </QueryClientProvider>
+                <AntdApp>
+                    <QueryClientProvider client={queryClient}>
+                        <RouterProvider router={Route} />
+                    </QueryClientProvider>
+                </AntdApp>
             </ConfigProvider>
         </UserProvider>
     )

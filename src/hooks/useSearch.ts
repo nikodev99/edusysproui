@@ -1,13 +1,13 @@
 import {useCallback, useRef, useState} from "react";
 import {useRawFetch} from "./useFetch.ts";
 import {AxiosResponse} from "axios";
-import {Response} from '../data/action/response.ts'
+import {ResponseRepo} from '../data/action/responseRepo.ts'
 import {Options} from "../core/utils/interfaces.ts";
 
 export const useSearch = <T extends object>(
     {setValue, funcParams = [], fetchFunc, setCustomOptions}: {
         setValue: (value: unknown) => void
-        fetchFunc: (...args: unknown[]) => Promise<AxiosResponse<T, unknown>> | Promise<Response<T>>
+        fetchFunc: (...args: unknown[]) => Promise<AxiosResponse<T, unknown>> | Promise<ResponseRepo<T>>
         funcParams?: unknown[]
         setCustomOptions: (options?: T) => Options
     }) => {

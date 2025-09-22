@@ -585,6 +585,7 @@ export type Options = Option[]
 
 export type ActionsButtons = {
     createUser?: boolean
+    addRoles?: boolean
 }
 
 export interface ActionLinksProps<TButtonAction extends object> {

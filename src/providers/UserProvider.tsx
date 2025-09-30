@@ -8,8 +8,11 @@ import {loggedUser} from "../auth/jwt/LoggedUser.ts";
 import {School} from "../entity";
 import {SignupSchema} from "../schema";
 import {isAxiosError} from "axios";
+import {useUserRepo} from "../hooks/actions/useUserRepo.ts";
 
 export const UserProvider = ({children}: UserContextProps) => {
+    const {saveActivity} = useUserRepo()
+
     const [token, setToken] = useState<string | null>(null)
     const [refreshToken, setRefreshToken] = useState<string | null>(null)
     const [user, setUser] = useState<UserProfile | null>(null)
@@ -44,8 +47,6 @@ export const UserProvider = ({children}: UserContextProps) => {
         initAuth().then()
     }, [])
 
-    console.log("SCHOOL: ", userSchool)
-
     const register = (data: SignupSchema) => {
         try {
             return signupApi(data)
@@ -63,7 +64,7 @@ export const UserProvider = ({children}: UserContextProps) => {
 
             if (resp && 'status' in resp && resp.status >= 200 && resp.status < 300) {
                 if ('data' in resp) {
-                    return cashedLoggedUser(resp.data)
+                    return cashedLoggedUser(resp.data, data.username)
                 }
                 setErrorMessage("Votre compte n'existe pas")
                 return false
@@ -100,7 +101,7 @@ export const UserProvider = ({children}: UserContextProps) => {
         try {
             const response = await tokenRefresh()
             if (response && response?.status === 200 && 'data' in response) {
-                const success = cashedLoggedUser(response.data)
+                const success = cashedLoggedUser(response.data, undefined)
                 if (success) {
                     jwtTokenManager.clearCache()
                     jwtTokenManager.refreshTokenCache()
@@ -161,7 +162,7 @@ export const UserProvider = ({children}: UserContextProps) => {
         }
     }
 
-    const cashedLoggedUser = (data: UserProfileToken) => {
+    const cashedLoggedUser = (data: UserProfileToken, username?: string) => {
         try {
             // Update storage first
             loggedUser.setToken(data.accessToken)
@@ -181,6 +182,14 @@ export const UserProvider = ({children}: UserContextProps) => {
             setToken(data.accessToken)
             setRefreshToken(data.refreshToken)
             setUserSchool(school)
+
+            //Save the login activity
+            if (username)
+                saveActivity({
+                    accountId: data.accountId,
+                    action: 'Login successful with cookie',
+                    description: 'Login successful with cookie for ' + username
+                })
 
             return true
         } catch (error) {

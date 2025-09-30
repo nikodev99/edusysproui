@@ -355,9 +355,10 @@ class Datetime {
         return this.isAfter(date1.date) && this.isBefore(date2.date)
     }
 
-    isSame(dateInput: DateInput | Params, timezone?: string, locale?: string) {
+    isSame(dateInput: DateInput | Params, unit?: ManipulateType, timezone?: string, locale?: string) {
         const date = new Datetime(dateInput, timezone, locale)
-        return this.date.isSame(date.date)
+        const customUnit = unit || (isParams(dateInput) ? dateInput?.unit : undefined)
+        return this.date.isSame(date.date, customUnit)
     }
 
     isValid(): boolean {

@@ -3,13 +3,18 @@ import {useLocation, Navigate} from 'react-router-dom';
 import {useAuth} from "../hooks/useAuth.ts";
 import {Flex, Spin} from "antd";
 import {toLower} from "../core/utils/utils.ts";
+import {useGlobalStore} from "../core/global/store.ts";
 
 const NavigationHandler = ({ children, requireAuth = true }: { children: ReactNode, requireAuth?: boolean }) => {
     const { isLoggedIn, userSchool, shouldPickSchool, user } = useAuth();
+    const setSchool = useGlobalStore(state => state.setSchool);
+
     const location = useLocation();
     const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
+        setSchool()
+        
         const timer = setTimeout(() => {
             setIsLoading(false);
         }, 5000)
@@ -17,7 +22,7 @@ const NavigationHandler = ({ children, requireAuth = true }: { children: ReactNo
         return () => {
             clearTimeout(timer)
         }
-    }, []);
+    }, [setSchool]);
 
     if (isLoading) {
         return(

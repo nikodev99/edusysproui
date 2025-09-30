@@ -13,7 +13,7 @@ const PageHierarchy = ({items, mBottom}: PageHierarchyProps) => {
 
     const breadcrumbItems = items?.map((item, index) => ({
         title: item.path ? (
-            <Link to={`${item.path}`} className='breadcrumb-nav' key={item.path || index}>
+            <Link to={`${item.path}`} className='breadcrumb-nav' key={item.path || index} state={item.state}>
                 {item.title}
             </Link>
         ): (

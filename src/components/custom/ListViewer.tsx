@@ -19,7 +19,7 @@ const ListViewer = <TData extends object, TError>(
     {
         callback, searchCallback, tableColumns, dropdownItems, throughDetails, hasCount, countTitle, localStorage,
         fetchId, cardData, cardNotAvatar, level, refetchCondition, callbackParams, searchCallbackParams, infinite,
-        uuidKey, tableProps, descMargin, itemSize, displayItem, filters, shareSearchQuery, onSelectData
+        uuidKey, tableProps, descMargin, itemSize, displayItem, filters, shareSearchQuery, onSelectData, dataDescription
     }: ListViewerProps<TData, TError>
 ) => {
 
@@ -60,9 +60,14 @@ const ListViewer = <TData extends object, TError>(
                 refetch().then(r => r.data)
             }
 
-            if (!isLoading && data && 'content' in data && 'totalElements' in data) {
-                setContent(data.content as TData[])
-                setDataCount(data.totalElements as number)
+            if (!isLoading && data) {
+                if ('content' in data && 'totalElements' in data) {
+                    setContent(data.content as TData[])
+                    setDataCount(data.totalElements as number)
+                }else {
+                    setContent(data as TData[])
+                    setDataCount((data as TData[])?.length as number)
+                }
             }
         }
 
@@ -148,7 +153,7 @@ const ListViewer = <TData extends object, TError>(
             const [parentKey, childKey] = uuidKey
             return record?.[parentKey as keyof TData]?.[childKey as keyof object]
         }
-        return uuidKey
+        return record[uuidKey as keyof TData] || uuidKey
     }
 
     const dataSource = !fetchId
@@ -170,6 +175,8 @@ const ListViewer = <TData extends object, TError>(
         }).filter((item): item is StudentListDataType => item !== null)
         : content;
 
+    console.log("DATASOURCE: ", dataSource)
+
     const handleUpdateSearchQuery = () => {
         setSearchQuery(undefined)
         shareSearchQuery?.(undefined)
@@ -189,6 +196,7 @@ const ListViewer = <TData extends object, TError>(
                                 : undefined
                         }
                         isCount={hasCount !== undefined ? hasCount : true}
+                        description={dataDescription}
                         addMargin={descMargin}
                     />
                     <div className='flex__end'>

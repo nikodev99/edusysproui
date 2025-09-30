@@ -46,6 +46,8 @@ import {GradeViewPage} from "../../pages/org/GradeViewPage.tsx";
 import RegisterPage from "../../pages/user/RegisterPage.tsx";
 import UserViewPage from "../../pages/org/UserViewPage.tsx";
 import UserSavePage from "../../pages/org/UserSavePage.tsx";
+import UserActivityPage from "../../pages/org/UserActivityPage.tsx";
+import PasswordResetPage from "../../pages/user/PasswordResetPage.tsx";
 
 const DashboardPage = withAuthProtection(Dashboard);
 const ListStudentPage = withAuthProtection(StudentListPage);
@@ -71,6 +73,7 @@ const ListDepartmentPage = withAuthProtection(DepartmentPage);
 const ListUserPage = withAuthProtection(UserListPage);
 const ViewUserPage = withAuthProtection(UserViewPage);
 const SaveUserPage = withAuthProtection(UserSavePage)
+const UserActivity = withAuthProtection(UserActivityPage)
 
 const SettingCustomizePage = withAuthProtection(CustomizePage);
 
@@ -84,6 +87,10 @@ export const Route = createBrowserRouter([
             {path: 'login', element: <LoginPage />},
             {path: 'register', element: <RegisterPage />}
         ]
+    },
+    {
+        path: '/password-reset/:token',
+        element: <PasswordResetPage />
     },
     {
         path: '/active_school',
@@ -212,7 +219,8 @@ export const Route = createBrowserRouter([
                         children: [
                             {path: text.path.page, element: <ListUserPage />},
                             {path: text.path.slug, element: <ViewUserPage />},
-                            {path: text.path.new, element: <SaveUserPage/>}
+                            {path: text.path.new, element: <SaveUserPage/>},
+                            {path: text.path.slug + '/activity', element: <UserActivity/>},
                         ]
                     }
                 ]

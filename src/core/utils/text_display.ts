@@ -2,10 +2,6 @@ import {loggedUser} from "../../auth/jwt/LoggedUser.ts";
 import {toLower} from "./utils.ts";
 
 export const raw = {
-    auth: {
-        login: '/login',
-        signUp: '/signup',
-    },
     home: {
         label: 'Tableau de bord',
         href: '/dashboard',

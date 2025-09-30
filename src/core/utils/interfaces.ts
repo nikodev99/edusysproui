@@ -23,14 +23,14 @@ import {PunishmentStatus} from "../../entity/enums/punishmentStatus.ts";
 import {Day} from "../../entity/enums/day.ts";
 import {AxiosError, AxiosResponse} from "axios";
 import {PercentPositionType, ProgressSize} from "antd/es/progress/progress";
-import {CheckboxOptionType, ListProps, TableColumnsType, TableProps} from "antd";
+import {CheckboxOptionType, TableColumnsType, TableProps} from "antd";
 import {ItemType} from "antd/es/menu/interface";
 import {z} from "zod";
 import {AssignmentTypeLiteral} from "../../entity/enums/assignmentType.ts";
 import {RadioGroupButtonStyle, RadioGroupOptionType} from "antd/es/radio";
 import {DefaultOptionType} from "antd/es/select";
 import {ButtonType} from "antd/es/button";
-import {UseMutationOptions, UseQueryResult} from "@tanstack/react-query";
+import {UseMutationOptions} from "@tanstack/react-query";
 import {Variant} from "antd/es/config-provider";
 import {NavigateOptions} from "react-router-dom";
 
@@ -256,6 +256,12 @@ export interface AxiosConfig {
     headers?: Record<string, string>
 }
 
+export interface MessageResponse {
+    message: string
+    timestamp: string | Date | number
+    isError?: boolean
+}
+
 export interface StudentListDataType {
     id: string
     academicYear: AcademicYear
@@ -282,16 +288,21 @@ export interface DataProps<TData extends object> {
     record: TData
 }
 
-export interface ListViewerProps<TData extends object, TError> {
+export type ListViewerProps<TData extends object, TError> = ListProps<TData> & {
     callback: () => Promise<AxiosResponse<TData | TData[], TError>>
     searchCallback?: (...args: unknown[]) => Promise<AxiosResponse<TData[]>>
+    hasCount?: boolean,
+    countTitle?: string,
+    fetchId?: string | string[]
+    callbackParams?: unknown[]
+    searchCallbackParams?: unknown[]
+}
+
+export interface ListProps<TData extends object> {
     tableColumns?: TableColumnsType<TData>
     displayItem?: 1 | 2 | 3 | 4,
     dropdownItems?: (url?: string, record?: TData) => ItemType[]
     throughDetails?: (id: string | number, record?:TData) => void
-    hasCount?: boolean,
-    countTitle?: string,
-    fetchId?: string | string[]
     localStorage?: {activeIcon?: string, pageSize?: string, page?: string, pageCount?: string}
     cardNotAvatar?: boolean
     cardData?: (data: TData[]) => DataProps<TData>[]
@@ -299,8 +310,6 @@ export interface ListViewerProps<TData extends object, TError> {
     hasSearch?: boolean
     searchInput?: boolean
     refetchCondition?: boolean
-    callbackParams?: unknown[]
-    searchCallbackParams?: unknown[]
     infinite?: boolean
     uuidKey?: keyof TData | string[]
     tableProps?: TableProps
@@ -313,7 +322,7 @@ export interface ListViewerProps<TData extends object, TError> {
     shareSearchQuery?: (value: string | undefined) => void
     showFilterAction?: (value: boolean) => void
     onSelectData?: (data: TData) => void
-    fetchedData?: UseQueryResult<TData, TError>
+    dataDescription?: ReactNode
 }
 
 export interface ExamData {
@@ -361,7 +370,7 @@ export interface AutoScrollProps {
     seconds?: number
 }
 
-export interface LoadMoreListProps<T> {
+export interface LoadMoreListProps<T extends object> {
     listProps: ListProps<T>
     isLoading: boolean,
     size: number,

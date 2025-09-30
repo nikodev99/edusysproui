@@ -2,30 +2,34 @@ import {useLocation} from "react-router-dom";
 import {useUserRepo} from "../../hooks/actions/useUserRepo.ts";
 import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
 import {text} from "../../core/utils/text_display.ts";
-import {getBrowser, MAIN_COLOR, setTitle} from "../../core/utils/utils.ts"
+import {getBrowser, getSlug, MAIN_COLOR, setTitle} from "../../core/utils/utils.ts"
 import ViewHeader from "../../components/ui/layout/ViewHeader.tsx";
-import {useEffect, useMemo, useState} from "react";
+import {ReactNode, useEffect, useMemo, useState} from "react";
 import {Card, Flex, Space, Divider, Typography, Progress} from "antd";
 import Responsive from "../../components/ui/layout/Responsive.tsx";
 import Grid from "../../components/ui/layout/Grid.tsx";
-import {LuLaptopMinimal} from "react-icons/lu";
+import {LuCircleCheckBig, LuLaptopMinimal, LuLockKeyhole} from "react-icons/lu";
 import Tag from "../../components/ui/layout/Tag.tsx";
 import {RoleEnum} from "../../auth/dto/role.ts";
 import Datetime from "../../core/datetime.ts";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {UserActionLinks} from "../../components/ui-kit-org";
 import {ItemType} from "antd/es/menu/interface";
+import {useRedirect} from "../../hooks/useRedirect.ts";
+import {User} from "../../auth/dto/user.ts";
 
 const UserViewPage = () => {
 
     const location = useLocation()
     const {state: userId} = location
 
+    const {toUserActivity} = useRedirect()
+
     const [linkButtons, setLinkButtons] = useState<ItemType[]>([])
     const [shouldRefetch, setShouldRefetch] = useState<boolean>(false)
-    const {useGetUser, useGetUserLogins} = useUserRepo()
+    const {useGetUser, useGetUserLogin} = useUserRepo()
     const {data: user, isLoading, refetch} = useGetUser(userId)
-    const logins = useGetUserLogins(userId)
+    const login = useGetUserLogin(user?.account as number)
 
     const userName = useMemo(() =>
         setTitle({firstName: user?.firstName, lastName: user?.lastName}),
@@ -45,18 +49,32 @@ const UserViewPage = () => {
         ]
     })
 
-    const login = useMemo(() =>
-            logins?.sort((a, b) => Datetime.of(a.createdAt).diffSecond(b.createdAt))?.[0] ?? null,
-    [logins])
+    const accountStatus = useMemo((): ReactNode => {
+        const enabledTag = user?.enabled
+            ? <Tag icon={<LuCircleCheckBig />} color='success'>Activé</Tag>
+            : <Tag icon={<LuLockKeyhole />} color='danger'>Désactivé</Tag>
+
+        const lockedTag = user?.accountNonLocked
+            ? <Tag icon={<LuCircleCheckBig />} color='success'>disponible</Tag>
+            : <Tag icon={<LuLockKeyhole />} color='danger'>Vérrouillé</Tag>
+
+        return <Space>
+            {enabledTag} {lockedTag}
+        </Space>
+    }, [])
 
     useEffect(() => {
         const init = async () => {
             if (shouldRefetch)
                 refetch().then()
         }
-        
+
         init().then(() => setShouldRefetch(false))
     }, [refetch, shouldRefetch])
+
+    const toActivity = () => {
+        toUserActivity(user?.id as number, getSlug({firstName: user?.firstName, lastName: user?.lastName}))
+    }
 
     return (
         <>
@@ -73,7 +91,8 @@ const UserViewPage = () => {
                 }}
                 blockProps={[
                     {title: 'Identifiant', mention: <Typography.Text editable>{user?.username}</Typography.Text>},
-                    {title: 'Téléphone', mention: user?.phoneNumber}
+                    {title: 'Téléphone', mention: user?.phoneNumber},
+                    {title: 'Status du compte', mention: accountStatus}
                 ]}
                 items={linkButtons}
             />
@@ -94,21 +113,22 @@ const UserViewPage = () => {
                             <Card.Meta title={
                                 <Flex justify='space-between'>
                                     <h3>Dernière connection</h3>
-                                    <Typography.Link>Voir Activités</Typography.Link>
+                                    <Typography.Link onClick={toActivity}>Voir Activités</Typography.Link>
                                 </Flex>
                             } style={{marginBottom: '10px'}} />
                             <Flex align='center' gap={10}>
                                 <LuLaptopMinimal size={50} />
                                 <div>
                                     <p>{
-                                        user?.lastLogin
-                                            ? Datetime.of(user?.lastLogin as number).fDatetime({format: 'dddd D MMMM YYYY à HH:mm:ss'})
+                                        user?.lastLogin || login?.lastUsedAt
+                                            ? Datetime.of((user?.lastLogin || login?.lastUsedAt) as number)
+                                                .fDatetime({format: 'dddd D MMMM YYYY à HH:mm:ss'})
                                             : '-'
                                     }</p>
                                     {login && (<Space split={<Divider type='vertical' />} wrap>
-                                        <p>IP: {login?.clientIp && login.clientIp}</p>
-                                        <p>Browser: {getBrowser(login?.browser && login.browser)}</p>
-                                        <p>OS: {login?.device && login.device}</p>
+                                        <p>IP: {login?.clientIp && login?.clientIp}</p>
+                                        <p>Browser: {getBrowser(login?.browser && login?.browser)}</p>
+                                        <p>OS: {login?.device && login?.device}</p>
                                     </Space>)}
                                 </div>
                             </Flex>

@@ -29,7 +29,7 @@ const CardList = <TData extends object>(
         return selectedGenderIcon(gender)
     }
 
-    const {Title, Text} = Typography
+    const {Title, Paragraph, Text} = Typography
     //TODO Adding the filter by name or whatever
 
     const xl = displayItem === 1 ? 24 : displayItem === 2 ? 12 : displayItem === 3 ? 8 : 6
@@ -66,13 +66,13 @@ const CardList = <TData extends object>(
                                         {c?.tag && <div className='card__tag'>{c?.tag}</div>}
                                         {!c.lastName && !c.firstName ? undefined : <Divider />}
                                         {c.gender && <Text>{selectedGender(c.gender)} {c?.gender}</Text>}
-                                        <Text>
+                                        <Paragraph>
                                             {c?.description && Array.isArray(c.description) ? c.description.map((d, i) => (
                                             <div className='desc' key={i}>{d}</div>
                                             )): (
                                                 <div className='desc'>{c?.description}</div>
                                             )}
-                                        </Text>
+                                        </Paragraph>
                                     </div>
                                 </div>
                             </Card>

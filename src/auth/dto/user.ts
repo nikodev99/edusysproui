@@ -13,15 +13,20 @@ export interface UserProfileToken {
     enabled: boolean
     accountNonLocked: boolean
     roles: Role[]
+    accountId: number
     user: UserProfile
 }
 
 export interface UserActiveLogin {
     loginId: number
+    accountId: number
     clientIp: string
     createdAt: string | number | Date
+    lastUsedAt: string | number | Date
+    expiryAt: string | number | Date
     device: string
     browser: string
+    token: string
 }
 
 export interface LoginRequest {
@@ -67,6 +72,15 @@ export interface User {
     userType: UserType
     createdAt: Date | number | string
     updatedAt: Date | number | string
+}
+
+export interface UserActivity {
+    id?: number
+    action: string
+    actionDate?: Date | number[] | string
+    ipAddress?: string
+    description: string
+    accountId: number
 }
 
 export enum UserType {

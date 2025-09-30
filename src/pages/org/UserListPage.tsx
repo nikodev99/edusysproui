@@ -5,7 +5,7 @@ import {useRedirect} from "../../hooks/useRedirect.ts";
 import {getSlug, MAIN_COLOR} from "../../core/utils/utils.ts";
 import {DataProps} from "../../core/utils/interfaces.ts";
 import {User} from "../../auth/dto/user.ts";
-import {Space, TableColumnsType, Typography} from "antd";
+import {Space, TableColumnsType} from "antd";
 import {Role, RoleEnum} from "../../auth/dto/role.ts";
 import {AvatarTitle} from "../../components/ui/layout/AvatarTitle.tsx";
 import {ActionButton} from "../../components/ui/layout/ActionButton.tsx";
@@ -91,17 +91,6 @@ const UserListPage = () => {
                     toView={() => toView(record?.id, record)}
                 />
             )
-        },
-        {
-            title: 'Identifiant',
-            key: 'username',
-            dataIndex: "username",
-            sorter: true,
-            showSorterTooltip: false,
-            render: (username: string, record) => <Typography.Link
-                onClick={() => toView(record?.id, record)} underline>
-                {username}
-            </Typography.Link>
         },
         {
             title: 'Role',

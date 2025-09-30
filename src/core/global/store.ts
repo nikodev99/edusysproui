@@ -14,6 +14,8 @@ type WithSelectors<S> = S extends { getState: () => infer T }
     ? S & { use: { [K in keyof T]: () => T[K] } }
     : never
 
+const school = loggedUser.getSchool()
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const createSelectors = <S extends UseBoundStore<StoreApi<object>>>(
     _store: S,
@@ -46,10 +48,14 @@ export const useGlobalStore = createSelectors(create(combine({
     countAllStudent: 0,
     countClasseStudent: 0,
     countGradeStudent: 0,
-    schoolId: loggedUser.getSchool()?.id as string
+    school: school,
+    schoolId: school?.id,
+    schoolAbbr: school?.abbr,
 }, (set) => ({
-    updateAcademicYear (academicYear: string) {
-        set({academicYear: academicYear});
+    setSchool() {
+        set({school: school})
+        set({schoolId: school?.id})
+        set({schoolAbbr: school?.abbr})
     },
 
     setDepartment () {

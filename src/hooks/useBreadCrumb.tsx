@@ -3,7 +3,7 @@ import {ReactNode, useMemo} from "react";
 import {text} from "../core/utils/text_display.ts";
 import PageHierarchy from "../components/breadcrumb/PageHierarchy.tsx";
 
-export type BreadcrumbType = {title: string | ReactNode, path?: string}
+export type BreadcrumbType = {title: string | ReactNode, path?: string, state?: unknown}
 export type BreadcrumbContextType = {item: BreadcrumbType[], context: ReactNode}
 export type BCProps = {bCItems: BreadcrumbType[], mBottom?: number}
 

@@ -3,7 +3,7 @@ import {firstLetter} from "../../core/utils/utils.ts";
 
 const PageDescription = (
     {title, description, count, isCount, addMargin = {size: '0'}}: {
-        title: ReactNode, description?: string, count?: number, isCount?: boolean
+        title: ReactNode, description?: ReactNode, count?: number, isCount?: boolean
         addMargin?: {
             position?: "top" | "bottom" | "left" | "right",
             size?: number | string
@@ -17,7 +17,7 @@ const PageDescription = (
                 {isCount ? <h1>{count}<span className='count__title'>{title}</span></h1> : <h1>{title}</h1>}
             </div>
             {description && <div className='page__description'>
-                <span>{description}</span>
+                <div>{description}</div>
             </div>}
         </header>
     )

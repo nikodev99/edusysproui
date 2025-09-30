@@ -1,6 +1,6 @@
 import {apiClient} from "../axiosConfig.ts";
-import {User, UserActiveLogin} from "../../auth/dto/user.ts";
-import {Pageable} from "../../core/utils/interfaces.ts";
+import {User, UserActiveLogin, UserActivity} from "../../auth/dto/user.ts";
+import {MessageResponse, Pageable} from "../../core/utils/interfaces.ts";
 import {Role} from "../../auth/dto/role.ts";
 
 export const getAllUsers = (schoolId: string, pageable: Pageable, sortCriteria?: string) => {
@@ -21,12 +21,28 @@ export const getAllSearchedUsers = async (schoolId: string, input: string) => {
     })
 }
 
-export const getUserLogins = (userId: number) => {
-    return apiClient.get<UserActiveLogin[]>(`/users/logins/${userId}`)
+export const getAllUserLogins = (accountId: number) => {
+    return apiClient.get<UserActiveLogin[]>(`/users/all_logins/${accountId}`)
+}
+
+export const getUserLogin = (accountId: number) => {
+    return apiClient.get<UserActiveLogin>(`/users/login/${accountId}`)
+}
+
+export const sessionLogout = (sessionId?: number) => {
+    return apiClient.post<MessageResponse>(`/users/logout/${sessionId}`)
 }
 
 export const getUserById = (userId: number, schoolId: string) => {
     return apiClient.get<User>(`/users/${userId}/${schoolId}`)
+}
+
+export const saveUserActivity = (activity: UserActivity) => {
+    return apiClient.post<UserActivity>(`/users/activity`, activity)
+}
+
+export const getUserActivities = (accountId: number) => {
+    return apiClient.get<UserActivity>(`/users/activity/${accountId}`)
 }
 
 export const countAllUsers = (schoolId: string) => {

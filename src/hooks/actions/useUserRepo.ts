@@ -1,16 +1,20 @@
 import {useFetch} from "../useFetch.ts";
 import {
     countAllUsers,
-    getAllSearchedUsers,
+    getAllSearchedUsers, getAllUserLogins,
     getAllUsers,
-    getUserById,
-    getUserLogins
+    getUserActivities,
+    getUserById, getUserLogin,
+    saveUserActivity
 } from "../../data/repository/userRepository.ts";
 import {useGlobalStore} from "../../core/global/store.ts";
 import {getShortSortOrder, setSortFieldName} from "../../core/utils/utils.ts";
+import {User, UserActivity} from "../../auth/dto/user.ts";
+import {loggedUser} from "../../auth/jwt/LoggedUser.ts";
 
 export const useUserRepo = () => {
     const schoolId = useGlobalStore(state => state.schoolId)
+    const logged = loggedUser.getUser()
 
     const useGetAllUsers = () => useFetch(['users', schoolId], getAllUsers, [schoolId], !!schoolId)
 
@@ -18,9 +22,9 @@ export const useUserRepo = () => {
         if (sortField && sortOrder) {
             sortOrder = getShortSortOrder(sortOrder);
             sortField = sortedField(sortField);
-            return await getAllUsers(schoolId, {page: page, size: size}, `${sortField}:${sortOrder}`);
+            return await getAllUsers(schoolId as string, {page: page, size: size}, `${sortField}:${sortOrder}`);
         }
-        return await getAllUsers(schoolId, {page: page, size: size});
+        return await getAllUsers(schoolId as string, {page: page, size: size});
     }
 
     const useGetSearchedUsers = (input?: string) => useFetch(
@@ -30,7 +34,7 @@ export const useUserRepo = () => {
         !!schoolId && !!input
     )
 
-    const getSearchedUsers = (input: string) => getAllSearchedUsers(schoolId, input);
+    const getSearchedUsers = (input: string) => getAllSearchedUsers(schoolId as string, input);
 
     const useGetUser = (userId: number) => useFetch(
         ['user', schoolId, userId],
@@ -39,8 +43,24 @@ export const useUserRepo = () => {
         !!userId && !!schoolId
     )
 
-    const useGetUserLogins = (userId: number) => {
-        const {data} = useFetch(['user-logins', userId], getUserLogins, [userId], !!userId)
+    const saveActivity = (data: UserActivity) => {
+        saveUserActivity(data).then(r => r.data)
+    }
+
+    const useGetUserActivities = (accountId: number) => {
+        const {data} = useFetch(["user-activities", accountId], getUserActivities, [accountId], !!accountId);
+        return data
+    }
+
+    const useGetAllUserLogins = (accountId: number) => useFetch(
+        ['user-logins', accountId],
+        getAllUserLogins,
+        [accountId],
+        !!accountId
+    )
+
+    const useGetUserLogin = (accountId: number) => {
+        const {data} = useFetch(['user-logins', accountId], getUserLogin, [accountId], !!accountId)
         return data
     }
 
@@ -49,14 +69,21 @@ export const useUserRepo = () => {
         return count.data as number
     }
 
+    const isSameUser = (currentUser?: User): boolean => currentUser ? currentUser?.username === logged?.username : false
+
+
     return {
         useGetAllUsers,
         getPaginatedUsers,
         useGetSearchedUsers,
         getSearchedUsers,
         useGetUser,
-        useGetUserLogins,
+        useGetAllUserLogins,
+        useGetUserLogin,
         useCountUsers,
+        saveActivity,
+        useGetUserActivities,
+        isSameUser
     }
 }
 

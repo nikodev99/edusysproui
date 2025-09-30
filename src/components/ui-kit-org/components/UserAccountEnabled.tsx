@@ -20,7 +20,7 @@ export const UserAccountEnabled = ({user, open, close, setRefetch}: {
     const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined)
     
     const enableText = useMemo(() => user?.enabled ? 'désactiver' : 'activer', [user?.enabled])
-    const enableCons = useMemo(() => user?.enabled
+    const enableCons = useMemo(() => !user?.enabled
         ? "L'activation autorise l'utilisateur à se connecter et à utiliser toutes les fonctionnalités associées à ses roles"
         : "La désactivation bloque l'accès, suspend les actions et restreint la visibilité de données de l'utilisateur jusqu'à réactivation.",
         [user?.enabled]

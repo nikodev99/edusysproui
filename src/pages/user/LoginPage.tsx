@@ -1,6 +1,6 @@
 import {LoginForm} from "../../components/forms/LoginForm.tsx";
 import {useForm} from "react-hook-form";
-import {Alert, Button, Card, Form} from "antd";
+import {Alert, Button, Card, Form, Typography} from "antd";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {LoginSchema, loginSchema} from "../../schema";
 import {useAuth} from "../../hooks/useAuth.ts";
@@ -58,6 +58,7 @@ const LoginPage = () => {
                         <Button type='primary' onClick={handleLogin}>Se connecter</Button>
                     </Form.Item>
                 </Form>
+                <Typography.Link onClick={() => alert('Cliqué ici pour changer de mot de passe')}>Mot de passe oublié</Typography.Link>
             </Card>
         </div>
     )

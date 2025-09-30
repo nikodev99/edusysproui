@@ -1,10 +1,8 @@
 import {ItemType} from "antd/es/menu/interface";
-import {Tooltip} from "antd";
-import {isAdmin} from "../../../auth/dto/role.ts";
 import {useCallback, useEffect, useMemo, useRef} from "react";
 import {
     LuKeyRound,
-    LuLock,
+    LuLock, LuLockKeyhole,
     LuLockOpen,
     LuSheet,
     LuToggleLeft,
@@ -19,25 +17,29 @@ import {UserRoles} from "./UserRoles.tsx";
 import {UserAccountEnabled} from "./UserAccountEnabled.tsx";
 import {UserAccountLocked} from "./UserAccountLocked.tsx";
 import {UserRemoveAccount} from "./UserRemoveAccount.tsx";
+import {useRedirect} from "../../../hooks/useRedirect.ts";
+import {getSlug} from "../../../core/utils/utils.ts";
+import {ResetPassword} from "./ResetPassword.tsx";
+import {useUserRepo} from "../../../hooks/actions/useUserRepo.ts";
 
 type UserActionButtons = {
     user?: User 
     getItems?: (items: ItemType[]) => void
     setRefresh?: (value: boolean) => void
-    loadMessage?: { success?: string; error?: string }
-    deleteTab?: (tab: string) => void
 }
 
-export const UserActionLinks = ({user, getItems, setRefresh, loadMessage, deleteTab}: UserActionButtons) => {
-    const userLogged = loggedUser.getUser()
-
+export const UserActionLinks = ({user, getItems, setRefresh}: UserActionButtons) => {
+    loggedUser.getUser();
+    const {toUserActivity} = useRedirect()
     const [roleManage, setRoleManage] = useToggle(false)
     const [enable, setEnable] = useToggle(false)
     const [accountNoLocked, setAccountNoLocked] = useToggle(false)
     const [removeUser, setRemoveUser] = useToggle(false)
+    const [passwordReset, setPasswordReset] = useToggle(false)
     const prevItemsRef = useRef<ItemType[] | undefined>(undefined);
+    const {isSameUser} = useUserRepo()
 
-    const isSameUser = useMemo(() => user?.username === userLogged?.username, [user?.username, userLogged?.username])
+    const sameUser = useMemo(() => user ? isSameUser(user) : false, [isSameUser, user])
 
     console.log("ALL ENABLES: ", user?.enabled)
     
@@ -53,7 +55,7 @@ export const UserActionLinks = ({user, getItems, setRefresh, loadMessage, delete
                 key: `activity-${user?.id}`,
                 icon: <LuSheet />,
                 label: 'Voir Activité',
-                onClick: () => alert('Création de compte')
+                onClick: () => toUserActivity(user?.id as number, getSlug({firstName: user?.firstName, lastName: user?.lastName}))
             },
             { type: 'divider' },
             {
@@ -72,21 +74,28 @@ export const UserActionLinks = ({user, getItems, setRefresh, loadMessage, delete
             {
                 key: `reset-${user?.id}`,
                 icon: <LuKeyRound />,
-                label: <Tooltip title={'yeye'}>Réinitialiser mot de passe</Tooltip>,
-                disabled: isAdmin(user?.roles as []) && !isSameUser,
+                label: "Réinitialiser mot de passe",
+                onClick: () => setPasswordReset()
             },
+            ...(sameUser ? [{
+                key: `change-${user?.id}`,
+                icon: <LuLockKeyhole />,
+                label: "Changer mot de passe",
+                onClick: () => alert("Changer le mot de passe"),
+            }] : []),
+            { type: 'divider' },
             {
                 key: `delete-${user?.id}`,
                 icon: <AiOutlineUserDelete />,
                 label: 'Retirer Utilisateur',
                 danger: true,
-                disabled: isAdmin(user?.roles as []) && isSameUser,
+                disabled: sameUser,
                 onClick: setRemoveUser
             }
-        ]
+        ] as ItemType[]
     }, [
-        isSameUser, setAccountNoLocked, setEnable, setRemoveUser, setRoleManage, user?.accountNonLocked, user?.enabled,
-        user?.id, user?.roles
+        sameUser, setAccountNoLocked, setEnable, setPasswordReset, setRemoveUser, setRoleManage, toUserActivity,
+        user?.accountNonLocked, user?.enabled, user?.firstName, user?.id, user?.lastName
     ])
 
     const itemsAreShallowEqual = useCallback((a?: ItemType[], b?: ItemType[]) => {
@@ -121,6 +130,7 @@ export const UserActionLinks = ({user, getItems, setRefresh, loadMessage, delete
             <UserAccountEnabled user={user as User} open={enable} close={setEnable} setRefetch={setRefresh} />
             <UserAccountLocked user={user as User} open={accountNoLocked} close={setAccountNoLocked} setRefetch={setRefresh}/>
             <UserRemoveAccount user={user as User} open={removeUser} close={setRemoveUser} setRefetch={setRefresh}/>
+            <ResetPassword user={user as User} open={removeUser} close={setRemoveUser} setRefetch={setRefresh}/>
         </section>
     )
 }

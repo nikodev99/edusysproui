@@ -16,7 +16,6 @@ import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {UserActionLinks} from "../../components/ui-kit-org";
 import {ItemType} from "antd/es/menu/interface";
 import {useRedirect} from "../../hooks/useRedirect.ts";
-import {User} from "../../auth/dto/user.ts";
 
 const UserViewPage = () => {
 
@@ -61,7 +60,7 @@ const UserViewPage = () => {
         return <Space>
             {enabledTag} {lockedTag}
         </Space>
-    }, [])
+    }, [user?.accountNonLocked, user?.enabled])
 
     useEffect(() => {
         const init = async () => {

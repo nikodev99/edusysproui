@@ -6,8 +6,14 @@ import {LoginSchema, loginSchema} from "../../schema";
 import {useAuth} from "../../hooks/useAuth.ts";
 import {useQueryPost} from "../../hooks/usePost.ts";
 import React from "react";
+import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 
 const LoginPage = () => {
+    useDocumentTitle({
+        title: "Connexion",
+        description: "Connexion description",
+    })
+
     const { loginUser, loginError, clearLoginError } = useAuth()
 
     const {control, formState: {errors}, handleSubmit} = useForm<LoginSchema>({

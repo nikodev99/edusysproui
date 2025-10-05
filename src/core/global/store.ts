@@ -2,7 +2,7 @@ import {create, StoreApi, UseBoundStore} from "zustand";
 import {combine} from "zustand/middleware";
 import {fetchFunc} from "../../hooks/useFetch.ts";
 import {getDepartmentBasics} from "../../data/repository/departmentRepository.ts";
-import {AcademicYear, Classe, Department} from "../../entity";
+import {AcademicYear, Classe, Department, School} from "../../entity";
 import {getAcademicYearFromYear, getCurrentAcademicYear} from "../../data/repository/academicYearRepository.ts";
 import {getClassesBasicValues} from "../../data/repository/classeRepository.ts";
 import {countStudent} from "../../data/repository/studentRepository.ts";
@@ -13,8 +13,6 @@ import {loggedUser} from "../../auth/jwt/LoggedUser.ts";
 type WithSelectors<S> = S extends { getState: () => infer T }
     ? S & { use: { [K in keyof T]: () => T[K] } }
     : never
-
-const school = loggedUser.getSchool()
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const createSelectors = <S extends UseBoundStore<StoreApi<object>>>(
@@ -48,11 +46,22 @@ export const useGlobalStore = createSelectors(create(combine({
     countAllStudent: 0,
     countClasseStudent: 0,
     countGradeStudent: 0,
-    school: school,
-    schoolId: school?.id,
-    schoolAbbr: school?.abbr,
+    school: {} as School,
+    schoolId: '' as string,
+    schoolAbbr: '' as string,
 }, (set) => ({
-    setSchool() {
+    initiateSchool() {
+        const school = loggedUser.getSchool()
+        if (school) {
+            set({
+                school: school,
+                schoolId: school?.id,
+                schoolAbbr: school?.abbr
+            })
+        }
+    },
+
+    setSchool(school: School) {
         set({school: school})
         set({schoolId: school?.id})
         set({schoolAbbr: school?.abbr})

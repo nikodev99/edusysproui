@@ -7,14 +7,14 @@ import {useGlobalStore} from "../core/global/store.ts";
 
 const NavigationHandler = ({ children, requireAuth = true }: { children: ReactNode, requireAuth?: boolean }) => {
     const { isLoggedIn, userSchool, shouldPickSchool, user } = useAuth();
-    const setSchool = useGlobalStore(state => state.setSchool);
+    const initiateSchool = useGlobalStore(state => state.initiateSchool);
 
     const location = useLocation();
     const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
-        setSchool()
-        
+        initiateSchool()
+
         const timer = setTimeout(() => {
             setIsLoading(false);
         }, 5000)
@@ -22,7 +22,7 @@ const NavigationHandler = ({ children, requireAuth = true }: { children: ReactNo
         return () => {
             clearTimeout(timer)
         }
-    }, [setSchool]);
+    }, []);
 
     if (isLoading) {
         return(

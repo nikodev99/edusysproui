@@ -27,9 +27,14 @@ export const SessionLogout = ({sessionId, open, close, isCurrent, setRefetch}: {
     const onLogout = useCallback(async () => {
         setRefetch?.(false);
         await sessionLogout(sessionId).then(res => {
-            if (res.status === 200)
+            if (res.status === 200) {
                 setSuccessMessage(res?.data?.message)
-            else
+                if (isCurrent && isCurrent) {
+                    logoutUser()
+                } else {
+                    setRefetch?.(true)
+                }
+            }else
                 setErrorMessage(res?.data?.message)
         }).catch(error => {
             if(isAxiosError(error)) {
@@ -38,17 +43,12 @@ export const SessionLogout = ({sessionId, open, close, isCurrent, setRefetch}: {
                 setErrorMessage(JSON.stringify(error))
             }
         })
-    }, [sessionId, setRefetch])
+    }, [isCurrent, logoutUser, sessionId, setRefetch])
 
 
     const handleCancel = () => {
         setErrorMessage(undefined)
         setSuccessMessage(undefined)
-        if (isCurrent && isCurrent) {
-            logoutUser()
-        }else {
-            setRefetch?.(true)
-        }
         close()
     }
     return(

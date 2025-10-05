@@ -13,9 +13,7 @@ import {AcademicYear} from "../../entity";
 import {useGlobalStore} from "../../core/global/store.ts";
 
 export const useAcademicYearRepo = () => {
-    const schoolId = useGlobalStore.getState().schoolId
-
-    console.log({schoolId})
+    const schoolId = useGlobalStore(state => state.schoolId)
 
     const useInsertAcademicYear = () =>
         useInsert(academicYearSchema, saveAcademicYear)

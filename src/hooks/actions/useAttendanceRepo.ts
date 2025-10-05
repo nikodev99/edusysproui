@@ -25,7 +25,7 @@ import {attendanceSchema} from "../../schema";
 import {useGlobalStore} from "../../core/global/store.ts";
 
 export const useAttendanceRepo = () => {
-    const schoolId = useGlobalStore.getState().schoolId
+    const schoolId = useGlobalStore(state => state.schoolId)
 
     const useInsertAttendances = () => useInsert(attendanceSchema, insertAttendances, {
         mutationKey: ['attendance-post']

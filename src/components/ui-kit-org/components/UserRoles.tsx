@@ -131,6 +131,7 @@ export const UserRoles = ({user, open, close, setRefresh}: {
                     options={options}
                     tagRender={tagRender}
                     value={roles}
+                    showSearch={false}
                 />
                 <Flex style={{marginTop: '20px'}} justify='flex-end' gap={10}>
                     <ModalConfirmButton

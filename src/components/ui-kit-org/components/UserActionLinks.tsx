@@ -40,8 +40,6 @@ export const UserActionLinks = ({user, getItems, setRefresh}: UserActionButtons)
     const {isSameUser} = useUserRepo()
 
     const sameUser = useMemo(() => user ? isSameUser(user) : false, [isSameUser, user])
-
-    console.log("ALL ENABLES: ", user?.enabled)
     
     const items: ItemType[] = useMemo(() => {
         return [
@@ -130,7 +128,7 @@ export const UserActionLinks = ({user, getItems, setRefresh}: UserActionButtons)
             <UserAccountEnabled user={user as User} open={enable} close={setEnable} setRefetch={setRefresh} />
             <UserAccountLocked user={user as User} open={accountNoLocked} close={setAccountNoLocked} setRefetch={setRefresh}/>
             <UserRemoveAccount user={user as User} open={removeUser} close={setRemoveUser} setRefetch={setRefresh}/>
-            <ResetPassword user={user as User} open={removeUser} close={setRemoveUser} setRefetch={setRefresh}/>
+            <ResetPassword user={user as User} open={passwordReset} close={setPasswordReset}/>
         </section>
     )
 }

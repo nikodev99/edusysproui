@@ -1,5 +1,5 @@
 import {apiClient} from "../axiosConfig.ts";
-import {User, UserActiveLogin, UserActivity} from "../../auth/dto/user.ts";
+import {ChangePasswordRequest, User, UserActiveLogin, UserActivity} from "../../auth/dto/user.ts";
 import {MessageResponse, Pageable} from "../../core/utils/interfaces.ts";
 import {Role} from "../../auth/dto/role.ts";
 
@@ -50,7 +50,6 @@ export const countAllUsers = (schoolId: string) => {
 }
 
 export const setAccountRoles = (accountId: number, roles: Role[]) => {
-    console.log("SET ACCOUNT ROLES", {accountId: accountId, roles: roles})
     return apiClient.patch(`/users/role/${accountId}`, {field: 'roles', value: roles})
 }
 
@@ -72,4 +71,8 @@ export const setUnlockAccount = (accountId: number) => {
 
 export const removeUserAccount = (accountId: number) => {
     return apiClient.patch(`/users/remove/${accountId}`, {field: 'isActive', value: false})
+}
+
+export const changePassword = async (request: ChangePasswordRequest) => {
+    return await apiClient.post<MessageResponse>('/users/change-password', request)
 }

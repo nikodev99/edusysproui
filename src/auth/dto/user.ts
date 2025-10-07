@@ -46,6 +46,7 @@ export interface SignupRequest {
 
 export interface UserProfile {
     userId: string
+    accountId: number
     firstName: string
     lastName: string
     username: string
@@ -80,15 +81,27 @@ export interface UserActivity {
     actionDate?: Date | number[] | string
     ipAddress?: string
     description: string
-    accountId: number
+    accountId?: number
 }
 
 export enum UserType {
     EMPLOYEE, GUARDIAN, TEACHER
 }
 
+export interface ResetPasswordRequest {
+    token: number
+    newPassword: string
+}
+
+export interface ChangePasswordRequest {
+    userId: number
+    oldPassword: string
+    newPassword: string
+}
+
 export const toUser = (profil: UserProfileToken): UserProfile => ({
     ...profil?.user,
+    accountId: profil?.accountId,
     email: profil?.email,
     username: profil?.username,
     phoneNumber: profil?.phoneNumber,

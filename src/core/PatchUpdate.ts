@@ -3,6 +3,8 @@ import {UpdateType} from "./shared/sharedEnums.ts";
 import {ID} from "./utils/interfaces.ts";
 import {patchContext} from "../data/repository/patchContext.ts";
 import {AxiosResponse} from "axios";
+import {saveUserActivity} from "../data/repository/userRepository.ts";
+import {UserActivity} from "../auth/dto/user.ts";
 
 export class PatchUpdate {
     static async setWithCustom(
@@ -10,10 +12,18 @@ export class PatchUpdate {
         setSuccessMessage: (msg?: string) => void,
         setErrorMessage: (msg?: string) => void,
         params: unknown[] = [],
+        activity?: UserActivity
     ) {
         await updateMethod(...params).then(resp => {
             if (resp.status === 200) {
                 setSuccessMessage()
+                if (activity) {
+                    saveUserActivity({
+                        action: activity?.action,
+                        accountId: activity?.accountId,
+                        description: activity?.description
+                    })
+                }
             }else {
                 setErrorMessage(String(resp.status))
             }

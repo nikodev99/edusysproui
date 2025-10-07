@@ -3,7 +3,7 @@ import {useAuth} from "../hooks/useAuth.ts";
 import LocalStorageManager from "../core/LocalStorageManager.ts";
 import {useLocation} from "react-router-dom";
 import {redirectTo} from "../context/RedirectContext.ts";
-import {jwtTokenManager} from "../auth/jwt/JWTToken.tsx";
+import {jwtTokenManager} from "../auth/jwt/JWTToken.ts";
 import {loggedUser} from "../auth/jwt/LoggedUser.ts";
 
 const ACTIVITY_TIMEOUT = import.meta.env.VITE_ACTIVITY_TIMEOUT as number;

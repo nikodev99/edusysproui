@@ -44,6 +44,10 @@ export const useUserRepo = () => {
     )
 
     const saveActivity = (data: UserActivity) => {
+        const accountId = logged?.accountId
+        if (accountId)
+            data = {...data, accountId: accountId}
+
         saveUserActivity(data).then(r => r.data)
     }
 

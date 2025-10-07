@@ -3,7 +3,7 @@ import {LoginRequest, toUser, UserProfile, UserProfileToken} from "../auth/dto/u
 import LocalStorageManager from "../core/LocalStorageManager.ts";
 import {loginApi, logoutApi, signupApi, tokenRefresh} from "../auth/services/AuthService.ts.tsx";
 import {UserContext, UserContextProps} from "../context/UserContext.ts";
-import {jwtTokenManager} from "../auth/jwt/JWTToken.tsx";
+import {jwtTokenManager} from "../auth/jwt/JWTToken.ts";
 import {loggedUser} from "../auth/jwt/LoggedUser.ts";
 import {School} from "../entity";
 import {SignupSchema} from "../schema";

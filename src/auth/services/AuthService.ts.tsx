@@ -1,7 +1,8 @@
 import {apiClient, handleError} from "../../data/axiosConfig.ts";
-import {LoginRequest, UserProfileToken} from "../dto/user.ts";
+import {LoginRequest, ResetPasswordRequest, User, UserProfileToken} from "../dto/user.ts";
 import {loggedUser} from "../jwt/LoggedUser.ts";
 import {SignupSchema} from "../../schema";
+import {MessageResponse} from "../../core/utils/interfaces.ts";
 
 export const loginApi = async (login: LoginRequest) => {
     return await apiClient.post<UserProfileToken>('/auth/login', {
@@ -44,4 +45,16 @@ export const userExists = async (personalInfoId: number) => {
 export const logoutApi = async () => {
     const refreshToken = loggedUser.getRefreshToken()
     await apiClient.post('/auth/logout', {refreshToken: refreshToken})
+}
+
+export const resetPasswordRequest = async (userId: number) => {
+    return await apiClient.post<MessageResponse>('/auth/password-reset/' + userId)
+}
+
+export const validateToken = async (token: string) => {
+    return await apiClient.get<User | MessageResponse>('/auth/validate-token/' + token)
+}
+
+export const resetPassword = async (request: ResetPasswordRequest) => {
+    return await apiClient.post<MessageResponse>('/auth/reset', request)
 }

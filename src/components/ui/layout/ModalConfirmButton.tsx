@@ -1,7 +1,7 @@
 import {Button, ButtonProps, Modal, Tooltip} from "antd";
 import {ReactNode} from "react";
 
-interface ConfirmButtonProps<TDataType> {
+export interface ConfirmButtonProps<TDataType> {
     btnProps?: ButtonProps
     handleFunc: (dataType?: TDataType) => void
     funcParam?: TDataType
@@ -16,15 +16,15 @@ interface ConfirmButtonProps<TDataType> {
 }
 
 export const ModalConfirmButton = <TDataType extends object | string | number | bigint>(
-    {handleFunc, funcParam, btnProps, title, content, okTxt, cancelTxt, onOk, onCancel, btnTxt, tooltipTxt}: ConfirmButtonProps<TDataType>
+    {handleFunc, funcParam, btnProps, title, content, okTxt = 'Oui', cancelTxt = 'Non', onOk, onCancel, btnTxt, tooltipTxt}: ConfirmButtonProps<TDataType>
 ) => {
 
     const showPromiseConfirm = () => {
         Modal.confirm({
             title: title ?? 'Voulez-vous vraiment supprimer',
             content: content ?? 'Soyez assurer lorsque vous cliquerez sur OUI, cet evaluation sera définitivement supprimer',
-            okText: okTxt ?? 'Oui',
-            cancelText: cancelTxt ?? 'Non',
+            okText: okTxt,
+            cancelText: cancelTxt,
             onOk: onOk ? onOk : async () => {
                 return new Promise((resolve, reject) => {
                     setTimeout(() => {

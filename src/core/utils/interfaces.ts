@@ -258,6 +258,7 @@ export interface AxiosConfig {
 
 export interface MessageResponse {
     message: string
+    description: string
     timestamp: string | Date | number
     isError?: boolean
 }

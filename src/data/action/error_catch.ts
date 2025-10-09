@@ -30,6 +30,12 @@ export const catchError = (err: unknown) => {
             ) {
                 return err.response?.data.error;
             }
+            if (err?.response?.data
+                && typeof err?.response?.data === 'object'
+                && 'message' in err.response.data
+            ) {
+                return err.response?.data.message;
+            }
             if (err?.response?.data && isString(err?.response?.data)) {
                 return err.response?.data
             }else {

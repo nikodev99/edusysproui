@@ -20,8 +20,8 @@ export const LoginForm = <T extends object>({control, errors}: FormContentProps<
                 label: "Nom d'utilisateur",
                 control: control,
                 required: true,
-                validateStatus: form.validate('username'),
-                help: form.error('username'),
+                validateStatus: form.validate('username' as keyof T),
+                help: form.error('username' as keyof T),
             }
         },
         {
@@ -34,8 +34,8 @@ export const LoginForm = <T extends object>({control, errors}: FormContentProps<
                 label: "Mot de passe",
                 control: control,
                 required: true,
-                validateStatus: form.validate('password'),
-                help: form.error('password'),
+                validateStatus: form.validate('password' as keyof T),
+                help: form.error('password' as keyof T),
             }
         }
     ]} />

@@ -49,6 +49,7 @@ export const useGlobalStore = createSelectors(create(combine({
     school: {} as School,
     schoolId: '' as string,
     schoolAbbr: '' as string,
+    securityRedirect: '' as string
 }, (set) => ({
     initiateSchool() {
         const school = loggedUser.getSchool()
@@ -120,6 +121,10 @@ export const useGlobalStore = createSelectors(create(combine({
                     set({allTeachers: resp.data})
                 }
             })
+    },
+
+    setSecurityRedirect (securityRedirect: string) {
+        set({securityRedirect: securityRedirect})
     }
 }))))
 

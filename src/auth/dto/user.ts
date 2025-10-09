@@ -1,5 +1,8 @@
 import {Role} from "./role.ts";
 import {Individual, School} from "../../entity";
+import {setTitle} from "../../core/utils/utils.ts";
+import {useMemo} from "react";
+import {z} from "zod";
 
 export interface UserProfileToken {
     accessToken: string
@@ -93,11 +96,26 @@ export interface ResetPasswordRequest {
     newPassword: string
 }
 
-export interface ChangePasswordRequest {
-    userId: number
-    oldPassword: string
-    newPassword: string
-}
+export const passwordRequest = z.object({
+    userId: z.number().optional(),
+    oldPassword: z.string({required_error: 'L\'ancien mot de passe est requis'})
+        .min(6, {message: "L'ancien mot de passe doit contenir au moins 6 characters"})
+        .max(50, {message: "L'ancien mot de passe doit contenir au plus 50 characters"})
+        .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/, {
+            message: "L'ancien mot de passe doit contenir au moins une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial."
+        }),
+    newPassword: z.string({required_error: 'Le nouveau mot de passe est requis'})
+        .min(6, {message: "Le nouveau mot de passe doit contenir au moins 6 characters"})
+        .max(50, {message: "Le nouveau mot de passe doit contenir au plus 50 characters"})
+        .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/, {
+            message: "Le nouveau mot de passe doit contenir au moins une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial."
+        })
+}).refine(data => data.newPassword !== data.oldPassword, {
+    message: 'Le nouveau mot de passe ne peut pas être le même que l\'ancien mot de passe',
+    path: ['newPassword']
+})
+
+export type ChangePasswordRequest = z.infer<typeof passwordRequest>
 
 export const toUser = (profil: UserProfileToken): UserProfile => ({
     ...profil?.user,
@@ -107,3 +125,10 @@ export const toUser = (profil: UserProfileToken): UserProfile => ({
     phoneNumber: profil?.phoneNumber,
     roles: profil?.roles
 });
+
+export const useName = (user?: User) => {
+    return useMemo(() =>
+            setTitle({firstName: user?.firstName, lastName: user?.lastName}),
+        [user?.firstName, user?.lastName]
+    )
+}

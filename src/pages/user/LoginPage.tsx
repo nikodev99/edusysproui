@@ -7,6 +7,7 @@ import {useAuth} from "../../hooks/useAuth.ts";
 import {useQueryPost} from "../../hooks/usePost.ts";
 import React from "react";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
+import {useGlobalStore} from "../../core/global/store.ts";
 
 const LoginPage = () => {
     useDocumentTitle({
@@ -15,6 +16,8 @@ const LoginPage = () => {
     })
 
     const { loginUser, loginError, clearLoginError } = useAuth()
+    const redirectMessage = useGlobalStore(state => state.securityRedirect)
+    const setRedirectMessage = useGlobalStore(state => state.setSecurityRedirect)
 
     const {control, formState: {errors}, handleSubmit} = useForm<LoginSchema>({
         resolver: zodResolver(loginSchema),
@@ -23,6 +26,7 @@ const LoginPage = () => {
     const {mutate} = useQueryPost(loginSchema)
 
     const onSubmit = (data: LoginSchema) => {
+        setRedirectMessage('')
         mutate({
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-expect-error
@@ -30,6 +34,8 @@ const LoginPage = () => {
             data: data
         })
     }
+
+    const clearSecurityMessage = () => setRedirectMessage('')
 
     const handleLogin = handleSubmit(onSubmit)
 
@@ -57,6 +63,17 @@ const LoginPage = () => {
                         style={{ marginBottom: 16 }}
                     />
                 )}
+                {redirectMessage && (
+                    <Alert
+                        message={"Problème de sécurité"}
+                        description={redirectMessage}
+                        type="info"
+                        showIcon
+                        closable
+                        onClose={clearSecurityMessage}
+                        style={{ marginBottom: 16 }}
+                    />
+                )}
                 <Form autoComplete='off' layout='vertical' onKeyDown={handleKeyDownSubmit}>
                     <LoginForm control={control} errors={errors} />
 
@@ -64,7 +81,7 @@ const LoginPage = () => {
                         <Button type='primary' onClick={handleLogin}>Se connecter</Button>
                     </Form.Item>
                 </Form>
-                <Typography.Link onClick={() => alert('Cliqué ici pour changer de mot de passe')}>Mot de passe oublié</Typography.Link>
+                <Typography.Link onClick={() => alert('Cliqué ici pour demandé la réinitialisation de votre mot de passe')}>Mot de passe oublié</Typography.Link>
             </Card>
         </div>
     )

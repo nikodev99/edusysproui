@@ -116,15 +116,15 @@ export const useRedirect = () => {
     const toUserList = () => redirectTo(text.org.group.user.href)
     const toSaveUser = () => redirectTo(text.org.group.user.add.href)
 
-    const toViewUser = (userId: number, userName?: string, plus?: { toActivity?: boolean }) => {
+    const toViewUser = (userId: number, userName?: string, plus?: number) => {
         let urlPlus: string = ''
-        if (plus?.toActivity) {
-            urlPlus = '/activity'
+        switch (plus) {
+            case 1: urlPlus = '/activity'; break
         }
 
         redirectTo(
             userName
-                ? text.org.group.user.view.href + joinWord(userName, '_', true) + urlPlus
+                ? text.org.group.user.view.href + joinWord(userName, '_', true) + (urlPlus)
                 : text.org.group.user.view.href + userId + urlPlus,
             {
                 state: userId
@@ -133,7 +133,20 @@ export const useRedirect = () => {
     }
 
     const toUserActivity = (userId: number, userName?: string) => {
-        return toViewUser(userId, userName,  {toActivity: true})
+        return toViewUser(userId, userName, 1)
+    }
+
+    const toChangePassword = (userId: number, userName?: string, both: boolean = true) => {
+        return redirectTo(
+            userName
+                ? text.org.group.user.view.href + (both
+                    ? `${userId}/${joinWord(userName, '_', true)}`
+                    : `${joinWord(userName, '_', true)}`) + '/change-password'
+                : text.org.group.user.view.href + userId + '/change-password',
+            {
+                state: userId
+            }
+        )
     }
 
     return {
@@ -179,6 +192,7 @@ export const useRedirect = () => {
         toUserList,
         toSaveUser,
         toViewUser,
-        toUserActivity
+        toUserActivity,
+        toChangePassword
     }
 }

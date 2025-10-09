@@ -48,6 +48,7 @@ import UserViewPage from "../../pages/org/UserViewPage.tsx";
 import UserSavePage from "../../pages/org/UserSavePage.tsx";
 import UserActivityPage from "../../pages/org/UserActivityPage.tsx";
 import PasswordResetPage from "../../pages/user/PasswordResetPage.tsx";
+import ChangePasswordPage from "../../pages/org/ChangePasswordPage.tsx";
 
 const DashboardPage = withAuthProtection(Dashboard);
 const ListStudentPage = withAuthProtection(StudentListPage);
@@ -74,6 +75,7 @@ const ListUserPage = withAuthProtection(UserListPage);
 const ViewUserPage = withAuthProtection(UserViewPage);
 const SaveUserPage = withAuthProtection(UserSavePage)
 const UserActivity = withAuthProtection(UserActivityPage)
+const UserChangePassword = withAuthProtection(ChangePasswordPage)
 
 const SettingCustomizePage = withAuthProtection(CustomizePage);
 
@@ -221,6 +223,7 @@ export const Route = createBrowserRouter([
                             {path: text.path.slug, element: <ViewUserPage />},
                             {path: text.path.new, element: <SaveUserPage/>},
                             {path: text.path.slug + '/activity', element: <UserActivity/>},
+                            {path: text.path.both + '/change-password', element: <UserChangePassword/>},
                         ]
                     }
                 ]

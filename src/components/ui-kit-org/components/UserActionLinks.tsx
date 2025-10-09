@@ -30,7 +30,7 @@ type UserActionButtons = {
 
 export const UserActionLinks = ({user, getItems, setRefresh}: UserActionButtons) => {
     loggedUser.getUser();
-    const {toUserActivity} = useRedirect()
+    const {toUserActivity, toChangePassword} = useRedirect()
     const [roleManage, setRoleManage] = useToggle(false)
     const [enable, setEnable] = useToggle(false)
     const [accountNoLocked, setAccountNoLocked] = useToggle(false)
@@ -79,7 +79,7 @@ export const UserActionLinks = ({user, getItems, setRefresh}: UserActionButtons)
                 key: `change-${user?.id}`,
                 icon: <LuLockKeyhole />,
                 label: "Changer mot de passe",
-                onClick: () => alert("Changer le mot de passe"),
+                onClick: () => toChangePassword(user?.id as number, getSlug({firstName: user?.firstName, lastName: user?.lastName}))
             }] : []),
             { type: 'divider' },
             {
@@ -92,8 +92,8 @@ export const UserActionLinks = ({user, getItems, setRefresh}: UserActionButtons)
             }
         ] as ItemType[]
     }, [
-        sameUser, setAccountNoLocked, setEnable, setPasswordReset, setRemoveUser, setRoleManage, toUserActivity,
-        user?.accountNonLocked, user?.enabled, user?.firstName, user?.id, user?.lastName
+        sameUser, setAccountNoLocked, setEnable, setPasswordReset, setRemoveUser, setRoleManage, toChangePassword,
+        toUserActivity, user?.accountNonLocked, user?.enabled, user?.firstName, user?.id, user?.lastName
     ])
 
     const itemsAreShallowEqual = useCallback((a?: ItemType[], b?: ItemType[]) => {

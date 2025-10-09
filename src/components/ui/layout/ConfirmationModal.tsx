@@ -1,9 +1,8 @@
 import FormSuccess from "../../ui/form/FormSuccess.tsx";
-import {text} from "../../../core/utils/text_display.ts";
 import FormError from "../../ui/form/FormError.tsx";
 import {Alert, Button, Flex, Modal} from "antd";
 import {ConfirmButtonProps, ModalConfirmButton} from "./ModalConfirmButton.tsx";
-import {CSSProperties, ReactNode, useCallback, useMemo} from "react";
+import {CSSProperties, ReactNode, useMemo} from "react";
 
 export type Messages = {
     success?: ReactNode,
@@ -29,6 +28,7 @@ export interface ConfirmationProps<T extends object> {
     justify?: CSSProperties['justifyContent'];
     hasCancelBtn?: boolean
     messages?: Messages
+    redirectLink?: string
 }
 
 const DEFAULT_ALERT: Required<AlertDesc> = {
@@ -37,14 +37,14 @@ const DEFAULT_ALERT: Required<AlertDesc> = {
     msg: ""
 };
 
-export type ConfirmationTYpe<TData extends object> = ConfirmationProps<TData> & ConfirmButtonProps<TData>
+export type ConfirmationTYpe<TData extends object, IData extends object> = ConfirmationProps<TData> & ConfirmButtonProps<IData>
 
-export const ConfirmationModal = <TData extends object>(
+export const ConfirmationModal = <TData extends object, IData extends object>(
     {
         data, open, close, setRefetch, handleFunc, modalTitle, alertDesc, customComponent, justify = 'flex-end',
         hasCancelBtn = false, title = 'Souhaitez vous poursuivre ?', content = 'Veuillez cliquer sur OUI pour confirmer', tooltipTxt,
-        btnTxt, btnProps, okTxt, cancelTxt, messages
-    }: ConfirmationTYpe<TData>
+        btnTxt, btnProps, okTxt, cancelTxt, messages, redirectLink
+    }: ConfirmationTYpe<TData, IData>
 ) => {
 
     const successMessage = useMemo(() => messages?.success, [messages?.success])
@@ -65,10 +65,6 @@ export const ConfirmationModal = <TData extends object>(
 
     const component = useMemo(() => customComponent ?? undefined, [customComponent])
 
-    const handleSubmitFunc = useCallback((data?: TData) => {
-        handleFunc(data)
-    }, [handleFunc])
-
     const handleCancel = () => {
         setRefetch?.(true)
         close()
@@ -76,7 +72,7 @@ export const ConfirmationModal = <TData extends object>(
 
     return(
         <>
-            {successMessage && <FormSuccess message={successMessage} redirectLink={text.org.group.user.href} />}
+            {successMessage && <FormSuccess message={successMessage} redirectLink={redirectLink} />}
             {errorMessage && <FormError message={errorMessage} isNotif />}
             <Modal
                 open={open}
@@ -91,7 +87,7 @@ export const ConfirmationModal = <TData extends object>(
                 {component}
                 <Flex style={{marginTop: '20px'}} justify={justify} gap={10}>
                     <ModalConfirmButton
-                        handleFunc={handleSubmitFunc}
+                        handleFunc={handleFunc}
                         title={title}
                         content={content}
                         tooltipTxt={tooltipTxt}

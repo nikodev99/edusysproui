@@ -21,8 +21,8 @@ export const ModalConfirmButton = <TDataType extends object | string | number | 
 
     const showPromiseConfirm = () => {
         Modal.confirm({
-            title: title ?? 'Voulez-vous vraiment supprimer',
-            content: content ?? 'Soyez assurer lorsque vous cliquerez sur OUI, cet evaluation sera définitivement supprimer',
+            title: title ?? 'Voulez-vous vraiment confirmer',
+            content: content ?? 'Veuillez cliquer sur OUI, pour confirmer',
             okText: okTxt,
             cancelText: cancelTxt,
             onOk: onOk ? onOk : async () => {
@@ -42,8 +42,14 @@ export const ModalConfirmButton = <TDataType extends object | string | number | 
     }
 
     return(
-        <Tooltip title={tooltipTxt ?? 'Supprimer'}>
-            <Button {...btnProps} onClick={showPromiseConfirm}>{btnTxt}</Button>
-        </Tooltip>
+        <>
+            {tooltipTxt ? (
+                <Tooltip title={tooltipTxt}>
+                    <Button {...btnProps} onClick={showPromiseConfirm}>{btnTxt}</Button>
+                </Tooltip>
+            ) : (
+                <Button {...btnProps} onClick={showPromiseConfirm}>{btnTxt}</Button>
+            )}
+        </>
     )
 }

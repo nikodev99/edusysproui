@@ -22,7 +22,7 @@ const NavigationHandler = ({ children, requireAuth = true }: { children: ReactNo
         return () => {
             clearTimeout(timer)
         }
-    }, []);
+    }, [initiateSchool]);
 
     if (isLoading) {
         return(

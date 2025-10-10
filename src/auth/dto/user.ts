@@ -91,12 +91,19 @@ export enum UserType {
     EMPLOYEE, GUARDIAN, TEACHER
 }
 
-export interface ResetPasswordRequest {
-    token: number
-    newPassword: string
-}
+export const passwordResetRequest = z.object({
+    token: z.string().optional(),
+    newPassword: z.string({required_error: 'Le nouveau mot de passe est requis'})
+        .min(6, {message: "Le nouveau mot de passe doit contenir au moins 6 characters"})
+        .max(50, {message: "Le nouveau mot de passe doit contenir au plus 50 characters"})
+        .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/, {
+            message: "Le nouveau mot de passe doit contenir au moins une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial."
+        })
+})
 
-export const passwordRequest = z.object({
+export type ResetPasswordRequest = z.infer<typeof passwordResetRequest>
+
+export const passwordChangeRequest = z.object({
     userId: z.number().optional(),
     oldPassword: z.string({required_error: 'L\'ancien mot de passe est requis'})
         .min(6, {message: "L'ancien mot de passe doit contenir au moins 6 characters"})
@@ -115,7 +122,7 @@ export const passwordRequest = z.object({
     path: ['newPassword']
 })
 
-export type ChangePasswordRequest = z.infer<typeof passwordRequest>
+export type ChangePasswordRequest = z.infer<typeof passwordChangeRequest>
 
 export const toUser = (profil: UserProfileToken): UserProfile => ({
     ...profil?.user,

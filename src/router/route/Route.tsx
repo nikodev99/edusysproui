@@ -43,7 +43,6 @@ import GradeEditPage from "../../pages/org/GradeEditPage.tsx";
 import {DepartmentViewPage} from "../../pages/org/DepartmentViewPage.tsx";
 import {DepartmentAddPage} from "../../pages/org/DepartmentAddPage.tsx";
 import {GradeViewPage} from "../../pages/org/GradeViewPage.tsx";
-import RegisterPage from "../../pages/user/RegisterPage.tsx";
 import UserViewPage from "../../pages/org/UserViewPage.tsx";
 import UserSavePage from "../../pages/org/UserSavePage.tsx";
 import UserActivityPage from "../../pages/org/UserActivityPage.tsx";
@@ -87,7 +86,6 @@ export const Route = createBrowserRouter([
         </NavigationHandler>,
         children: [
             {path: 'login', element: <LoginPage />},
-            {path: 'register', element: <RegisterPage />}
         ]
     },
     {

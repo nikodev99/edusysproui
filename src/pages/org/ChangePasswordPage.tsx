@@ -4,7 +4,7 @@ import {getSlug} from "../../core/utils/utils.ts";
 import {useParams} from "react-router-dom";
 import {useUserRepo} from "../../hooks/actions/useUserRepo.ts";
 import {useEffect, useMemo, useState} from "react";
-import {ChangePasswordRequest, passwordRequest, useName} from "../../auth/dto/user.ts";
+import {ChangePasswordRequest, passwordChangeRequest, useName} from "../../auth/dto/user.ts";
 import {Form} from "antd";
 import {ChangePasswordForm} from "../../components/forms/ChangePasswordForm.tsx";
 import {useForm} from "react-hook-form";
@@ -35,7 +35,7 @@ const ChangePasswordPage = () => {
     const {logoutUser} = useAuth()
 
     const {control, formState: {errors}, handleSubmit} = useForm<ChangePasswordRequest>({
-        resolver: zodResolver(passwordRequest)
+        resolver: zodResolver(passwordChangeRequest)
     })
 
     useEffect(() => {

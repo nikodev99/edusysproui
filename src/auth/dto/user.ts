@@ -41,6 +41,7 @@ export interface SignupRequest {
     username: string
     email: string
     password: string
+    passwordConfirm: string
     phoneNumber: string
     personalInfo: Individual
     userType: UserType
@@ -96,7 +97,7 @@ export const passwordResetRequest = z.object({
     newPassword: z.string({required_error: 'Le nouveau mot de passe est requis'})
         .min(6, {message: "Le nouveau mot de passe doit contenir au moins 6 characters"})
         .max(50, {message: "Le nouveau mot de passe doit contenir au plus 50 characters"})
-        .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/, {
+        .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()-_=+{}|;:,.<>?/])[A-Za-z\d!@#$%^&*()-_=+{}|;:,.<>?/]{6,100}$/, {
             message: "Le nouveau mot de passe doit contenir au moins une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial."
         })
 })
@@ -108,13 +109,13 @@ export const passwordChangeRequest = z.object({
     oldPassword: z.string({required_error: 'L\'ancien mot de passe est requis'})
         .min(6, {message: "L'ancien mot de passe doit contenir au moins 6 characters"})
         .max(50, {message: "L'ancien mot de passe doit contenir au plus 50 characters"})
-        .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/, {
+        .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()-_=+{}|;:,.<>?/])[A-Za-z\d!@#$%^&*()-_=+{}|;:,.<>?/]{6,100}$/, {
             message: "L'ancien mot de passe doit contenir au moins une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial."
         }),
     newPassword: z.string({required_error: 'Le nouveau mot de passe est requis'})
         .min(6, {message: "Le nouveau mot de passe doit contenir au moins 6 characters"})
         .max(50, {message: "Le nouveau mot de passe doit contenir au plus 50 characters"})
-        .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/, {
+        .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()-_=+{}|;:,.<>?/])[A-Za-z\d!@#$%^&*()-_=+{}|;:,.<>?/]{6,100}$/, {
             message: "Le nouveau mot de passe doit contenir au moins une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial."
         })
 }).refine(data => data.newPassword !== data.oldPassword, {

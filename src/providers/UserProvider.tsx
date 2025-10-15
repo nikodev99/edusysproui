@@ -1,12 +1,12 @@
 import {useEffect, useState} from "react";
 import {LoginRequest, toUser, UserProfile, UserProfileToken} from "../auth/dto/user.ts";
 import LocalStorageManager from "../core/LocalStorageManager.ts";
-import {loginApi, logoutApi, signupApi, tokenRefresh} from "../auth/services/AuthService.ts.tsx";
+import {loginApi, logoutApi, signupApi, tokenRefresh, assignToUser} from "../auth/services/AuthService.ts.tsx";
 import {UserContext, UserContextProps} from "../context/UserContext.ts";
 import {jwtTokenManager} from "../auth/jwt/JWTToken.ts";
 import {loggedUser} from "../auth/jwt/LoggedUser.ts";
 import {School} from "../entity";
-import {SignupSchema} from "../schema";
+import {AssignUserToSchoolSchema, SignupSchema} from "../schema";
 import {isAxiosError} from "axios";
 import {useUserRepo} from "../hooks/actions/useUserRepo.ts";
 
@@ -52,6 +52,15 @@ export const UserProvider = ({children}: UserContextProps) => {
             return signupApi(data)
         } catch (error) {
             console.error("Error during registration:", error)
+            return false
+        }
+    }
+
+    const assignSchoolToUser = (data: AssignUserToSchoolSchema) => {
+        try {
+            return assignToUser(data)
+        }catch (error) {
+            console.error("Error during school assignment:", error)
             return false
         }
     }
@@ -209,6 +218,7 @@ export const UserProvider = ({children}: UserContextProps) => {
             refreshToken,
             userSchool,
             registerUser: register,
+            assignUser: assignSchoolToUser,
             loginUser: login,
             refresh: handleRefreshToken,
             logoutUser: logout,

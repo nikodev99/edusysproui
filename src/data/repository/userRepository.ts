@@ -2,6 +2,7 @@ import {apiClient} from "../axiosConfig.ts";
 import {ChangePasswordRequest, User, UserActiveLogin, UserActivity} from "../../auth/dto/user.ts";
 import {MessageResponse, Pageable} from "../../core/utils/interfaces.ts";
 import {Role} from "../../auth/dto/role.ts";
+import {Individual} from "../../entity";
 
 export const getAllUsers = (schoolId: string, pageable: Pageable, sortCriteria?: string) => {
     return apiClient.get<User>(`/users/${schoolId}`, {
@@ -71,6 +72,18 @@ export const setUnlockAccount = (accountId: number) => {
 
 export const removeUserAccount = (accountId: number) => {
     return apiClient.patch(`/users/remove/${accountId}`, {field: 'isActive', value: false})
+}
+
+export const findUserPersonalInfo = (search: string) => {
+    return apiClient.get<Individual[]>('/users/ind', {
+        params: {
+            search: search
+        }
+    })
+}
+
+export const findUserByPersonalInfo = (personalInfoId: number) => {
+    return apiClient.get<User>(`/users/personal/${personalInfoId}`)
 }
 
 export const changePassword = async (request: ChangePasswordRequest) => {

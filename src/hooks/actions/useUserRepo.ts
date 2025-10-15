@@ -1,6 +1,6 @@
 import {useFetch} from "../useFetch.ts";
 import {
-    countAllUsers,
+    countAllUsers, findUserByPersonalInfo, findUserPersonalInfo,
     getAllSearchedUsers, getAllUserLogins,
     getAllUsers,
     getUserActivities,
@@ -75,6 +75,19 @@ export const useUserRepo = () => {
 
     const isSameUser = (currentUser?: User): boolean => currentUser ? currentUser?.username === logged?.username : false
 
+    const useSearchUserPersonalInfo = (searchKey: string) => useFetch(
+        ['user-search-personal-info', searchKey],
+        findUserPersonalInfo,
+        [searchKey],
+        !!searchKey
+    )
+
+    const findSearchedUserPersonalInfo = (searchKey: string) => findUserPersonalInfo(searchKey)
+
+    const useGetUserByPersonalInfo = (personalInfoId: number) => {
+        const {data} = useFetch(['user-by-personalInfo', personalInfoId], findUserByPersonalInfo, [personalInfoId], !!personalInfoId)
+        return data
+    }
 
     return {
         useGetAllUsers,
@@ -87,7 +100,10 @@ export const useUserRepo = () => {
         useCountUsers,
         saveActivity,
         useGetUserActivities,
-        isSameUser
+        isSameUser,
+        useSearchUserPersonalInfo,
+        findSearchedUserPersonalInfo,
+        useGetUserByPersonalInfo
     }
 }
 

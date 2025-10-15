@@ -1,7 +1,7 @@
 import {apiClient, handleError} from "../../data/axiosConfig.ts";
 import {LoginRequest, ResetPasswordRequest, User, UserProfileToken} from "../dto/user.ts";
 import {loggedUser} from "../jwt/LoggedUser.ts";
-import {SignupSchema} from "../../schema";
+import {AssignUserToSchoolSchema, SignupSchema} from "../../schema";
 import {MessageResponse} from "../../core/utils/interfaces.ts";
 
 export const loginApi = async (login: LoginRequest) => {
@@ -27,6 +27,15 @@ export const tokenRefresh = async () => {
 export const signupApi = async (data: SignupSchema) => {
     try {
         return await apiClient.post<SignupSchema>('/auth/register', data)
+    }catch (error) {
+        handleError(error)
+        throw error
+    }
+}
+
+export const assignToUser = async (data: AssignUserToSchoolSchema) => {
+    try {
+        return await apiClient.post<MessageResponse>('/auth/register-new-school', data)
     }catch (error) {
         handleError(error)
         throw error

@@ -6,13 +6,24 @@ import {SignupRequest} from "../../auth/dto/user.ts";
 import {useMemo} from "react";
 import {enumToObjectArray} from "../../core/utils/utils.ts";
 import {RoleEnum} from "../../auth/dto/role.ts";
+import {AssignUserToSchoolSchema, SignupSchema} from "../../schema";
+import {loggedUser} from "../../auth/jwt/LoggedUser.ts";
 
-export const UserAccountForm = <T extends object>({control, errors}: FormContentProps<T, SignupRequest>) => {
+type UserAccountFormProps = FormContentProps<SignupSchema | AssignUserToSchoolSchema, SignupRequest> & {
+    flowType: 'create' | 'assign' | 'idle'
+    accountExists?: boolean
+}
+
+export const UserAccountForm = ({control, errors, flowType}: UserAccountFormProps) => {
     const form = new FormConfig(errors, false)
     const roleOptions = useMemo(() => enumToObjectArray(RoleEnum, true), [])
+    const school = loggedUser.getSchool()
+
+    if (flowType === 'idle') return
 
     return(
-        <FormContent formItems={[
+        <>{flowType === 'create' ?
+            (<FormContent formItems={[
             {
                 type: InputTypeEnum.TEXT,
                 inputProps: {
@@ -41,6 +52,7 @@ export const UserAccountForm = <T extends object>({control, errors}: FormContent
                     validateStatus: form.validate('password'),
                     help: form.error('password'),
                     hasForm: false,
+                    disabled: true
                 }
             },
             {
@@ -56,6 +68,7 @@ export const UserAccountForm = <T extends object>({control, errors}: FormContent
                     validateStatus: form.validate('passwordConfirm'),
                     help: form.error('passwordConfirm'),
                     hasForm: false,
+                    disabled: true
                 }
             },
             {
@@ -75,6 +88,44 @@ export const UserAccountForm = <T extends object>({control, errors}: FormContent
                     mode: 'multiple'
                 }
             }
-        ]} />
+        ]} />): flowType === 'assign' ?
+            (<FormContent formItems={[
+                {
+                    type: InputTypeEnum.SELECT,
+                    inputProps: {
+                        md: 12,
+                        lg: 12,
+                        label: "Affilier l'utilisateur à l'école",
+                        control: control,
+                        name: form.name('schoolId'),
+                        required: true,
+                        options: school ? [{value: school.id, label: school.name}] : [],
+                        selectedValue: school?.id,
+                        placeholder: 'Nom de l\'école',
+                        validateStatus: form.validate('schoolId'),
+                        help: form.error('schoolId'),
+                        hasForm: false,
+                        disabled: true,
+                    }
+                },
+                {
+                    type: InputTypeEnum.SELECT,
+                    inputProps: {
+                        md: 12,
+                        lg: 12,
+                        label: 'Roles',
+                        control: control,
+                        name: form.name('roles'),
+                        required: true,
+                        options: roleOptions,
+                        placeholder: 'Donnez des roles à votre utilisateur',
+                        validateStatus: form.validate('roles'),
+                        help: form.error('roles'),
+                        hasForm: false,
+                        mode: 'multiple'
+                    }
+                }
+            ]} />): undefined
+        }</>
     )
 }

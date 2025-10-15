@@ -16,6 +16,7 @@ export const ChangePasswordForm = <T extends FieldValues>(
                 type: InputTypeEnum.PASSWORD,
                 inputProps: {
                     lg: 24,
+                    md: 24,
                     label: 'Ancien mot de passe',
                     control: control,
                     name: 'oldPassword' as Path<T>,
@@ -29,6 +30,7 @@ export const ChangePasswordForm = <T extends FieldValues>(
                 type: InputTypeEnum.PASSWORD,
                 inputProps: {
                     lg: 24,
+                    md: 24,
                     label: 'Nouveau mot de passe',
                     control: control,
                     name: 'newPassword' as Path<T>,

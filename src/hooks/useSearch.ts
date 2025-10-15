@@ -9,10 +9,12 @@ export const useSearch = <T extends object>(
         setValue: (value: unknown) => void
         fetchFunc: (...args: unknown[]) => Promise<AxiosResponse<T, unknown>> | Promise<ResponseRepo<T>>
         funcParams?: unknown[]
-        setCustomOptions: (options?: T) => Options
+        setCustomOptions: (options?: T[]) => Options
     }) => {
     const [options, setOptions] = useState<Options>([]);
     const [selectedValue, setSelectedValue] = useState<unknown>('');
+    const [resource, setResource] = useState<T | undefined>(undefined)
+    const [records, setRecords] = useState<T[] | undefined>(undefined)
     const timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
     const currentValue = useRef<unknown>('');
     const [fetching, setFetching] = useState(false);
@@ -41,23 +43,26 @@ export const useSearch = <T extends object>(
                 );
 
                 if (response && 'data' in response) {
-                    const records: T = response.data as T;
+                    const returnRecords: T[] = response.data as T[];
 
                     // Only update if this is still the current search
                     if (currentValue.current === value) {
-                        const transformedData = setCustomOptions(records);
+                        const transformedData = setCustomOptions(returnRecords);
+                        setRecords(returnRecords)
 
                         callback(transformedData as []);
                     } else {
                         console.log('Search value changed, ignoring stale response');
                     }
                 } else {
-                    if (!selectedValue)
+                    if (!selectedValue) {
                         callback([]);
+                    }
                 }
             } catch (error) {
-                if (!selectedValue)
+                if (!selectedValue) {
                     callback([]);
+                }
             } finally {
                 setFetching(false);
             }
@@ -67,8 +72,9 @@ export const useSearch = <T extends object>(
         if (value) {
             timeout.current = setTimeout(performSearch, 300);
         } else {
-            if(!selectedValue)
+            if(!selectedValue) {
                 callback([]);
+            }
             
             setFetching(false);
         }
@@ -81,6 +87,11 @@ export const useSearch = <T extends object>(
 
     const handleChange = useCallback((newValue: unknown) => {
         setSelectedValue(newValue);
+        
+        if (records) {
+            setResource(records.find(i => i['id'] === newValue))
+        }
+        
         setValue(newValue);
 
         if (options?.length === 0) {
@@ -91,12 +102,13 @@ export const useSearch = <T extends object>(
                 setOptions([selectedOption]); // At minimum, keep the selected option
             }
         }
-    }, [options, setValue]);
+    }, [options, records, setValue]);
 
     // Clear function for resetting the search
     const clearSearch = useCallback(() => {
         setOptions([]);
         setSelectedValue('');
+        setResource(undefined)
         currentValue.current = '';
         if (timeout.current) {
             clearTimeout(timeout.current);
@@ -114,6 +126,8 @@ export const useSearch = <T extends object>(
         handleSearch,
         handleChange,
         setValue,
-        clearSearch // New utility function
+        clearSearch, // New utility function
+        resource,
+        selectedValue,
     }
 }

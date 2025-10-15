@@ -39,7 +39,7 @@ export {assignmentDateUpdateSchema, assignmentSchema, assignmentMerge} from './m
 export {attendanceSchema, singleAttendanceSchema} from './models/attendanceSchema.ts'
 export {planningSchemaMerge, planningSchema} from './models/planningSchema.ts'
 export {scoreSchema, singleScoreSchema} from './models/scoreSchema.ts'
-export {loginSchema, logoutSchema, signupSchema} from './models/authSchema.ts'
+export {loginSchema, logoutSchema, signupSchema, assignUserToSchoolSchema} from './models/authSchema.ts'
 export {academicYearSchema, academicYearSchemaMerge} from './models/academicYearSchema.ts'
 export {semesterSchema, semesterTemplateSchema, allSemesterSchema, allSemesterTemplateSchema} from './models/semesterSchema.ts'
 
@@ -76,3 +76,4 @@ export type SemesterTemplateSchema = z.infer<typeof semesterTemplateSchema>
 export type AllSemesterTemplateSchema = z.infer<typeof allSemesterTemplateSchema>
 export type DepartmentSchema = z.infer<typeof departmentSchema>
 export type DepartmentBossSchema = z.infer<typeof departmentBossSchema>
+export type AssignUserToSchoolSchema = z.infer<typeof assignUserToSchoolSchema>

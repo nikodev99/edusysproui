@@ -1,51 +1,25 @@
 import {InsertModal} from "../custom/InsertSchema.tsx";
-import {useForm} from "react-hook-form";
-import {signupSchema, SignupSchema} from "../../schema";
-import {zodResolver} from "@hookform/resolvers/zod";
+import {AssignUserToSchoolSchema, signupSchema, SignupSchema} from "../../schema";
 import {UserAccountForm} from "../forms/UserAccountForm.tsx";
-import {useAuth} from "../../hooks/useAuth.ts";
 import {Individual} from "../../entity";
 import {UserType} from "../../auth/dto/user.ts";
-import {useEffect} from "react";
-import {loggedUser} from "../../auth/jwt/LoggedUser.ts";
+import {useUserAccountFlow} from "../../hooks/useUserAccountFlow.tsx";
 
-type CreateUserProps = {
+export type CreateUserProps = {
     open?: boolean,
     onCancel?: () => void
     personalInfo?: Individual
     userType: UserType
-    resp?: (resp: { updated: boolean }) => void
 }
 
 const CreateUser = ({open, onCancel, personalInfo, userType}: CreateUserProps) => {
-    const form = useForm<SignupSchema>({
-        resolver: zodResolver(signupSchema)
-    })
+    const {flowType, handleSubmit: handleSubmitFlow, useForm} = useUserAccountFlow(personalInfo, userType)
 
-    const {setValue, control, formState: {errors}, watch} = form
-    
-    const {registerUser} = useAuth()
+    const {control, formState: {errors, submitCount}} = useForm
 
-    useEffect(() => {
-        setValue('userType', userType)
-    }, [setValue, userType]);
-
-    console.log('DATA ENTERED: ', watch())
-    
-    const createUser = async (data: SignupSchema) => {
-        if (form.formState.submitCount <= 0) {
-            if (personalInfo) {
-                const registerData = {
-                    ...data,
-                    email: personalInfo.emailId,
-                    phoneNumber: personalInfo.telephone,
-                    personalInfoId: personalInfo.id as number,
-                    roles: {...data.roles, schoolId: loggedUser.getSchool()?.id}
-                };
-
-                return registerUser(registerData as SignupSchema);
-            }
-            return registerUser(data);
+    const createUser = async (data: SignupSchema | AssignUserToSchoolSchema) => {
+        if (submitCount <= 0) {
+            return handleSubmitFlow(data)
         }
     }
 
@@ -56,18 +30,31 @@ const CreateUser = ({open, onCancel, personalInfo, userType}: CreateUserProps) =
                 <UserAccountForm
                     control={control}
                     errors={errors}
+                    flowType={flowType}
                 />
             }
-            handleForm={form}
+            handleForm={useForm as never}
             postFunc={createUser as never}
             open={open}
             onCancel={onCancel}
-            messageSuccess={"Nouveau compte utilisateur créer avec succès"}
-            title={"Créer un compte utilisateur pour "}
-            okText={"Créer le compte"}
-            description={"Veuillez confirmer votre pour créer le nouveau compte utilisateur."}
+            messageSuccess={
+                flowType === 'create'
+                    ? "Nouveau compte utilisateur créer avec succès"
+                    : "Utilisateur affilié à l'école avec succès"
+            }
+            title={
+                flowType === 'create'
+                    ? "Créer un compte utilisateur pour "
+                    : "Affilier l'utilisateur à l'école"
+            }
+            okText={flowType === 'create' ? "Créer le compte" : "Affilier l'utilisateur"}
+            description={
+                flowType === 'create'
+                    ? "Veuillez confirmer votre pour créer le nouveau compte utilisateur."
+                    : "Veuillez confirmer pour affilier l'utilisateur à votre école."
+            }
         />
     )
 }
 
-export {CreateUser}
+export { CreateUser }

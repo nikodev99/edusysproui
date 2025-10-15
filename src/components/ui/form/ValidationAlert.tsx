@@ -1,7 +1,13 @@
 import {Alert} from "antd";
-import {ReactNode} from "react";
+import {ReactNode, useMemo} from "react";
 
-export const ValidationAlert = ({alertMessage, message}: {alertMessage: ReactNode, message?: string[] | string}) => {
+interface ValidationAlertProps {
+    alertMessage: ReactNode,
+    message?: string[] | string | ReactNode,
+    type?: "success" | "info" | "warning" | "error"
+}
+
+export const ValidationAlert = ({alertMessage, message, type = 'error'}: ValidationAlertProps) => {
 
     const messageErrors = (entries: string[]): ReactNode => {
         if (entries) {
@@ -14,12 +20,19 @@ export const ValidationAlert = ({alertMessage, message}: {alertMessage: ReactNod
         return null
     }
 
+    const description = useMemo(() => {
+        if (Array.isArray(message) || typeof message === "string") {
+            return messageErrors(message)
+        }
+        return message
+    }, [message])
+
     return (
         <Alert
             style={{marginBottom: '15px'}}
             message={alertMessage}
-            type='error'
-            description={messageErrors(message as string[])}
+            type={type}
+            description={description}
             closable
             showIcon
         />

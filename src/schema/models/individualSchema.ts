@@ -27,6 +27,7 @@ export const individualSchema = z.object({
     address: addressSchema,
     image: z.string().nullable().optional(),
     attachments: z.array(z.string()).nullable().optional(),
+    individualType: z.union([z.string({required_error: "Le type de l'individu est requis"}), z.number({required_error: "Le type de l'individu est requis"})])
 })
 
 export const teacherIndividualExtend = individualSchema.extend({

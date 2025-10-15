@@ -9,7 +9,7 @@ import {ModalConfirmButton} from "../../components/ui/layout/ModalConfirmButton.
 import {LuLockOpen} from "react-icons/lu";
 import {passwordResetRequest, ResetPasswordRequest, useName, User} from "../../auth/dto/user.ts";
 import {useAuth} from "../../hooks/useAuth.ts";
-import {useEffect, useMemo, useState} from "react";
+import {useMemo, useState} from "react";
 import {useGlobalStore} from "../../core/global/store.ts";
 import {MessageResponse} from "../../core/utils/interfaces.ts";
 import TextInput from "../../components/ui/form/TextInput.tsx";
@@ -17,6 +17,8 @@ import {useForm} from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import FormSuccess from "../../components/ui/form/FormSuccess.tsx";
 import FormError from "../../components/ui/form/FormError.tsx";
+import {useQueryPost} from "../../hooks/usePost.ts";
+import {catchError} from "../../data/action/error_catch.ts";
 
 function isUser(arg?: object): arg is User {
     if (!arg || typeof arg !== 'object') {
@@ -60,25 +62,34 @@ const PasswordResetPage = () => {
     const userName = useName(user)
 
     const {logoutUser} = useAuth()
+    const {mutate} = useQueryPost(passwordResetRequest)
 
-    useEffect(() => {
-        if (successMessage) {
-            setRedirectMessage(successMessage)
-        }
-    }, [setRedirectMessage, successMessage]);
+    const clearMessages = () => {
+        setErrorMessage(undefined);
+        setSuccessMessage(undefined);
+    };
 
     const onSubmit = (data: ResetPasswordRequest) => {
+        clearMessages()
         const registeredData = {...data, token: token}
-        resetPassword(registeredData).then(res => {
-            if (res.status === 200) {
-                setSuccessMessage(res.data.message)
-                //TODO envoyer un mail mot de passe réinitialiser avec succès avec un lien ce n'est pas moi
-                logoutUser()
-            }else {
-                setErrorMessage(res.data.message)
-            }
-        }).catch(err => {
-            err.response?.data?.message && setErrorMessage(err.response.data.message)
+
+        mutate({
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-expect-error
+            postFn: resetPassword,
+            data: registeredData,
+        }, {
+            onSuccess: response => {
+                if (response.status === 200 && response.data && 'message' in response.data) {
+                    setSuccessMessage(response?.data?.message as string);
+                    setRedirectMessage(response?.data?.message as string)
+                    logoutUser()
+                }
+            },
+            onError: error => {
+                const errorMsg = catchError(error) as string;
+                setErrorMessage(errorMsg as string);
+            },
         })
     }
 
@@ -113,7 +124,6 @@ const PasswordResetPage = () => {
                                 />
                             </>
                         )}
-
                     </PageWrapper>
                 </Grid>
             </Responsive>

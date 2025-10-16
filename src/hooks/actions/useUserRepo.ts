@@ -1,5 +1,6 @@
 import {useFetch} from "../useFetch.ts";
 import {
+    ActivityFilterProps,
     countAllUsers, findUserByPersonalInfo, findUserPersonalInfo,
     getAllSearchedUsers, getAllUserLogins,
     getAllUsers,
@@ -56,6 +57,15 @@ export const useUserRepo = () => {
         return data
     }
 
+    const getPaginatedUserActivities = async (accountId: number, filters: ActivityFilterProps, page: number, size: number, sortField?: string, sortOrder?: string) => {
+        if (sortField && sortOrder) {
+            sortOrder = getShortSortOrder(sortOrder);
+            sortField = activityFields(sortField);
+            return await getUserActivities(accountId, filters, {page: page, size: size}, `${sortField}:${sortOrder}`);
+        }
+        return await getUserActivities(accountId, filters, {page: page, size: size});
+    }
+
     const useGetAllUserLogins = (accountId: number) => useFetch(
         ['user-logins', accountId],
         getAllUserLogins,
@@ -100,6 +110,7 @@ export const useUserRepo = () => {
         useCountUsers,
         saveActivity,
         useGetUserActivities,
+        getPaginatedUserActivities,
         isSameUser,
         useSearchUserPersonalInfo,
         findSearchedUserPersonalInfo,
@@ -119,6 +130,15 @@ const sortedField = (sortField: string | string[]) => {
             return 'u.lastLogin'
         case 'userType':
             return 'u.userType'
+        default:
+            return undefined;
+    }
+}
+
+const activityFields = (sortField: string | string[]) => {
+    switch (setSortFieldName(sortField)) {
+        case 'action':
+            return 'ua.action'
         default:
             return undefined;
     }

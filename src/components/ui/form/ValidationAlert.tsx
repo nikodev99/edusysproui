@@ -21,7 +21,7 @@ export const ValidationAlert = ({alertMessage, message, type = 'error'}: Validat
     }
 
     const description = useMemo(() => {
-        if (Array.isArray(message) || typeof message === "string") {
+        if (Array.isArray(message)) {
             return messageErrors(message)
         }
         return message

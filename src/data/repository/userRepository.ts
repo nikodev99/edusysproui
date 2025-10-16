@@ -4,6 +4,14 @@ import {MessageResponse, Pageable} from "../../core/utils/interfaces.ts";
 import {Role} from "../../auth/dto/role.ts";
 import {Individual} from "../../entity";
 
+export interface ActivityFilterProps {
+    dates: {
+        startDate: Date | undefined
+        endDate: Date | undefined
+    }
+    search?: string
+}
+
 export const getAllUsers = (schoolId: string, pageable: Pageable, sortCriteria?: string) => {
     return apiClient.get<User>(`/users/${schoolId}`, {
         params: {
@@ -42,8 +50,17 @@ export const saveUserActivity = (activity: UserActivity) => {
     return apiClient.post<UserActivity>(`/users/activity`, activity)
 }
 
-export const getUserActivities = (accountId: number) => {
-    return apiClient.get<UserActivity>(`/users/activity/${accountId}`)
+export const getUserActivities = (accountId: number, filter: ActivityFilterProps, pageable: Pageable, sortCriteria?: string, ) => {
+    return apiClient.get<UserActivity>(`/users/activity/${accountId}`, {
+        params: {
+            page: pageable?.page,
+            size: pageable?.size,
+            sortCriteria: sortCriteria,
+            ...(filter.dates.startDate ? {startDate: filter.dates.startDate} : {}),
+            ...(filter.dates.endDate ? {endDate: filter.dates.endDate} : {}),
+            ...(filter.search ? {search: filter.search} : {})
+        }
+    })
 }
 
 export const countAllUsers = (schoolId: string) => {

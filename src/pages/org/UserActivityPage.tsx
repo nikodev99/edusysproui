@@ -14,10 +14,10 @@ import {UserActiveLogin, UserActivity} from "../../auth/dto/user.ts";
 import Datetime from "../../core/datetime.ts";
 import {LuLogOut} from "react-icons/lu";
 import {DataProps} from "../../core/utils/interfaces.ts";
-import {getAllUserLogins, getUserActivities} from "../../data/repository/userRepository.ts";
+import {ActivityFilterProps, getAllUserLogins} from "../../data/repository/userRepository.ts";
 import {useToggle} from "../../hooks/useToggle.ts";
-import {SessionLogout} from "../../components/ui-kit-org/components/SessionLogout.tsx";
 import {loggedUser} from "../../auth/jwt/LoggedUser.ts";
+import {UserActivityFilter, SessionLogout} from "../../components/ui-kit-org";
 
 const UserActivityPage = () => {
     const location = useLocation()
@@ -222,11 +222,25 @@ const AccountAccess = ({accountId, isSame}: {accountId?: number, isSame: boolean
 }
 
 const AccountActivity = ({accountId}: {accountId?: number}) => {
+    const [filters, setFilters] = useState<ActivityFilterProps>({
+        dates: {
+            startDate: Datetime.now().minusMonth(1).toDate(),
+            endDate: Datetime.now().toDate()
+        }
+    })
+    const [isRefetch, setIsRefetch] = useState(false)
+
+    const {getPaginatedUserActivities} = useUserRepo()
+    
+    const shouldRefetch = useMemo(() => (filters && Object.keys(filters).length > 1 && !isRefetch), [filters, isRefetch])
+    
     const columns: TableColumnsType<UserActivity> = useMemo(() => [
         {
             title: 'Actions',
             key: 'actions',
             dataIndex: 'action',
+            sorter: true,
+            showSorterTooltip: false
         },
         {
             title: 'Date',
@@ -265,6 +279,11 @@ const AccountActivity = ({accountId}: {accountId?: number}) => {
         })) as DataProps<UserActivity>[]
     }, [])
 
+    const handleUpdateFilters = (value: ActivityFilterProps) => {
+        setFilters(value)
+        setIsRefetch(false)
+    }
+
     return(
         <section style={{marginTop: '30px'}}>
             <Responsive gutter={[16, 16]}>
@@ -274,14 +293,18 @@ const AccountActivity = ({accountId}: {accountId?: number}) => {
                 </Grid>
             </Responsive>
             <ListViewer
-                callback={getUserActivities as () => Promise<never>}
-                callbackParams={[accountId]}
+                callback={getPaginatedUserActivities as () => Promise<never>}
+                callbackParams={[accountId, filters as ActivityFilterProps]}
                 tableColumns={columns}
                 countTitle={'Activité'}
                 cardData={cardData as () => never}
                 cardNotAvatar
                 fetchId='user-activities'
                 displayItem={3}
+                refetchCondition={shouldRefetch}
+                itemSize={20}
+                filters={<UserActivityFilter setFilters={handleUpdateFilters} />}
+                tableHeight={800}
                 localStorage={{
                     activeIcon: 'activityToggleIcon'
                 }}

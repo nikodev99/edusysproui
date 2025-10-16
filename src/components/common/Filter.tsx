@@ -2,7 +2,8 @@ import {Select, Space} from "antd";
 import {ActionButton} from "../ui/layout/ActionButton.tsx";
 import {LuCirclePlus, LuCircleX} from "react-icons/lu";
 import {ItemType} from "antd/es/menu/interface";
-import {useEffect, useState} from "react";
+import {ReactNode, useEffect, useState} from "react";
+import {Options} from "../../core/utils/interfaces.ts";
 
 export interface FilterProps<T extends object> {
     filters: T
@@ -11,9 +12,15 @@ export interface FilterProps<T extends object> {
     onClear?: (key: keyof T) => void
     setFilters?: (filters: T) => void
     onChanges?: Record<keyof T, (value: unknown) => void>
+    inputRender?: Partial<Record<keyof T, (params: {
+        value: unknown,
+        onChange: (v: unknown) => void
+        onClear: () => void
+        options?: Options
+    }) => ReactNode>>
 }
 
-export const Filter = <T extends object>({filters, items = [], onClear, setFilters, options, onChanges}: FilterProps<T>) => {
+export const Filter = <T extends object>({filters, items = [], onClear, setFilters, options, onChanges, inputRender}: FilterProps<T>) => {
 
     const [filterItems, setFilterItems] = useState<T>(filters as T)
     const [keys, setKeys] = useState<(keyof T)[]>([])
@@ -46,24 +53,50 @@ export const Filter = <T extends object>({filters, items = [], onClear, setFilte
 
     return(
         <Space wrap>
-            {keys?.map((key, i) => (
-                <Select
-                    key={key as string}
-                    allowClear={i > 0 ? {clearIcon: <LuCircleX style={{color: "red"}} />} : undefined}
-                    onClear={i > 0 ? () => handleClear(key as keyof T) : undefined}
-                    value={filterItems[key] ?? undefined}
-                    variant='borderless'
-                    options={options ? options[key] : undefined}
-                    style={{width: '150px'}}
-                    onChange={(value) => {
-                        if (value === undefined) {
-                            handleClear(key);
-                        } else {
-                            onChanges?.[key]?.(value);
-                        }
-                    }}
-                />
-            ))}
+            {keys?.map((key, i) => {
+                const value = (filterItems)[key] ?? undefined
+
+                const callOnChange = (v: unknown) => {
+                    if (v === undefined) {
+                        handleClear(key)
+                    }else {
+                        onChanges?.[key]?.(v)
+                    }
+                }
+
+                const custom = inputRender?.[key]
+                if (custom) {
+                    return (
+                        <div key={`${String(key)}-${i}`}>
+                            {custom({
+                                value,
+                                onChange: () => callOnChange(key),
+                                onClear: () => handleClear(key),
+                                options: options? (options[key] as Options) : undefined
+                            })}
+                        </div>
+                    )
+                }
+
+                return (
+                    <Select
+                        key={key as string}
+                        allowClear={i > 0 ? {clearIcon: <LuCircleX style={{color: "red"}} />} : undefined}
+                        onClear={i > 0 ? () => handleClear(key as keyof T) : undefined}
+                        value={filterItems[key] ?? undefined}
+                        variant='borderless'
+                        options={options ? options[key] : undefined}
+                        style={{width: '150px'}}
+                        onChange={(value) => {
+                            if (value === undefined) {
+                                handleClear(key);
+                            } else {
+                                onChanges?.[key]?.(value);
+                            }
+                        }}
+                    />
+                )
+            })}
             <ActionButton icon={<LuCirclePlus size={20} />} className='filter_action' items={[
                 {key: '0', label: 'filtrer par', disabled: true},
                 {type: 'divider'},

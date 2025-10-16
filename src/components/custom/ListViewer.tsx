@@ -19,7 +19,8 @@ const ListViewer = <TData extends object, TError>(
     {
         callback, searchCallback, tableColumns, dropdownItems, throughDetails, hasCount, countTitle, localStorage,
         fetchId, cardData, cardNotAvatar, level, refetchCondition, callbackParams, searchCallbackParams, infinite,
-        uuidKey, tableProps, descMargin, itemSize, displayItem, filters, shareSearchQuery, onSelectData, dataDescription
+        uuidKey, tableProps, descMargin, itemSize, displayItem, filters, shareSearchQuery, onSelectData, dataDescription,
+        tableHeight
     }: ListViewerProps<TData, TError>
 ) => {
 
@@ -260,7 +261,7 @@ const ListViewer = <TData extends object, TError>(
                                 allItems={dataCount}
                                 loadMoreSize={handleLoadMoreSize}
                                 size={size}
-                                height={550}
+                                height={tableHeight ?? 550}
                             />
 
                             : <Table
@@ -273,7 +274,7 @@ const ListViewer = <TData extends object, TError>(
                                 onChange={handleSorterChange}
                                 pagination={false}
                                 scroll={{
-                                    y: 550,
+                                    y: tableHeight ?? 550,
                                     x: 'max-content'
                                 }}
                                 onRow={(record: TData) => ({

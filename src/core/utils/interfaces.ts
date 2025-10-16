@@ -301,6 +301,7 @@ export type ListViewerProps<TData extends object, TError> = ListProps<TData> & {
 
 export interface ListProps<TData extends object> {
     tableColumns?: TableColumnsType<TData>
+    tableHeight?: number
     displayItem?: 1 | 2 | 3 | 4,
     dropdownItems?: (url?: string, record?: TData) => ItemType[]
     throughDetails?: (id: string | number, record?:TData) => void

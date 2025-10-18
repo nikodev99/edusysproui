@@ -48,35 +48,44 @@ import UserSavePage from "../../pages/org/UserSavePage.tsx";
 import UserActivityPage from "../../pages/org/UserActivityPage.tsx";
 import PasswordResetPage from "../../pages/user/PasswordResetPage.tsx";
 import ChangePasswordPage from "../../pages/org/ChangePasswordPage.tsx";
+import {withRoleProtection} from "../../middleware/withRoleProtection.tsx";
 
-const DashboardPage = withAuthProtection(Dashboard);
-const ListStudentPage = withAuthProtection(StudentListPage);
-const EnrollPage = withAuthProtection(EnrollStudentPage);
-const ViewStudentPage = withAuthProtection(StudentViewPage);
+const DashboardPage = withAuthProtection(withRoleProtection(Dashboard));
 
-const ListTeacherPage = withAuthProtection(TeacherListPage);
-const TeacherAddPage = withAuthProtection(AddTeacherPage);
-const ViewTeacherPage = withAuthProtection(TeacherViewPage);
+const ListStudentPage = withAuthProtection(withRoleProtection(StudentListPage));
+const EnrollPage = withAuthProtection(withRoleProtection(EnrollStudentPage));
+const ViewStudentPage = withAuthProtection(withRoleProtection(StudentViewPage));
 
-const ListEmployeePage = withAuthProtection(EmployeeListPage);
-const EmployeeAddPage = withAuthProtection(AddEmployeePage);
-const ViewEmployeePage = withAuthProtection(EmployeeViewPage);
+const ListTeacherPage = withAuthProtection(withRoleProtection(TeacherListPage));
+const TeacherAddPage = withAuthProtection(withRoleProtection(AddTeacherPage));
+const ViewTeacherPage = withAuthProtection(withRoleProtection(TeacherViewPage));
 
-const ListAcademicYearPage = withAuthProtection(AcademicYearPage);
-const ListGradePage = withAuthProtection(GradePage);
-const AddGradePage = withAuthProtection(GradeSavePage);
-const EditGradePage = withAuthProtection(GradeEditPage);
-const ViewGradePage = withAuthProtection(GradeViewPage);
-const AddDepartmentPage = withAuthProtection(DepartmentAddPage);
-const ViewDepartmentPage = withAuthProtection(DepartmentViewPage);
-const ListDepartmentPage = withAuthProtection(DepartmentPage);
-const ListUserPage = withAuthProtection(UserListPage);
-const ViewUserPage = withAuthProtection(UserViewPage);
-const SaveUserPage = withAuthProtection(UserSavePage)
-const UserActivity = withAuthProtection(UserActivityPage)
-const UserChangePassword = withAuthProtection(ChangePasswordPage)
+const ProtectedGuardianListPage = withAuthProtection(withRoleProtection(GuardianListPage));
+const ProtectedGuardianViewPage = withAuthProtection(withRoleProtection(GuardianViewPage));
 
-const SettingCustomizePage = withAuthProtection(CustomizePage);
+const ProtectedClasseSubjectListsPage = withAuthProtection(withRoleProtection(ClasseSubjectListsPage));
+const ProtectedClasseViewPage = withAuthProtection(withRoleProtection(ClasseViewPage));
+const ProtectedSubjectViewPage = withAuthProtection(withRoleProtection(SubjectViewPage));
+
+const ListEmployeePage = withAuthProtection(withRoleProtection(EmployeeListPage));
+const EmployeeAddPage = withAuthProtection(withRoleProtection(AddEmployeePage));
+const ViewEmployeePage = withAuthProtection(withRoleProtection(EmployeeViewPage));
+
+const ListAcademicYearPage = withAuthProtection(withRoleProtection(AcademicYearPage));
+const ListGradePage = withAuthProtection(withRoleProtection(GradePage));
+const AddGradePage = withAuthProtection(withRoleProtection(GradeSavePage));
+const EditGradePage = withAuthProtection(withRoleProtection(GradeEditPage));
+const ViewGradePage = withAuthProtection(withRoleProtection(GradeViewPage));
+const AddDepartmentPage = withAuthProtection(withRoleProtection(DepartmentAddPage));
+const ViewDepartmentPage = withAuthProtection(withRoleProtection(DepartmentViewPage));
+const ListDepartmentPage = withAuthProtection(withRoleProtection(DepartmentPage));
+const ListUserPage = withAuthProtection(withRoleProtection(UserListPage));
+const ViewUserPage = withAuthProtection(withRoleProtection(UserViewPage));
+const SaveUserPage = withAuthProtection(withRoleProtection(UserSavePage))
+const UserActivity = withAuthProtection(withRoleProtection(UserActivityPage))
+const UserChangePassword = withAuthProtection(withRoleProtection(ChangePasswordPage))
+
+const SettingCustomizePage = withAuthProtection(withRoleProtection(CustomizePage));
 
 export const Route = createBrowserRouter([
     {
@@ -134,16 +143,16 @@ export const Route = createBrowserRouter([
             {
                 path: 'guardians',
                 children: [
-                    { path: text.path.page, element: <GuardianListPage /> },
-                    { path: text.path.view, element: <GuardianViewPage /> }
+                    { path: text.path.page, element: <ProtectedGuardianListPage /> },
+                    { path: text.path.view, element: <ProtectedGuardianViewPage /> }
                 ]
             },
             {
                 path: 'classes-and-subjects',
                 children: [
-                    {path: text.path.page, element: <ClasseSubjectListsPage />},
-                    {path: text.cc.group.classe.path.view, element: <ClasseViewPage />},
-                    {path: text.cc.group.course.path.view, element: <SubjectViewPage />},
+                    {path: text.path.page, element: <ProtectedClasseSubjectListsPage />},
+                    {path: text.cc.group.classe.path.view, element: <ProtectedClasseViewPage />},
+                    {path: text.cc.group.course.path.view, element: <ProtectedSubjectViewPage />},
                 ]
             },
             {

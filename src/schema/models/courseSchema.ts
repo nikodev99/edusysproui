@@ -6,7 +6,8 @@ export const courseSchema = z.object({
         message: "Le nom d'une matière doit contenir au moins trois characters"
     }),
     abbr: z.string({required_error: "L'abréviation est réquise"}).min(1, {message: "L'abréviation est réquise"}),
-    department: departmentSchemaMerge
+    discipline: z.string().optional().nullable(),
+    department: departmentSchemaMerge.optional().nullable(),
 })
 
 export const courseSchemaMerge = z.object({

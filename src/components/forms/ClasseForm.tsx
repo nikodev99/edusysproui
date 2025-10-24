@@ -66,11 +66,13 @@ export const ClasseForm = <T extends FieldValues>(
                 inputProps: {
                     lg: 12,
                     options: departmentOptions,
+                    label: 'Département',
+                    control: control,
                     name: 'department.id' as Path<T>,
                     required: showField,
                     placeholder: 'Département',
-                    validateStatus: form.validate('id', 'grade'),
-                    help: form.error('id', 'grade'),
+                    validateStatus: form.validate('id', 'department'),
+                    help: form.error('id', 'department'),
                     selectedValue: (data ? data.department.id : undefined) as PathValue<T, Path<T>>
                 }
             }] as never: []),

@@ -7,27 +7,30 @@ import {addClasse} from "../../../data/repository/classeRepository.ts";
 import {InsertModal} from "../../custom/InsertSchema.tsx";
 import {useGradeRepo} from "../../../hooks/actions/useGradeRepo.ts";
 import {useMemo} from "react";
-import {isUniversity, SectionType} from "../../../entity/enums/section.ts";
+import {isUniversity} from "../../../entity/enums/section.ts";
 
 export const AddClasse = ({open, onCancel}: ModalProps) => {
-    const {gradeOptions} = useGradeRepo()
+    const {gradeOptions, useGetGrade} = useGradeRepo()
     
     const form = useForm<ClasseSchema>({
         resolver: zodResolver(classeSchema)
     })
 
     const {control, formState: {errors}, watch} = form
-    const gradeId = useMemo(() => watch()?.grade?.id, [watch])
+    const dataEntered = watch()
 
-    const showField = useMemo(() => {
-        if (gradeId) {
-            const sectionEntered = gradeOptions?.find(g => g.value === gradeId)
-            const show = isUniversity(SectionType[sectionEntered?.label as unknown as keyof typeof SectionType])
-            console.log({sectionEntered, show})
-            return show
-        }
-        return false
-    }, [gradeId, gradeOptions])
+    const gradeId = useMemo(() => {
+        if (dataEntered)
+            return dataEntered.grade?.id
+        else 
+            return 0
+    }, [dataEntered])
+
+    const grade = useGetGrade(gradeId, false)
+
+    const showField = useMemo(() => isUniversity(grade?.section as string), [grade?.section])
+
+    console.log({grade, showField})
 
     return(
         <InsertModal
@@ -41,6 +44,8 @@ export const AddClasse = ({open, onCancel}: ModalProps) => {
             okText='Ajouter une nouvelle classe'
             description="Souhaitez-vous poursuivre avec l'ajout de la classe ?"
             handleForm={form}
+            isNotif={true}
+            toReset={false}
         />
     )
 }

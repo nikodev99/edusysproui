@@ -1,6 +1,6 @@
 import {TableColumnsType, Tag} from "antd";
 import {ActionButton} from "../../ui/layout/ActionButton.tsx";
-import {Classe} from "../../../entity";
+import {Classe, Department} from "../../../entity";
 import {LuDot, LuEye} from "react-icons/lu";
 import ListViewer from "../../custom/ListViewer.tsx";
 import {redirectTo} from "../../../context/RedirectContext.ts";
@@ -10,16 +10,20 @@ import {fDatetime} from "../../../core/utils/utils.ts";
 import {DataProps} from "../../../core/utils/interfaces.ts";
 import {SuperWord} from "../../../core/utils/tsxUtils.tsx";
 import {useClasseRepo} from "../../../hooks/actions/useClasseRepo.ts";
+import {AvatarTitle} from "../../ui/layout/AvatarTitle.tsx";
+import {SectionType} from "../../../entity/enums/section.ts";
+import {useCallback} from "react";
+import {ItemType} from "antd/es/menu/interface";
 
 export const ClasseList = ({condition}: {condition?: boolean}) => {
 
     const {getPaginatedClasses, getSearchedClasses} = useClasseRepo()
 
-    const throughDetails = (link: string) => {
+    const throughDetails = (link: string | number) => {
         redirectTo(`${text.cc.group.classe.view.href}${link}`)
     }
 
-    const getItems = (url: string) => {
+    const getItems = useCallback((url?: string): ItemType[] => {
         if (url)
             return [
                 {
@@ -31,7 +35,7 @@ export const ClasseList = ({condition}: {condition?: boolean}) => {
                 {key: `delete-${url}`, label: 'Delete', danger: true}
             ]
         return []
-    }
+    }, [])
 
     const cardData = (data: Classe[]) => {
         return data?.map(c => ({
@@ -64,11 +68,21 @@ export const ClasseList = ({condition}: {condition?: boolean}) => {
             align: 'center',
         },
         {
+            title: 'Departement',
+            dataIndex: 'department',
+            key: 'department',
+            render: (department: Department) => <AvatarTitle
+                firstName={department?.name}
+                reference={department?.code}
+                size={40}
+            />
+        },
+        {
             title: "Niveau",
             dataIndex: ['grade', 'section'],
             key: 'grade',
             align: 'center',
-            render: (text) => (<Tag color='geekblue'>{text}</Tag>)
+            render: (text) => (<Tag color='geekblue'>{SectionType[text]}</Tag>)
             //TODO getting all the grade distinct grade and filter by grade
         },
         {

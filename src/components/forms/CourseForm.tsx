@@ -4,27 +4,22 @@ import {Course} from "../../entity";
 import FormContent from "../ui/form/FormContent.tsx";
 import {InputTypeEnum} from "../../core/shared/sharedEnums.ts";
 import {FormConfig} from "../../config/FormConfig.ts";
-import {useGlobalStore} from "../../core/global/store.ts";
-import {useEffect} from "react";
+import {useMemo} from "react";
+import {useDepartmentRepo} from "../../hooks/actions/useDepartmentRepo.ts";
 
 export const CourseForm = <T extends FieldValues>(
-    {control, errors, data}: FormContentProps<T, Course>
+    {control, errors, data, showField}: FormContentProps<T, Course>
 ) => {
-    
+
+    const {useGetAllDepartments} = useDepartmentRepo()
     const form = new FormConfig(errors)
 
-    const departments = useGlobalStore(state => state.departments); // Subscribe to Zustand store
-    const setDepartment = useGlobalStore(state => state.setDepartment); // Get the function
+    const departments = useGetAllDepartments()
 
-    useEffect(() => {
-        if(departments.length === 0)
-            setDepartment()
-    }, [departments.length, setDepartment]);
-
-    const departmentOptions = departments && departments.map(d => ({
+    const departmentOptions = useMemo(() => departments && departments.map(d => ({
         value: d.id,
         label: d.name
-    })) as []
+    })) as [], [departments])
 
     return(
         <FormContent formItems={[
@@ -32,7 +27,7 @@ export const CourseForm = <T extends FieldValues>(
                 type: InputTypeEnum.TEXT,
                 inputProps: {
                     lg: 12,
-                    label: 'Nom de la classe',
+                    label: 'Nom de la matière',
                     control: control,
                     name: 'course' as Path<T>,
                     required: true,
@@ -56,7 +51,7 @@ export const CourseForm = <T extends FieldValues>(
                     defaultValue: (data ? data.abbr : undefined) as PathValue<T, Path<T>>
                 }
             },
-            {
+            ...(showField ? [{
                 type: InputTypeEnum.SELECT,
                 inputProps: {
                     lg: 12,
@@ -64,13 +59,26 @@ export const CourseForm = <T extends FieldValues>(
                     label: 'Département',
                     control: control,
                     name: 'department.id' as Path<T>,
-                    required: true,
+                    required: showField,
                     placeholder: 'Départment de Science',
                     validateStatus: form.validate('id', 'department'),
                     help: form.error('id', 'department'),
                     selectedValue: (data ? data.department?.id : undefined) as PathValue<T, Path<T>>
                 }
-            },
+            }]: [{
+                type: InputTypeEnum.TEXT,
+                inputProps: {
+                    lg: 12,
+                    label: 'Discipline',
+                    control: control,
+                    name: 'discipline' as Path<T>,
+                    required: false,
+                    placeholder: 'Science',
+                    validateStatus: form.validate('discipline'),
+                    help: form.error('discipline'),
+                    defaultValue: (data ? data.discipline : undefined) as PathValue<T, Path<T>>
+                }
+            }]),
         ]} />
     )
 }

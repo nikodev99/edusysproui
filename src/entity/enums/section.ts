@@ -1,30 +1,25 @@
 export enum SectionType {
+    GARDERIE = 'GARDERIE',
+    CRECHE = 'CRECHE',
     MATERNELLE = 'MATERNELLE',
     PRIMAIRE = 'PRIMAIRE',
     COLLEGE = 'COLLEGE',
     LYCEE = 'LYCÉE',
-    INSTITUT = 'INSTITUT',
-    INSTITUT_TECHNIQUE = 'INSTITUT TECHNIQUE',
-    UNIVERSITE = 'UNIVERSITÉ',
-    LYCEE_GENERALE = 'LYCÉE GENERALE',
-    LYCEE_TECHNIQUE = 'LYCÉE TECHNIQUE',
-    LYCEE_TECHNIQUE_COMMERCIALE = 'LYCÉE TECHNIQUE COMMERCIALE',
-    LYCEE_TECHNIQUE_INDUSTRIEL = 'LYCÉE TECHNIQUE INDUSTRIEL',
-    LYCEE_PROFESSIONNEL = 'LYCÉE PROFESSIONNEL',
-    BACHELOR = 'BACHELOR',
-    MASTER = 'MASTER',
-    DOCTORAT = 'DOCTORAT',
-    LICENCE = 'LICENCE',
-    ENGINEERING = 'INGÉNIERIE',
+    BTS = 'CYCLE BTS',
+    DUT = "CYCLE DUT",
+    LICENCE = 'CYCLE LICENCE',
+    MASTER = 'CYCLE MASTER',
+    DOCTORAT = 'CYCLE DOCTORAT',
+    PROFESSIONAL = "FORMATION PROFESSIONNELLE",
+    ENGINEERING = 'CYCLE INGÉNIERIE',
     CERTIFICATION = 'CERTIFICATION',
     OTHER = 'AUTRE'
 }
 
 export const UNIVERSITY_SECTIONS = new Set<SectionType>([
-    SectionType.BACHELOR,
-    SectionType.INSTITUT,
-    SectionType.INSTITUT_TECHNIQUE,
-    SectionType.UNIVERSITE,
+    SectionType.BTS,
+    SectionType.DUT,
+    SectionType.PROFESSIONAL,
     SectionType.MASTER,
     SectionType.DOCTORAT,
     SectionType.LICENCE,
@@ -35,19 +30,16 @@ export const UNIVERSITY_SECTIONS = new Set<SectionType>([
 export const COLLEGE_SECTIONS = new Set<SectionType>([
     SectionType.COLLEGE,
     SectionType.LYCEE,
-    SectionType.LYCEE_GENERALE,
-    SectionType.LYCEE_TECHNIQUE,
-    SectionType.LYCEE_TECHNIQUE_COMMERCIALE,
-    SectionType.LYCEE_TECHNIQUE_INDUSTRIEL,
-    SectionType.LYCEE_PROFESSIONNEL
 ])
 
 export const anyIsUniversity = (sections: (SectionType | string)[]) =>
     sections.some(isUniversity)
 
 export const isUniversity = (section: SectionType | string) => {
+    console.log('section: ', section)
     if (typeof section === 'string') {
         const enumVal = SectionType[section]
+        console.log('enumVal: ', enumVal)
         if(enumVal === undefined || enumVal === null) return false
         return UNIVERSITY_SECTIONS.has(enumVal)
     }

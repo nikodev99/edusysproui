@@ -1,15 +1,26 @@
 import "./sidebar.scss"
 import {Button, Flex, Image, Layout, Menu} from "antd";
-import {menuItems} from "../../core/menuItems.tsx";
+import {getMenuItemForUser} from "../../core/menuItems.tsx";
 import {useToggle} from "../../hooks/useToggle.ts";
 import {LuChevronLeft, LuChevronRight} from "react-icons/lu";
 import {redirectTo} from "../../context/RedirectContext.ts";
 import {useLocation} from "react-router-dom";
+import {useMemo} from "react";
+import {useAuth} from "../../hooks/useAuth.ts";
 
 const Sidebar = ({onCollapsed}: {onCollapsed?: boolean}) => {
 
     const [collapsed, setCollapsed] = useToggle(false)
     const location = useLocation()
+    const {isLoggedIn} = useAuth()
+
+    const menuItems = useMemo(() => {
+        if (isLoggedIn()) 
+            return getMenuItemForUser()
+        else
+            return []
+    }, [isLoggedIn])
+
     const handleMenuItemClick = ({key}: {key: string|null}) => {key ? redirectTo(key) : redirectTo('/')}
 
     const findSelectedKey = (): string[] => {

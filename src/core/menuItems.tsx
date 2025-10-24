@@ -9,7 +9,7 @@ import {
     LuLibrary, LuUniversity,
     LuUsers, LuUsersRound,
 } from "react-icons/lu";
-import {MenuProps, message} from "antd";
+import {message} from "antd";
 import {ItemType} from "antd/es/menu/interface";
 import {PiNotebook, PiStudent} from "react-icons/pi";
 import {text} from "./utils/text_display.ts";
@@ -121,5 +121,3 @@ export const getMenuItemForUser = (): ItemType[] => {
 
     return routeAccess.filterMenuItems(allMenuItems, roles)
 }
-
-export const menuItems: Required<MenuProps>['items'][number][] = getMenuItemForUser()

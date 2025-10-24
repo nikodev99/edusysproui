@@ -92,7 +92,7 @@ class Datetime {
 
     private _parse(date: DateInput = new Date()): Dayjs {
         if (typeof date === "string") {
-            return dayjs(date).tz(this.timezone).locale(this.locale)
+            return dayjs.tz(date, this.timezone).locale(this.locale)
         }
         if (date instanceof Date) {
             return dayjs(date).tz(this.timezone).locale(this.locale)
@@ -101,7 +101,8 @@ class Datetime {
             switch (date?.length) {
                 case 3: {
                     const [year, month, day] = date
-                    return dayjs(new Date(year, month - 1, day, 0, 0)).tz(this.timezone).locale(this.locale)
+                    const dateString = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                    return dayjs.tz(dateString, this.timezone).locale(this.locale);
                 }
                 case 6: {
                     const [year, month, day, hour, minute, second] = date
@@ -124,7 +125,9 @@ class Datetime {
     }
 
     static of(date: DateInput | Params, timezone?: string, locale?: string): Datetime {
-        return new Datetime(date, timezone, locale);
+        const datetime = new Datetime(date, timezone, locale);
+        console.log('Datetime: ', datetime)
+        return datetime;
     }
 
     static now(date?: DateInput | Params, timezone?: string, locale?: string): Datetime {

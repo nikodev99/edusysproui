@@ -3,7 +3,7 @@ import {useFetch} from "../useFetch.ts";
 import {
     getAllSchoolGrades,
     getGradeById,
-    getGradesWithPlanning,
+    getGradesWithPlanning, getGradeWithPlannings,
     saveGrade
 } from "../../data/repository/gradeRepository.ts";
 import {useInsert} from "../usePost.ts";
@@ -45,11 +45,11 @@ export const useGradeRepo = () => {
         return data as Grade[] || []
     }
 
-    const useGetGrade = (gradeId: number, options?: RepoOptions) => {
+    const useGetGrade = (gradeId: number, hasPlannings: boolean = true, options?: RepoOptions) => {
         const {data, refetch} = useFetch(
             ['single-grade', gradeId],
-            getGradeById,
-            [gradeId],
+            hasPlannings ? getGradeWithPlannings : getGradeById,
+            [gradeId, hasPlannings],
             !!gradeId
         )
 

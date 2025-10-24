@@ -19,10 +19,19 @@ export const getGradesWithPlanning = (schoolId: string, academicYearId: string) 
     })
 }
 
+export const getGradeWithPlannings = (gradeId: number) => {
+    return apiClient.get<Grade>('/grades', {
+        params: {
+            gradeId: gradeId,
+        }
+    })
+}
+
 export const getGradeById = (gradeId: number) => {
     return apiClient.get<Grade>('/grades', {
         params: {
             gradeId: gradeId,
+            hasPlannings: false
         }
     })
 }

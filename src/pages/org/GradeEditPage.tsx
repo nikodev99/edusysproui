@@ -35,7 +35,7 @@ const GradeEditPage = () => {
     const [isOpenRemove, setIsOpenRemove] = useToggle(false)
 
     const {useGetGrade} = useGradeRepo()
-    const grade = useGetGrade(gradeId, {shouldRefetch: shouldRefetch})
+    const grade = useGetGrade(gradeId, true, {shouldRefetch: shouldRefetch})
 
     const {context} = useBreadCrumb({
         bCItems: [

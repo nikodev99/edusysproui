@@ -11,11 +11,11 @@ export interface OutletPageProps {
     breadCrumb: BCProps
     content: ReactNode
     responseMessages?: {success?: ReactNode, error?: ReactNode}
-    redirectLink?: string
+    setRedirect?: (url?: string) => void
     isNotif?: boolean
 }
 
-const OutletPage = ({metadata, breadCrumb, content, responseMessages, redirectLink, isNotif = true}: OutletPageProps) => {
+const OutletPage = ({metadata, breadCrumb, content, responseMessages, setRedirect, isNotif = true}: OutletPageProps) => {
     useDocumentTitle(metadata)
 
     const {context} = useBreadCrumb(breadCrumb)
@@ -24,7 +24,7 @@ const OutletPage = ({metadata, breadCrumb, content, responseMessages, redirectLi
         {context}
         {responseMessages && (
             <>
-                {responseMessages?.success && <FormSuccess message={responseMessages?.success} redirectLink={redirectLink} isNotif={isNotif}/>}
+                {responseMessages?.success && <FormSuccess message={responseMessages?.success} setRedirect={setRedirect} isNotif={isNotif}/>}
                 {responseMessages?.error && <FormError message={responseMessages?.error} isNotif={isNotif}/>}
 
                 {responseMessages?.success && <Alert type={'success'} message={responseMessages?.success} closeIcon showIcon style={{marginBottom: '10px'}}/>}

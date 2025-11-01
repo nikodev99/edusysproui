@@ -49,12 +49,14 @@ import UserActivityPage from "../../pages/org/UserActivityPage.tsx";
 import PasswordResetPage from "../../pages/user/PasswordResetPage.tsx";
 import ChangePasswordPage from "../../pages/org/ChangePasswordPage.tsx";
 import {withRoleProtection} from "../../middleware/withRoleProtection.tsx";
+import ReEnrollStudentPage from "../../pages/student/ReEnrollStudentPage.tsx";
 
 const DashboardPage = withAuthProtection(withRoleProtection(Dashboard));
 
 const ListStudentPage = withAuthProtection(withRoleProtection(StudentListPage));
 const EnrollPage = withAuthProtection(withRoleProtection(EnrollStudentPage));
 const ViewStudentPage = withAuthProtection(withRoleProtection(StudentViewPage));
+const ReEnrollPage = withAuthProtection(withRoleProtection(ReEnrollStudentPage));
 
 const ListTeacherPage = withAuthProtection(withRoleProtection(TeacherListPage));
 const TeacherAddPage = withAuthProtection(withRoleProtection(AddTeacherPage));
@@ -129,7 +131,9 @@ export const Route = createBrowserRouter([
                 children: [
                     { path: text.path.page, element: <ListStudentPage />},
                     { path: text.path.new, element: <EnrollPage />},
-                    { path: text.path.view, element: <ViewStudentPage />}
+                    { path: text.path.view, element: <ViewStudentPage />},
+                    { path: 're-enrollment', element: <ReEnrollPage /> },
+                    { path: 'search', element: 'Recherche' }
                 ]
             },
             {

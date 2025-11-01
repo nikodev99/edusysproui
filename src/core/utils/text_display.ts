@@ -17,6 +17,14 @@ export const raw = {
                 label: 'Inscription',
                 href: '/students/new'
             },
+            reAdd: {
+              label: 'Re-inscription',
+              href: '/students/re-enrollment'
+            },
+            search: {
+              label: 'Recherche',
+              href: '/students/search'
+            },
             view: {
                 label: 'Details',
                 href: '/students/'

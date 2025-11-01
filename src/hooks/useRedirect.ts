@@ -2,7 +2,8 @@ import {useParams} from "react-router-dom";
 import {text} from "../core/utils/text_display.ts";
 import {redirectTo} from "../context/RedirectContext.ts";
 import {SectionType} from "../entity/enums/section.ts";
-import {joinWord} from "../core/utils/utils.ts";
+import {getSlug, joinWord} from "../core/utils/utils.ts";
+import {Individual} from "../entity";
 
 export const useRedirect = () => {
     const {schoolSlug} = useParams<{ schoolSlug: string }>()
@@ -16,9 +17,20 @@ export const useRedirect = () => {
 
     const toStudent = () => redirectTo(text.student.href)
 
-    const toAddStudent = () => redirectTo(text.student.group.add.href)
+    const toEnrollStudent = () => redirectTo(text.student.group.add.href)
 
-    const toViewStudent = (studentId: string) => redirectTo(text.student.group.view.href + studentId)
+    const toReenrollStudent = () => redirectTo(text.student.group.reAdd.href)
+
+    const toSearchStudent = () => redirectTo(text.student.group.search.href)
+
+    const toViewStudent = (studentId: string, data?: Individual) => {
+        const path = text.student.group.view.href + studentId
+        let slugPath = path
+        if (data) {
+            slugPath = `${path}?identifier=${getSlug(data)}`
+        }
+        redirectTo(slugPath)
+    }
 
     const toTeacher = () => redirectTo(text.teacher.href)
 
@@ -153,7 +165,9 @@ export const useRedirect = () => {
         toLogin,
         toDashboard,
         toStudent,
-        toAddStudent,
+        toEnrollStudent,
+        toReenrollStudent,
+        toSearchStudent,
         toViewStudent,
         toTeacher,
         toAddTeacher,

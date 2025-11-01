@@ -6,6 +6,7 @@ import {ItemType} from "antd/es/menu/interface";
 import {AvatarProps} from "../ui_interfaces.ts";
 import {AvatarTitle} from "./AvatarTitle.tsx";
 import {assignKeys, firstLetter} from "../../../core/utils/utils.ts";
+import {ValidationAlert} from "../form/ValidationAlert.tsx";
 
 interface ViewProps {
     isLoading: boolean,
@@ -25,12 +26,13 @@ interface ViewProps {
         position?: "top" | "bottom" | "left" | "right",
         size?: number
     }
+    errors?: unknown[] | unknown
 }
 
 const ViewHeader = (
     {
         isLoading, setEdit, closeState, avatarProps, blockProps, items, btnLabel, pColor, upperName, editText, hasEdit = true,
-        btnDisabled = false, showBtn = true, addMargin
+        btnDisabled = false, showBtn = true, addMargin, errors
     }: ViewProps
 ) => {
 
@@ -82,6 +84,12 @@ const ViewHeader = (
                     </Button>
                 </Dropdown>
             </Flex>}
+
+            {errors && <ValidationAlert
+                alertMessage={"Une erreur inattendue est survenue"}
+                messsage={errors as string}
+                type='error'
+            />}
         </Flex>
     )
 }

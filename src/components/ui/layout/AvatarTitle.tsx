@@ -55,7 +55,7 @@ export const AvatarTitle = (
             />
             <Flex className="legal" vertical justify='center'>
                 <span
-                    className={`title ${link || toView ? 'linked' : ''}`}
+                    className={`title ${(link || toView) ? 'linked' : ''}`}
                     onClick={handleRedirect}
                 >
                     {avatarText}

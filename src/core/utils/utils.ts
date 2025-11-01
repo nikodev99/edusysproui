@@ -1,4 +1,4 @@
-import {ApiEvent, Color, DateExplose, EnumType, ExamView, ID, StudentListDataType} from "./interfaces.ts"
+import {ApiEvent, Color, DateExplose, EnumType, ExamView, ID, Options, StudentListDataType} from "./interfaces.ts"
 import countries from 'world-countries'
 import dayjs from "dayjs";
 import 'dayjs/locale/fr.js'
@@ -6,9 +6,10 @@ import {BloodType} from "../../entity/enums/bloodType.ts";
 import {ProgressProps} from "antd";
 import {Day} from "../../entity/enums/day.ts";
 import {Gender} from "../../entity/enums/gender.tsx";
-import {Assignment, Enrollment, Individual, Planning, Schedule} from "../../entity";
+import {AcademicYear, Assignment, Enrollment, Individual, Planning, Schedule} from "../../entity";
 import Datetime from "../datetime.ts";
 import {BROWSERS} from "./browser.ts";
+import {FieldError} from "react-hook-form";
 
 export const createElement = (htmlElement: string, parentNode: Element|null, attributes?: {[key: string]: string}, content?: string) => {
 
@@ -164,13 +165,26 @@ export const getCountry = (cca3: string) => {
     return countries.find(country => country.cca3 === cca3)
 }
 
-export const getStringAcademicYear = (startDate?: Date | [number, number, number], endDate?: Date | [number, number, number]) => {
-    if (startDate && endDate) {
-        return `${arrayToDate(startDate).getFullYear()} - ${arrayToDate(endDate).getFullYear()}`
-    }
-    return undefined
-}
+export const getStringAcademicYear = (
+    startDate?: AcademicYear | Date | [number, number, number],
+    endDate?: Date | [number, number, number]
+): string | undefined => {
+    let start = startDate;
+    let end = endDate;
 
+    // Extract dates from AcademicYear object if provided
+    if (startDate && typeof startDate === 'object' && 'startDate' in startDate) {
+        start = startDate.startDate as Date;
+        end = startDate.endDate as Date;
+    }
+
+    // Return the formatted year range if both dates exist
+    if (start && end) {
+        return `${arrayToDate(start as Date).getFullYear()} - ${arrayToDate(end).getFullYear()}`;
+    }
+
+    return undefined;
+};
 export const sumInArray = <T extends object | number>(arrayToSum: T[], arrayKey?: keyof T): number => {
     return arrayToSum?.reduce((sum, item) => {
         if (arrayKey && typeof item === 'object' && item !== null) {
@@ -518,6 +532,13 @@ export const setFirstName = (firstName?: string): string => {
             .join(' ')
     return ''
 }
+
+export const setPlural = (word?: string): string => {
+    if (!word) return '';
+
+    const rawWord = word.trim();
+    return rawWord.endsWith('s') ? rawWord : `${rawWord}s`;
+};
 
 export const toLower = (sequence?: string): string | null => {
     if (sequence) {
@@ -904,6 +925,54 @@ export const getUniqueness = <T, K>(
             return map;
         }, new Map<ID, K>()).values()
     ) : undefined;
+}
+
+export const collectErrorMessages = (errors?: FieldError | Record<string, unknown>): string[] => {
+    const messages: string[] = []
+
+    function visit(node: unknown) {
+        if (!node) return
+
+        if (Array.isArray(node)) {
+            for(const el of node) visit(el)
+            return
+        }
+
+        if (typeof node === 'object' && 'message' in node) {
+            const m = node?.message
+            if (typeof m === 'string' && m?.trim() !== '') {
+                messages.push(m)
+            }else if (Array.isArray(m)) {
+                for (const msg of m) {
+                    if(typeof msg === 'string') {
+                        messages.push(msg)
+                    }
+                }
+            }else if (typeof m === 'object' && m !== null) {
+                messages.push(JSON.stringify(m))
+            }
+        }
+
+        for (const key of Object.keys(node)) {
+            if (key === 'message' || key === 'type' || key === 'ref') continue
+
+            const child = node[key]
+
+            if (typeof child === 'object' && child !== null) {
+                visit(child)
+            }
+        }
+    }
+
+    visit(errors)
+    return messages
+}
+
+export const individualOptions = (data?: Individual[]): Options => {
+    return data ? data?.map(i => ({
+        label: setFirstName(`${i?.lastName} ${i?.firstName}`),
+        value: i?.id as number
+    })) : [] as Options
 }
 
 export const setStudentList = (students: Enrollment[]) => {

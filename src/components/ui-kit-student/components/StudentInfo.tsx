@@ -1,6 +1,6 @@
 import Block from "../../view/Block.tsx";
 import {Divider, Table, TableColumnsType, Avatar as AntAvatar, Typography, Badge} from "antd";
-import {HTMLProps, ReactNode, useEffect, useState} from "react";
+import {HTMLProps, ReactNode, useEffect, useMemo, useState} from "react";
 import {Enrollment, HealthCondition, Schedule, Reprimand} from "../../../entity";
 import {
     bloodLabel, convertToM, fDate, firstLetter, fullDay, getAge, getCountry,
@@ -419,15 +419,16 @@ const DisciplinaryRecords = ({infoData, seeMore, color}: StudentInfoProps) => {
 
 export const StudentInfo = ({enrollment, seeMore, color}: { enrollment: Enrollment, color?: string, seeMore?: (key: string) => void }) => {
 
-    const {classe} = enrollment
+    const classe = useMemo(() => enrollment?.classe, [enrollment])
+    const sections = [SectionType.MATERNELLE, SectionType.PRIMAIRE, SectionType.GARDERIE, SectionType.CRECHE]
 
     const items: ReactNode[] = [
         <IndividualInfo infoData={enrollment} dataKey='individual-block' color={color}/>,
-        ...(classe?.grade?.section != SectionType.MATERNELLE && classe?.grade?.section != SectionType.PRIMAIRE ? [
+        ...(!sections.includes(SectionType[classe?.grade?.section as keyof typeof SectionType]) ? [
             <GraphSection infoData={enrollment} dataKey='graph-block' color={color}/>
         ] : []),
         <GuardianBlock infoData={enrollment} dataKey='guardian-section' color={color} />,
-        ...(classe?.grade?.section != SectionType.MATERNELLE && classe?.grade?.section != SectionType.PRIMAIRE ? [
+        ...(!sections.includes(SectionType[classe?.grade?.section as keyof typeof SectionType]) ? [
             <ExamList infoData={enrollment} seeMore={seeMore} dataKey='exam-block' color={color}/>
         ] : []),
         <SchoolHistory infoData={enrollment} seeMore={seeMore} dataKey='school-history-block' color={color}/>,

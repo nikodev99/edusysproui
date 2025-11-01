@@ -1,12 +1,9 @@
 import {message as successMassage, notification} from 'antd'
 import {ReactNode, useEffect} from "react";
-import {text} from "../../../core/utils/text_display.ts";
-import {redirect} from "react-router-dom";
 
-const FormSuccess = ({message, toRedirect, redirectLink, isNotif, type = 'success', onClose}: {
+const FormSuccess = ({message, setRedirect, isNotif, type = 'success', onClose}: {
     message?: string | ReactNode,
-    toRedirect?: boolean,
-    redirectLink?: string,
+    setRedirect?: (url?: string) => void,
     isNotif?: boolean,
     type?: 'success' | 'error' | 'info' | 'warning'
     onClose?: () => void
@@ -30,7 +27,7 @@ const FormSuccess = ({message, toRedirect, redirectLink, isNotif, type = 'succes
                 key,
                 type: 'loading',
                 content: 'chargement...'
-            })
+            }).then()
             setTimeout(() => {
                 messageApi.open({
                     key,
@@ -38,14 +35,12 @@ const FormSuccess = ({message, toRedirect, redirectLink, isNotif, type = 'succes
                     content: message,
                     duration: 2,
                 }).then(() => {
-                    if (toRedirect && redirectLink){
-                        redirect(redirectLink ? redirectLink : text.student.href)
-                    }
+                    setRedirect?.()
                 })
             }, 2000)
         }
 
-    }, [api, isNotif, message, messageApi, redirectLink, toRedirect, type])
+    }, [api, isNotif, message, messageApi, onClose, setRedirect, type])
 
     return(
         <>

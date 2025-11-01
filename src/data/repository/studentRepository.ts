@@ -35,6 +35,16 @@ export const searchEnrolledStudents = (schoolId: string, searchInput: string) =>
     })
 }
 
+export const searchUnenrolledStudents = (schoolId: string, searchInput: string) => {
+    return request({
+        method: 'GET',
+        url: '/enroll/not_enrolled/' + schoolId,
+        params: {
+            query: searchInput
+        }
+    })
+}
+
 export const getStudentById = (studentId: string): Promise<AxiosResponse<Enrollment>> => {
     return apiClient.get<Enrollment>(`/enroll/student/${studentId}`)
 }

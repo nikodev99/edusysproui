@@ -14,7 +14,7 @@ export const FormSelect = <T extends FieldValues>(selectProps: SelectType<T>) =>
 
     const handleFilterOption = (input: string, option?: { label: string; value: string }) => {
         return typeof filterOption === 'function'
-            ? filterOption
+            ? filterOption(input, option)
             : filterOption === true ? (option?.label ?? '').toLowerCase().includes(input.toLowerCase()) : undefined;
     }
 

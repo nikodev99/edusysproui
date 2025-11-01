@@ -1,5 +1,5 @@
 import {ItemType} from "antd/es/menu/interface";
-import {useCallback, useEffect, useMemo, useRef} from "react";
+import {useMemo} from "react";
 import {
     LuKeyRound,
     LuLock, LuLockKeyhole,
@@ -11,7 +11,6 @@ import {
 } from "react-icons/lu";
 import {AiOutlineUserDelete} from "react-icons/ai";
 import {User} from "../../../auth/dto/user.ts";
-import {loggedUser} from "../../../auth/jwt/LoggedUser.ts";
 import {useToggle} from "../../../hooks/useToggle.ts";
 import {UserRoles} from "./UserRoles.tsx";
 import {UserAccountEnabled} from "./UserAccountEnabled.tsx";
@@ -21,22 +20,16 @@ import {useRedirect} from "../../../hooks/useRedirect.ts";
 import {getSlug} from "../../../core/utils/utils.ts";
 import {ResetPassword} from "./ResetPassword.tsx";
 import {useUserRepo} from "../../../hooks/actions/useUserRepo.ts";
+import {ActionButtonsProps} from "../../../core/utils/interfaces.ts";
+import {useMenuItemsEffect} from "../../../hooks/useMenuItemsEffect.ts";
 
-type UserActionButtons = {
-    user?: User 
-    getItems?: (items: ItemType[]) => void
-    setRefresh?: (value: boolean) => void
-}
-
-export const UserActionLinks = ({user, getItems, setRefresh}: UserActionButtons) => {
-    loggedUser.getUser();
+export const UserActionLinks = ({data: user, getItems, setRefresh}: ActionButtonsProps<User>) => {
     const {toUserActivity, toChangePassword} = useRedirect()
     const [roleManage, setRoleManage] = useToggle(false)
     const [enable, setEnable] = useToggle(false)
     const [accountNoLocked, setAccountNoLocked] = useToggle(false)
     const [removeUser, setRemoveUser] = useToggle(false)
     const [passwordReset, setPasswordReset] = useToggle(false)
-    const prevItemsRef = useRef<ItemType[] | undefined>(undefined);
     const {isSameUser} = useUserRepo()
 
     const sameUser = useMemo(() => user ? isSameUser(user) : false, [isSameUser, user])
@@ -96,27 +89,7 @@ export const UserActionLinks = ({user, getItems, setRefresh}: UserActionButtons)
         toUserActivity, user?.accountNonLocked, user?.enabled, user?.firstName, user?.id, user?.lastName
     ])
 
-    const itemsAreShallowEqual = useCallback((a?: ItemType[], b?: ItemType[]) => {
-        if (a === b) return true;
-        if (!a || !b) return false;
-        if (a.length !== b.length) return false;
-        for (let i = 0; i < a.length; i++) {
-            const ai: ItemType = a[i];
-            const bi: ItemType = b[i];
-            if (ai?.key !== bi?.key) return false;
-        }
-        return true;
-    }, []);
-
-    useEffect(() => {
-        if (!getItems) return;
-        const prev = prevItemsRef.current;
-        if (itemsAreShallowEqual(prev, items)) return; // pas de changement réel → pas d'appel
-        prevItemsRef.current = items;
-        getItems(items);
-    }, [getItems, items, itemsAreShallowEqual]);
-
-    console.log({removeUser})
+   useMenuItemsEffect(items, getItems)
 
     const handleCloseUserRole = () => {
         setRoleManage()

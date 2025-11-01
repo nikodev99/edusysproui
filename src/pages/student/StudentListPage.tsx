@@ -3,39 +3,45 @@ import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {text} from "../../core/utils/text_display.ts";
 import {useBreadcrumbItem} from "../../hooks/useBreadCrumb.tsx";
 import {ListPageHierarchy} from "../../components/custom/ListPageHierarchy.tsx";
-import {useMemo} from "react";
-import {redirectTo} from "../../context/RedirectContext.ts";
 import {AiOutlineUserAdd} from "react-icons/ai";
 import {fetchEnrolledStudents} from "../../data";
 import {AxiosResponse} from "axios";
 import {StudentList} from "../../components/ui-kit-student/components/StudentList.tsx";
 import {searchEnrolledStudents} from "../../data/repository/studentRepository.ts";
+import {useRedirect} from "../../hooks/useRedirect.ts";
+import {Button} from "antd";
+import {LuClipboard, LuClipboardPlus, LuSearch} from "react-icons/lu";
+import {useMemo} from "react";
+import {setPlural} from "../../core/utils/utils.ts";
 
 const StudentListPage = () => {
+    const {toEnrollStudent, toReenrollStudent, toSearchStudent} = useRedirect()
+    
+    const pageLabel = useMemo(() => setPlural(text.student.label), [])
 
     useDocumentTitle({
-        title: `EduSysPro - ${text.student.label}`,
+        title: `EduSysPro - ${pageLabel}`,
         description: "Student description",
         hasEdu: false
     })
 
     const pageHierarchy = useBreadcrumbItem([
         {
-            title: text.student.label
+            title: pageLabel
         }
     ])
-
-    const enrollUrl = useMemo<string>(() => text.student.group.add.href, []);
 
     return(
         <>
             <ListPageHierarchy
                 items={pageHierarchy as []}
-                hasButton={true}
-                onClick={() => redirectTo(enrollUrl)}
-                type='primary'
-                icon={<AiOutlineUserAdd />}
-                label={text.student.group.add.label}
+                hasDropdownButton={true}
+                icon={<Button type='primary'><AiOutlineUserAdd /> {text.student.group.add.label}</Button>}
+                dropdownItems={[
+                    {key: '1', icon: <LuClipboard />,label: text.student.group.add.label, onClick: toEnrollStudent},
+                    {key: '2', icon: <LuClipboardPlus />, label: text.student.group.reAdd.label, onClick: toReenrollStudent},
+                    {key: '3', icon: <LuSearch />, label: text.student.group.search.label, onClick: toSearchStudent}
+                ]}
             />
             <StudentList
                 callback={fetchEnrolledStudents as () => Promise<AxiosResponse<DataType>>}

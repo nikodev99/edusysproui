@@ -179,7 +179,7 @@ const UserListPage = () => {
         />
         <section>
             <UserActionLinks
-                user={selectedUser}
+                data={selectedUser}
                 getItems={setLinkButtons}
                 setRefresh={setRefetch}
             />

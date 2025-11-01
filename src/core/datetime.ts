@@ -126,7 +126,6 @@ class Datetime {
 
     static of(date: DateInput | Params, timezone?: string, locale?: string): Datetime {
         const datetime = new Datetime(date, timezone, locale);
-        console.log('Datetime: ', datetime)
         return datetime;
     }
 

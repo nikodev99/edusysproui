@@ -3,11 +3,11 @@ import {enrollStudent} from "../post";
 import {AxiosResponse} from "axios";
 import {Enrollment} from "../../entity";
 import {ResponseRepo as CustomResponse} from "./responseRepo.ts";
-import {ErrorCatch} from "./error_catch.ts";
+import {catchError} from "./error_catch.ts";
 
-export const addStudent = async (values: EnrollmentSchema): Promise<CustomResponse<Enrollment>> => {
+export const addStudent = async (values: EnrollmentSchema, isRerun: boolean = false): Promise<CustomResponse<Enrollment>> => {
 
-    const validateFields = enrollmentSchema.safeParse(values)
+    const validateFields = enrollmentSchema(isRerun).safeParse(values)
     if (!validateFields.success) {
         return {
             isSuccess: false,
@@ -19,17 +19,22 @@ export const addStudent = async (values: EnrollmentSchema): Promise<CustomRespon
 
     try {
         const resp: AxiosResponse<Enrollment> = await enrollStudent(data)
-        if ( resp.status !== 200) {
+        if (resp.status >= 200 && resp.status < 300) {
+            return {
+                isSuccess: true,
+                data: resp.data,
+                success: 'Student successfully added'
+            }
+        }else {
             return {
                 isSuccess: false,
                 error: `Error ${resp.status}: ${resp.statusText}`
             }
         }
     } catch (err: unknown) {
-        return ErrorCatch(err)
-    }
-    return {
-        isSuccess: true,
-        success: 'Student successfully added'
+        return {
+            isSuccess: false,
+            error: catchError(err) as string
+        }
     }
 }

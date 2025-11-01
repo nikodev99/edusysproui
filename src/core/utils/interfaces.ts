@@ -299,6 +299,12 @@ export type ListViewerProps<TData extends object, TError> = ListProps<TData> & {
     searchCallbackParams?: unknown[]
 }
 
+export type ActionButtonsProps<TData extends object> = {
+    data?: TData
+    getItems?: (items: ItemType[]) => void
+    setRefresh?: (value: boolean) => void
+}
+
 export interface ListProps<TData extends object> {
     tableColumns?: TableColumnsType<TData>
     tableHeight?: number
@@ -325,6 +331,8 @@ export interface ListProps<TData extends object> {
     showFilterAction?: (value: boolean) => void
     onSelectData?: (data: TData) => void
     dataDescription?: ReactNode
+    hasDesc?: boolean,
+    pageTitle?: ReactNode
 }
 
 export interface ExamData {

@@ -1,14 +1,16 @@
 import {z} from "zod";
 import {addressSchema} from "./addressSchema.ts";
-import {dateProcess} from "../commonSchema.ts";
+import {dateProcess, utf8characterDigitExcluded} from "../commonSchema.ts";
 
 export const individualSchema = z.object({
-    firstName: z.string({required_error: 'Prénom(s) est réquis'})
-        .min(3, {message: "Prénom doit contenir au moins trois caractères"})
-        .regex(/^[a-zA-Zéèàîïùêâûòô\s-]+$/, {message: 'Le prénom doit contenir uniquement des lettres, des tirets et des espaces'}),
-    lastName: z.string({required_error: 'Nom(s) est réquis'})
-        .min(3, {message: "Nom de famille doit contenir au moins trois caractères"})
-        .regex(/^[a-zA-Zéèàîïùêâûòô\s-]+$/, {message: 'Le Nom de famille doit contenir uniquement des lettres, des tirets et des espaces'}),
+    firstName: utf8characterDigitExcluded({
+        requiredError: 'Prénom(s) est réquis',
+        regexError: 'Le prénom doit contenir uniquement des lettres, des tirets et des espaces',
+    }).min(3, {message: "Prénom doit contenir au moins trois caractères"}),
+    lastName: utf8characterDigitExcluded({
+        requiredError: 'Nom(s) est réquis',
+        regexError: 'Le Nom de famille doit contenir uniquement des lettres, des tirets et des espaces'
+    }).min(3, {message: "Nom de famille doit contenir au moins trois caractères"}),
     maidenName: z.string().nullable().optional(),
     gender: z.union([z.string({required_error: "Le genre est requis"}), z.number({required_error: "Le genre est requis"})]),
     status: z.string().optional(),

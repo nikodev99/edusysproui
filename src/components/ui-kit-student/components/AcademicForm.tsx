@@ -14,8 +14,6 @@ export const AcademicForm = ({control, errors}: ZodProps<EnrollmentSchema>) => {
     const academicYear = useGetCurrentAcademicYear()
     const classes = useGetClasseBasicValues()
 
-    console.log('Academic Year: ', academicYear)
-
     //TODO ensure the client is connected
     const classeOptions = useMemo(() => classes.map(c => ({
         value: c.id,

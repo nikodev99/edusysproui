@@ -9,3 +9,4 @@ export { StudentEditDrawer } from "./components/StudentEditDrawer.tsx";
 export { StudentExam } from "./components/StudentExam.tsx";
 export { StudentHistory } from "./components/StudentHistory.tsx";
 export { StudentInfo } from "./components/StudentInfo.tsx";
+export { StudentActionLinks } from "./components/StudentActionLinks.tsx";

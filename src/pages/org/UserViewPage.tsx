@@ -165,7 +165,7 @@ const UserViewPage = () => {
             </section>
             <section>
                 <UserActionLinks
-                    user={user}
+                    data={user}
                     getItems={setLinkButtons}
                     setRefresh={setShouldRefetch}
                 />

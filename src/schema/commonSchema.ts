@@ -51,3 +51,7 @@ export const timeProcess = (title: string) =>
 export const excludeSpecialCharacters= (errors: TypicalErrors) =>
     z.string({required_error: errors.requiredError})
     .regex(/^[\p{Script=Latin}\d\s]+$/u, {message: errors.regexError})
+
+export const utf8characterDigitExcluded = (errors: TypicalErrors) =>
+    z.string({required_error: errors.requiredError})
+        .regex(/^[a-zA-Zéèàîïùêâûòôäë\s-]+$/, {message: errors.regexError})

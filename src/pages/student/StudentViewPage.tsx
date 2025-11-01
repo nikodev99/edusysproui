@@ -2,33 +2,38 @@ import {useParams} from "react-router-dom";
 import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {text} from "../../core/utils/text_display.ts";
 import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
-import {useEffect, useState} from "react";
-import {Enrollment, Student} from "../../entity";
+import {useMemo, useState} from "react";
+import {Student} from "../../entity";
 import ViewHeader from "../../components/ui/layout/ViewHeader.tsx";
 import {setName} from "../../core/utils/utils.ts";
 import {
+    StudentActionLinks,
     StudentAttendance,
     StudentClasse, StudentEditDrawer,
     StudentExam,
     StudentHistory,
     StudentInfo
 } from "../../components/ui-kit-student";
-import {LuCircleUser, LuTrash, LuUserPlus} from "react-icons/lu";
-import {redirectTo} from "../../context/RedirectContext.ts";
+import {LuCircleUser} from "react-icons/lu";
 import {ViewRoot} from "../../components/custom/ViewRoot.tsx";
 import {useStudentRepo} from "../../hooks/actions/useStudentRepo.ts";
+import {ItemType} from "antd/es/menu/interface";
+import {catchError} from "../../data/action/error_catch.ts";
+import {useRedirect} from "../../hooks/useRedirect.ts";
 
 const StudentViewPage = () => {
-
+    const {toViewGuardian} = useRedirect()
     const { id } = useParams()
 
-    const [enrolledStudent, setEnrolledStudent] = useState<Enrollment | null>(null);
     const [openDrawer, setOpenDrawer] = useState(false)
     const [color, setColor] = useState('')
+    const [linkButtons, setLinkButtons] = useState<ItemType[]>([])
     const {useGetStudent} = useStudentRepo()
 
-    const {data, isLoading, isSuccess, error, refetch} = useGetStudent(id as string)
+    const {data, isLoading, error, refetch} = useGetStudent(id as string)
 
+    const enrolledStudent = useMemo(() => data, [data])
+    const errors = useMemo(() => catchError(error), [error])
     const studentName = enrolledStudent ? setName(enrolledStudent?.student.personalInfo) : 'Étudiant'
 
     useDocumentTitle({
@@ -48,12 +53,18 @@ const StudentViewPage = () => {
             }
         ]
     })
-
-    useEffect(() => {
-        if (isSuccess && data) {
-            setEnrolledStudent(data as Enrollment)
-        }
-    }, [data, isSuccess]);
+    
+    const setItems: ItemType[] = useMemo(() => {
+        return [
+            {
+                key: '2',
+                label: 'Tuteur légal',
+                icon: <LuCircleUser/>,
+                onClick: () => toViewGuardian(enrolledStudent?.student?.guardian?.id as string)
+            },
+            ...linkButtons
+        ]
+    }, [enrolledStudent?.student?.guardian?.id, linkButtons, toViewGuardian])
 
     const handleOpenDrawer = (state: boolean) => {
         setOpenDrawer(state)
@@ -63,8 +74,6 @@ const StudentViewPage = () => {
         setOpenDrawer(false)
         refetch().then(r => r.data)
     }
-
-    error ? console.log('error occured: ', error) : ''
 
     return(
         <>
@@ -87,16 +96,8 @@ const StudentViewPage = () => {
                     },
                     {title: enrolledStudent?.classe?.name, mention: enrolledStudent?.classe?.grade?.section}
                 ]}
-                items={[
-                    {
-                        key: 2,
-                        label: 'Tuteur légal',
-                        icon: <LuCircleUser/>,
-                        onClick: () => redirectTo(text.guardian.group.view.href + enrolledStudent?.student.guardian.id)
-                    },
-                    {key: 3, label: 'Réinscrire', icon: <LuUserPlus/>},
-                    {key: 4, label: 'Retirer l\'étudiant', danger: true, icon: <LuTrash/>}
-                ]}
+                items={setItems}
+                errors={errors}
             />
 
             <ViewRoot
@@ -118,6 +119,10 @@ const StudentViewPage = () => {
                     data={enrolledStudent ? enrolledStudent.student : {} as Student}
                 />
             </section>
+            <StudentActionLinks
+                data={enrolledStudent}
+                getItems={setLinkButtons}
+            />
         </>
     )
 }

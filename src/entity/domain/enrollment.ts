@@ -8,5 +8,5 @@ export interface Enrollment {
     student: Student
     classe: Classe
     enrollmentDate: Date
-    isArchive: boolean
+    isArchived: boolean
 }

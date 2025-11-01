@@ -67,6 +67,7 @@ const GuardianListPage = () => {
             key: 'lastName',
             width: '20%',
             sorter: true,
+            align: 'start',
             showSorterTooltip: false,
             className: 'col__name',
             onCell: ({id}) => ({
@@ -77,7 +78,7 @@ const GuardianListPage = () => {
                     <Avatar firstText={personalInfo?.firstName} lastText={text} />
                     <div>
                         <p>{`${text?.toUpperCase()}, ${setFirstName(personalInfo?.firstName)}`}</p>
-                        <p className='st__ref'>{personalInfo?.emailId}</p>
+                        <p className='st__ref'>{personalInfo?.reference || personalInfo?.emailId}</p>
                     </div>
                 </div>
             )

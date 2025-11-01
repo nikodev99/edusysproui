@@ -1,13 +1,12 @@
 import {assignUserToSchoolSchema, AssignUserToSchoolSchema, SignupSchema, signupSchema} from "../../schema";
-import {ReactNode, useCallback, useMemo, useState} from "react";
+import {ReactNode, useMemo, useState} from "react";
 import {useUserRepo} from "../../hooks/actions/useUserRepo.ts";
 import PageWrapper from "../view/PageWrapper.tsx";
 import {Form, Select} from "antd";
 import Responsive from "../ui/layout/Responsive.tsx";
 import {Individual} from "../../entity";
 import {useSearch} from "../../hooks/useSearch.ts";
-import {MessageResponse, Options} from "../../core/utils/interfaces.ts";
-import {setFirstName} from "../../core/utils/utils.ts";
+import {MessageResponse} from "../../core/utils/interfaces.ts";
 import {useUserAccountFlow} from "../../hooks/useUserAccountFlow.tsx";
 import {IndividualType, individualTypeToUserType} from "../../entity/domain/individual.ts";
 import {LuLockOpen} from "react-icons/lu";
@@ -18,6 +17,7 @@ import {AxiosResponse} from "axios";
 import Grid from "../ui/layout/Grid.tsx";
 import {ZodSchema} from "zod";
 import {catchError} from "../../data/action/error_catch.ts";
+import {individualOptions} from "../../core/utils/utils.ts";
 
 export const AssignUser = (
     {setErrorMessage, setSuccessMessage}: {setErrorMessage: (errorMsg: ReactNode) => void, setSuccessMessage: (successMsg: ReactNode) => void}
@@ -25,13 +25,6 @@ export const AssignUser = (
     const [searchValue, setSearchValue] = useState<number | undefined>(undefined)
 
     const {findSearchedUserPersonalInfo} = useUserRepo()
-    
-    const individualOptions = useCallback((data?: Individual[]): Options => {
-        return data ? data?.map(i => ({
-            label: setFirstName(`${i?.lastName} ${i?.firstName}`),
-            value: i?.id as number
-        })) : [] as Options
-    }, [])
 
     const {fetching, resource, options, handleSearch, handleChange} = useSearch<Individual>({
         setValue: setSearchValue as (value: unknown) => void,
@@ -120,7 +113,7 @@ export const AssignUser = (
                 <Grid xs={24} md={24} lg={24} xxl={24}>
                     <Form layout='vertical'>
                         {isReady && <>
-                            <UserAccountForm control={control} errors={errors} flowType={flowType} />
+                            <UserAccountForm control={control as never} errors={errors} flowType={flowType} />
                             <ModalConfirmButton
                                 btnProps={{icon: <LuLockOpen />, type: 'primary'}}
                                 btnTxt={
@@ -133,7 +126,7 @@ export const AssignUser = (
                                         ? 'Voulez vous vraiment créer un nouveau compte pour ' + personalInfo?.lastName + ' ' + personalInfo?.firstName + ' ?'
                                         : 'Voulez vous vraiment affilier ' + personalInfo?.lastName + ' ' + personalInfo?.firstName + ' à votre école ?'
                                 }
-                                handleFunc={handleSubmit(assignSchoolToUser)}
+                                handleFunc={handleSubmit(assignSchoolToUser as () => never)}
                             />
                         </>}
                     </Form>

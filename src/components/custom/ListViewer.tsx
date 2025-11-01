@@ -14,13 +14,14 @@ import {getAge} from "../../core/utils/utils.ts";
 import {AutoScrollTable} from "../ui/layout/AutoScrollTable.tsx";
 import Grid from "../ui/layout/Grid.tsx";
 import {useToggle} from "../../hooks/useToggle.ts";
+import {PageTitle} from "./PageTitle.tsx";
 
 const ListViewer = <TData extends object, TError>(
     {
         callback, searchCallback, tableColumns, dropdownItems, throughDetails, hasCount, countTitle, localStorage,
         fetchId, cardData, cardNotAvatar, level, refetchCondition, callbackParams, searchCallbackParams, infinite,
         uuidKey, tableProps, descMargin, itemSize, displayItem, filters, shareSearchQuery, onSelectData, dataDescription,
-        tableHeight
+        tableHeight, hasDesc = true, pageTitle
     }: ListViewerProps<TData, TError>
 ) => {
 
@@ -176,8 +177,6 @@ const ListViewer = <TData extends object, TError>(
         }).filter((item): item is StudentListDataType => item !== null)
         : content;
 
-    console.log("DATASOURCE: ", dataSource)
-
     const handleUpdateSearchQuery = () => {
         setSearchQuery(undefined)
         shareSearchQuery?.(undefined)
@@ -185,6 +184,7 @@ const ListViewer = <TData extends object, TError>(
 
     return(
         <>
+            {hasDesc && <PageTitle title={pageTitle} description={dataDescription} />}
             <div className='header__area'>
                 <Flex justify='space-between' align='middle' className='flex__between' wrap='wrap'>
                     <PageDescription
@@ -197,7 +197,7 @@ const ListViewer = <TData extends object, TError>(
                                 : undefined
                         }
                         isCount={hasCount !== undefined ? hasCount : true}
-                        description={dataDescription}
+                        description={!hasDesc ? dataDescription : undefined}
                         addMargin={descMargin}
                     />
                     <div className='flex__end'>

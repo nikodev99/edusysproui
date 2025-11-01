@@ -1,4 +1,4 @@
-import {GenderCounted, Pageable} from "../../core/utils/interfaces.ts";
+import {GenderCounted, Options, Pageable} from "../../core/utils/interfaces.ts";
 import {useFetch, useRawFetch} from "../useFetch.ts";
 import {UseQueryResult} from "@tanstack/react-query";
 import {Enrollment} from "../../entity";
@@ -12,11 +12,12 @@ import {
     getClasseStudents,
     getRandomStudentClassmate,
     getStudentById,
-    searchEnrolledStudents
+    searchEnrolledStudents, searchUnenrolledStudents
 } from "../../data/repository/studentRepository.ts";
 import {fetchEnrolledClasseStudents} from "../../data/action/studentAction.ts";
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import {useGlobalStore} from "../../core/global/store.ts";
+import { setFirstName } from "../../core/utils/utils.ts";
 
 export const useStudentRepo = () => {
     const schoolId = useGlobalStore(state => state.schoolId)
@@ -58,6 +59,18 @@ export const useStudentRepo = () => {
             !!schoolId && !!searchInput
         );
     };
+
+    const useGetSearchUnenrolledStudents = (
+        searchInput: string
+    ): UseQueryResult<Enrollment[], unknown> => useFetch(
+        ["unenrolled-students-search", schoolId],
+        searchUnenrolledStudents,
+        [schoolId, searchInput],
+        !!schoolId && !!searchInput
+    )
+
+    const findUnenrolledStudents = (searchInput: string) =>
+        searchUnenrolledStudents(schoolId, searchInput)
 
     /**
      * Fetches a single student by ID.
@@ -241,9 +254,18 @@ export const useStudentRepo = () => {
         return count
     };
 
+    const studentOptions = useCallback((data?: Enrollment[]): Options => {
+        return data ? data?.map(i => ({
+            label: setFirstName(`${i?.student?.personalInfo?.lastName} ${i?.student?.personalInfo?.firstName}`),
+            value: i?.id as number
+        })) : [] as Options
+    }, [])
+
     return {
         useGetEnrolledStudents,
         useSearchEnrolledStudents,
+        useGetSearchUnenrolledStudents,
+        findUnenrolledStudents,
         useGetStudent,
         useGetClasseEnrolledStudents,
         useGetClasseEnrolledStudentsSearch,
@@ -253,5 +275,6 @@ export const useStudentRepo = () => {
         useCountClasseStudents,
         useCountSomeClasseStudents,
         useCountStudent,
+        studentOptions,
     };
 };

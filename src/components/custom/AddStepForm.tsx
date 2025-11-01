@@ -2,7 +2,7 @@ import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {BreadcrumbType, useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
 import {Button, Flex, Form, Steps} from "antd";
 import {FieldValues, UseFormReturn} from "react-hook-form";
-import {ReactNode, useState} from "react";
+import {ReactNode, useMemo} from "react";
 import {useLocation} from "react-router-dom";
 import queryString from 'query-string'
 import {Metadata} from "../../core/utils/interfaces.ts";
@@ -26,44 +26,31 @@ interface AddStepsProps<TFieldValues extends FieldValues> {
     isPending: boolean
     currentNumber: number
     stepsDots?: boolean | ((iconDot: ReactNode, {index, status, title, description}: never) => ReactNode)
+    errors?: string[]
+    setRedirect?: (url?: string) => void
 }
 
 const AddStepForm = <TFieldValues extends FieldValues>(
     {
-        docTitle,
-        breadCrumb,
-        addLink,
-        handleForm,
-        triggerNext,
-        onSubmit,
-        steps,
-        messages,
-        isPending,
-        stepsDots,
-        currentNumber,
+        docTitle, breadCrumb, addLink, handleForm, triggerNext, onSubmit, steps, messages, isPending, stepsDots, currentNumber, errors,
+        setRedirect
     }: AddStepsProps<TFieldValues>
 ) => {
 
     useDocumentTitle(docTitle)
     const {context} = useBreadCrumb({bCItems: breadCrumb});
 
-    const [hasErrors, setHasErrors] = useState<boolean>(false);
-
     const location = useLocation()
     const queryParam = queryString.parse(location.search)
     const stepNumber = Number(queryParam.step) || 0
     const current = stepNumber > currentNumber ? 0 : stepNumber
     const {error, success} = messages
-    const {handleSubmit, formState: {errors}, clearErrors} = handleForm
+    const {handleSubmit} = handleForm
+
+    const hasErrors = useMemo(() => errors && errors?.length > 0, [errors])
 
     const next = async () => {
         triggerNext(current)
-        if(errors && Object.keys(errors).length > 0) {
-            setHasErrors(true)
-        }else {
-            setHasErrors(false)
-            clearErrors()
-        }
     }
 
     const prev = () => redirectTo(`${addLink}?step=${current - 1}`)
@@ -81,10 +68,10 @@ const AddStepForm = <TFieldValues extends FieldValues>(
             <PageWrapper>
                 {hasErrors && <ValidationAlert
                     alertMessage='Une ou plusieurs erreurs de validation détectés'
-                    message={Object.values(errors).map(err => err?.message) as string[]}
+                    message={errors}
                 />}
-                {error && (<FormError message={error}/>)}
-                {success && (<FormSuccess message={success} toRedirect={true}/>)}
+                {error && (<FormError message={error} />)}
+                {success && (<FormSuccess message={success} setRedirect={setRedirect} />)}
                 <Flex className='inscription-wrapper' vertical>
                     <div className='form-wrapper'>
                         <Form layout="vertical" initialValues={{requiredMarkValue: 'customize'}}

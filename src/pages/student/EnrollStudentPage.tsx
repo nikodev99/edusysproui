@@ -4,10 +4,10 @@ import {text} from "../../core/utils/text_display.ts";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {EnrollmentSchema, enrollmentSchema, GuardianSchema} from "../../schema";
-import {useEffect, useState, useTransition} from "react";
+import {useMemo, useState, useTransition} from "react";
 import {Gender} from "../../entity/enums/gender.tsx";
 import {Status} from "../../entity/enums/status.ts";
-import {Guardian, toGuardianSchema} from "../../entity";
+import {Address, Enrollment, Guardian, toGuardianSchema} from "../../entity";
 import {redirectTo} from "../../context/RedirectContext.ts";
 import {addStudent} from "../../data";
 import StudentForm from "../../components/forms/StudentForm.tsx";
@@ -18,13 +18,14 @@ import HealthConditionForm from "../../components/forms/HealthConditionForm.tsx"
 import {useToggle} from "../../hooks/useToggle.ts";
 import {OutputFileEntry} from "@uploadcare/blocks";
 import {IndividualForm} from "../../components/forms/IndividualForm.tsx";
-import {loggedUser} from "../../auth/jwt/LoggedUser.ts";
+import {collectErrorMessages} from "../../core/utils/utils.ts";
+import {useRedirect} from "../../hooks/useRedirect.ts";
 
 const EnrollStudentPage = () => {
 
     const documentTitle: Metadata = {
-        title: "EduSysPro - EnrollStudentPage",
-        description: "EnrollStudentPage description",
+        title: "EduSysPro - Inscription",
+        description: "Inscription description",
         hasEdu: false
     }
 
@@ -44,32 +45,32 @@ const EnrollStudentPage = () => {
     const [isExists, setIsExists] = useState<boolean>(false)
     const [error, setError] = useState<string | undefined>("")
     const [success, setSuccess] = useState<string | undefined>("")
+    const [registeredStudent, setRegisteredStudent] = useState<Enrollment | null>(null)
     const [isPending, startTransition] = useTransition()
     const [validationTriggered, setValidationTriggered] = useState(false)
-    const [showMaidenName, setShowMaidenName] = useState(false)
     const [image, setImage] = useState<string | undefined>(undefined)
     const addLink = text.student.group.add.href
 
+    const {toViewStudent} = useRedirect()
+
     const form = useForm<EnrollmentSchema>({
-        resolver: zodResolver(enrollmentSchema)
+        resolver: zodResolver(enrollmentSchema(false))
     })
 
     const {watch, control, formState: {errors}, setValue, trigger, reset} = form
     //TODO in production stop the watching
     const formData = watch()
+    
+    const showMaidenName = useMemo(() => {
+        const guardian = formData?.student && 'guardian' in formData.student
+            ? formData?.student?.guardian?.personalInfo
+            : null
 
-    useEffect(() => {
-        const guardian = formData?.student?.guardian?.personalInfo
-        if (
-            guardian && 'gender' in guardian && 'status' in guardian &&
-            guardian?.gender === Gender.FEMME && guardian?.status === Status.MARIE
-        ) {
-            setShowMaidenName(true)
-        }else {
-            setShowMaidenName(false)
-        }
-        console.log("Data: ", formData)
-    }, [errors, formData]);
+        return !!(guardian && 'gender' in guardian && 'status' in guardian &&
+            guardian?.gender === Gender.FEMME && guardian?.status === Status.MARIE);
+    }, [formData.student])
+
+    const formErrors: string[] = useMemo(() => collectErrorMessages(errors), [errors]);
 
     const validate = (validateFields: boolean, current: number) => {
         if (validateFields) {
@@ -145,7 +146,7 @@ const EnrollStudentPage = () => {
     ]
 
     const triggerNext = async (current: number) => {
-        let validateFields;
+        let validateFields: boolean;
         try {
             switch (current) {
                 case 0:
@@ -182,7 +183,9 @@ const EnrollStudentPage = () => {
                             'student.guardian.personalInfo.status', 'student.guardian.personalInfo.telephone'
                         ])
                         if (checked && !guardianId && !isExists) {
-                            setValue('student.guardian.personalInfo.address', formData.student.personalInfo.address)
+                            const address = formData.student && 'personalInfo' in formData.student
+                                ? formData.student.personalInfo.address : {} as Address
+                            setValue('student.guardian.personalInfo.address', address)
                         }else {
                             const guardianAddressFields = await trigger([
                                 'student.guardian.personalInfo.address.number', 'student.guardian.personalInfo.address.street',
@@ -210,8 +213,6 @@ const EnrollStudentPage = () => {
         setError("")
         setSuccess("")
 
-        const school = loggedUser.getSchool()
-
         startTransition(() => {
 
             if (image)
@@ -220,26 +221,17 @@ const EnrollStudentPage = () => {
                     student: {
                         ...data.student,
                         personalInfo: {
-                            ...data.student.personalInfo,
+                            ...data.student['personalInfo'],
                             image: image
                     }
                 }
             }
 
-            data = {
-                ...data,
-                student: {
-                    ...data.student,
-                    personalInfo: {
-                        ...data.student.personalInfo,
-                        reference: `${school?.abbr}000400`
-                    }
-                },
-            }
-
             addStudent(data)
                 .then((res) => {
+                    console.log("RES: ", res)
                     setError(res?.error)
+                    setRegisteredStudent(res.data as Enrollment)
                     if (res.isSuccess) {
                         setSuccess(res?.success)
                         reset()
@@ -248,7 +240,17 @@ const EnrollStudentPage = () => {
         })
     }
 
-    console.log('Error occurred: ', errors)
+    const handleRedirect = () => {
+        if (registeredStudent)
+            toViewStudent(
+                registeredStudent.student?.id as string,
+                registeredStudent.student?.personalInfo
+            )
+        else
+            console.log("No redirect called.")
+    }
+
+    console.log("REGISTERED STUDENT: ", registeredStudent)
 
     return(
         <AddStepForm
@@ -262,6 +264,8 @@ const EnrollStudentPage = () => {
             isPending={isPending}
             handleForm={form}
             currentNumber={6}
+            errors={formErrors}
+            setRedirect={handleRedirect}
         />
     )
 }

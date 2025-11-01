@@ -8,30 +8,40 @@ import {Gender} from "../../../entity/enums/gender.tsx";
 import Tagger from "../../ui/layout/Tagger.tsx";
 import {AiOutlineEllipsis} from "react-icons/ai";
 import {ActionButton} from "../../ui/layout/ActionButton.tsx";
-import {redirectTo} from "../../../context/RedirectContext.ts";
 import {text} from "../../../core/utils/text_display.ts";
 import {LuEye} from "react-icons/lu";
 import {useColumnSearch} from "../../../hooks/useColumnSearch.tsx";
 import Datetime from "../../../core/datetime.ts";
+import {useRedirect} from "../../../hooks/useRedirect.ts";
+import {Individual} from "../../../entity";
+import {StudentActionLinks} from "./StudentActionLinks.tsx";
+import {useCallback, useState} from "react";
+import {ItemType} from "antd/es/menu/interface";
 
 export const StudentList = <TError extends AxiosError>(listProps: ListViewerProps<StudentListDataType, TError>) => {
-
+    const [selectedStudent, setSelectedStudent] = useState<StudentListDataType | undefined>(undefined)
+    const [linkButtons, setLinkButtons] = useState<ItemType[]>([])
+    
     const {callback, searchCallback} = listProps;
+    const {toViewStudent} = useRedirect()
 
     const {getColumnSearchProps} = useColumnSearch<StudentListDataType>()
 
-    const getItems = (url: string) => {
-        if (url)
-            return [
-                {key: `details-${url}`, icon: <LuEye size={20} />, label: 'Voir l\'étudiant', onClick: () => throughDetails(url)},
-                {key: `delete-${url}`, label: 'Delete', danger: true}
-            ]
-        return []
-    }
+    const throughDetails = useCallback((_link?: string, record?: StudentListDataType) => {
+        toViewStudent(record?.id as string, {lastName: record?.lastName, firstName: record?.firstName} as Individual)
+    }, [toViewStudent])
 
-    const throughDetails = (link: string) => {
-        redirectTo(`${text.student.group.view.href}${link}`)
-    }
+    const getItems = useCallback((_url?: string, student?: StudentListDataType): ItemType[] => {
+        return [
+            {
+                key: `details-${student?.id}`,
+                icon: <LuEye />,
+                label: `Voir ${setFirstName(text.student.label)}`,
+                onClick: () => throughDetails(student?.id, student),
+            },
+            ...linkButtons
+        ]
+    }, [linkButtons, throughDetails])
 
     const columns: TableColumnsType<StudentListDataType> = [
         {
@@ -42,8 +52,9 @@ export const StudentList = <TError extends AxiosError>(listProps: ListViewerProp
             sorter: true,
             showSorterTooltip: false,
             className: 'col__name',
-            onCell: ({id}) => ({
-                onClick: () => throughDetails(id)
+            align: 'start',
+            onCell: (record) => ({
+                onClick: () => throughDetails(record?.id, record)
             }),
             ...getColumnSearchProps('lastName'),
             render: (text, {firstName, image, reference}) => (
@@ -146,16 +157,21 @@ export const StudentList = <TError extends AxiosError>(listProps: ListViewerProp
     }
 
     return(
-        <ListViewer
-            {...listProps}
-            callback={callback}
-            searchCallback={searchCallback}
-            tableColumns={columns}
-            dropdownItems={getItems}
-            throughDetails={throughDetails}
-            countTitle={text.student.label}
-            cardData={cardData}
-            level={5}
-        />
+        <>
+            <ListViewer
+                {...listProps}
+                callback={callback}
+                searchCallback={searchCallback}
+                tableColumns={columns}
+                dropdownItems={getItems}
+                throughDetails={throughDetails as () => void}
+                countTitle={text.student.label}
+                cardData={cardData}
+                hasDesc={false}
+                level={5}
+                onSelectData={setSelectedStudent}
+            />
+           <StudentActionLinks data={selectedStudent} getItems={setLinkButtons} />
+        </>
     )
 }

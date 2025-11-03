@@ -18,6 +18,8 @@ export const FormSelect = <T extends FieldValues>(selectProps: SelectType<T>) =>
             : filterOption === true ? (option?.label ?? '').toLowerCase().includes(input.toLowerCase()) : undefined;
     }
 
+
+
     return(
         <FormItem {...selectProps} defaultValue={defaultValue || selectedValue} render={({field}) => {
             return(
@@ -36,7 +38,10 @@ export const FormSelect = <T extends FieldValues>(selectProps: SelectType<T>) =>
                                 value={field.value || selectedValue}
                                 onSearch={onSearch}
                                 showSearch={showSearch}
-                                onChange={field.onChange || onChange}
+                                onChange={(value, options) => {
+                                    onChange?.(value as never, options)
+                                    field.onChange
+                                }}
                             />
                             <Button htmlType='submit' disabled={disabled ? disabled : field.value === selectedValue}><LuSave /></Button>
                         </Space.Compact>
@@ -53,7 +58,10 @@ export const FormSelect = <T extends FieldValues>(selectProps: SelectType<T>) =>
                             value={field.value || selectedValue}
                             onSearch={onSearch}
                             showSearch={showSearch}
-                            onChange={field.onChange || onChange}
+                            onChange={(value, options) => {
+                                onChange?.(value as never, options)
+                                field.onChange
+                            }}
                         />
                     )}
                 </>

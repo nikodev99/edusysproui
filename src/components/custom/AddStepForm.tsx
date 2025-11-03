@@ -28,12 +28,13 @@ interface AddStepsProps<TFieldValues extends FieldValues> {
     stepsDots?: boolean | ((iconDot: ReactNode, {index, status, title, description}: never) => ReactNode)
     errors?: string[]
     setRedirect?: (url?: string) => void
+    setActivity?: () => Promise<boolean>
 }
 
 const AddStepForm = <TFieldValues extends FieldValues>(
     {
         docTitle, breadCrumb, addLink, handleForm, triggerNext, onSubmit, steps, messages, isPending, stepsDots, currentNumber, errors,
-        setRedirect
+        setRedirect, setActivity
     }: AddStepsProps<TFieldValues>
 ) => {
 
@@ -71,7 +72,7 @@ const AddStepForm = <TFieldValues extends FieldValues>(
                     message={errors}
                 />}
                 {error && (<FormError message={error} />)}
-                {success && (<FormSuccess message={success} setRedirect={setRedirect} />)}
+                {success && (<FormSuccess message={success} setRedirect={setRedirect} setActivity={setActivity} />)}
                 <Flex className='inscription-wrapper' vertical>
                     <div className='form-wrapper'>
                         <Form layout="vertical" initialValues={{requiredMarkValue: 'customize'}}

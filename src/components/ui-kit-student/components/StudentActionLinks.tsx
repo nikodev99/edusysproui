@@ -5,8 +5,11 @@ import {LuBan, LuCircleArrowOutUpRight, LuUserMinus, LuUserPlus} from "react-ico
 import {useMenuItemsEffect} from "../../../hooks/useMenuItemsEffect.ts";
 import {Tooltip} from "antd";
 import {Enrollment} from "../../../entity";
+import {useToggle} from "../../../hooks/useToggle.ts";
+import {StudentPromotion} from "./StudentPromotion.tsx";
 
-export const StudentActionLinks = ({data, getItems}: ActionButtonsProps<StudentListDataType | Enrollment>) => {
+export const StudentActionLinks = ({data, getItems, setRefresh}: ActionButtonsProps<StudentListDataType | Enrollment>) => {
+    const [openPromoteStudent, setOpenPromoteStudent] = useToggle(false)
     
     const enrollment = useMemo(() => data, [data])
     
@@ -18,13 +21,13 @@ export const StudentActionLinks = ({data, getItems}: ActionButtonsProps<StudentL
             key: `reinscription-${studentId}`,
             label: 'Réinscrire',
             icon: <LuUserPlus/>,
-            disabled: !enrollment?.academicYear?.current
+            disabled: enrollment?.academicYear?.current
         },
         {
             key: `promu-${studentId}`,
             label: <Tooltip title="Changer de classe">Promouvoir</Tooltip>,
             icon: <LuCircleArrowOutUpRight/>,
-            onClick: () => alert("Promotion")
+            onClick: setOpenPromoteStudent
         },
         {
             key: 'discipline-' + studentId,
@@ -40,13 +43,13 @@ export const StudentActionLinks = ({data, getItems}: ActionButtonsProps<StudentL
             danger: true,
             onClick: () => alert("Archive the student")
         }
-    ], [enrollment?.academicYear, studentId]) 
+    ], [enrollment?.academicYear, setOpenPromoteStudent, studentId]) 
     
     useMenuItemsEffect(items, getItems)
     
     return(
         <section>
-
+            <StudentPromotion student={data as Enrollment} open={openPromoteStudent} close={setOpenPromoteStudent} setRefresh={setRefresh} />
         </section>
     )
 }

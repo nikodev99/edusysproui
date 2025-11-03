@@ -1,6 +1,6 @@
 import FormSuccess from "../../ui/form/FormSuccess.tsx";
 import FormError from "../../ui/form/FormError.tsx";
-import {Alert, Button, Flex, Modal} from "antd";
+import {Alert, Button, Flex, Modal, ModalProps} from "antd";
 import {ConfirmButtonProps, ModalConfirmButton} from "./ModalConfirmButton.tsx";
 import {CSSProperties, ReactNode, useMemo} from "react";
 
@@ -28,7 +28,9 @@ export interface ConfirmationProps<T extends object> {
     justify?: CSSProperties['justifyContent'];
     hasCancelBtn?: boolean
     messages?: Messages
-    redirectLink?: string
+    setRedirect?: (url?: string) => void
+    setActivity?: () => Promise<boolean>
+    modalProps?: ModalProps
 }
 
 const DEFAULT_ALERT: Required<AlertDesc> = {
@@ -43,7 +45,7 @@ export const ConfirmationModal = <TData extends object, IData extends object>(
     {
         data, open, close, setRefetch, handleFunc, modalTitle, alertDesc, customComponent, justify = 'flex-end',
         hasCancelBtn = false, title = 'Souhaitez vous poursuivre ?', content = 'Veuillez cliquer sur OUI pour confirmer', tooltipTxt,
-        btnTxt, btnProps, okTxt, cancelTxt, messages, redirectLink
+        btnTxt, btnProps, okTxt, cancelTxt, messages, setRedirect, modalProps, setActivity
     }: ConfirmationTYpe<TData, IData>
 ) => {
 
@@ -72,9 +74,10 @@ export const ConfirmationModal = <TData extends object, IData extends object>(
 
     return(
         <>
-            {successMessage && <FormSuccess message={successMessage} redirectLink={redirectLink} />}
+            {successMessage && <FormSuccess message={successMessage} setRedirect={setRedirect} setActivity={setActivity} />}
             {errorMessage && <FormError message={errorMessage} isNotif />}
             <Modal
+                {...modalProps}
                 open={open}
                 onCancel={handleCancel}
                 destroyOnClose

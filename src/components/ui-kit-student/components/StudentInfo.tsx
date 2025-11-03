@@ -29,6 +29,7 @@ import {LuBan} from "react-icons/lu";
 import {StudentCarousel} from "../../common/StudentCarousel.tsx";
 import {ScheduleCalendar} from "../../common/ScheduleCalendar.tsx";
 import Datetime from "../../../core/datetime.ts";
+import {LinkToStudent} from "../../../core/shared/sharedEnums.ts";
 
 type StudentInfoProps = InfoPageProps<Enrollment>
 
@@ -41,7 +42,11 @@ interface HistoryData {
 
 const IndividualInfo = ({infoData, color}: StudentInfoProps) => {
 
-    const {student, student: {personalInfo, healthCondition}} = infoData
+    const {student, personalInfo, healthCondition} = useMemo(() => ({
+        student: infoData?.student,
+        personalInfo: infoData?.student?.personalInfo,
+        healthCondition: infoData?.student?.healthCondition,
+    }), [infoData])
 
     const [nationality, setNationality] = useState<string>()
     const country = getCountry(personalInfo?.nationality as string)
@@ -49,8 +54,8 @@ const IndividualInfo = ({infoData, color}: StudentInfoProps) => {
     const birthDay = fDate(personalInfo?.birthDate)
     const individualData = [
         {statement: 'Genre', response: firstLetter(personalInfo?.gender)},
-        {statement: 'Nom(s) et prénom(s) du père', response: setFirstName(student.dadName)},
-        {statement: 'Nom(s) et prénom(s) de la mère', response: setFirstName(student.momName)},
+        {statement: 'Nom(s) et prénom(s) du père', response: setFirstName(student?.dadName)},
+        {statement: 'Nom(s) et prénom(s) de la mère', response: setFirstName(student?.momName)},
         ...(isNull(personalInfo?.telephone) ? [] : [{statement: 'Téléphone', response: personalInfo?.telephone}]),
         ...(isNull(personalInfo?.emailId) ? [] : [{statement: '@', response: personalInfo?.emailId}]),
     ]
@@ -91,37 +96,51 @@ const IndividualInfo = ({infoData, color}: StudentInfoProps) => {
 }
 
 const GuardianBlock = ({infoData, color}: StudentInfoProps) => {
-    const {student: {guardian: {personalInfo}}} = infoData
+    const {personalInfo, linkToStudent, jobTitle, company} = useMemo(() => ({
+        personalInfo: infoData?.student?.guardian?.personalInfo,
+        linkToStudent: infoData?.student?.guardian?.linkToStudent,
+        jobTitle: infoData?.student?.guardian?.jobTitle,
+        company: infoData?.student?.guardian?.company,
+    }), [infoData?.student?.guardian])
 
     const guardianData = [
         {statement: 'Nom(s)', response: personalInfo?.lastName},
         {statement: 'Prénoms(s)', response: personalInfo?.firstName},
         {statement: 'Téléphone', response: personalInfo?.telephone},
         ...(isNull(personalInfo?.mobile) ? [] : [{statement: 'Mobile', response: personalInfo?.mobile}]),
-        {statement: '@', response: personalInfo?.emailId}
+        {statement: '@', response: personalInfo?.emailId},
+        ...(isNull(linkToStudent) ? [] : [{statement: 'Lien de parenté', response: LinkToStudent[linkToStudent]}])
     ]
     const addressData = [
-        {statement: 'Numéro', response: personalInfo.address?.number},
-        {statement: 'Rue', response: personalInfo.address?.street},
-        {statement: 'Quartier', response: personalInfo.address?.neighborhood},
-        ...(!isNull(personalInfo.address?.borough) ? [{
+        {statement: 'Numéro', response: personalInfo?.address?.number},
+        {statement: 'Rue', response: personalInfo?.address?.street},
+        {statement: 'Quartier', response: personalInfo?.address?.neighborhood},
+        ...(!isNull(personalInfo?.address?.borough) ? [{
             statement: 'Arrondissement',
-            response: personalInfo.address?.borough
+            response: personalInfo?.address?.borough
         }] : []),
-        {statement: 'Ville', response: personalInfo.address?.city}
+        {statement: 'Ville', response: personalInfo?.address?.city}
+    ]
+
+    const professional = [
+        ...(isNull(company) ? [] : [{statement: 'Employeur', response: company}]),
+        ...(isNull(jobTitle) ? [] : [{statement: 'Poste', response: jobTitle}])
     ]
 
     return (
         <PanelSection title='Tuteur legal'>
             <PanelTable title='Tuteur' data={guardianData} panelColor={color}/>
-            <PanelTable title='Addresse' data={addressData} panelColor={color}/>
+            <PanelTable title='Adresse' data={addressData} panelColor={color}/>
+            {professional && professional?.length > 0 && (
+                <PanelTable title='Emploi' data={professional} panelColor={color}/>
+            )}
         </PanelSection>
     )
 }
 
 const ExamList = ({infoData, seeMore, color}: StudentInfoProps) => {
 
-    const {student: {marks}} = infoData
+    const marks = useMemo(() => infoData?.student?.marks, [infoData?.student?.marks])
 
     const handleClick = () => {
         seeMore && seeMore('1')
@@ -180,14 +199,17 @@ const ExamList = ({infoData, seeMore, color}: StudentInfoProps) => {
 
 const GraphSection = ({infoData}: StudentInfoProps) => {
 
-    const {student: {personalInfo, marks}} = infoData
+    const {personalInfo, marks} = useMemo(() => ({
+        personalInfo: infoData?.student?.personalInfo,
+        marks: infoData?.student?.marks,
+    }), [infoData?.student?.marks, infoData?.student?.personalInfo])
 
-    const graphData = marks.map((s) => ({
+    const graphData = marks?.map((s) => ({
         subject: s.assignment?.subject?.course,
         score: s.obtainedMark
     }))
 
-    if (graphData.length === 0) {
+    if (graphData && graphData?.length === 0) {
         graphData.push({subject: 'Physique chimie', score: 16})
         graphData.push({subject: 'French', score: 12})
         graphData.push({subject: 'Anglais', score: 18})
@@ -203,7 +225,9 @@ const GraphSection = ({infoData}: StudentInfoProps) => {
 }
 
 const SchoolHistory = ({infoData, color}: StudentInfoProps) => {
-    const {student: {enrollments}} = infoData
+    const {enrollments} = useMemo(() => ({
+        enrollments: infoData?.student?.enrollments
+    }), [infoData?.student?.enrollments])
 
     const columns: TableColumnsType<HistoryData> = [
         {
@@ -225,7 +249,10 @@ const SchoolHistory = ({infoData, color}: StudentInfoProps) => {
             dataIndex: 'yearAmount',
             key: 'yearAmount',
             align: 'center',
-            render: (text) => (<span>{text ? currency(text) : ''}</span>),
+            render: (text) => {
+                if (text)
+                    return(<span>{text ? currency(text) : ''}</span>)
+            },
         },
     ];
 
@@ -233,7 +260,7 @@ const SchoolHistory = ({infoData, color}: StudentInfoProps) => {
         dataId: e.classe.id.toString(),
         academicYear: e.academicYear?.academicYear ?? '',
         classeName: e.classe?.name ?? '',
-        yearAmount: (e.classe?.monthCost ?? 0) * (monthsBetween(e.academicYear?.startDate, e.academicYear?.endDate) ?? 0),
+        yearAmount: (e.classe?.monthCost || 0) * (monthsBetween(e.academicYear?.startDate, e.academicYear?.endDate) || 0),
     })) ?? [];
 
     return (
@@ -259,7 +286,9 @@ const SchoolHistory = ({infoData, color}: StudentInfoProps) => {
 
 const AttendanceSection = ({infoData, seeMore, color}: StudentInfoProps) => {
 
-    const { student: { attendances } } = infoData
+    const { attendances } = useMemo(() => ({
+        attendances: infoData?.student?.attendances
+    }), [infoData?.student?.attendances])
 
     const handleClick = () => {
         seeMore && seeMore('2')
@@ -317,7 +346,8 @@ const SchoolColleagues = ({infoData, seeMore, color}: StudentInfoProps) => {
 
 const HealthData = ({infoData, color}: StudentInfoProps) => {
 
-    const {student} = infoData
+    const student = useMemo(() => infoData?.student, [infoData?.student])
+
     const healthCondition: HealthCondition | undefined = student?.healthCondition
 
     const conditions = healthCondition?.medicalConditions?.map((condition) => ({
@@ -359,8 +389,8 @@ const HealthData = ({infoData, color}: StudentInfoProps) => {
 }
 
 const CourseSchedule = ({infoData}: StudentInfoProps) => {
-    const {classe} = infoData
-    const schedules: Schedule[] = classe.schedule !== null ? classe.schedule : []
+    const classe = useMemo(() => infoData?.classe, [infoData?.classe])
+    const schedules: Schedule[] = classe?.schedule !== null ? classe?.schedule : []
 
     return(
         <Section title={`Emploi du temps: ${Datetime.now().fullDay()}`}>
@@ -376,7 +406,7 @@ const CourseSchedule = ({infoData}: StudentInfoProps) => {
 
 const DisciplinaryRecords = ({infoData, seeMore, color}: StudentInfoProps) => {
 
-    const {student: {personalInfo}} = infoData
+    const personalInfo = useMemo(() => infoData?.student?.personalInfo, [infoData?.student?.personalInfo])
     const reprimands = [] as Reprimand[]
     const values = Object.values(
         reprimands.reduce((acc, curr) => {
@@ -418,6 +448,7 @@ const DisciplinaryRecords = ({infoData, seeMore, color}: StudentInfoProps) => {
  */
 
 export const StudentInfo = ({enrollment, seeMore, color}: { enrollment: Enrollment, color?: string, seeMore?: (key: string) => void }) => {
+    console.log("ENROLLMENT: ", enrollment)
 
     const classe = useMemo(() => enrollment?.classe, [enrollment])
     const sections = [SectionType.MATERNELLE, SectionType.PRIMAIRE, SectionType.GARDERIE, SectionType.CRECHE]

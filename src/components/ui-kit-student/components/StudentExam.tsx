@@ -21,13 +21,19 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
 
     const examCount = LocalStorageManager.get<number>('examCount') ?? 10;
 
-    const {academicYear: {id, academicYear}, student, student: {personalInfo, enrollments}, classe} = enrolledStudent
+    const {academicYear, student, personalInfo, enrollments, classe} = useMemo(() => ({
+        academicYear: enrolledStudent?.academicYear,
+        student: enrolledStudent?.student,
+        personalInfo: enrolledStudent?.student?.personalInfo,
+        enrollments: enrolledStudent?.student?.enrollments,
+        classe: enrolledStudent?.classe,
+    }), [enrolledStudent?.academicYear, enrolledStudent?.classe, enrolledStudent?.student])
 
     const [scores, setScores] = useState<Score[]>([])
     const [subjectValue, setSubjectValue] = useState<number>(0)
     const [allData, setAllData] = useState<number>(0)
     const [size, setSize] = useState<number>(examCount)
-    const [academicYearId, setAcademicYearId] = useState<string>(id)
+    const [academicYearId, setAcademicYearId] = useState<string>(academicYear?.id ?? '')
 
     const {useGetAllClasseAssignments} = useAssignmentRepo()
     const {useGetAllStudentScores} = useScoreRepo()
@@ -39,13 +45,13 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
 
     const academicYears = useMemo(() => {
         return enrollments && [
-            { value: id, label: academicYear},
-            ...enrollments.map(e => ({
-                value: e.academicYear.id,
-                label: e.academicYear.academicYear
-            }))
+            { value: academicYear?.id, label: academicYear},
+            ...enrollments?.map(e => ({
+                value: e?.academicYear?.id,
+                label: e?.academicYear?.academicYear
+            })) ?? []
         ];
-    }, [id, academicYear, enrollments]);
+    }, [academicYear, enrollments]);
 
     useEffect(() => {
         if (subjectValue === 0) {

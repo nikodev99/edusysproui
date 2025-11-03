@@ -7,7 +7,7 @@ import {EnrollmentSchema, enrollmentSchema, GuardianSchema} from "../../schema";
 import {useMemo, useState, useTransition} from "react";
 import {Gender} from "../../entity/enums/gender.tsx";
 import {Status} from "../../entity/enums/status.ts";
-import {Address, Enrollment, Guardian, toGuardianSchema} from "../../entity";
+import {Address, Enrollment, Guardian, Individual, toGuardianSchema} from "../../entity";
 import {redirectTo} from "../../context/RedirectContext.ts";
 import {addStudent} from "../../data";
 import StudentForm from "../../components/forms/StudentForm.tsx";
@@ -20,6 +20,7 @@ import {OutputFileEntry} from "@uploadcare/blocks";
 import {IndividualForm} from "../../components/forms/IndividualForm.tsx";
 import {collectErrorMessages} from "../../core/utils/utils.ts";
 import {useRedirect} from "../../hooks/useRedirect.ts";
+import {useActivity} from "../../hooks/useActivity.ts";
 
 const EnrollStudentPage = () => {
 
@@ -52,6 +53,7 @@ const EnrollStudentPage = () => {
     const addLink = text.student.group.add.href
 
     const {toViewStudent} = useRedirect()
+    const {enrollStudentActivity} = useActivity()
 
     const form = useForm<EnrollmentSchema>({
         resolver: zodResolver(enrollmentSchema(false))
@@ -229,12 +231,13 @@ const EnrollStudentPage = () => {
 
             addStudent(data)
                 .then((res) => {
-                    console.log("RES: ", res)
-                    setError(res?.error)
-                    setRegisteredStudent(res.data as Enrollment)
                     if (res.isSuccess) {
+                        const enrollment = res.data as Enrollment
+                        setRegisteredStudent(enrollment)
                         setSuccess(res?.success)
                         reset()
+                    }else {
+                        setError(res?.error)
                     }
                 })
         })
@@ -250,7 +253,10 @@ const EnrollStudentPage = () => {
             console.log("No redirect called.")
     }
 
-    console.log("REGISTERED STUDENT: ", registeredStudent)
+    const handleSettingActivity = () => enrollStudentActivity(
+        registeredStudent?.student?.personalInfo as Individual,
+        registeredStudent?.classe?.name as string
+    )
 
     return(
         <AddStepForm
@@ -266,6 +272,7 @@ const EnrollStudentPage = () => {
             currentNumber={6}
             errors={formErrors}
             setRedirect={handleRedirect}
+            setActivity={handleSettingActivity}
         />
     )
 }

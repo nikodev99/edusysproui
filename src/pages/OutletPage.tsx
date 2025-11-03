@@ -12,6 +12,7 @@ export interface OutletPageProps {
     content: ReactNode
     responseMessages?: {success?: ReactNode, error?: ReactNode}
     setRedirect?: (url?: string) => void
+    setActivity?: () => Promise<boolean>
     isNotif?: boolean
 }
 

@@ -1,12 +1,13 @@
 import {message as successMassage, notification} from 'antd'
 import {ReactNode, useEffect} from "react";
 
-const FormSuccess = ({message, setRedirect, isNotif, type = 'success', onClose}: {
+const FormSuccess = ({message, setRedirect, isNotif, type = 'success', onClose, setActivity}: {
     message?: string | ReactNode,
     setRedirect?: (url?: string) => void,
     isNotif?: boolean,
     type?: 'success' | 'error' | 'info' | 'warning'
     onClose?: () => void
+    setActivity?: () => Promise<boolean>
 }) => {
     const [messageApi, messageContext] = successMassage.useMessage()
     const [api, notifContext] = notification.useNotification()
@@ -35,12 +36,20 @@ const FormSuccess = ({message, setRedirect, isNotif, type = 'success', onClose}:
                     content: message,
                     duration: 2,
                 }).then(() => {
-                    setRedirect?.()
+                    if (setActivity) {
+                        setActivity().then(bool => {
+                            if (bool) {
+                                setRedirect?.()
+                            }
+                        })
+                    }else {
+                        setRedirect?.()
+                    }
                 })
             }, 2000)
         }
 
-    }, [api, isNotif, message, messageApi, onClose, setRedirect, type])
+    }, [api, isNotif, message, messageApi, onClose, setActivity, setRedirect, type])
 
     return(
         <>

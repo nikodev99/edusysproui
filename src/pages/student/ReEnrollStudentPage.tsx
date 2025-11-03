@@ -7,26 +7,22 @@ import Grid from "../../components/ui/layout/Grid.tsx";
 import {Badge, Card, Descriptions, Form, Select, Spin, Tag} from "antd";
 import {PageTitle} from "../../components/custom/PageTitle.tsx";
 import {useSearch} from "../../hooks/useSearch.ts";
-import {ReactNode, useEffect, useMemo, useState, useTransition} from "react";
-import {Enrollment} from "../../entity";
+import {useMemo, useState} from "react";
+import {Enrollment, Individual} from "../../entity";
 import {useStudentRepo} from "../../hooks/actions/useStudentRepo.ts";
 import Datetime from "../../core/datetime.ts";
 import {AcademicForm} from "../../components/ui-kit-student";
-import {useForm} from "react-hook-form";
-import {enrollmentSchema, EnrollmentSchema} from "../../schema";
-import {zodResolver} from "@hookform/resolvers/zod";
 import {ModalConfirmButton} from "../../components/ui/layout/ModalConfirmButton.tsx";
-import {addStudent} from "../../data";
 import {LuUserRoundPlus} from "react-icons/lu";
 import {useRedirect} from "../../hooks/useRedirect.ts";
+import {useActivity} from "../../hooks/useActivity.ts";
+import {useEnrollmentForm} from "../../hooks/useEnrollmentForm.ts";
 
 const ReEnrollStudentPage = () => {
     const {toViewStudent} = useRedirect()
+    const {reenrollStudentActivity} = useActivity()
 
     const [searchValue, setSearchValue] = useState<number | undefined>(undefined)
-    const [successMessage, setSuccessMessage] = useState<ReactNode | undefined>(undefined)
-    const [errorMessage, setErrorMessage] = useState<ReactNode | undefined>(undefined)
-    const [isPending, startTransition] = useTransition()
 
     const {findUnenrolledStudents, studentOptions} = useStudentRepo()
 
@@ -43,46 +39,9 @@ const ReEnrollStudentPage = () => {
         ind: resource?.student?.personalInfo
     }), [resource])
 
-    const {control, formState: {errors}, watch, handleSubmit, reset} = useForm<EnrollmentSchema>({
-        defaultValues: {
-            student: {
-                id: student?.id,
-            },
-            classe: {
-                id: classe?.id,
-            }
-        },
-        resolver: zodResolver(enrollmentSchema(true))
-    })
+    const {control, errors, handleSubmit, onSubmit, isPending, successMessage, errorMessage} = useEnrollmentForm(student?.id)
 
-    useEffect(() => {
-        reset({
-            student: { id: student?.id ?? "" },
-            classe:  { id: classe?.id  ?? 0 },
-        });
-    }, [student?.id, classe?.id, reset]);
-
-    console.log("WATCHER: ", watch(), " ERRORS: ", errors)
-
-    const onSubmit = (data: EnrollmentSchema) => {
-        setErrorMessage("")
-        setSuccessMessage("")
-
-        console.log("DATA: ", data)
-
-        startTransition(() => {
-
-            addStudent(data, true)
-                .then((res) => {
-                    console.log("RES: ", res)
-                    setErrorMessage(res?.error)
-                    if (res.isSuccess) {
-                        setSuccessMessage(res?.success)
-                        reset()
-                    }
-                })
-        })
-    }
+    const handleActivity = () => reenrollStudentActivity(ind as Individual, classe?.name as string)
 
     return(
         <OutletPage
@@ -91,6 +50,7 @@ const ReEnrollStudentPage = () => {
                 error: errorMessage
             }}
             setRedirect={() => toViewStudent(student?.id as string, ind)}
+            setActivity={handleActivity}
             metadata={{
                 title: text.student.group.reAdd.label,
                 description: "Re-inscription description",
@@ -120,7 +80,7 @@ const ReEnrollStudentPage = () => {
                                     options={options}
                                     showSearch
                                     value={searchValue}
-                                    style={{width: '100%'}}
+                                    style={{width: '100%', height: '40px'}}
                                 />
                             </Grid>
                         </Responsive>

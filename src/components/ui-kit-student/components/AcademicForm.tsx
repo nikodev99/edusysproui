@@ -1,4 +1,4 @@
-import {ZodProps} from "../../../core/utils/interfaces.ts";
+import {Option, ZodProps} from "../../../core/utils/interfaces.ts";
 import Responsive from "../../ui/layout/Responsive.tsx";
 import {useMemo} from "react";
 import SelectInput from "../../ui/form/SelectInput.tsx";
@@ -6,7 +6,9 @@ import {EnrollmentSchema} from "../../../schema";
 import {useAcademicYearRepo} from "../../../hooks/actions/useAcademicYearRepo.ts";
 import {useClasseRepo} from "../../../hooks/actions/useClasseRepo.ts";
 
-export const AcademicForm = ({control, errors}: ZodProps<EnrollmentSchema>) => {
+export const AcademicForm = ({control, errors, getSchool}: ZodProps<EnrollmentSchema> & {
+    getSchool?: (classe: Option) => void
+}) => {
 
     const {useGetCurrentAcademicYear} = useAcademicYearRepo()
     const {useGetClasseBasicValues} = useClasseRepo()
@@ -19,6 +21,10 @@ export const AcademicForm = ({control, errors}: ZodProps<EnrollmentSchema>) => {
         value: c.id,
         label: c.name,
     })), [classes])
+
+    const handleClasseChange = (value: string) => {
+        getSchool?.(classeOptions[value])
+    }
 
     return(
         <Responsive gutter={[16, 16]}>
@@ -44,6 +50,7 @@ export const AcademicForm = ({control, errors}: ZodProps<EnrollmentSchema>) => {
                 validateStatus={errors.classe?.id ? 'error' : ''}
                 help={errors.classe?.id ? errors.classe?.id.message : ''}
                 options={classeOptions}
+                onChange={handleClasseChange}
             />
         </Responsive>
     )

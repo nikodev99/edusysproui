@@ -31,7 +31,7 @@ export const GuardianForm = ({control, errors, showField, checked, onChecked, va
     }
 
     const {fetching, options, handleSearch, handleChange} = useSearch({
-        setValue: setValue,
+        setValue: setValue as never,
         fetchFunc: fetchSearchedEnrolledStudentsGuardian as never,
         setCustomOptions: setOptions as never,
     })

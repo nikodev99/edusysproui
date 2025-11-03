@@ -9,7 +9,7 @@ import {
     saveUserActivity
 } from "../../data/repository/userRepository.ts";
 import {useGlobalStore} from "../../core/global/store.ts";
-import {getShortSortOrder, setSortFieldName} from "../../core/utils/utils.ts";
+import {getShortSortOrder, isObjectEmpty, setSortFieldName} from "../../core/utils/utils.ts";
 import {User, UserActivity} from "../../auth/dto/user.ts";
 import {loggedUser} from "../../auth/jwt/LoggedUser.ts";
 
@@ -44,12 +44,17 @@ export const useUserRepo = () => {
         !!userId && !!schoolId
     )
 
-    const saveActivity = (data: UserActivity) => {
-        const accountId = logged?.accountId
-        if (accountId)
-            data = {...data, accountId: accountId}
-
-        saveUserActivity(data).then(r => r.data)
+    const saveActivity = async (data: UserActivity): Promise<boolean> => {
+        try {
+            const accountId = logged?.accountId
+            const payload: UserActivity = accountId ? {...data, accountId} : data
+            const r = await saveUserActivity(payload)
+            const savedActivity = r.data
+            return !isObjectEmpty(savedActivity)
+        } catch (e) {
+            console.error('Error saving user activity:', e)
+            return false
+        }
     }
 
     const useGetUserActivities = (accountId: number) => {

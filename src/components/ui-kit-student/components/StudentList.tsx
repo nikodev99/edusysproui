@@ -21,6 +21,7 @@ import {ItemType} from "antd/es/menu/interface";
 export const StudentList = <TError extends AxiosError>(listProps: ListViewerProps<StudentListDataType, TError>) => {
     const [selectedStudent, setSelectedStudent] = useState<StudentListDataType | undefined>(undefined)
     const [linkButtons, setLinkButtons] = useState<ItemType[]>([])
+    const [refresh, setRefresh] = useState<boolean>(false)
     
     const {callback, searchCallback} = listProps;
     const {toViewStudent} = useRedirect()
@@ -170,8 +171,13 @@ export const StudentList = <TError extends AxiosError>(listProps: ListViewerProp
                 hasDesc={false}
                 level={5}
                 onSelectData={setSelectedStudent}
+                refetchCondition={refresh}
             />
-           <StudentActionLinks data={selectedStudent} getItems={setLinkButtons} />
+           <StudentActionLinks
+               data={selectedStudent}
+               getItems={setLinkButtons}
+               setRefresh={setRefresh}
+           />
         </>
     )
 }

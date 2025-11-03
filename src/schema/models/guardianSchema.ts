@@ -13,4 +13,5 @@ export const guardianSchema = z.object({
     }),
     company: z.string().optional(),
     jobTitle: z.string().optional(),
+    linkToStudent: z.string().optional(),
 })

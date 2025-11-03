@@ -1,12 +1,14 @@
 import {Student} from "./student.ts";
 import {Individual} from "./individual.ts";
 import {School} from "./school.ts";
+import {LinkToStudent} from "../../core/shared/sharedEnums.ts";
 
 export interface Guardian {
     id: string
     personalInfo: Individual
     jobTitle: string
     company: string
+    linkToStudent: LinkToStudent
     students: Student[] | undefined
     createdAt: Date | undefined
     modifyAt: Date | undefined
@@ -45,5 +47,6 @@ export const toGuardianSchema = (guardian: Guardian) => {
         },
         company: guardian.company,
         jobTitle: guardian.jobTitle,
+        linkToStudent: guardian.linkToStudent,
     }
 }

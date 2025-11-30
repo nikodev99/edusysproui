@@ -8,7 +8,7 @@ export enum PunishmentStatus {
 }
 
 export const punishmentStatusTag = (status: PunishmentStatus): [string, PunishmentStatus] =>{
-    let tagColor
+    let tagColor: string
     const tagText = PunishmentStatus[status as unknown as keyof typeof PunishmentStatus]
     switch (status) {
     case 'PENDING' as PunishmentStatus:

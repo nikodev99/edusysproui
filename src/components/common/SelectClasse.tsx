@@ -16,7 +16,7 @@ export const SelectClasse = (
     const classes = useGetClasseBasicValues()
 
     const handleClasseChange = (value: number | number[]) => {
-        getClasse(value)
+        getClasse?.(value)
     }
 
     return(

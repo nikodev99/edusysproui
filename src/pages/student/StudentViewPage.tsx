@@ -11,7 +11,7 @@ import {
     StudentAttendance,
     StudentClasse, StudentEditDrawer,
     StudentExam,
-    StudentHistory,
+    StudentDiscipline,
     StudentInfo
 } from "../../components/ui-kit-student";
 import {LuCircleUser} from "react-icons/lu";
@@ -107,7 +107,7 @@ const StudentViewPage = () => {
                     {label: 'Examens', children: <StudentExam enrolledStudent={enrolledStudent!}/>},
                     {label: 'Présence', children: <StudentAttendance enrolledStudent={enrolledStudent!}/>},
                     {label: 'Condisciples', children: <StudentClasse enrolledStudent={enrolledStudent!}/>},
-                    {label: 'Discipline', children: <StudentHistory/>},
+                    {label: 'Discipline', children: <StudentDiscipline/>},
                 ]}
                 tab={{centered: true}}
             />

@@ -32,7 +32,6 @@ export const useQueryPost = <TData, TParams extends readonly unknown[] = []>(
     return useMutation<AxiosResponse<TData>, AxiosError, MutationPostVariables<TData, TParams>>({
         mutationFn: async ({postFn, data, params}) => {
             const validate = schema.safeParse(data)
-            console.log("VALIDATE: ", validate)
             if (!validate.success) {
                 throw new AxiosError(
                     `Donnée non valide: \n${validate.error.errors.map(e => e.message).join('\n')}.`,

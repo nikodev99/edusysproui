@@ -198,7 +198,7 @@ export const UserProvider = ({children}: UserContextProps) => {
                     accountId: data.accountId,
                     action: 'Login successful with cookie',
                     description: 'Login successful with cookie for ' + username
-                })
+                }).then(r => r)
 
             return true
         } catch (error) {

@@ -9,10 +9,37 @@ export const CustomEntitySelect = <TEntity extends object, TEntityID extends str
         entities, onlyCurrent, variant = 'borderless', placeholder, isLoading, multiple,
     }: SelectEntity<TEntity, TEntityID>
 ) => {
-    const [allEntities, setAllEntities] = useState<TEntity[]>([])
     const [activeResource, setActiveResource] = useState<TEntity | TEntity[]>()
     const [activeEntity, setActiveEntity] = useState<TEntityID | TEntityID[]>()
     const [hasUserInteracted, setHasUserInteracted] = useToggle(false)
+
+    /**
+     * A memoized variable that computes a list of entities based on certain conditions.
+     *
+     * The variable is derived using the `useMemo` hook to optimize performance by recomputing
+     * only when dependencies change. It first determines the base list as `entities` if it exists
+     * and has a length greater than zero; otherwise, it falls back to `data`.
+     * Additionally, if `onlyCurrent` and `uniqueValue.key` are defined, the returned list is filtered
+     * by the specified key in `uniqueValue` to match the value of `onlyCurrent`.
+     *
+     * Dependencies:
+     * - `data`
+     * - `entities`
+     * - `onlyCurrent`
+     * - `uniqueValue?.key`
+     *
+     * Returns:
+     * The filtered or unfiltered list of entities based on the applied conditions.
+     */
+    const allEntities = useMemo(() => {
+        let base = entities && entities.length > 0 ? entities : data;
+        if (onlyCurrent && uniqueValue?.key) {
+            const key = uniqueValue.key;
+
+            base = base.filter(a => a[key] === onlyCurrent);
+        }
+        return base;
+    }, [data, entities, onlyCurrent, uniqueValue?.key]);
 
     const getActiveEntity = useCallback(() => {
         if (hasUserInteracted || !uniqueValue || !uniqueValue.key || !uniqueValue?.value) {
@@ -46,16 +73,6 @@ export const CustomEntitySelect = <TEntity extends object, TEntityID extends str
             }
         }
     }, [activeEntity, activeResource, getEntity, getResource, hasUserInteracted])
-    
-    useEffect(() => {
-        let base = entities && entities.length > 0 ? entities : data;
-        if (onlyCurrent && uniqueValue?.key) {
-            const key = uniqueValue.key;
-
-            base = base.filter(a => a[key] === onlyCurrent);
-        }
-        setAllEntities(base);
-    }, [data, entities, onlyCurrent, uniqueValue?.key]);
 
     useEffect(() => {
         if (!hasUserInteracted && allEntities?.length > 0)

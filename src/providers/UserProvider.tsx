@@ -9,6 +9,7 @@ import {School} from "../entity";
 import {AssignUserToSchoolSchema, SignupSchema} from "../schema";
 import {isAxiosError} from "axios";
 import {useUserRepo} from "../hooks/actions/useUserRepo.ts";
+import {useQueryClient} from "@tanstack/react-query";
 
 export const UserProvider = ({children}: UserContextProps) => {
     const {saveActivity} = useUserRepo()
@@ -20,6 +21,8 @@ export const UserProvider = ({children}: UserContextProps) => {
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
     const [userSchool, setUserSchool] = useState<School | null>(null)
     const [errorType, setErrorType] = useState<string | null>(null)
+
+    const queryClient = useQueryClient()
 
     useEffect(() => {
         const initAuth = async () => {
@@ -161,6 +164,8 @@ export const UserProvider = ({children}: UserContextProps) => {
             LocalStorageManager.remove('lastActivity')
 
             jwtTokenManager.clearCache()
+            LocalStorageManager.clear()
+            queryClient.clear()
 
             setUser(null)
             setToken(null)
@@ -181,9 +186,12 @@ export const UserProvider = ({children}: UserContextProps) => {
             const schools = userProfile?.schools || []
             const school = schools?.length === 1 ? schools[0] : null
             loggedUser.setUser(userProfile)
+            loggedUser.setRoles(userProfile?.roles || [])
 
             if (school) {
                 loggedUser.setSchool(school)
+            }else {
+                loggedUser.removeSchool()
             }
 
             // Update React state

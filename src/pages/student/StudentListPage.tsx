@@ -4,18 +4,18 @@ import {text} from "../../core/utils/text_display.ts";
 import {useBreadcrumbItem} from "../../hooks/useBreadCrumb.tsx";
 import {ListPageHierarchy} from "../../components/custom/ListPageHierarchy.tsx";
 import {AiOutlineUserAdd} from "react-icons/ai";
-import {fetchEnrolledStudents} from "../../data";
 import {AxiosResponse} from "axios";
 import {StudentList} from "../../components/ui-kit-student/components/StudentList.tsx";
-import {searchEnrolledStudents} from "../../data/repository/studentRepository.ts";
 import {useRedirect} from "../../hooks/useRedirect.ts";
 import {Button} from "antd";
 import {LuClipboard, LuClipboardPlus, LuSearch} from "react-icons/lu";
 import {useMemo} from "react";
 import {setPlural} from "../../core/utils/utils.ts";
+import {useStudentRepo} from "../../hooks/actions/useStudentRepo.ts";
 
 const StudentListPage = () => {
     const {toEnrollStudent, toReenrollStudent, toSearchStudent} = useRedirect()
+    const {getPaginatedStudents, getSearchedEnrolledStudents} = useStudentRepo()
     
     const pageLabel = useMemo(() => setPlural(text.student.label), [])
 
@@ -44,8 +44,8 @@ const StudentListPage = () => {
                 ]}
             />
             <StudentList
-                callback={fetchEnrolledStudents as () => Promise<AxiosResponse<DataType>>}
-                searchCallback={searchEnrolledStudents as (...input: unknown[]) => Promise<AxiosResponse<DataType[]>>}
+                callback={getPaginatedStudents as never}
+                searchCallback={getSearchedEnrolledStudents as (...input: unknown[]) => Promise<AxiosResponse<DataType[]>>}
                 localStorage={{
                     activeIcon: 'activeIcon',
                     pageSize: 'pageSize',

@@ -9,12 +9,6 @@ export {
     fetchGuardianWithStudents
 } from './action/fetch_guardian'
 
-export {
-    fetchEnrolledStudents,
-    fetchStudentById,
-    countStudents
-} from './action/studentAction.ts'
-
 export {fetchTeachers, fetchTeacherById, count} from './action/teacherAction.ts'
 
 export {fetchAllCourses} from './action/courseAction.ts'

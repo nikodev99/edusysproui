@@ -10,12 +10,14 @@ import {LuMinus} from "react-icons/lu";
 import {ModalConfirmButton} from "../../ui/layout/ModalConfirmButton.tsx";
 import {PatchUpdate} from "../../../core/PatchUpdate.ts";
 import {setAccountRoles} from "../../../data/repository/userRepository.ts";
+import {loggedUser} from "../../../auth/jwt/LoggedUser.ts";
 
-export const UserRoles = ({user, open, close, setRefresh}: {
+export const UserRoles = ({user, open, close, setRefresh, sameUser}: {
     user: User,
     open: boolean,
     close: () => void,
-    setRefresh?: (value: boolean) => void
+    setRefresh?: (value: boolean) => void,
+    sameUser?: boolean,
 }) => {
     const [roles, setRoles] = useState<Role[]>([])
     const [roleToDelete, setRoleToDelete] = useState<Role[]>([])
@@ -93,6 +95,7 @@ export const UserRoles = ({user, open, close, setRefresh}: {
             setErrorMessage,
             [user?.account, roles]
         )
+        updateRole(roles)
     }
 
     const handleRemoveRoles = async () => {
@@ -104,6 +107,7 @@ export const UserRoles = ({user, open, close, setRefresh}: {
             setErrorMessage,
             [user?.account, accountRoles]
         )
+        updateRole(accountRoles)
     }
 
     const handleCloseModal = () => {
@@ -112,6 +116,12 @@ export const UserRoles = ({user, open, close, setRefresh}: {
         setRoleToDelete([])
         setRefresh?.(true)
         close()
+    }
+
+    const updateRole = (roles?: Role[]) => {
+        if (sameUser) {
+            loggedUser.setRoles(roles || [])
+        }
     }
 
     return (

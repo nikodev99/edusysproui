@@ -11,7 +11,6 @@ import { Table as CustomTable } from "../../ui/layout/Table.tsx";
 import {Gender} from "../../../entity/enums/gender.tsx";
 import PanelTable from "../../ui/layout/PanelTable.tsx";
 import {SectionType} from "../../../entity/enums/section.ts";
-import {fetchStudentClassmatesRandomly} from "../../../data/action/studentAction.ts";
 import {text} from "../../../core/utils/text_display.ts";
 import {BloodType} from "../../../entity/enums/bloodType.ts";
 import {MdHealthAndSafety} from "react-icons/md";
@@ -30,6 +29,7 @@ import {StudentCarousel} from "../../common/StudentCarousel.tsx";
 import {ScheduleCalendar} from "../../common/ScheduleCalendar.tsx";
 import Datetime from "../../../core/datetime.ts";
 import {LinkToStudent} from "../../../core/shared/sharedEnums.ts";
+import {useStudentRepo} from "../../../hooks/actions/useStudentRepo.ts";
 
 type StudentInfoProps = InfoPageProps<Enrollment>
 
@@ -311,24 +311,20 @@ const AttendanceSection = ({infoData, seeMore, color}: StudentInfoProps) => {
 }
 
 const SchoolColleagues = ({infoData, seeMore, color}: StudentInfoProps) => {
-    
     const [classmates, setClassmates] = useState<Enrollment[]>([])
+    const {useGetRandomStudentClassmate} = useStudentRepo()
+    const {data, isLoading, isPending, isPaused} = useGetRandomStudentClassmate(
+        infoData?.student?.id as string,
+        infoData?.classe?.id as number
+    )
+
+    useEffect(() => {
+        setClassmates(data || [])
+    }, [data]);
 
     const handleClick = () => {
         seeMore && seeMore('3')
     }
-
-    useEffect(() => {
-        const fetchData = async () => {
-            await fetchStudentClassmatesRandomly(infoData).then(async (res) => {
-                if (res?.isSuccess && 'data' in res) {
-                    setClassmates(res?.data as Enrollment[])
-                }
-            }).catch((error) => `Failed to fetch classmates ${error.errorCode}: ${error.message}`)
-        }
-
-        fetchData().then()
-    }, [infoData]);
 
     const handleSeeDetails = (id: string) => {
         redirectTo(`${text.student.group.view.href}${id}`)
@@ -336,10 +332,11 @@ const SchoolColleagues = ({infoData, seeMore, color}: StudentInfoProps) => {
 
     return (
         <StudentCarousel
-            students={classmates}
+            students={classmates ?? [] as Enrollment[]}
             seeMore={handleClick}
             redirectTo={handleSeeDetails}
             color={color}
+            loading={isLoading || isPending || isPaused}
         />
     )
 }

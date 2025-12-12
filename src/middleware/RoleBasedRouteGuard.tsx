@@ -43,8 +43,7 @@ export const RoleBasedRouteGuard = ({children, routePath, redirectTo: customRedi
     const location = useLocation()
     const pathname = routePath || location.pathname
 
-    const user = loggedUser.getUser()
-    const userRoles = user?.roles || []
+    const userRoles = loggedUser.getRole() || []
 
     const hasAccess = routeAccess.checkRouteAccess(pathname, userRoles)
 

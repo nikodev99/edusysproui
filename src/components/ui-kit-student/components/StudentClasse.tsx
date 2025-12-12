@@ -114,7 +114,7 @@ export const StudentClasse = ({enrolledStudent, setActiveKey}: {enrolledStudent:
                                                     {item?.student?.personalInfo?.lastName} {setFirstName(`${item?.student?.personalInfo?.firstName}`)}
                                                 </span>
                                                 }
-                                                description={item.student.reference}
+                                                description={item.student?.personalInfo?.reference}
                                             />
                                         </Skeleton>
                                     </List.Item>

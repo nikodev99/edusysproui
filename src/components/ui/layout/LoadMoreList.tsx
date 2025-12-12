@@ -1,5 +1,16 @@
-import {Button, List} from "antd";
-import {LoadMoreListProps} from "../../../core/utils/interfaces.ts";
+import {Button, List, ListProps} from "antd";
+import {ButtonType} from "antd/es/button";
+import {ReactNode} from "react";
+
+export interface LoadMoreListProps<T extends object> {
+    listProps: ListProps<T>
+    isLoading: boolean,
+    size: number,
+    allItems: number,
+    onLoadMore?: () => void
+    buttonType?: ButtonType
+    buttonLabel?: ReactNode
+}
 
 export const LoadMoreList = <T extends object>(
     {listProps, isLoading, size, allItems, onLoadMore, buttonType, buttonLabel}: LoadMoreListProps<T>

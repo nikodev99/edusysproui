@@ -4,11 +4,11 @@ import PageWrapper from "../../view/PageWrapper.tsx";
 import TabItem from "../../view/TabItem.tsx";
 import {text} from "../../../core/utils/text_display.ts";
 import {StudentList} from "../../ui-kit-student/components/StudentList.tsx";
-import {fetchEnrolledClasseStudents} from "../../../data/action/studentAction.ts";
 import {AxiosResponse} from "axios";
 import {getClasseEnrolledStudentsSearch} from "../../../data/repository/studentRepository.ts";
 import {Card} from "antd";
 import {SuperWord} from "../../../core/utils/tsxUtils.tsx";
+import {useStudentRepo} from "../../../hooks/actions/useStudentRepo.ts";
 //import Responsive from "../../ui/layout/Responsive.tsx";
 //import Grid from "../../ui/layout/Grid.tsx";
 //import PieChart from "../../graph/PieChart.tsx";
@@ -45,7 +45,7 @@ type ClasseStudentProps = InfoPageProps<Classe> & {
 }*/
 
 export const ClasseStudent = ({infoData, academicYear}: ClasseStudentProps) => {
-
+    const {getPaginatedClasseStudents} = useStudentRepo()
     return(
         <PageWrapper>
             <TabItem
@@ -54,7 +54,7 @@ export const ClasseStudent = ({infoData, academicYear}: ClasseStudentProps) => {
                     <>
                         <Card bordered>
                             <StudentList
-                                callback={fetchEnrolledClasseStudents as () => Promise<AxiosResponse<StudentListDataType>>}
+                                callback={getPaginatedClasseStudents as never}
                                 searchCallback={getClasseEnrolledStudentsSearch as (...input: unknown[]) => Promise<AxiosResponse<StudentListDataType[]>>}
                                 callbackParams={[infoData?.id, academicYear]}
                                 searchCallbackParams={[infoData?.id, academicYear]}

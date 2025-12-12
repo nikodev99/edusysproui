@@ -1,10 +1,11 @@
-import {FC, ReactNode, useCallback, useEffect} from "react";
+import {FC, ReactNode, useCallback, useEffect, useState} from "react";
 import {useAuth} from "../hooks/useAuth.ts";
 import LocalStorageManager from "../core/LocalStorageManager.ts";
 import {useLocation} from "react-router-dom";
 import {redirectTo} from "../context/RedirectContext.ts";
 import {jwtTokenManager} from "../auth/jwt/JWTToken.ts";
 import {loggedUser} from "../auth/jwt/LoggedUser.ts";
+import {Spin} from "antd";
 
 const ACTIVITY_TIMEOUT = import.meta.env.VITE_ACTIVITY_TIMEOUT as number;
 const ACTIVITY_CHECK_INTERNAL = import.meta.env.VITE_ACTIVITY_CHECK_INTERNAL as number;
@@ -25,7 +26,8 @@ interface AuthMiddlewareProps {
 
 export const AuthMiddleware: FC<AuthMiddlewareProps> = ({children}) => {
     const location = useLocation()
-    const {logoutUser, isLoggedIn, refresh} = useAuth()
+    const {logoutUser, isLoggedIn, refresh, userSchool} = useAuth()
+    const [isSchoolDataReady, setIsSchoolDataReady] = useState<boolean>(false)
 
     const updateLastActivity = useCallback(() => {
         const currentTime = Date.now()
@@ -126,6 +128,26 @@ export const AuthMiddleware: FC<AuthMiddlewareProps> = ({children}) => {
     }, [isLoggedIn, updateLastActivity])
 
     useEffect(() => {
+        if (isLoggedIn()) {
+            if (userSchool) {
+                setIsSchoolDataReady(true)
+            }else {
+                const cachedSchool = loggedUser.getSchool()
+                if (cachedSchool) {
+                    setIsSchoolDataReady(true)
+                }else {
+                    const timer = setTimeout(() => {
+                        setIsSchoolDataReady(true)
+                    }, 500)
+                    return clearTimeout(timer)
+                }
+            }
+        }else {
+            setIsSchoolDataReady(true)
+        }
+    }, [isLoggedIn, userSchool]);
+
+    useEffect(() => {
         //Add activity event listeners
         ACTIVITY_EVENTS.forEach(event => {
             document.addEventListener(event, handleActivity, {passive: true})
@@ -169,6 +191,21 @@ export const AuthMiddleware: FC<AuthMiddlewareProps> = ({children}) => {
             window.removeEventListener('focus', handleFocus)
         }
     }, [isLoggedIn, performAuthCheck]);
+
+    //Loader if school data ain't ready
+    if(!isSchoolDataReady && isLoggedIn()) {
+        return (
+            <div style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100vh',
+                width: '100%'
+            }}>
+                <Spin size="large" tip="Loading school information..." />
+            </div>
+        )
+    }
 
     return <>{children}</>
 }

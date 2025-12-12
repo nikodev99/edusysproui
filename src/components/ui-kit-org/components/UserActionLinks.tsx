@@ -53,13 +53,15 @@ export const UserActionLinks = ({data: user, getItems, setRefresh}: ActionButton
                 key: `enable-${user?.id}`,
                 icon: user?.enabled ? <LuToggleRight /> : <LuToggleLeft />,
                 label: user?.enabled ? 'Désactivé' : 'Activé',
-                onClick: setEnable
+                onClick: setEnable,
+                disabled: sameUser
             },
             {
                 key: `lock-${user?.id}`,
                 icon: user?.accountNonLocked ? <LuLock /> : <LuLockOpen />,
                 label: user?.accountNonLocked ? 'Vérrouiller' : 'Déverrouiller',
-                onClick: setAccountNoLocked
+                onClick: setAccountNoLocked,
+                disabled: sameUser
             },
             { type: 'divider' },
             {
@@ -97,7 +99,7 @@ export const UserActionLinks = ({data: user, getItems, setRefresh}: ActionButton
 
     return(
         <section>
-            <UserRoles user={user as User} open={roleManage} close={handleCloseUserRole} setRefresh={setRefresh} />
+            <UserRoles user={user as User} open={roleManage} close={handleCloseUserRole} setRefresh={setRefresh} sameUser={sameUser} />
             <UserAccountEnabled user={user as User} open={enable} close={setEnable} setRefetch={setRefresh} />
             <UserAccountLocked user={user as User} open={accountNoLocked} close={setAccountNoLocked} setRefetch={setRefresh}/>
             <UserRemoveAccount user={user as User} open={removeUser} close={setRemoveUser} setRefetch={setRefresh}/>

@@ -29,6 +29,8 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
         classe: enrolledStudent?.classe,
     }), [enrolledStudent?.academicYear, enrolledStudent?.classe, enrolledStudent?.student])
 
+    console.log('enrolledStudent: ', enrolledStudent)
+
     const [scores, setScores] = useState<Score[]>([])
     const [subjectValue, setSubjectValue] = useState<number>(0)
     const [allData, setAllData] = useState<number>(0)

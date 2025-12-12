@@ -2,63 +2,51 @@ import {GenderCounted, Options, Pageable} from "../../core/utils/interfaces.ts";
 import {useFetch, useRawFetch} from "../useFetch.ts";
 import {UseQueryResult} from "@tanstack/react-query";
 import {Enrollment} from "../../entity";
-import {fetchEnrolledStudents} from "../../data";
 import {
     countClasseStudents,
     countSomeClasseStudents,
     countStudent,
-    getAllStudentClassmate,
+    getAllStudentClassmate, getClasseEnrolledStudents,
     getClasseEnrolledStudentsSearch,
-    getClasseStudents,
+    getClasseStudents, getEnrolledStudents,
     getRandomStudentClassmate,
     getStudentById,
     searchEnrolledStudents, searchUnenrolledStudents
 } from "../../data/repository/studentRepository.ts";
-import {fetchEnrolledClasseStudents} from "../../data/action/studentAction.ts";
 import {useCallback, useEffect, useState} from "react";
 import {useGlobalStore} from "../../core/global/store.ts";
-import { setFirstName } from "../../core/utils/utils.ts";
+import {getShortSortOrder, setFirstName} from "../../core/utils/utils.ts";
+import {AxiosResponse} from "axios";
 
 export const useStudentRepo = () => {
     const schoolId = useGlobalStore(state => state.schoolId)
 
     /**
-     * Fetches paginated enrolled students.
+     * Retrieves a paginated list of enrolled students, optionally sorted by a specified field and order.
      *
-     * @param {Pageable} pageable - Pagination object (page, size).
-     * @param {string} [sortField] - Field to sort by.
-     * @param {'asc' | 'desc'} [sortOrder] - Sort direction.
-     * @returns {UseQueryResult<Enrollment[], unknown>}
+     * @param {number} page - The page number to retrieve (zero-based index).
+     * @param {number} size - The number of students to include per page.
+     * @param {string} [sortField] - The field by which to sort the students (optional).
+     * @param {'asc' | 'desc'} [sortOrder] - The order in which to sort the students, either ascending ('asc') or descending ('desc') (optional).
+     * @returns {Promise<AxiosResponse<Enrollment, unknown>>} A promise that resolves to the response object containing the paginated list of students.
      */
-    const useGetEnrolledStudents = (
-        pageable: Pageable,
+    const getPaginatedStudents = async (
+        page: number,
+        size: number,
         sortField?: string,
         sortOrder?: 'asc' | 'desc',
-    ): UseQueryResult<Enrollment[], unknown> => {
-        return useFetch(
-            ['students-list'],
-            fetchEnrolledStudents,
-            [pageable.page, pageable.size, sortField, sortOrder],
-            !!pageable.size
-        );
+    ): Promise<AxiosResponse<Enrollment, unknown>> => {
+        if (sortField && sortOrder) {
+            sortOrder = getShortSortOrder(sortOrder)
+            sortField = sortedField(sortField)
+            return await getEnrolledStudents(schoolId, page, size, `${sortField}:${sortOrder}`)
+        }
+        return await getEnrolledStudents(schoolId, page, size)
     };
 
-    /**
-     * Searches enrolled students by name or other identifier.
-     *
-     * @param {string} searchInput - The search term.
-     * @returns {UseQueryResult<Enrollment[], unknown>}
-     */
-    const useSearchEnrolledStudents = (
-        searchInput: string
-    ): UseQueryResult<Enrollment[], unknown> => {
-        return useFetch(
-            ['students-search', schoolId, searchInput],
-            searchEnrolledStudents,
-            [schoolId, searchInput],
-            !!schoolId && !!searchInput
-        );
-    };
+    const getSearchedEnrolledStudents = async (searchInput: string) => {
+        return await searchEnrolledStudents(schoolId, searchInput)
+    }
 
     const useGetSearchUnenrolledStudents = (
         searchInput: string
@@ -90,28 +78,30 @@ export const useStudentRepo = () => {
     };
 
     /**
-     * Fetches enrolled students of a specific class with pagination.
+     * Retrieves a paginated and optionally sorted list of students enrolled in a specific class for a given academic year.
      *
-     * @param {number} classeId - The class ID.
-     * @param {string} academicYear - Academic year identifier.
-     * @param {Pageable} pageable - Pagination object.
-     * @param {string} [sortField] - Field to sort by.
-     * @param {'asc' | 'desc'} [sortOrder] - Sort direction.
-     * @returns {UseQueryResult<Enrollment[], unknown>}
+     * @param {number} classeId - The unique identifier of the class.
+     * @param {string} academicYear - The academic year for which the enrolled students are retrieved (e.g., "2023-2024").
+     * @param {number} page - The page number of the results to retrieve (starting from 0).
+     * @param {number} size - The number of records to fetch per page.
+     * @param {string} [sortField] - The field on which the results should be sorted (optional).
+     * @param {'asc' | 'desc'} [sortOrder] - The order of sorting, either ascending ('asc') or descending ('desc') (optional).
+     * @returns {Promise<AxiosResponse<Enrollment[], unknown>>} A promise resolving to the Axios response containing an array of enrollment records.
      */
-    const useGetClasseEnrolledStudents = (
+    const getPaginatedClasseStudents = async (
         classeId: number,
         academicYear: string,
-        pageable: Pageable = { page: 0, size: 10 },
+        page: number,
+        size: number,
         sortField?: string,
         sortOrder?: 'asc' | 'desc',
-    ): UseQueryResult<Enrollment[], unknown> => {
-        return useFetch(
-            ['classe-students', classeId, academicYear],
-            fetchEnrolledClasseStudents,
-            [classeId, academicYear, pageable.page, pageable.size, sortField, sortOrder],
-            !!classeId && !!academicYear
-        );
+    ): Promise<AxiosResponse<Enrollment[], unknown>> => {
+        if (sortField && sortOrder) {
+            sortOrder = getShortSortOrder(sortOrder)
+            sortField = sortedField(sortField)
+            return await getClasseEnrolledStudents(classeId, academicYear, {page: page, size: size}, `${sortField}:${sortOrder}`)
+        }
+        return await getClasseEnrolledStudents(classeId, academicYear, {page: page, size: size})
     };
 
     /**
@@ -163,7 +153,7 @@ export const useStudentRepo = () => {
      */
     const useGetRandomStudentClassmate = (
         studentId: string,
-        classeId: string
+        classeId: number
     ): UseQueryResult<Enrollment[], unknown> => {
         return useFetch(
             ['random-classmate', schoolId, studentId, classeId],
@@ -262,12 +252,12 @@ export const useStudentRepo = () => {
     }, [])
 
     return {
-        useGetEnrolledStudents,
-        useSearchEnrolledStudents,
+        getPaginatedStudents,
+        getSearchedEnrolledStudents,
         useGetSearchUnenrolledStudents,
         findUnenrolledStudents,
         useGetStudent,
-        useGetClasseEnrolledStudents,
+        getPaginatedClasseStudents,
         useGetClasseEnrolledStudentsSearch,
         useGetClasseStudents,
         useGetRandomStudentClassmate,
@@ -278,3 +268,16 @@ export const useStudentRepo = () => {
         studentOptions,
     };
 };
+
+const sortedField = (sortField: string) => {
+    switch (sortField) {
+        case 'lastName':
+            return 'e.student.personalInfo.lastName'
+        case 'lastEnrolledDate':
+            return 'e.enrollmentDate'
+        case 'age':
+            return 'e.student.personalInfo.birthDate'
+        default:
+            return undefined;
+    }
+}

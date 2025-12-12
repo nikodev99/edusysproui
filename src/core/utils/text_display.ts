@@ -271,10 +271,11 @@ export const calendarMessages = {
 };
 
 export const jwt = {
-    tokenKey: 'jwtAccessToken',
-    refreshTokenKey: 'jwtRefreshToken',
-    user: 'edusyspro-user',
-    school: 'edusyspro-school'
+    tokenKey: '@jwtAccessToken',
+    refreshTokenKey: '@jwtRefreshToken',
+    user: '@edusyspro-user',
+    school: '@edusyspro-school',
+    roles: '@edusyspro-roles',
 }
 
 export const text = withSlug(toLower(loggedUser.getSchool()?.abbr as string) as string)

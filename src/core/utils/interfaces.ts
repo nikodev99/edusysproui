@@ -29,7 +29,6 @@ import {z} from "zod";
 import {AssignmentTypeLiteral} from "../../entity/enums/assignmentType.ts";
 import {RadioGroupButtonStyle, RadioGroupOptionType} from "antd/es/radio";
 import {DefaultOptionType} from "antd/es/select";
-import {ButtonType} from "antd/es/button";
 import {UseMutationOptions} from "@tanstack/react-query";
 import {Variant} from "antd/es/config-provider";
 import {NavigateOptions} from "react-router-dom";
@@ -378,16 +377,6 @@ export interface AutoScrollProps {
     height?: number
     infinite?: boolean
     seconds?: number
-}
-
-export interface LoadMoreListProps<T extends object> {
-    listProps: ListProps<T>
-    isLoading: boolean,
-    size: number,
-    allItems: number,
-    onLoadMore?: () => void
-    buttonType?: ButtonType
-    buttonLabel?: ReactNode
 }
 
 export interface ReprimandData {

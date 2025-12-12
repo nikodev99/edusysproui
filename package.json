@@ -1,7 +1,7 @@
 {
   "name": "edusysproui",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -21,7 +21,7 @@
     "@uploadcare/react-uploader": "^0.5.4",
     "antd": "^5.23.1",
     "antd-img-crop": "^4.22.0",
-    "axios": "^1.10.0",
+    "axios": "^1.13.2",
     "country-flag-icons": "^1.5.13",
     "dayjs": "^1.11.11",
     "jose": "^6.0.11",

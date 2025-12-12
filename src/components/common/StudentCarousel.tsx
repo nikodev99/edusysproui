@@ -1,4 +1,4 @@
-import {Button, Carousel} from "antd";
+import {Button, Carousel, Skeleton} from "antd";
 import {Avatar} from "../ui/layout/Avatar.tsx";
 import {lowerName} from "../../core/utils/utils.ts";
 import Section from "../ui/layout/Section.tsx";
@@ -7,18 +7,25 @@ import {Color} from "../../core/utils/interfaces.ts";
 import {ReactNode} from "react";
 
 export const StudentCarousel = (
-    {students, redirectTo, color, seeMore, btnLabel, title}: {
+    {students, redirectTo, color, seeMore, btnLabel, title, loading}: {
         students: Enrollment[]
         seeMore: () => void
         redirectTo?: (id: string) => void
         color?: Color
         btnLabel?: string
-        title?: ReactNode
+        title?: ReactNode,
+        loading?: boolean
     }
 ) => {
 
     const handleRedirect = (id: string) => {
         redirectTo && redirectTo(id)
+    }
+
+    if (loading) {
+        return <Section title={title ?? 'Condisciples'}>
+            <Skeleton.Node active={loading} style={{width: "100%"}}  />
+        </Section>
     }
 
     return(

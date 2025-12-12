@@ -17,25 +17,25 @@ const App = () => {
     })
 
     return(
-        <UserProvider>
-            <ConfigProvider locale={frFR} theme={{
-                token: {
-                    colorPrimary: '#000C40',
-                    fontFamily: '"Work Sans", Helvetica, sans-serif',
-                },
-                components: {
-                    Timeline: {
-                        dotBg: 'transparent',
+        <QueryClientProvider client={queryClient}>
+            <UserProvider>
+                <ConfigProvider locale={frFR} theme={{
+                    token: {
+                        colorPrimary: '#000C40',
+                        fontFamily: '"Work Sans", Helvetica, sans-serif',
+                    },
+                    components: {
+                        Timeline: {
+                            dotBg: 'transparent',
+                        }
                     }
-                }
-            }}>
-                <AntdApp>
-                    <QueryClientProvider client={queryClient}>
+                }}>
+                    <AntdApp>
                         <RouterProvider router={Route} />
-                    </QueryClientProvider>
-                </AntdApp>
-            </ConfigProvider>
-        </UserProvider>
+                    </AntdApp>
+                </ConfigProvider>
+            </UserProvider>
+        </QueryClientProvider>
     )
 }
 

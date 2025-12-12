@@ -2,6 +2,7 @@ import LocalStorageManager from "../../core/LocalStorageManager.ts";
 import {jwt} from "../../core/utils/text_display.ts";
 import {UserProfile} from "../dto/user.ts";
 import {School} from "../../entity";
+import {Role} from "../dto/role.ts";
 
 export class LoginUser {
     private static instance : LoginUser | null = null
@@ -46,6 +47,10 @@ export class LoginUser {
         return this.cashedSchool
     }
 
+    getRole(): Role[] | null {
+        return LocalStorageManager.get<Role[]>(jwt.roles)
+    }
+
     public setUser(user: UserProfile) {
         LocalStorageManager.update<UserProfile>(jwt.user, () => user)
     }
@@ -60,6 +65,10 @@ export class LoginUser {
 
     public setSchool(school: School) {
         LocalStorageManager.update<School>(jwt.school, () => school)
+    }
+
+    public setRoles(roles: Role[]) {
+        LocalStorageManager.update<Role[]>(jwt.roles, () => roles)
     }
 
     public removeUser() {
@@ -78,11 +87,16 @@ export class LoginUser {
         LocalStorageManager.remove(jwt.school)
     }
 
+    public removeRoles() {
+        LocalStorageManager.remove(jwt.roles)
+    }
+
     public clearCache() {
         this.cachedUser = null
         this.cashedToken = null
         this.cashedRefreshToken = null
         this.cashedSchool = null
+        this.removeRoles()
     }
 
 }

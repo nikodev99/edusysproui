@@ -19,6 +19,7 @@ import FormSuccess from "../../components/ui/form/FormSuccess.tsx";
 import FormError from "../../components/ui/form/FormError.tsx";
 import {useQueryPost} from "../../hooks/usePost.ts";
 import {catchError} from "../../data/action/error_catch.ts";
+import {redirectTo} from "../../context/RedirectContext.ts";
 
 function isUser(arg?: object): arg is User {
     if (!arg || typeof arg !== 'object') {
@@ -102,7 +103,7 @@ const PasswordResetPage = () => {
                             <Alert message={message?.message} type='warning' showIcon />
                         ) : (
                             <>
-                                {successMessage && <FormSuccess message={successMessage} isNotif/>}
+                                {successMessage && <FormSuccess message={successMessage} setRedirect={() => redirectTo('/login')} isNotif/>}
                                 {errorMessage && <FormError message={errorMessage} isNotif/>}
                                 <Typography.Title level={3}>Utilisateur identifié: {userName}</Typography.Title>
                                 <Typography.Title level={5}>Veuillez entrer votre nouveau mot de passe</Typography.Title>

@@ -3,9 +3,9 @@ import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
 import {text} from "../../core/utils/text_display.ts";
 import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
 import {useMemo, useState} from "react";
-import {Student} from "../../entity";
+import {Enrollment, Student} from "../../entity";
 import ViewHeader from "../../components/ui/layout/ViewHeader.tsx";
-import {setName} from "../../core/utils/utils.ts";
+import {setName, setPlural} from "../../core/utils/utils.ts";
 import {
     StudentActionLinks,
     StudentAttendance,
@@ -45,7 +45,7 @@ const StudentViewPage = () => {
     const {context} = useBreadCrumb({
         bCItems: [
             {
-                title: text.student.label,
+                title: setPlural(text.student.label),
                 path: text.student.href
             },
             {
@@ -107,7 +107,7 @@ const StudentViewPage = () => {
                     {label: 'Examens', children: <StudentExam enrolledStudent={enrolledStudent!}/>},
                     {label: 'Présence', children: <StudentAttendance enrolledStudent={enrolledStudent!}/>},
                     {label: 'Condisciples', children: <StudentClasse enrolledStudent={enrolledStudent!}/>},
-                    {label: 'Discipline', children: <StudentDiscipline/>},
+                    {label: 'Discipline', children: <StudentDiscipline enrolledStudent={enrolledStudent as Enrollment}/>},
                 ]}
                 tab={{centered: true}}
             />

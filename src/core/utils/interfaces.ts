@@ -332,6 +332,8 @@ export interface ListProps<TData extends object> {
     dataDescription?: ReactNode
     hasDesc?: boolean,
     pageTitle?: ReactNode
+    noSearch?: boolean
+    setLoading?: (isLoading: boolean) => void
 }
 
 export interface ExamData {

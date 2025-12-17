@@ -26,6 +26,10 @@ interface AssignmentViewProps {
     studentId?: string
     disableSelect?: boolean
     label?: string
+    calendarLimit?: {
+        startDate?: Date | string | number[]
+        endDate?: Date | string | number[]
+    }
 }
 
 const AssignmentView = (

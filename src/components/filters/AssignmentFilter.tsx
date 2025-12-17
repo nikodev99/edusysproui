@@ -1,32 +1,17 @@
-import {Filter} from "../../common/Filter.tsx";
-import {AssignmentFilterProps} from "../../../data/repository/assignmentRepository.ts";
-import {text} from "../../../core/utils/text_display.ts";
+import {Filter} from "../common/Filter.tsx";
+import {AssignmentFilterProps} from "../../data/repository/assignmentRepository.ts";
+import {text} from "../../core/utils/text_display.ts";
 import {ItemType} from "antd/es/menu/interface";
-import {useCallback, useMemo, useState} from "react";
-import {useGradeRepo} from "../../../hooks/actions/useGradeRepo.ts";
-import {useCourseRepo} from "../../../hooks/actions/useCourseRepo.ts";
+import {useMemo, useState} from "react";
+import {useGradeRepo} from "../../hooks/actions/useGradeRepo.ts";
+import {useCourseRepo} from "../../hooks/actions/useCourseRepo.ts";
 //import {useSemesterRepo} from "../../../hooks/useSemesterRepo.ts";
-import {useClasseRepo} from "../../../hooks/actions/useClasseRepo.ts";
-
-type FilterType = {
-    setFilters: (filters: AssignmentFilterProps) => void,
-    academicYear?: string,
-    academicYearOptions?: Option[]
-    academicYearChangeFunc?: (value: string) => void
-}
-type Option = { label: string; value: unknown }
-
-const getOptions = <T extends object>(data: T[], value: keyof T, label: keyof T): Option[] => {
-    const mappedData = data?.map(d => ({
-        value: d[value] as unknown,
-        label: d[label] as string
-    })) || [];
-
-    return [{value: 0, label: 'TOUS'}, ...mappedData];
-}
+import {useClasseRepo} from "../../hooks/actions/useClasseRepo.ts";
+import {FilterType, useFilter} from "../../hooks/useFilter.ts";
+import {Options} from "../../core/utils/interfaces.ts";
 
 export const AssignmentFilter = (
-    {academicYear, academicYearOptions, setFilters: emitFilters}: FilterType
+    {academicYear, academicYearOptions, setFilters: emitFilters}: FilterType<AssignmentFilterProps>
 ) => {
 
     //const [semesters, setSemesters] = useState<Semester[]>([])
@@ -45,6 +30,8 @@ export const AssignmentFilter = (
     const classes = useMemo(() => fetchedClasses ?? [], [fetchedClasses])
     const courses = useMemo(() => fetchedCourses ?? [], [fetchedCourses])
 
+    const {makeOnChange, handleUpdateFilters, handleClear, getOptions} = useFilter(setFilterItem, emitFilters)
+    
     const options = useMemo(
         () =>
             ({
@@ -54,19 +41,9 @@ export const AssignmentFilter = (
                 courseId:   getOptions(courses,   "id",  "course"),
                 //TODO Adding the filter by semester
                 //semesterId: getOptions(semesters, "semesterId", "semesterName"),
-            } as Record<keyof AssignmentFilterProps, Option[]>),
-        [academicYearOptions, grades, classes, courses]
+            } as Record<keyof AssignmentFilterProps, Options>),
+        [academicYearOptions, getOptions, grades, classes, courses]
     );
-
-    const makeOnChange =
-        (key: keyof AssignmentFilterProps) =>
-            (value: unknown) => {
-                setFilterItem((prev) => {
-                    const next = { ...prev, [key]: value as number };
-                    emitFilters(next);
-                    return next;
-                });
-            };
 
     const onChanges = useMemo(
         () =>
@@ -80,33 +57,12 @@ export const AssignmentFilter = (
         [emitFilters]
     );
 
-    console.log('COURSES: ', courses)
-
-    const handleUpdateFilters = (key: keyof AssignmentFilterProps) => setFilterItem((prev) => {
-        const next = { ...prev, [key]: 0 };
-        emitFilters(next);
-        return next;
-    })
-
     const items: ItemType[] = [
         {key: '2', label: 'Grade', onClick: () => handleUpdateFilters('gradeId')},
         {key: '3', label: 'Classe', onClick: () => handleUpdateFilters('classeId')},
         {key: '4', label: 'Matière', onClick: () => handleUpdateFilters('courseId')},
         {key: '5', label: text.semester, onClick: () => handleUpdateFilters('semesterId')}
     ]
-
-    const handleClear = useCallback(
-        (key: keyof AssignmentFilterProps) => {
-            setFilterItem((prev) => {
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                const { [key]: _, ...rest } = prev;
-                const next = rest as AssignmentFilterProps;
-                emitFilters(next);
-                return next;
-            });
-        },
-        [emitFilters]
-    );
 
     return (
         <Filter

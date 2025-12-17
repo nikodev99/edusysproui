@@ -445,8 +445,6 @@ const DisciplinaryRecords = ({infoData, seeMore, color}: StudentInfoProps) => {
  */
 
 export const StudentInfo = ({enrollment, seeMore, color}: { enrollment: Enrollment, color?: string, seeMore?: (key: string) => void }) => {
-    console.log("ENROLLMENT: ", enrollment)
-
     const classe = useMemo(() => enrollment?.classe, [enrollment])
     const sections = [SectionType.MATERNELLE, SectionType.PRIMAIRE, SectionType.GARDERIE, SectionType.CRECHE]
 

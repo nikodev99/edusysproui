@@ -13,11 +13,11 @@ export const punishmentStatusTag = (status: PunishmentStatus): [string, Punishme
     switch (status) {
     case 'PENDING' as PunishmentStatus:
     case 'DEFERRED' as PunishmentStatus:
+    case 'IN_PROGRESS' as PunishmentStatus:
         tagColor = 'warning'
         break;
-    case 'IN_PROGRESS' as PunishmentStatus:
     case 'COMPLETED' as PunishmentStatus:
-        tagColor = 'success'
+        tagColor = 'blue'
         break;
     case 'CANCELLED' as PunishmentStatus:
     case 'APPEALED' as PunishmentStatus:

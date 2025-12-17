@@ -169,18 +169,21 @@ export const getStringAcademicYear = (
     startDate?: AcademicYear | Date | [number, number, number],
     endDate?: Date | [number, number, number]
 ): string | undefined => {
-    let start = startDate;
-    let end = endDate;
+    let start: Datetime;
+    let end: Datetime;
 
     // Extract dates from AcademicYear object if provided
     if (startDate && typeof startDate === 'object' && 'startDate' in startDate) {
-        start = startDate.startDate as Date;
-        end = startDate.endDate as Date;
+        start = Datetime.of(startDate.startDate);
+        end = Datetime.of(startDate.endDate);
+    }else {
+        start = Datetime.of(startDate as Date)
+        end = Datetime.of(endDate as Date)
     }
 
     // Return the formatted year range if both dates exist
     if (start && end) {
-        return `${arrayToDate(start as Date).getFullYear()} - ${arrayToDate(end).getFullYear()}`;
+        return `${start.YEAR}-${end.YEAR}`;
     }
 
     return undefined;

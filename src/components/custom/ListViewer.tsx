@@ -1,5 +1,5 @@
 import {ChangeEvent, Key, ReactNode, useEffect, useLayoutEffect, useState} from "react";
-import {Button, Flex, Input, Pagination, Segmented, Space, Table, TablePaginationConfig, Tooltip} from "antd";
+import {Button, Flex, Input, Pagination, Space, Table, TablePaginationConfig, Tooltip} from "antd";
 import {FilterValue, SorterResult } from "antd/es/table/interface";
 import LocalStorageManager from "../../core/LocalStorageManager.ts";
 import Responsive from "../../components/ui/layout/Responsive.tsx";
@@ -7,7 +7,7 @@ import CardList from "../view/CardList.tsx";
 import PageDescription from "./PageDescription.tsx";
 import PageError from "../../pages/errors/PageError.tsx";
 import {fetchFunc, useFetch} from "../../hooks/useFetch.ts";
-import {LuDownload, LuLayoutDashboard, LuListFilter, LuTable} from "react-icons/lu";
+import {LuDownload, LuLayoutDashboard, LuListFilter, LuTableOfContents} from "react-icons/lu";
 import {Enrollment} from "../../entity";
 import {ListViewerProps, StudentListDataType} from "../../core/utils/interfaces.ts";
 import {getAge} from "../../core/utils/utils.ts";
@@ -21,7 +21,7 @@ const ListViewer = <TData extends object, TError>(
         callback, searchCallback, tableColumns, dropdownItems, throughDetails, hasCount, countTitle, localStorage,
         fetchId, cardData, cardNotAvatar, level, refetchCondition, callbackParams, searchCallbackParams, infinite,
         uuidKey, tableProps, descMargin, itemSize, displayItem, filters, shareSearchQuery, onSelectData, dataDescription,
-        tableHeight, hasDesc = true, pageTitle
+        tableHeight, hasDesc = true, pageTitle, noSearch = false, setLoading
     }: ListViewerProps<TData, TError>
 ) => {
 
@@ -73,7 +73,11 @@ const ListViewer = <TData extends object, TError>(
             }
         }
 
-    }, [data, isLoading, pageCount, refetch, searchCallback, searchCallbackParams, searchQuery, shareSearchQuery, size, sortField, sortOrder]);
+        if (setLoading) {
+            setLoading(isLoading)
+        }
+
+    }, [setLoading, data, isLoading, pageCount, refetch, searchCallback, searchCallbackParams, searchQuery, shareSearchQuery, size, sortField, sortOrder]);
 
     useEffect(() => {
         if (callbackParams)
@@ -137,19 +141,6 @@ const ListViewer = <TData extends object, TError>(
 
     const handleShowFilters = () => setShowFilters()
 
-    const selectableIcons = [
-        {
-            label: '',
-            value: '1',
-            icon: <LuTable />
-        },
-        {
-            label: '',
-            value: '2',
-            icon: <LuLayoutDashboard />
-        }
-    ]
-
     const rowKey = (record: TData) => {
         if (Array.isArray(uuidKey)) {
             const [parentKey, childKey] = uuidKey
@@ -201,7 +192,7 @@ const ListViewer = <TData extends object, TError>(
                         addMargin={descMargin}
                     />
                     <div className='flex__end'>
-                        <Input
+                        {!noSearch && <Input
                             allowClear
                             size='middle'
                             placeholder='Recherche...'
@@ -209,12 +200,27 @@ const ListViewer = <TData extends object, TError>(
                             className='search__input'
                             onChange={handleSearchInput}
                             onClear={handleUpdateSearchQuery}
-                        />
-                        <Segmented
-                            options={selectableIcons}
-                            onChange={(value) => selectedIcon(Number.parseInt(value))}
-                            value={activeIcon.toString()}
-                        />
+                        />}
+
+                        <Space.Compact>
+                            <Tooltip title='Affichage tableau'>
+                                <Button
+                                    icon={<LuTableOfContents />}
+                                    color={activeIcon === 1 ? 'blue' : undefined}
+                                    variant='solid'
+                                    onClick={() => selectedIcon(1)}
+                                />
+                            </Tooltip>
+                            {cardData && <Tooltip title='Affichage carte'>
+                                <Button
+                                    icon={<LuLayoutDashboard />}
+                                    color={activeIcon === 2 ? 'blue' : undefined}
+                                    variant='solid'
+                                    onClick={() => selectedIcon(2)}
+                                />
+                            </Tooltip>}
+                        </Space.Compact>
+
                         <Space.Compact>
                             {filterUI && <Tooltip title='Filtrer'>
                                 <Button icon={<LuListFilter />} onClick={handleShowFilters} />
@@ -232,7 +238,7 @@ const ListViewer = <TData extends object, TError>(
             </div>
             <Responsive gutter={[16, 16]} className={`${activeIcon !== 2 ? 'student__list__datatable' : ''}`}>
                 {
-                    activeIcon === 2 ? <CardList
+                    activeIcon === 2 && cardData ? <CardList
                         content={cardData ? cardData(dataSource as TData[]) : []}
                         isActive={activeIcon === 2 }
                         isLoading={isLoading || dataSource === undefined}
@@ -278,6 +284,7 @@ const ListViewer = <TData extends object, TError>(
                                     x: 'max-content'
                                 }}
                                 onRow={(record: TData) => ({
+                                    style: onSelectData ? {cursor: 'pointer'} : {},
                                     onClick: () => onSelectData ? onSelectData(record) : undefined
                                 })}
                             />}

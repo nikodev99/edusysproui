@@ -202,7 +202,7 @@ export const AuthMiddleware: FC<AuthMiddlewareProps> = ({children}) => {
                 height: '100vh',
                 width: '100%'
             }}>
-                <Spin size="large" tip="Loading school information..." />
+                <Spin size="large" />
             </div>
         )
     }

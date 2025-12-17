@@ -29,8 +29,6 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
         classe: enrolledStudent?.classe,
     }), [enrolledStudent?.academicYear, enrolledStudent?.classe, enrolledStudent?.student])
 
-    console.log('enrolledStudent: ', enrolledStudent)
-
     const [scores, setScores] = useState<Score[]>([])
     const [subjectValue, setSubjectValue] = useState<number>(0)
     const [allData, setAllData] = useState<number>(0)
@@ -45,9 +43,11 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
     const assignments = useGetAllClasseAssignments(classe?.id, academicYearId)
     const {data, isSuccess, error, isLoading, isRefetching, refetch} = useGetAllStudentScores(student?.id, academicYearId, {size: size, page: 0}, subjectValue)
 
+    console.log("VIEWED STUDENT: ", enrolledStudent)
+
     const academicYears = useMemo(() => {
         return enrollments && [
-            { value: academicYear?.id, label: academicYear},
+            { value: academicYear?.id, label: academicYear?.academicYear},
             ...enrollments?.map(e => ({
                 value: e?.academicYear?.id,
                 label: e?.academicYear?.academicYear
@@ -110,7 +110,7 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
             title: "Date",
             dataIndex: 'examDate',
             key: 'examDate',
-            align: 'center',
+            align: 'right',
             responsive: ['md'],
             width: '13%',
             render: text => fDate(text),
@@ -175,6 +175,10 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
 
                 />
             ]}
+            calendarLimit={{
+                startDate: academicYear?.startDate,
+                endDate: academicYear?.endDate
+            }}
             academicYear={academicYearId}
             tabViews={[
                 {

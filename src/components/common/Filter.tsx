@@ -8,7 +8,7 @@ import {Options} from "../../core/utils/interfaces.ts";
 export interface FilterProps<T extends object> {
     filters: T
     items?: ItemType[]
-    options?: Record<keyof T, {label: string, value: unknown}[]>
+    options?: Record<keyof T, Options>
     onClear?: (key: keyof T) => void
     setFilters?: (filters: T) => void
     onChanges?: Record<keyof T, (value: unknown) => void>
@@ -48,8 +48,6 @@ export const Filter = <T extends object>({filters, items = [], onClear, setFilte
             setFilters?.(newFilterItems as T)
         }
     }
-
-    console.log('FILTER DANS FILTER: ', filterItems)
 
     return(
         <Space wrap>

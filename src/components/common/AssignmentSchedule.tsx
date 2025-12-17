@@ -21,12 +21,14 @@ type AssignmentScheduleType = {
     onlyMark?: string
     selectable?: boolean
     selectSlotAction?: (slots: SlotInfo) => void
+    startDate?: Date | string | number[]
+    endDate?: Date | string | number[]
 }
 
 export const AssignmentSchedule = (
     {
         eventSchedule, showBest = true, show = true, plus = true, shareScoreSize, setRefetch, onlyMark, views = ['month', 'week', 'agenda'],
-        height, isLoading, selectable, selectSlotAction
+        height, isLoading, selectable, selectSlotAction, startDate, endDate
     }: AssignmentScheduleType
 ) => {
     const [wasDeleted, setWasDeleted] = useState<Record<string, boolean>>({})
@@ -77,6 +79,8 @@ export const AssignmentSchedule = (
                     AssignmentTypeLiteral[event?.resource?.type as unknown as keyof typeof AssignmentTypeLiteral], true
                 ) as [string, string]}
                 selectable={selectable}
+                startDate={startDate}
+                endDate={endDate}
                 onSelectSlot={selectSlotAction}
             />
             <AssignmentViewDesc

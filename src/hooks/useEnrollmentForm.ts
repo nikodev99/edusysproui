@@ -2,8 +2,8 @@
 import { useEffect, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { enrollmentSchema, EnrollmentSchema } from "../schema";
-import { addStudent } from "../data";
+import { enrollmentSchema, EnrollmentSchema } from "@/schema";
+import { addStudent } from "@/data";
 import type { ReactNode } from "react";
 
 /**

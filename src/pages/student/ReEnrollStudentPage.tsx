@@ -1,25 +1,19 @@
-import OutletPage from "../OutletPage.tsx";
-import {text} from "../../core/utils/text_display.ts";
-import {getAge, getStringAcademicYear, setFirstName, setPlural} from "../../core/utils/utils.ts";
-import PageWrapper from "../../components/view/PageWrapper.tsx";
-import Responsive from "../../components/ui/layout/Responsive.tsx";
-import Grid from "../../components/ui/layout/Grid.tsx";
-import {Badge, Card, Descriptions, Form, Select, Spin, Tag} from "antd";
-import {PageTitle} from "../../components/custom/PageTitle.tsx";
-import {useSearch} from "../../hooks/useSearch.ts";
+import OutletPage from "@/pages/OutletPage.tsx";
+import {text} from "@/core/utils/text_display.ts";
+import {getStringAcademicYear, setFirstName, setPlural} from "@/core/utils/utils.ts";
+import PageWrapper from "@/components/view/PageWrapper.tsx";
+import Responsive from "@/components/ui/layout/Responsive.tsx";
+import Grid from "@/components/ui/layout/Grid.tsx";
+import {Select} from "antd";
+import {PageTitle} from "@/components/custom/PageTitle.tsx";
+import {useSearch} from "@/hooks/useSearch.ts";
 import {useMemo, useState} from "react";
-import {Enrollment, Individual} from "../../entity";
-import {useStudentRepo} from "../../hooks/actions/useStudentRepo.ts";
-import Datetime from "../../core/datetime.ts";
-import {AcademicForm} from "../../components/ui-kit-student";
-import {ModalConfirmButton} from "../../components/ui/layout/ModalConfirmButton.tsx";
-import {LuUserRoundPlus} from "react-icons/lu";
-import {useRedirect} from "../../hooks/useRedirect.ts";
-import {useActivity} from "../../hooks/useActivity.ts";
-import {useEnrollmentForm} from "../../hooks/useEnrollmentForm.ts";
+import {Enrollment, Individual} from "@/entity";
+import {useStudentRepo} from "@/hooks/actions/useStudentRepo.ts";
+import {StudentResult} from "@/components/ui-kit-student";
+import {useActivity} from "@/hooks/useActivity.ts";
 
 const ReEnrollStudentPage = () => {
-    const {toViewStudent} = useRedirect()
     const {reenrollStudentActivity} = useActivity()
 
     const [searchValue, setSearchValue] = useState<number | undefined>(undefined)
@@ -32,24 +26,16 @@ const ReEnrollStudentPage = () => {
         setCustomOptions: studentOptions
     })
 
-    const {academicYear, classe, student, ind} = useMemo(() => ({
+    const {academicYear, classe, ind} = useMemo(() => ({
         academicYear: resource?.academicYear,
         classe: resource?.classe,
-        student: resource?.student,
         ind: resource?.student?.personalInfo
     }), [resource])
-
-    const {control, errors, handleSubmit, onSubmit, isPending, successMessage, errorMessage} = useEnrollmentForm(student?.id)
 
     const handleActivity = () => reenrollStudentActivity(ind as Individual, classe?.name as string)
 
     return(
         <OutletPage
-            responseMessages={{
-                success: successMessage,
-                error: errorMessage
-            }}
-            setRedirect={() => toViewStudent(student?.id as string, ind)}
             setActivity={handleActivity}
             metadata={{
                 title: text.student.group.reAdd.label,
@@ -84,50 +70,12 @@ const ReEnrollStudentPage = () => {
                                 />
                             </Grid>
                         </Responsive>
-                        {resource && <Responsive gutter={[16, 16]} style={{marginTop: '30px'}}>
-                            <Grid xs={24} md={12} lg={12}>
-                                <Card>
-                                    <Descriptions
-                                        title={`Dernière inscription année ${getStringAcademicYear(academicYear)}`}
-                                        items={[
-                                            {key: '1', label: 'Nom(s)', children: ind?.lastName, span: 3},
-                                            {key: '2', label: 'Prenom(s)', children: ind?.firstName, span: 3},
-                                            {key: '3', label: 'Date de Naissance', children: Datetime.of(ind?.birthDate as Date).fDate(), span: 3},
-                                            {key: '4', label: 'Age', children: getAge(ind?.birthDate as number[], true), span: 3},
-                                            {key: '5', label: 'Lieu de naissance', children: ind?.birthCity, span: 3},
-                                            {key: '6', label: 'Référence', children: <b>{ind?.reference}</b>, span: 3},
-                                            {key: '7', label: 'Classe', children: classe?.name, span: 3},
-                                            {key: '8', label: 'Niveau', children: <Tag>{classe?.grade?.section}</Tag>, span: 3},
-                                            {key: '9', label: 'Date d\'inscription', children: Datetime.of(resource?.enrollmentDate).fDatetime(), span: 3},
-                                            {key: '10', label: 'Archivé', children: <Badge status="error" text={resource?.isArchived ? 'Oui' : 'Non'} />},
-                                        ]}
-                                    />
-                                </Card>
-                            </Grid>
-                            <Grid xs={24} md={12} lg={12}>
-                                <Card>
-                                    <Form layout='vertical'>
-                                        <AcademicForm
-                                            control={control}
-                                            errors={errors}
-                                            validationTriggered={true}
-                                        />
-                                        <Form.Item>
-                                            <ModalConfirmButton
-                                                btnProps={{
-                                                    icon: <LuUserRoundPlus />,
-                                                    type: 'primary'
-                                                }}
-                                                btnTxt={'Ré-inscrire'}
-                                                title={`Voulez vraiment continuer avec la ré-inscription de ${setFirstName(`${ind?.lastName} ${ind?.firstName}`)}`}
-                                                handleFunc={() => handleSubmit(onSubmit)()}
-                                            />
-                                        </Form.Item>
-                                        {isPending && <Spin />}
-                                    </Form>
-                                </Card>
-                            </Grid>
-                        </Responsive>}
+                        {resource && <StudentResult
+                            title={`Dernière inscription année ${getStringAcademicYear(academicYear)}`}
+                            resource={resource}
+                            modalTitle={`Voulez vraiment continuer avec la ré-inscription de ${setFirstName(`${ind?.lastName} ${ind?.firstName}`)}`}
+                            submitBtnTxt='Réinscrire'
+                        />}
                     </PageWrapper>
                 </>
             }

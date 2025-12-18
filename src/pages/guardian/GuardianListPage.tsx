@@ -1,24 +1,24 @@
-import {ListPageHierarchy} from "../../components/custom/ListPageHierarchy.tsx";
-import {BreadcrumbType, useBreadcrumbItem} from "../../hooks/useBreadCrumb.tsx";
-import {text} from "../../core/utils/text_display.ts";
-import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
-import ListViewer from "../../components/custom/ListViewer.tsx";
+import {ListPageHierarchy} from "@/components/custom/ListPageHierarchy.tsx";
+import {BreadcrumbType, useBreadcrumbItem} from "@/hooks/useBreadCrumb.tsx";
+import {text} from "@/core/utils/text_display.ts";
+import {useDocumentTitle} from "@/hooks/useDocumentTitle.ts";
+import ListViewer from "@/components/custom/ListViewer.tsx";
 import {TableColumnsType} from "antd";
-import {Avatar} from "../../components/ui/layout/Avatar.tsx";
-import {enumToObjectArrayForFiltering, setFirstName} from "../../core/utils/utils.ts";
-import {Gender} from "../../entity/enums/gender.tsx";
-import {Guardian} from "../../entity";
-import {fetchEnrolledStudentsGuardians} from "../../data";
-import {ActionButton} from "../../components/ui/layout/ActionButton.tsx";
+import {Avatar} from "@/components/ui/layout/Avatar.tsx";
+import {enumToObjectArrayForFiltering, setFirstName} from "@/core/utils/utils.ts";
+import {Gender} from "@/entity/enums/gender.tsx";
+import {Guardian} from "@/entity";
+import {fetchEnrolledStudentsGuardians} from "@/data";
+import {ActionButton} from "@/components/ui/layout/ActionButton.tsx";
 import {LuEye} from "react-icons/lu";
-import {redirectTo} from "../../context/RedirectContext.ts";
+import {redirectTo} from "@/context/RedirectContext.ts";
 import {AxiosResponse} from "axios";
 import {AiOutlineUserDelete} from "react-icons/ai";
 import {BiSolidUserAccount} from "react-icons/bi";
-import {StatusTags} from "../../core/utils/tsxUtils.tsx";
-import {Status} from "../../entity/enums/status.ts";
-import {DataProps} from "../../core/utils/interfaces.ts";
-import {getSearchedEnrolledStudentGuardian} from "../../data/repository/guardianRepository.ts";
+import {StatusTags} from "@/core/utils/tsxUtils.tsx";
+import {Status} from "@/entity/enums/status.ts";
+import {DataProps} from "@/core/utils/interfaces.ts";
+import {getSearchedEnrolledStudentGuardian} from "@/data/repository/guardianRepository.ts";
 
 const GuardianListPage = () => {
 

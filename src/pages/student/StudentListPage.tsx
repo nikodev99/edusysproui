@@ -1,20 +1,20 @@
-import {StudentListDataType as DataType} from "../../core/utils/interfaces.ts";
-import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
-import {text} from "../../core/utils/text_display.ts";
-import {useBreadcrumbItem} from "../../hooks/useBreadCrumb.tsx";
-import {ListPageHierarchy} from "../../components/custom/ListPageHierarchy.tsx";
+import {StudentListDataType as DataType} from "@/core/utils/interfaces.ts";
+import {useDocumentTitle} from "@/hooks/useDocumentTitle.ts";
+import {text} from "@/core/utils/text_display.ts";
+import {useBreadcrumbItem} from "@/hooks/useBreadCrumb.tsx";
+import {ListPageHierarchy} from "@/components/custom/ListPageHierarchy.tsx";
 import {AiOutlineUserAdd} from "react-icons/ai";
 import {AxiosResponse} from "axios";
-import {StudentList} from "../../components/ui-kit-student/components/StudentList.tsx";
-import {useRedirect} from "../../hooks/useRedirect.ts";
+import {StudentList} from "@/components/ui-kit-student/components/StudentList.tsx";
+import {useRedirect} from "@/hooks/useRedirect.ts";
 import {Button} from "antd";
 import {LuClipboard, LuClipboardPlus, LuSearch} from "react-icons/lu";
 import {useMemo} from "react";
-import {setPlural} from "../../core/utils/utils.ts";
-import {useStudentRepo} from "../../hooks/actions/useStudentRepo.ts";
+import {setPlural} from "@/core/utils/utils.ts";
+import {useStudentRepo} from "@/hooks/actions/useStudentRepo.ts";
 
 const StudentListPage = () => {
-    const {toEnrollStudent, toReenrollStudent, toSearchStudent} = useRedirect()
+    const {toEnrollStudent, toReenrollStudent, toSearch} = useRedirect()
     const {getPaginatedStudents, getSearchedEnrolledStudents} = useStudentRepo()
     
     const pageLabel = useMemo(() => setPlural(text.student.label), [])
@@ -40,7 +40,7 @@ const StudentListPage = () => {
                 dropdownItems={[
                     {key: '1', icon: <LuClipboard />,label: text.student.group.add.label, onClick: toEnrollStudent},
                     {key: '2', icon: <LuClipboardPlus />, label: text.student.group.reAdd.label, onClick: toReenrollStudent},
-                    {key: '3', icon: <LuSearch />, label: text.student.group.search.label, onClick: toSearchStudent}
+                    {key: '3', icon: <LuSearch />, label: text.search.label, onClick: () => toSearch()}
                 ]}
             />
             <StudentList

@@ -1,11 +1,11 @@
-import {ActionButtonsProps, StudentListDataType} from "../../../core/utils/interfaces.ts";
+import {ActionButtonsProps, StudentListDataType} from "@/core/utils/interfaces.ts";
 import {ItemType} from "antd/es/menu/interface";
 import {useMemo} from "react";
 import {LuBan, LuCircleArrowOutUpRight, LuUserMinus, LuUserPlus} from "react-icons/lu";
-import {useMenuItemsEffect} from "../../../hooks/useMenuItemsEffect.ts";
+import {useMenuItemsEffect} from "@/hooks/useMenuItemsEffect.ts";
 import {Tooltip} from "antd";
-import {Enrollment} from "../../../entity";
-import {useToggle} from "../../../hooks/useToggle.ts";
+import {Enrollment} from "@/entity";
+import {useToggle} from "@/hooks/useToggle.ts";
 import {StudentPromotion} from "./StudentPromotion.tsx";
 
 export const StudentActionLinks = ({data, getItems, setRefresh}: ActionButtonsProps<StudentListDataType | Enrollment>) => {
@@ -31,7 +31,7 @@ export const StudentActionLinks = ({data, getItems, setRefresh}: ActionButtonsPr
         },
         {
             key: 'discipline-' + studentId,
-            label: "sanctions disciplinaires",
+            label: "Sanctions disciplinaires",
             icon: <LuBan />,
             onClick: () => alert('Sanctionné')
         },

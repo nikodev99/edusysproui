@@ -11,7 +11,7 @@ import {
     getClasseStudents, getEnrolledStudents,
     getRandomStudentClassmate,
     getStudentById,
-    searchEnrolledStudents, searchUnenrolledStudents
+    searchEnrolledStudents, searchStudents, searchUnenrolledStudents
 } from "../../data/repository/studentRepository.ts";
 import {useCallback, useEffect, useState} from "react";
 import {useGlobalStore} from "../../core/global/store.ts";
@@ -59,6 +59,13 @@ export const useStudentRepo = () => {
 
     const findUnenrolledStudents = (searchInput: string) =>
         searchUnenrolledStudents(schoolId, searchInput)
+
+    const useGetSearchStudent = (searchInput: string) => useFetch(
+        ['search-student', searchInput],
+        searchStudents,
+        [schoolId, searchInput],
+        !!schoolId && !!searchInput
+    )
 
     /**
      * Fetches a single student by ID.
@@ -256,6 +263,7 @@ export const useStudentRepo = () => {
         getSearchedEnrolledStudents,
         useGetSearchUnenrolledStudents,
         findUnenrolledStudents,
+        useGetSearchStudent,
         useGetStudent,
         getPaginatedClasseStudents,
         useGetClasseEnrolledStudentsSearch,

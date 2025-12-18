@@ -1,7 +1,7 @@
-import {EnrollmentSchema, enrollmentSchema} from "../../schema";
+import {EnrollmentSchema, enrollmentSchema} from "@/schema";
 import {enrollStudent} from "../post";
 import {AxiosResponse} from "axios";
-import {Enrollment} from "../../entity";
+import {Enrollment} from "@/entity";
 import {ResponseRepo as CustomResponse} from "./responseRepo.ts";
 import {catchError} from "./error_catch.ts";
 

@@ -1,11 +1,11 @@
 import {useParams} from "react-router-dom";
-import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
-import {text} from "../../core/utils/text_display.ts";
-import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
+import {useDocumentTitle} from "@/hooks/useDocumentTitle.ts";
+import {text} from "@/core/utils/text_display.ts";
+import {useBreadCrumb} from "@/hooks/useBreadCrumb.tsx";
 import {useMemo, useState} from "react";
-import {Enrollment, Student} from "../../entity";
-import ViewHeader from "../../components/ui/layout/ViewHeader.tsx";
-import {setName, setPlural} from "../../core/utils/utils.ts";
+import {Enrollment, Student} from "@/entity";
+import ViewHeader from "@/components/ui/layout/ViewHeader.tsx";
+import {setName, setPlural} from "@/core/utils/utils.ts";
 import {
     StudentActionLinks,
     StudentAttendance,
@@ -13,13 +13,13 @@ import {
     StudentExam,
     StudentDiscipline,
     StudentInfo
-} from "../../components/ui-kit-student";
+} from "@/components/ui-kit-student";
 import {LuCircleUser} from "react-icons/lu";
-import {ViewRoot} from "../../components/custom/ViewRoot.tsx";
-import {useStudentRepo} from "../../hooks/actions/useStudentRepo.ts";
+import {ViewRoot} from "@/components/custom/ViewRoot.tsx";
+import {useStudentRepo} from "@/hooks/actions/useStudentRepo.ts";
 import {ItemType} from "antd/es/menu/interface";
-import {catchError} from "../../data/action/error_catch.ts";
-import {useRedirect} from "../../hooks/useRedirect.ts";
+import {catchError} from "@/data/action/error_catch.ts";
+import {useRedirect} from "@/hooks/useRedirect.ts";
 
 const StudentViewPage = () => {
     const {toViewGuardian} = useRedirect()

@@ -1,19 +1,23 @@
-import {DataProps, ListViewerProps, StudentListDataType} from "../../../core/utils/interfaces.ts";
+import {DataProps, ListViewerProps, StudentListDataType} from "@/core/utils/interfaces.ts";
 import {AxiosError} from "axios";
-import ListViewer from "../../custom/ListViewer.tsx";
+import ListViewer from "@/components/custom/ListViewer.tsx";
 import {TableColumnsType, Tag} from "antd";
-import {Avatar} from "../../ui/layout/Avatar.tsx";
-import {dateCompare, enumToObjectArrayForFiltering, setFirstName} from "../../../core/utils/utils.ts";
-import {Gender} from "../../../entity/enums/gender.tsx";
-import Tagger from "../../ui/layout/Tagger.tsx";
+import {Avatar} from "@/components/ui/layout/Avatar.tsx";
+import {
+    checkAcademicYearEnded,
+    enumToObjectArrayForFiltering,
+    setFirstName
+} from "@/core/utils/utils.ts";
+import {Gender} from "@/entity/enums/gender.tsx";
+import Tagger from "@/components/ui/layout/Tagger.tsx";
 import {AiOutlineEllipsis} from "react-icons/ai";
-import {ActionButton} from "../../ui/layout/ActionButton.tsx";
-import {text} from "../../../core/utils/text_display.ts";
+import {ActionButton} from "@/components/ui/layout/ActionButton.tsx";
+import {text} from "@/core/utils/text_display.ts";
 import {LuEye} from "react-icons/lu";
-import {useColumnSearch} from "../../../hooks/useColumnSearch.tsx";
-import Datetime from "../../../core/datetime.ts";
-import {useRedirect} from "../../../hooks/useRedirect.ts";
-import {Individual} from "../../../entity";
+import {useColumnSearch} from "@/hooks/useColumnSearch.tsx";
+import Datetime from "@/core/datetime.ts";
+import {useRedirect} from "@/hooks/useRedirect.ts";
+import {AcademicYear, Individual} from "@/entity";
 import {StudentActionLinks} from "./StudentActionLinks.tsx";
 import {useCallback, useState} from "react";
 import {ItemType} from "antd/es/menu/interface";
@@ -32,13 +36,13 @@ export const StudentList = <TError extends AxiosError>(listProps: ListViewerProp
         toViewStudent(record?.id as string, {lastName: record?.lastName, firstName: record?.firstName} as Individual)
     }, [toViewStudent])
 
-    const getItems = useCallback((_url?: string, student?: StudentListDataType): ItemType[] => {
+    const getItems = useCallback((_url?: string, record?: StudentListDataType): ItemType[] => {
         return [
             {
-                key: `details-${student?.id}`,
+                key: `details-${record?.id}`,
                 icon: <LuEye />,
                 label: `Voir ${setFirstName(text.student.label)}`,
-                onClick: () => throughDetails(student?.id, student),
+                onClick: () => throughDetails(record?.id, record)
             },
             ...linkButtons
         ]
@@ -94,8 +98,8 @@ export const StudentList = <TError extends AxiosError>(listProps: ListViewerProp
             key: 'status',
             align: 'center',
             width: '12%',
-            render: (text) => (<Tagger
-                status={dateCompare(text?.endDate)}
+            render: (academicYear: AcademicYear) => (<Tagger
+                status={checkAcademicYearEnded(academicYear)}
                 successMessage={'inscrit'}
                 warnMessage={'fin-année-scolaire'}
             />)
@@ -136,7 +140,7 @@ export const StudentList = <TError extends AxiosError>(listProps: ListViewerProp
             key: 'action',
             align: 'right',
             width: '5%',
-            render: (text) => (<ActionButton items={getItems(text)} />)
+            render: (id, record) => (<ActionButton items={getItems(id, record)} />)
         }
     ];
 
@@ -148,8 +152,11 @@ export const StudentList = <TError extends AxiosError>(listProps: ListViewerProp
             gender: c?.gender,
             image: c?.image,
             reference: c?.reference,
-            tag: <Tagger status={dateCompare(c?.academicYear?.endDate as Date)} successMessage='inscrit'
-                         warnMessage='fin_annee_scolaire'/>,
+            tag: <Tagger
+                status={checkAcademicYearEnded(c.academicYear)}
+                successMessage='inscrit'
+                warnMessage='fin_annee_scolaire'
+            />,
             description: [
                 `${c.grade} - ${c.classe}`,
                 `Inscrit le, ${Datetime.of(c.lastEnrolledDate).fDatetime({to: true})}`
@@ -164,7 +171,7 @@ export const StudentList = <TError extends AxiosError>(listProps: ListViewerProp
                 callback={callback}
                 searchCallback={searchCallback}
                 tableColumns={columns}
-                dropdownItems={getItems}
+                dropdownItems={(url, record) => getItems(url, record)}
                 throughDetails={throughDetails as () => void}
                 countTitle={text.student.label}
                 cardData={cardData}

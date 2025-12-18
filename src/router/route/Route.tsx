@@ -1,55 +1,56 @@
 import {createBrowserRouter, Navigate} from "react-router-dom";
-import PageLayout from "../../pages/PageLayout.tsx";
-import PageError from "../../pages/errors/PageError.tsx";
-import Dashboard from "../../pages/home/page.tsx";
-import StudentListPage from "../../pages/student/StudentListPage.tsx";
-import EnrollStudentPage from "../../pages/student/EnrollStudentPage.tsx";
-import StudentViewPage from "../../pages/student/StudentViewPage.tsx";
-import TeacherListPage from "../../pages/teacher/TeacherListPage.tsx";
-import GuardianListPage from "../../pages/guardian/GuardianListPage.tsx";
-import GuardianViewPage from "../../pages/guardian/GuardianViewPage.tsx";
-import AddTeacherPage from "../../pages/teacher/AddTeacherPage.tsx";
-import TeacherViewPage from "../../pages/teacher/TeacherViewPage.tsx";
-import {OrganizationPage} from "../../pages/org/OrganizationPage.tsx";
-import ClasseSubjectListsPage from "../../pages/classe_subject/ClasseSubjectListsPage.tsx";
-import ClasseViewPage from "../../pages/classe_subject/ClasseViewPage.tsx";
-import SubjectViewPage from "../../pages/classe_subject/SubjectViewPage.tsx";
-import {text} from "../../core/utils/text_display.ts";
-import ExamListPage from "../../pages/exam/ExamListPage.tsx";
-import AddExamPage from "../../pages/exam/AddExamPage.tsx";
-import ExamViewPage from "../../pages/exam/ExamViewPage.tsx";
-import AttendancePage from "../../pages/attendance/AttendancePage.tsx";
-import AttendanceAddPage from "../../pages/attendance/AttendanceAddPage.tsx";
-import {AttendanceEditPage} from "../../pages/attendance/AttendanceEditPage.tsx";
-import LibraryListPage from "../../pages/library/LibraryListPage.tsx";
-import FinanceDashboardPage from "../../pages/finance/FinanceDashboardPage.tsx";
-import MessagePage from "../../pages/chat/MessagePage.tsx";
-import EmployeeListPage from "../../pages/employee/EmployeeListPage.tsx";
-import LoginPage from "../../pages/user/LoginPage.tsx";
-import RedirectProvider from "../../providers/RedirectProvider.tsx";
-import NavigationHandler from "../../providers/NavigationHandler.tsx";
-import {AuthMiddleware} from "../../middleware/AuthMiddleware.tsx";
-import {withAuthProtection} from "../../middleware/withAuthProtection.tsx";
-import LogSchoolPage from "../../pages/user/LogSchoolPage.tsx";
-import AddEmployeePage from "../../pages/employee/AddEmployeePage.tsx";
-import EmployeeViewPage from "../../pages/employee/EmployeeViewPage.tsx";
-import CustomizePage from "../../pages/setting/CustomizePage.tsx";
-import AcademicYearPage from "../../pages/org/AcademicYearPage.tsx";
-import GradePage from "../../pages/org/GradePage.tsx";
-import DepartmentPage from "../../pages/org/DepartmentPage.tsx";
-import UserListPage from "../../pages/org/UserListPage.tsx";
-import {GradeSavePage} from "../../pages/org/GradeSavePage.tsx";
-import GradeEditPage from "../../pages/org/GradeEditPage.tsx";
-import {DepartmentViewPage} from "../../pages/org/DepartmentViewPage.tsx";
-import {DepartmentAddPage} from "../../pages/org/DepartmentAddPage.tsx";
-import {GradeViewPage} from "../../pages/org/GradeViewPage.tsx";
-import UserViewPage from "../../pages/org/UserViewPage.tsx";
-import UserSavePage from "../../pages/org/UserSavePage.tsx";
-import UserActivityPage from "../../pages/org/UserActivityPage.tsx";
-import PasswordResetPage from "../../pages/user/PasswordResetPage.tsx";
-import ChangePasswordPage from "../../pages/org/ChangePasswordPage.tsx";
-import {withRoleProtection} from "../../middleware/withRoleProtection.tsx";
-import ReEnrollStudentPage from "../../pages/student/ReEnrollStudentPage.tsx";
+import PageLayout from "@/pages/PageLayout.tsx";
+import PageError from "@/pages/errors/PageError.tsx";
+import Dashboard from "@/pages/home/page.tsx";
+import StudentListPage from "@/pages/student/StudentListPage.tsx";
+import EnrollStudentPage from "@/pages/student/EnrollStudentPage.tsx";
+import TeacherListPage from "@/pages/teacher/TeacherListPage.tsx";
+import GuardianListPage from "@/pages/guardian/GuardianListPage.tsx";
+import GuardianViewPage from "@/pages/guardian/GuardianViewPage.tsx";
+import AddTeacherPage from "@/pages/teacher/AddTeacherPage.tsx";
+import TeacherViewPage from "@/pages/teacher/TeacherViewPage.tsx";
+import {OrganizationPage} from "@/pages/org/OrganizationPage.tsx";
+import ClasseSubjectListsPage from "@/pages/classe_subject/ClasseSubjectListsPage.tsx";
+import ClasseViewPage from "@/pages/classe_subject/ClasseViewPage.tsx";
+import SubjectViewPage from "@/pages/classe_subject/SubjectViewPage.tsx";
+import {text} from "@/core/utils/text_display.ts";
+import ExamListPage from "@/pages/exam/ExamListPage.tsx";
+import AddExamPage from "@/pages/exam/AddExamPage.tsx";
+import ExamViewPage from "@/pages/exam/ExamViewPage.tsx";
+import AttendancePage from "@/pages/attendance/AttendancePage.tsx";
+import AttendanceAddPage from "@/pages/attendance/AttendanceAddPage.tsx";
+import {AttendanceEditPage} from "@/pages/attendance/AttendanceEditPage.tsx";
+import LibraryListPage from "@/pages/library/LibraryListPage.tsx";
+import FinanceDashboardPage from "@/pages/finance/FinanceDashboardPage.tsx";
+import MessagePage from "@/pages/chat/MessagePage.tsx";
+import EmployeeListPage from "@/pages/employee/EmployeeListPage.tsx";
+import LoginPage from "@/pages/user/LoginPage.tsx";
+import RedirectProvider from "@/providers/RedirectProvider.tsx";
+import NavigationHandler from "@/providers/NavigationHandler.tsx";
+import {AuthMiddleware} from "@/middleware/AuthMiddleware.tsx";
+import {withAuthProtection} from "@/middleware/withAuthProtection.tsx";
+import LogSchoolPage from "@/pages/user/LogSchoolPage.tsx";
+import AddEmployeePage from "@/pages/employee/AddEmployeePage.tsx";
+import EmployeeViewPage from "@/pages/employee/EmployeeViewPage.tsx";
+import CustomizePage from "@/pages/setting/CustomizePage.tsx";
+import AcademicYearPage from "@/pages/org/AcademicYearPage.tsx";
+import GradePage from "@/pages/org/GradePage.tsx";
+import DepartmentPage from "@/pages/org/DepartmentPage.tsx";
+import UserListPage from "@/pages/org/UserListPage.tsx";
+import {GradeSavePage} from "@/pages/org/GradeSavePage.tsx";
+import GradeEditPage from "@/pages/org/GradeEditPage.tsx";
+import {DepartmentViewPage} from "@/pages/org/DepartmentViewPage.tsx";
+import {DepartmentAddPage} from "@/pages/org/DepartmentAddPage.tsx";
+import {GradeViewPage} from "@/pages/org/GradeViewPage.tsx";
+import UserViewPage from "@/pages/org/UserViewPage.tsx";
+import UserSavePage from "@/pages/org/UserSavePage.tsx";
+import UserActivityPage from "@/pages/org/UserActivityPage.tsx";
+import PasswordResetPage from "@/pages/user/PasswordResetPage.tsx";
+import ChangePasswordPage from "@/pages/org/ChangePasswordPage.tsx";
+import {withRoleProtection} from "@/middleware/withRoleProtection.tsx";
+import ReEnrollStudentPage from "@/pages/student/ReEnrollStudentPage.tsx";
+import StudentViewPage from "@/pages/student/StudentViewPage.tsx";
+import SearchablePage from "@/pages/search/SearchablePage.tsx";
 
 const DashboardPage = withAuthProtection(withRoleProtection(Dashboard));
 
@@ -57,6 +58,8 @@ const ListStudentPage = withAuthProtection(withRoleProtection(StudentListPage));
 const EnrollPage = withAuthProtection(withRoleProtection(EnrollStudentPage));
 const ViewStudentPage = withAuthProtection(withRoleProtection(StudentViewPage));
 const ReEnrollPage = withAuthProtection(withRoleProtection(ReEnrollStudentPage));
+
+const SearchPage = withAuthProtection(withRoleProtection(SearchablePage))
 
 const ListTeacherPage = withAuthProtection(withRoleProtection(TeacherListPage));
 const TeacherAddPage = withAuthProtection(withRoleProtection(AddTeacherPage));
@@ -133,9 +136,9 @@ export const Route = createBrowserRouter([
                     { path: text.path.new, element: <EnrollPage />},
                     { path: text.path.view, element: <ViewStudentPage />},
                     { path: 're-enrollment', element: <ReEnrollPage /> },
-                    { path: 'search', element: 'Recherche' }
                 ]
             },
+            { path: 'search', element: <SearchPage /> },
             {
                 path: 'teachers',
                 children: [

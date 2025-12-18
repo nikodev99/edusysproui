@@ -1,8 +1,8 @@
-import {GenderCounted, Pageable} from "../../core/utils/interfaces.ts";
+import {GenderCounted, Pageable} from "@/core/utils/interfaces.ts";
 import {AxiosResponse} from "axios";
-import {Enrollment} from "../../entity";
-import {apiClient, request} from "../axiosConfig.ts";
-import {EnrollmentSchema} from "../../schema";
+import {Enrollment} from "@/entity";
+import {apiClient, request} from "@/data/axiosConfig.ts";
+import {EnrollmentSchema} from "@/schema";
 
 export const enrollStudent = (data: EnrollmentSchema): Promise<AxiosResponse<Enrollment>> => {
     return request({
@@ -39,6 +39,16 @@ export const searchUnenrolledStudents = (schoolId: string, searchInput: string) 
     return request({
         method: 'GET',
         url: '/enroll/not_enrolled/' + schoolId,
+        params: {
+            query: searchInput
+        }
+    })
+}
+
+export const searchStudents = (schoolId: string, searchInput: string): Promise<AxiosResponse<Enrollment, unknown>> => {
+    return request({
+        method: 'GET',
+        url: '/enroll/searched-student/' + schoolId,
         params: {
             query: searchInput
         }

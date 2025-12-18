@@ -1,22 +1,17 @@
-import { Metadata } from "../core/utils/interfaces.ts";
-import {useDocumentTitle} from "../hooks/useDocumentTitle.ts";
-import {BCProps, useBreadCrumb} from "../hooks/useBreadCrumb.tsx";
+import { Metadata } from "@/core/utils/interfaces.ts";
+import {useDocumentTitle} from "@/hooks/useDocumentTitle.ts";
+import {BCProps, useBreadCrumb} from "@/hooks/useBreadCrumb.tsx";
 import {ReactNode} from "react";
-import FormSuccess from "../components/ui/form/FormSuccess.tsx";
-import FormError from "../components/ui/form/FormError.tsx";
-import {Alert} from "antd";
+import {Notification, NotificationProps} from "@/components/custom/Notification.tsx";
 
-export interface OutletPageProps {
+export type OutletPageProps = {
     metadata: Metadata
     breadCrumb: BCProps
     content: ReactNode
-    responseMessages?: {success?: ReactNode, error?: ReactNode}
-    setRedirect?: (url?: string) => void
     setActivity?: () => Promise<boolean>
-    isNotif?: boolean
-}
+} & NotificationProps
 
-const OutletPage = ({metadata, breadCrumb, content, responseMessages, setRedirect, isNotif = true}: OutletPageProps) => {
+const OutletPage = ({metadata, breadCrumb, content, responseMessages, setRedirect, isNotif}: OutletPageProps) => {
     useDocumentTitle(metadata)
 
     const {context} = useBreadCrumb(breadCrumb)
@@ -24,13 +19,7 @@ const OutletPage = ({metadata, breadCrumb, content, responseMessages, setRedirec
     return <>
         {context}
         {responseMessages && (
-            <>
-                {responseMessages?.success && <FormSuccess message={responseMessages?.success} setRedirect={setRedirect} isNotif={isNotif}/>}
-                {responseMessages?.error && <FormError message={responseMessages?.error} isNotif={isNotif}/>}
-
-                {responseMessages?.success && <Alert type={'success'} message={responseMessages?.success} closeIcon showIcon style={{marginBottom: '10px'}}/>}
-                {responseMessages?.error && <Alert type={'error'} message={responseMessages?.error} closeIcon showIcon style={{marginBottom: '10px'}}/>}
-            </>
+            <Notification isNotif={isNotif} setRedirect={setRedirect} responseMessages={responseMessages} />
         )}
         {content}
     </>

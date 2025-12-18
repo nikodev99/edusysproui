@@ -3,7 +3,7 @@ import {text} from "../core/utils/text_display.ts";
 import {redirectTo} from "../context/RedirectContext.ts";
 import {SectionType} from "../entity/enums/section.ts";
 import {getSlug, joinWord} from "../core/utils/utils.ts";
-import {Individual} from "../entity";
+import {Individual} from "@/entity";
 
 export const useRedirect = () => {
     const {schoolSlug} = useParams<{ schoolSlug: string }>()
@@ -21,7 +21,12 @@ export const useRedirect = () => {
 
     const toReenrollStudent = () => redirectTo(text.student.group.reAdd.href)
 
-    const toSearchStudent = () => redirectTo(text.student.group.search.href)
+    const toSearch = (state?: string) => {
+        if(typeof state === 'string')
+            return redirectTo(text.search.href, {state: state})
+        else
+            return redirectTo(text.search.href)
+    }
 
     const toViewStudent = (studentId: string, data?: Individual) => {
         const path = text.student.group.view.href + studentId
@@ -167,7 +172,7 @@ export const useRedirect = () => {
         toStudent,
         toEnrollStudent,
         toReenrollStudent,
-        toSearchStudent,
+        toSearch,
         toViewStudent,
         toTeacher,
         toAddTeacher,

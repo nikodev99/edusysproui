@@ -4,13 +4,21 @@ import Search from "antd/es/input/Search";
 import AvatarDropdown from "./AvatarDropdown.tsx";
 import NotificationDropdown from "./NotificationDropdown.tsx";
 import {LuBell, LuMenu, LuUser} from "react-icons/lu";
-import {useAcademicYearRepo} from "../../hooks/actions/useAcademicYearRepo.ts";
+import {useAcademicYearRepo} from "@/hooks/actions/useAcademicYearRepo.ts";
+import {useRedirect} from "@/hooks/useRedirect.ts";
+import {useState} from "react";
 
 
 const Header = ({onCollapsed}: {onCollapsed: () => void}) => {
-
+    const [searchValue, setSearchValue] = useState<string | undefined>(undefined)
+    const {toSearch} = useRedirect()
     const {useGetCurrentAcademicYear} = useAcademicYearRepo()
     const academicYear = useGetCurrentAcademicYear()
+
+    const handleSearch = (value: string) => {
+        setSearchValue(undefined)
+        return toSearch(value)
+    }
 
     return(
         <Layout.Header className='header'>
@@ -28,7 +36,15 @@ const Header = ({onCollapsed}: {onCollapsed: () => void}) => {
                 </Flex>
 
                 <Flex align='center' style={{width: '600px'}}>
-                    <Search placeholder='Search...' allowClear className='search-input' size='large' variant='filled' />
+                    <Search
+                        placeholder='Search...'
+                        allowClear
+                        className='search-input'
+                        size='large'
+                        variant='filled'
+                        value={searchValue}
+                        onSearch={handleSearch}
+                    />
                 </Flex>
                 <Flex align='center' gap='3rem'>
                     <Flex align='center' gap='10px'>

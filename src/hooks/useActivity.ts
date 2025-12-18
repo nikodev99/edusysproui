@@ -1,6 +1,6 @@
 import {useUserRepo} from "./actions/useUserRepo.ts";
-import {Individual} from "../entity";
-import {text} from "../core/utils/text_display.ts";
+import {Individual} from "@/entity";
+import {text} from "@/core/utils/text_display.ts";
 
 export const useActivity = () => {
     const {saveActivity} = useUserRepo()

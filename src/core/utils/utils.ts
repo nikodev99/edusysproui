@@ -2,11 +2,11 @@ import {ApiEvent, Color, DateExplose, EnumType, ExamView, ID, Options, StudentLi
 import countries from 'world-countries'
 import dayjs from "dayjs";
 import 'dayjs/locale/fr.js'
-import {BloodType} from "../../entity/enums/bloodType.ts";
+import {BloodType} from "@/entity/enums/bloodType.ts";
 import {ProgressProps} from "antd";
-import {Day} from "../../entity/enums/day.ts";
-import {Gender} from "../../entity/enums/gender.tsx";
-import {AcademicYear, Assignment, Enrollment, Individual, Planning, Schedule} from "../../entity";
+import {Day} from "@/entity/enums/day.ts";
+import {Gender} from "@/entity/enums/gender.tsx";
+import {AcademicYear, Assignment, Enrollment, Individual, Planning, Schedule} from "@/entity";
 import Datetime from "../datetime.ts";
 import {BROWSERS} from "./browser.ts";
 import {FieldError} from "react-hook-form";
@@ -684,6 +684,10 @@ export const convertToM = (cm?: number) => {
 
 export const isNull = (word: string | undefined) => {
     return word === null || word === undefined || word === '' || word.length === 0;
+}
+
+export const checkAcademicYearEnded = (academicYear?: AcademicYear): boolean => {
+    return academicYear ? Datetime.of(academicYear.endDate).isAfter(new Date()) : false
 }
 
 export const hasField = <T extends object>(obj: T, field: keyof T): boolean => {

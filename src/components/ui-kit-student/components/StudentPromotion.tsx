@@ -1,16 +1,16 @@
-import {ConfirmationModal} from "../../ui/layout/ConfirmationModal.tsx";
-import {Enrollment, Individual} from "../../../entity";
-import {setFirstName} from "../../../core/utils/utils.ts";
+import {ConfirmationModal} from "@/components/ui/layout/ConfirmationModal.tsx";
+import {Enrollment, Individual} from "@/entity";
+import {setFirstName} from "@/core/utils/utils.ts";
 import {useEffect, useMemo, useState} from "react";
-import Datetime from "../../../core/datetime.ts";
-import {text} from "../../../core/utils/text_display.ts";
+import Datetime from "@/core/datetime.ts";
+import {text} from "@/core/utils/text_display.ts";
 import {LuCircleArrowOutUpRight} from "react-icons/lu";
 import {AcademicForm} from "./AcademicForm.tsx";
-import {useActivity} from "../../../hooks/useActivity.ts";
-import {Option} from "../../../core/utils/interfaces.ts";
-import {useEnrollmentForm} from "../../../hooks/useEnrollmentForm.ts";
+import {useActivity} from "@/hooks/useActivity.ts";
+import {Option} from "@/core/utils/interfaces.ts";
+import {useEnrollmentForm} from "@/hooks/useEnrollmentForm.ts";
 import {Form} from "antd";
-import {useGlobalStore} from "../../../core/global/store.ts";
+import {useGlobalStore} from "@/core/global/store.ts";
 
 export const StudentPromotion = ({student, open, close, setRefresh}: {
     student: Enrollment,

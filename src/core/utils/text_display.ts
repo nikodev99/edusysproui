@@ -1,4 +1,4 @@
-import {loggedUser} from "../../auth/jwt/LoggedUser.ts";
+import {loggedUser} from "@/auth/jwt/LoggedUser.ts";
 import {toLower} from "./utils.ts";
 
 export const raw = {
@@ -8,6 +8,10 @@ export const raw = {
         path: {
             page: ['/', 'dashboard'],
         },
+    },
+    search: {
+        label: 'Recherche',
+        href: '/search'
     },
     student: {
         label: 'Étudiant',
@@ -20,10 +24,6 @@ export const raw = {
             reAdd: {
               label: 'Re-inscription',
               href: '/students/re-enrollment'
-            },
-            search: {
-              label: 'Recherche',
-              href: '/students/search'
             },
             view: {
                 label: 'Details',

@@ -10,5 +10,4 @@ export { StudentExam } from "./components/StudentExam.tsx";
 export { StudentDiscipline } from "./components/StudentDiscipline.tsx";
 export { StudentInfo } from "./components/StudentInfo.tsx";
 export { StudentActionLinks } from "./components/StudentActionLinks.tsx";
-export { StudentDisciplineManagement } from "./components/StudentDisciplineManagement.tsx"
 export { StudentResult } from "./components/StudentResult.tsx"

@@ -17,13 +17,14 @@ import {LuEye} from "react-icons/lu";
 import {useColumnSearch} from "@/hooks/useColumnSearch.tsx";
 import Datetime from "@/core/datetime.ts";
 import {useRedirect} from "@/hooks/useRedirect.ts";
-import {AcademicYear, Individual} from "@/entity";
+import {AcademicYear, Enrollment, Individual} from "@/entity";
 import {StudentActionLinks} from "./StudentActionLinks.tsx";
 import {useCallback, useState} from "react";
 import {ItemType} from "antd/es/menu/interface";
+import {toEnrollment} from "@/entity/domain/enrollment.ts";
 
 export const StudentList = <TError extends AxiosError>(listProps: ListViewerProps<StudentListDataType, TError>) => {
-    const [selectedStudent, setSelectedStudent] = useState<StudentListDataType | undefined>(undefined)
+    const [selectedStudent, setSelectedStudent] = useState<Enrollment | undefined>(undefined)
     const [linkButtons, setLinkButtons] = useState<ItemType[]>([])
     const [refresh, setRefresh] = useState<boolean>(false)
     
@@ -177,7 +178,7 @@ export const StudentList = <TError extends AxiosError>(listProps: ListViewerProp
                 cardData={cardData}
                 hasDesc={false}
                 level={5}
-                onSelectData={setSelectedStudent}
+                onSelectData={(data) => setSelectedStudent(toEnrollment(data))}
                 refetchCondition={refresh}
             />
            <StudentActionLinks

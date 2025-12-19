@@ -51,6 +51,7 @@ import {withRoleProtection} from "@/middleware/withRoleProtection.tsx";
 import ReEnrollStudentPage from "@/pages/student/ReEnrollStudentPage.tsx";
 import StudentViewPage from "@/pages/student/StudentViewPage.tsx";
 import SearchablePage from "@/pages/search/SearchablePage.tsx";
+import StudentDisciplinePage from "@/pages/student/StudentDisciplinePage.tsx";
 
 const DashboardPage = withAuthProtection(withRoleProtection(Dashboard));
 
@@ -58,6 +59,7 @@ const ListStudentPage = withAuthProtection(withRoleProtection(StudentListPage));
 const EnrollPage = withAuthProtection(withRoleProtection(EnrollStudentPage));
 const ViewStudentPage = withAuthProtection(withRoleProtection(StudentViewPage));
 const ReEnrollPage = withAuthProtection(withRoleProtection(ReEnrollStudentPage));
+const StudentDiscipline = withAuthProtection(withRoleProtection(StudentDisciplinePage))
 
 const SearchPage = withAuthProtection(withRoleProtection(SearchablePage))
 
@@ -136,6 +138,7 @@ export const Route = createBrowserRouter([
                     { path: text.path.new, element: <EnrollPage />},
                     { path: text.path.view, element: <ViewStudentPage />},
                     { path: 're-enrollment', element: <ReEnrollPage /> },
+                    { path: text.path.view + '/discipline', element: <StudentDiscipline /> }
                 ]
             },
             { path: 'search', element: <SearchPage /> },

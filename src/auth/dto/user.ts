@@ -1,6 +1,6 @@
 import {Role} from "./role.ts";
-import {Individual, School} from "../../entity";
-import {setTitle} from "../../core/utils/utils.ts";
+import {Individual, School} from "@/entity";
+import {setTitle} from "@/core/utils/utils.ts";
 import {useMemo} from "react";
 import {z} from "zod";
 

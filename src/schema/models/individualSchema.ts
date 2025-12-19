@@ -1,6 +1,6 @@
 import {z} from "zod";
-import {addressSchema} from "./addressSchema.ts";
-import {dateProcess, utf8characterDigitExcluded} from "../commonSchema.ts";
+import {addressSchema} from "@/schema";
+import {dateProcess, utf8characterDigitExcluded} from "@/schema/commonSchema.ts";
 
 export const individualSchema = z.object({
     firstName: utf8characterDigitExcluded({
@@ -29,7 +29,10 @@ export const individualSchema = z.object({
     address: addressSchema,
     image: z.string().nullable().optional(),
     attachments: z.array(z.string()).nullable().optional(),
-    individualType: z.union([z.string({required_error: "Le type de l'individu est requis"}), z.number({required_error: "Le type de l'individu est requis"})])
+    individualType: z.union([
+        z.string({required_error: "Le type de l'individu est requis"}),
+        z.number({required_error: "Le type de l'individu est requis"})
+    ])
 })
 
 export const teacherIndividualExtend = individualSchema.extend({

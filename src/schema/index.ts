@@ -22,6 +22,8 @@ import {
     semesterSchema, semesterTemplateSchema,
 } from "./models/semesterSchema.ts";
 import {departmentBossSchema, departmentSchema} from "./models/departmentSchema.ts";
+import {reprimandSchema} from "@/schema/models/reprimandSchema.ts";
+import {punishmentSchema} from "@/schema/models/punishmentSchema.ts";
 
 export {enrollmentSchema} from './models/enrollmentSchema'
 export {classeSchemaMerge, classeSchema} from './models/classeSchema'
@@ -77,3 +79,5 @@ export type AllSemesterTemplateSchema = z.infer<typeof allSemesterTemplateSchema
 export type DepartmentSchema = z.infer<typeof departmentSchema>
 export type DepartmentBossSchema = z.infer<typeof departmentBossSchema>
 export type AssignUserToSchoolSchema = z.infer<typeof assignUserToSchoolSchema>
+export type ReprimandSchema = z.infer<typeof reprimandSchema>
+export type Punishment = z.infer<typeof punishmentSchema>

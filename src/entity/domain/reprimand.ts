@@ -1,10 +1,6 @@
-import {Moment} from "../../core/utils/interfaces.ts";
+import {Moment} from "@/core/utils/interfaces.ts";
 import {ReprimandType} from "../enums/reprimandType.ts";
-import {Punishment} from "./punishment.ts";
-import {Individual} from "./individual.ts";
-import {Student} from "./student.ts";
-import {AcademicYear} from "./academicYear.ts";
-import {Classe} from "./classe.ts";
+import {Punishment, Student, Individual, AcademicYear, Classe} from "@/entity";
 
 export interface Reprimand {
     id: number

@@ -16,7 +16,9 @@ const PageHierarchy = ({items, mBottom}: PageHierarchyProps) => {
             <Link to={`${item.path}`} className='breadcrumb-nav' key={item.path || index} state={item.state}>
                 {item.title}
             </Link>
-        ): (
+        ) : item.setRedirect ? (
+            <a onClick={item.setRedirect}>{item?.title}</a>
+        ) : (
             item.title
         )
     }))

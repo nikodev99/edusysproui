@@ -14,14 +14,14 @@ import {text} from "../core/utils/text_display.ts";
 import {ItemType} from "antd/es/menu/interface";
 
 interface RouteAccessMap {
-    module?: ((roles: Role[]) => boolean)[]
+    module?: (() => boolean)[]
     actions?: {
-        [actionPath: string]: ((roles: Role[]) => boolean)[]
+        [actionPath: string]: (() => boolean)[]
     }
 }
 
 interface MenuPermission {
-    canView: (roles: Role[]) => boolean
+    canView: () => boolean
 }
 
 class RouteAccess {
@@ -50,11 +50,11 @@ class RouteAccess {
          */
         'students': {
             module: [
-                (roles) => isTopAdmin(roles) || isEnroll(roles) || isTeacher(roles)
+                () => isTopAdmin() || isEnroll() || isTeacher()
             ],
             actions: {
                 'new': [
-                    (roles) => isTopAdmin(roles) || isEnroll(roles)
+                    () => isTopAdmin() || isEnroll()
                 ]
             }
         },
@@ -76,7 +76,7 @@ class RouteAccess {
          */
         'guardians': {
             module: [
-                (roles) => isTopAdmin(roles) || isFinance(roles) || isTeacher(roles) || isGuardian(roles)
+                () => isTopAdmin() || isFinance() || isTeacher() || isGuardian()
             ]
         },
 
@@ -94,11 +94,11 @@ class RouteAccess {
          */
         'teachers': {
             module: [
-                (roles) => isTopAdmin(roles) || isFinance(roles) || isHR(roles)
+                () => isTopAdmin() || isFinance() || isHR()
             ],
             actions: {
                 'new': [
-                    (roles) => isTopAdmin(roles) || isHR(roles)
+                    () => isTopAdmin() || isHR()
                 ]
             }
         },
@@ -117,7 +117,7 @@ class RouteAccess {
          */
         'classes-and-subjects': {
             module: [
-                (roles) => isTopAdmin(roles) || isAdmin(roles) || isSecretary(roles)
+                () => isTopAdmin() || isAdmin() || isSecretary()
             ]
         },
 
@@ -134,11 +134,11 @@ class RouteAccess {
          */
         'examinations': {
             module: [
-                (roles) => isTopAdmin(roles) || isTeacher(roles)
+                () => isTopAdmin() || isTeacher()
             ],
             actions: {
                 'new': [
-                    (roles) => isTeacher(roles)
+                    () => isTeacher()
                 ]
             }
         },
@@ -156,13 +156,13 @@ class RouteAccess {
          */
         'attendances': {
             module: [
-                (roles) => isTopAdmin(roles) || isSecretary(roles)
+                () => isTopAdmin() || isSecretary()
             ]
         },
 
         /**
          * Represents a set of access rules for the 'library' section. Each function in the array
-         * evaluates a condition based on the user's roles to determine access.
+         * evaluates a condition based on the user's to determine access.
          *
          * @property {Array<Function>} library - Array of functions that check user access for the 'library' section.
          * Each function takes roles as input, evaluates the roles using specific conditions,
@@ -170,7 +170,7 @@ class RouteAccess {
          */
         'library': {
             module: [
-                (roles) => isTopAdmin(roles) || isSecretary(roles)
+                () => isTopAdmin() || isSecretary()
             ]
         },
 
@@ -187,7 +187,7 @@ class RouteAccess {
          */
         'fee-and-finance': {
             module: [
-                (roles) => isTopAdmin(roles) || isFinance(roles)
+                () => isTopAdmin() || isFinance()
             ]
         },
 
@@ -207,7 +207,7 @@ class RouteAccess {
          */
         'staff-management': {
             module: [
-                (roles) => isTopAdmin(roles) || isHR(roles)
+                () => isTopAdmin() || isHR()
             ]
         },
 
@@ -226,37 +226,37 @@ class RouteAccess {
          */
         'organization': {
             module: [
-                (roles) => isAdmin(roles) || isTopAdmin(roles)
+                () => isAdmin() || isTopAdmin()
             ]
         },
 
         'organization/school': {
             module: [
-                (roles) => isAdmin(roles) || isTopAdmin(roles)
+                () => isAdmin() || isTopAdmin()
             ]
         },
         'organization/academic_year': {
             module: [
-                (roles) => isAdmin(roles) || isTopAdmin(roles)
+                () => isAdmin() || isTopAdmin()
             ]
         },
         'organization/grades': {
             module: [
-                (roles) => isAdmin(roles) || isTopAdmin(roles)
+                () => isAdmin() || isTopAdmin()
             ]
         },
         'organization/departments': {
             module: [
-                (roles) => isAdmin(roles) || isTopAdmin(roles)
+                () => isAdmin() || isTopAdmin()
             ]
         },
         'organization/users': {
             module: [
-                (roles) => isAdmin(roles) || isTopAdmin(roles)
+                () => isAdmin() || isTopAdmin()
             ],
             actions: {
                 'new': [
-                    (roles) => isAdmin(roles) || isTopAdmin(roles)
+                    () => isAdmin() || isTopAdmin()
                 ],
                 ':id/:slug/change-password': [],
                 ':slug/activity': [],
@@ -266,12 +266,12 @@ class RouteAccess {
 
         'settings': {
             module: [
-                (roles) => isAdmin(roles) || isTopAdmin(roles)
+                () => isAdmin() || isTopAdmin()
             ]
         },
         'settings/customize': {
             module: [
-                (roles) => isAdmin(roles) || isTopAdmin(roles)
+                () => isAdmin() || isTopAdmin()
             ]
         },
         'settings/legal_certificate': {
@@ -282,54 +282,54 @@ class RouteAccess {
         },
         'settings/special_document': {
             module: [
-                (roles) => isAdmin(roles) || isTopAdmin(roles)
+                () => isAdmin() || isTopAdmin()
             ]
         },
     }
 
     private menuPermissions: Record<string, MenuPermission> = {
         [text.student.href]: {
-            canView: (roles) => isTopAdmin(roles) || isEnroll(roles) || isTeacher(roles)
+            canView: () => isTopAdmin() || isEnroll() || isTeacher()
         },
 
         [text.guardian.href]: {
-            canView: (roles) => isTopAdmin(roles) || isFinance(roles) || isTeacher(roles) || isGuardian(roles)
+            canView: () => isTopAdmin() || isFinance() || isTeacher() || isGuardian()
         },
 
         [text.teacher.href]: {
-            canView: (roles) => isTopAdmin(roles) || isFinance(roles) || isHR(roles)
+            canView: () => isTopAdmin() || isFinance() || isHR()
         },
 
         [text.cc.href]: {
-            canView: (roles) => isTopAdmin(roles) || isAdmin(roles) || isSecretary(roles)
+            canView: () => isTopAdmin() || isAdmin() || isSecretary()
         },
 
         [text.exam.href]: {
-            canView: (roles) => isTopAdmin(roles) || isTeacher(roles)
+            canView: () => isTopAdmin() || isTeacher()
         },
 
         [text.att.href]: {
-            canView: (roles) => isTopAdmin(roles) || isSecretary(roles)
+            canView: () => isTopAdmin() || isSecretary()
         },
 
         [text.finance.href]: {
-            canView: (roles) => isTopAdmin(roles) || isFinance(roles)
+            canView: () => isTopAdmin() || isFinance()
         },
 
         '/report-and-analytics': {
-            canView: (roles) => isTeacher(roles) || isAdmin(roles) || isEnroll(roles)
+            canView: () => isTeacher() || isAdmin() || isEnroll()
         },
 
         [text.employee.href]: {
-            canView: (roles) => isTopAdmin(roles) || isHR(roles)
+            canView: () => isTopAdmin() || isHR()
         },
 
         [text.org.href]: {
-            canView: (roles) => isAdmin(roles) || isTopAdmin(roles)
+            canView: () => isAdmin() || isTopAdmin()
         },
 
         [text.settings.href]: {
-            canView: (roles) => isAdmin(roles) || isTopAdmin(roles)
+            canView: () => isAdmin() || isTopAdmin()
         }
     }
 
@@ -362,19 +362,19 @@ class RouteAccess {
         if (!moduleConfig) {
             for (const [routePattern, config] of Object.entries(this.routeAccessMap)) {
                 if (fullRoute.startsWith(routePattern)) {
-                    return this.checkModuleAndAction(config, action, roles)
+                    return this.checkModuleAndAction(config, action)
                 }
             }
 
             return true
         }
 
-        return this.checkModuleAndAction(moduleConfig, action, roles)
+        return this.checkModuleAndAction(moduleConfig, action)
     }
 
-    private checkModuleAndAction (config: RouteAccessMap, action: string, roles: Role[]): boolean {
+    private checkModuleAndAction (config: RouteAccessMap, action: string): boolean {
         if (config.module && config.module.length > 0) {
-            const hasModuleAccess = config.module.some(checker => checker(roles))
+            const hasModuleAccess = config.module.some(checker => checker())
             if (!hasModuleAccess) {
                 return false
             }
@@ -387,7 +387,7 @@ class RouteAccess {
                 if (actionCheckers.length === 0)
                     return true
 
-                return actionCheckers.some(checker => checker(roles))
+                return actionCheckers.some(checker => checker())
             }
         }
 
@@ -396,15 +396,15 @@ class RouteAccess {
                 if (checkers.length === 0)
                     return true
 
-                return checkers.some(checker => checker(roles))
+                return checkers.some(checker => checker())
             }
         }
 
         return true
     }
 
-    private canViewMenuItem (menuKey: string, roles: Role[]): boolean {
-        if (isTopAdmin(roles)) {
+    private canViewMenuItem (menuKey: string): boolean {
+        if (isTopAdmin()) {
             return true
         }
 
@@ -414,10 +414,10 @@ class RouteAccess {
             return true
         }
 
-        return permission.canView(roles)
+        return permission.canView()
     }
 
-    public filterMenuItems (items: ItemType[], roles: Role[]): ItemType[] {
+    public filterMenuItems (items: ItemType[]): ItemType[] {
         return items.map(item => {
             if (!item || typeof item !== "object" || !('in' in item)) {
                 return item
@@ -427,7 +427,7 @@ class RouteAccess {
 
             // If this item has children (it's a submenu), filter the children recursively
             if ('children' in itemCopy && Array.isArray(itemCopy.children)) {
-                const filteredChildren = this.filterMenuItems(itemCopy.children, roles)
+                const filteredChildren = this.filterMenuItems(itemCopy.children)
 
                 // If all children were filtered out, we should hide the parent to
                 // An empty submenu is confusing and looks broken to users
@@ -438,7 +438,7 @@ class RouteAccess {
             }
 
             const itemKey = String(itemCopy.key)
-            if (!this.canViewMenuItem(itemKey, roles)) {
+            if (!this.canViewMenuItem(itemKey)) {
                 return null
             }
 

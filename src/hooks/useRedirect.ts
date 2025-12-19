@@ -3,7 +3,7 @@ import {text} from "../core/utils/text_display.ts";
 import {redirectTo} from "../context/RedirectContext.ts";
 import {SectionType} from "../entity/enums/section.ts";
 import {getSlug, joinWord} from "../core/utils/utils.ts";
-import {Individual} from "@/entity";
+import {Enrollment, Individual} from "@/entity";
 
 export const useRedirect = () => {
     const {schoolSlug} = useParams<{ schoolSlug: string }>()
@@ -35,6 +35,13 @@ export const useRedirect = () => {
             slugPath = `${path}?identifier=${getSlug(data)}`
         }
         redirectTo(slugPath)
+    }
+
+    const toDiscipline = (studentId: string, student?: Enrollment) => {
+        const path = text.student.group.view.href + studentId + '/discipline'
+        if (student)
+            return redirectTo(path, {state: student})
+        return redirectTo(path)
     }
 
     const toTeacher = () => redirectTo(text.teacher.href)
@@ -174,6 +181,7 @@ export const useRedirect = () => {
         toReenrollStudent,
         toSearch,
         toViewStudent,
+        toDiscipline,
         toTeacher,
         toAddTeacher,
         toViewTeacher,

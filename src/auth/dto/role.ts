@@ -1,3 +1,5 @@
+import {loggedUser} from "@/auth/jwt/LoggedUser.ts";
+
 export enum RoleEnum {
     TOP_ADMIN = 'Top Administrateur',
     ADMIN = 'Responsable Informatique',
@@ -12,34 +14,36 @@ export enum RoleEnum {
 
 export type Role = keyof typeof RoleEnum;
 
-export const isTopAdmin = (roles: Role[]): boolean => {
-    return roles?.some(role => role === 'TOP_ADMIN' || role === 'DIRECTOR');
+const userRoles = loggedUser.getRole()
+
+export const isTopAdmin = (): boolean => {
+    return userRoles?.some(role => role === 'TOP_ADMIN' || role === 'DIRECTOR') || false;
 }
 
-export const isAdmin = (roles: Role[]): boolean => {
-    return roles?.some(role => role === 'ADMIN');
+export const isAdmin = (): boolean => {
+    return userRoles?.some(role => role === 'ADMIN') || false;
 }
 
-export const isTeacher = (roles: Role[]): boolean => {
-    return roles?.some(role => role === 'TEACHER');
+export const isTeacher = (): boolean => {
+    return userRoles?.some(role => role === 'TEACHER') || false;
 }
 
-export const isHR = (roles: Role[]): boolean => {
-    return roles?.some(role => role === 'HR');
+export const isHR = (): boolean => {
+    return userRoles?.some(role => role === 'HR') || false;
 }
 
-export const isFinance = (roles: Role[]): boolean => {
-    return roles?.some(role => role === 'FINANCE');
+export const isFinance = (): boolean => {
+    return userRoles?.some(role => role === 'FINANCE') || false;
 }
 
-export const isEnroll = (roles: Role[]): boolean => {
-    return roles?.some(role => role === 'ENROLL');
+export const isEnroll = (): boolean => {
+    return userRoles?.some(role => role === 'ENROLL') || false;
 }
 
-export const isGuardian = (roles: Role[]): boolean => {
-    return roles?.some(role => role === 'GUARDIAN');
+export const isGuardian = (): boolean => {
+    return userRoles?.some(role => role === 'GUARDIAN') || false;
 }
 
-export const isSecretary = (roles: Role[]): boolean => {
-    return roles?.some(role => role === 'SECRETARY');
+export const isSecretary = (): boolean => {
+    return userRoles?.some(role => role === 'SECRETARY') || false;
 }

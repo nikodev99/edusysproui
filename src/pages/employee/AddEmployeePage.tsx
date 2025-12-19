@@ -1,21 +1,21 @@
-import {text} from "../../core/utils/text_display.ts";
-import {AddStepForm} from "../../components/custom/AddStepForm.tsx";
+import {text} from "@/core/utils/text_display.ts";
+import {AddStepForm} from "@/components/custom/AddStepForm.tsx";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useForm} from "react-hook-form";
-import {EmployeeSchema} from "../../schema";
-import {employeeSchema} from "../../schema/models/employeeSchema.ts";
+import {EmployeeSchema} from "@/schema";
+import {employeeSchema} from "@/schema/models/employeeSchema.ts";
 import {ReactNode, useMemo, useState, useTransition} from "react";
-import {IndividualForm} from "../../components/forms/IndividualForm.tsx";
-import {AddressOwner, IndividualType} from "../../core/shared/sharedEnums.ts";
-import {Gender} from "../../entity/enums/gender.tsx";
-import {Status} from "../../entity/enums/status.ts";
-import AddressForm from "../../components/forms/AddressForm.tsx";
-import {EmployeeForm} from "../../components/forms/EmployeeForm.tsx";
-import {AttachmentForm} from "../../components/ui-kit-student";
+import {IndividualForm} from "@/components/forms/IndividualForm.tsx";
+import {AddressOwner, IndividualType} from "@/core/shared/sharedEnums.ts";
+import {Gender} from "@/entity/enums/gender.tsx";
+import {Status} from "@/entity/enums/status.ts";
+import AddressForm from "@/components/forms/AddressForm.tsx";
+import {EmployeeForm} from "@/components/forms/EmployeeForm.tsx";
+import {AttachmentForm} from "@/components/ui-kit-student";
 import {OutputFileEntry} from "@uploadcare/blocks";
-import {redirectTo} from "../../context/RedirectContext.ts";
-import {useEmployeeRepo} from "../../hooks/actions/useEmployeeRepo.ts";
-import {loggedUser} from "../../auth/jwt/LoggedUser.ts";
+import {redirectTo} from "@/context/RedirectContext.ts";
+import {useEmployeeRepo} from "@/hooks/actions/useEmployeeRepo.ts";
+import {loggedUser} from "@/auth/jwt/LoggedUser.ts";
 
 const AddEmployeePage = () => {
   const metadata = {
@@ -65,7 +65,7 @@ const AddEmployeePage = () => {
   }
 
   const triggerNext = async (current: number) => {
-    let validateFields
+    let validateFields: boolean
     try {
       switch (current) {
         case 0:
@@ -170,8 +170,6 @@ const AddEmployeePage = () => {
       setErrorMessage(`Impossible d'ajouté l'employée {submitCount=${submitCount}, école=${school?.name}}`)
     }
   }
-
-  console.log("ERRORS: ", errors)
 
   return (
       <AddStepForm

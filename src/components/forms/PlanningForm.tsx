@@ -1,16 +1,16 @@
-import FormContent from "../ui/form/FormContent.tsx";
-import {FormContentProps, TypedInputType} from "../../core/utils/interfaces.ts";
-import {Planning, Semester} from "../../entity";
+import FormContent from "@/components/ui/form/FormContent.tsx";
+import {FormContentProps, TypedInputType} from "@/core/utils/interfaces.ts";
+import {Planning, Semester} from "@/entity";
 import {Control, FieldErrors, FieldValues, Path, PathValue} from "react-hook-form";
-import {InputTypeEnum} from "../../core/shared/sharedEnums.ts";
-import {FormUtils} from "../../core/utils/formUtils.ts";
-import {FormConfig} from "../../config/FormConfig.ts";
-import {useSemesterRepo} from "../../hooks/actions/useSemesterRepo.ts";
+import {InputTypeEnum} from "@/core/shared/sharedEnums.ts";
+import {FormUtils} from "@/core/utils/formUtils.ts";
+import {FormConfig} from "@/config/FormConfig.ts";
+import {useSemesterRepo} from "@/hooks/actions/useSemesterRepo.ts";
 import {useMemo} from "react";
 import {Alert, Card} from "antd";
-import Datetime from "../../core/datetime.ts";
-import {getUniqueness} from "../../core/utils/utils.ts";
-import {FieldConfig} from "../ui/form/ListInput.tsx";
+import Datetime from "@/core/datetime.ts";
+import {getUniqueness} from "@/core/utils/utils.ts";
+import {FieldConfig} from "@/components/ui/form/ListInput.tsx";
 
 type PlanningFormProps<T extends FieldValues> = FormContentProps<T, Planning> & {
     handleUpdate?: (field: string, value: unknown) => void,

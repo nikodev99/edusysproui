@@ -1,6 +1,7 @@
-import {Student} from "./student.ts";
+import {Individual, Student} from "@/entity";
 import {Classe} from "./classe.ts";
-import {AcademicYear} from "./academicYear.ts";
+import {AcademicYear} from "@/entity";
+import {StudentListDataType} from "@/core/utils/interfaces.ts";
 
 export interface Enrollment {
     id: number
@@ -9,4 +10,28 @@ export interface Enrollment {
     classe: Classe
     enrollmentDate: Date
     isArchived: boolean
+}
+
+export const toEnrollment = (data: StudentListDataType): Enrollment => {
+    return {
+        id: 0,
+        academicYear: data?.academicYear,
+        student: {
+            id: data?.id,
+            personalInfo: {
+                firstName: data?.firstName,
+                lastName: data?.lastName,
+                gender: data?.gender,
+                reference: data?.reference,
+                image: data?.image
+            } as Individual
+        } as Student,
+        classe: {
+            name: data?.classe,
+            grade: {
+                section: data?.grade
+            }
+        } as Classe,
+        enrollmentDate: data?.lastEnrolledDate as Date
+    } as Enrollment
 }

@@ -1,16 +1,16 @@
-import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
-import {BreadcrumbType, useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
+import {useDocumentTitle} from "@/hooks/useDocumentTitle.ts";
+import {BreadcrumbType, useBreadCrumb} from "@/hooks/useBreadCrumb.tsx";
 import {Button, Flex, Form, Steps} from "antd";
 import {FieldValues, UseFormReturn} from "react-hook-form";
 import {ReactNode, useMemo} from "react";
 import {useLocation} from "react-router-dom";
 import queryString from 'query-string'
-import {Metadata} from "../../core/utils/interfaces.ts";
-import FormError from "../../components/ui/form/FormError.tsx";
-import FormSuccess from "../../components/ui/form/FormSuccess.tsx";
+import {Metadata} from "@/core/utils/interfaces.ts";
+import FormError from "@/components/ui/form/FormError.tsx";
+import FormSuccess from "@/components/ui/form/FormSuccess.tsx";
 import PageWrapper from "../view/PageWrapper.tsx";
-import {redirectTo} from "../../context/RedirectContext.ts";
-import {RequiredMark} from "../../core/utils/tsxUtils.tsx";
+import {redirectTo} from "@/context/RedirectContext.ts";
+import {RequiredMark} from "@/core/utils/tsxUtils.tsx";
 import {ValidationAlert} from "../ui/form/ValidationAlert.tsx";
 import {LoadingButton} from "../ui/layout/LoadingButton.tsx";
 

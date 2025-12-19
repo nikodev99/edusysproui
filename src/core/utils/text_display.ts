@@ -22,7 +22,7 @@ export const raw = {
                 href: '/students/new'
             },
             reAdd: {
-              label: 'Re-inscription',
+              label: 'Réinscription',
               href: '/students/re-enrollment'
             },
             view: {

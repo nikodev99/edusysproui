@@ -1,14 +1,14 @@
 import {useEffect, useState} from "react";
-import {LoginRequest, toUser, UserProfile, UserProfileToken} from "../auth/dto/user.ts";
-import LocalStorageManager from "../core/LocalStorageManager.ts";
-import {loginApi, logoutApi, signupApi, tokenRefresh, assignToUser} from "../auth/services/AuthService.ts.tsx";
-import {UserContext, UserContextProps} from "../context/UserContext.ts";
-import {jwtTokenManager} from "../auth/jwt/JWTToken.ts";
-import {loggedUser} from "../auth/jwt/LoggedUser.ts";
-import {School} from "../entity";
-import {AssignUserToSchoolSchema, SignupSchema} from "../schema";
+import {LoginRequest, toUser, UserProfile, UserProfileToken} from "@/auth/dto/user.ts";
+import LocalStorageManager from "@/core/LocalStorageManager.ts";
+import {loginApi, logoutApi, signupApi, tokenRefresh, assignToUser} from "@/auth/services/AuthService.ts.tsx";
+import {UserContext, UserContextProps} from "@/context/UserContext.ts";
+import {jwtTokenManager} from "@/auth/jwt/JWTToken.ts";
+import {loggedUser} from "@/auth/jwt/LoggedUser.ts";
+import {School} from "@/entity";
+import {AssignUserToSchoolSchema, SignupSchema} from "@/schema";
 import {isAxiosError} from "axios";
-import {useUserRepo} from "../hooks/actions/useUserRepo.ts";
+import {useUserRepo} from "@/hooks/actions/useUserRepo.ts";
 import {useQueryClient} from "@tanstack/react-query";
 
 export const UserProvider = ({children}: UserContextProps) => {
@@ -161,6 +161,7 @@ export const UserProvider = ({children}: UserContextProps) => {
             loggedUser.removeUser()
             loggedUser.removeSchool()
             loggedUser.clearCache()
+            loggedUser.removeRoles()
             LocalStorageManager.remove('lastActivity')
 
             jwtTokenManager.clearCache()

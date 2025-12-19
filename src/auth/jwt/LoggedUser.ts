@@ -1,7 +1,7 @@
-import LocalStorageManager from "../../core/LocalStorageManager.ts";
-import {jwt} from "../../core/utils/text_display.ts";
+import LocalStorageManager from "@/core/LocalStorageManager.ts";
+import {jwt} from "@/core/utils/text_display.ts";
 import {UserProfile} from "../dto/user.ts";
-import {School} from "../../entity";
+import {School} from "@/entity";
 import {Role} from "../dto/role.ts";
 
 export class LoginUser {

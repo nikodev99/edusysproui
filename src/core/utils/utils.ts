@@ -616,7 +616,7 @@ export const firstLetter = (word?: string): string => {
 }
 
 export const firstWord = (word?: string): string => {
-    return setFirstName(word).split(' ')[0]
+    return word ? setFirstName(word).split(' ')[0] : ''
 }
 
 export const cLowerName = (first: string, last?: string, length?: number) => {
@@ -706,8 +706,8 @@ export const getShortSortOrder = (order: string | undefined): 'asc' | 'desc' | u
 };
 
 export const getSlug = ({personalInfo, firstName, lastName}: {personalInfo?: Individual, firstName?: string, lastName?: string}) => {
-    const first = firstWord(personalInfo?.firstName ?? firstName)
-    const last = firstWord(personalInfo?.lastName ?? lastName)
+    const first = firstWord(personalInfo?.firstName ?? firstName) || ''
+    const last = firstWord(personalInfo?.lastName ?? lastName) || ''
     return (`${first}_${last}`)?.toLowerCase()
 }
 

@@ -1,4 +1,5 @@
-@import "assets/style/variables";
+@use "assets/style/variables" as *;
+@use "sass:color";
 
 * {
   box-sizing: border-box;
@@ -27,7 +28,7 @@ body {
   }
 
   .ant-btn-primary:hover {
-    background-color: lighten($primary_color, 20%)!important;
+    background-color: color.adjust($primary_color, $lightness: 20%)!important;
     color: $text_color_over_primary_color!important;
   }
 

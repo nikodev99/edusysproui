@@ -1,4 +1,5 @@
-@import "../../assets/style/main";
+@use "../../assets/style/main" as *;
+@use "sass:color" ;
 
 .header {
   display: flex;
@@ -31,7 +32,7 @@
   }
 
   .header-icon {
-    background: lighten($primary_color, 83%);
+    background: color.adjust($primary_color, $lightness: 83%);
     padding: 6px;
     border-radius: 4px;
     color: $primary_color;
@@ -77,10 +78,10 @@
       .account-dropdown {
         .alert {
           font-size: 16px;
-          color: lighten($primary_color, 40%);
+          color: color.adjust($primary_color, $lightness: 40%);
 
           &:hover {
-            color: lighten($primary_color, 60%);
+            color: color.adjust($primary_color, $lightness: 60%);
           }
         }
       }

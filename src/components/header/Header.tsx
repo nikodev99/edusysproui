@@ -48,12 +48,12 @@ const Header = ({onCollapsed}: {onCollapsed: () => void}) => {
                 </Flex>
                 <Flex align='center' gap='3rem'>
                     <Flex align='center' gap='10px'>
-                        <Dropdown dropdownRender={() => (<NotificationDropdown />)}>
+                        <Dropdown popupRender={() => (<NotificationDropdown />)}>
                             <Badge dot>
                                 <Avatar shape='square' icon={<LuBell />} className='header-icon' />
                             </Badge>
                         </Dropdown>
-                        <Dropdown dropdownRender={() => (<AvatarDropdown />)} trigger={['click']} arrow={{pointAtCenter: true}}>
+                        <Dropdown popupRender={() => (<AvatarDropdown />)} trigger={['click']} arrow={{pointAtCenter: true}}>
                             <Avatar shape={"square"} icon={<LuUser/>} className="avatar"/>
                         </Dropdown>
                     </Flex>

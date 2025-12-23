@@ -1,4 +1,4 @@
-@import "assets/style/main";
+@use "assets/style/main" as *;
 
 .content {
   margin: 24px 16px;

@@ -1,3 +1,5 @@
+@use "sass:color";
+
 .card-container {
   width: 300px;
   background-color: #0b1d39;
@@ -36,7 +38,7 @@
   .student-info {
     display: flex;
     justify-content: space-between;
-    background: darken(#0b1d39, 5%);
+    background: color.adjust(#0b1d39, $lightness: -5%);
     padding: 20px;
 
     .left-section {

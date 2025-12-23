@@ -1,4 +1,4 @@
-@import "../../assets/style/main";
+@use "../../assets/style/main" as *;
 
 /*** Block UI ***/
 
@@ -21,7 +21,6 @@
 
 .block-masonry {
   display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
   margin-left: -30px;
   width: auto;
@@ -37,7 +36,6 @@
   padding: 0;
   width: 100%;
   @include box-sizing(border-box);
-  -moz-transition: box-shadow 0.3s ease, transform 0.3s ease;
   -webkit-transition: box-shadow 0.3s ease, transform 0.3s ease;
   transition: box-shadow 0.3s ease, transform 0.3s ease;
 

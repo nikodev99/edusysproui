@@ -1,51 +1,49 @@
-import {GenderCounted, Options, Pageable} from "../../core/utils/interfaces.ts";
+import {GenderCounted, Options, Pageable} from "@/core/utils/interfaces.ts";
 import {useFetch, useRawFetch} from "../useFetch.ts";
 import {UseQueryResult} from "@tanstack/react-query";
-import {Enrollment} from "../../entity";
+import {Enrollment} from "@/entity";
 import {
     countClasseStudents,
     countSomeClasseStudents,
     countStudent,
     getAllStudentClassmate, getClasseEnrolledStudents,
     getClasseEnrolledStudentsSearch,
-    getClasseStudents, getEnrolledStudents,
+    getClasseStudents, getEnrolledStudents, getEnrolledStudentsByTeacher,
     getRandomStudentClassmate,
     getStudentById,
-    searchEnrolledStudents, searchStudents, searchUnenrolledStudents
-} from "../../data/repository/studentRepository.ts";
+    searchEnrolledStudents, searchEnrolledStudentsByTeacher, searchStudents, searchUnenrolledStudents
+} from "@/data/repository/studentRepository.ts";
 import {useCallback, useEffect, useState} from "react";
-import {useGlobalStore} from "../../core/global/store.ts";
-import {getShortSortOrder, setFirstName} from "../../core/utils/utils.ts";
+import {useGlobalStore} from "@/core/global/store.ts";
+import {getShortSortOrder, setFirstName} from "@/core/utils/utils.ts";
 import {AxiosResponse} from "axios";
+import {useAuth} from "@/hooks/useAuth.ts";
 
-export const useStudentRepo = () => {
+export const useStudentRepo = (context: 'ALL' | 'TEACHER' = 'ALL') => {
     const schoolId = useGlobalStore(state => state.schoolId)
 
-    /**
-     * Retrieves a paginated list of enrolled students, optionally sorted by a specified field and order.
-     *
-     * @param {number} page - The page number to retrieve (zero-based index).
-     * @param {number} size - The number of students to include per page.
-     * @param {string} [sortField] - The field by which to sort the students (optional).
-     * @param {'asc' | 'desc'} [sortOrder] - The order in which to sort the students, either ascending ('asc') or descending ('desc') (optional).
-     * @returns {Promise<AxiosResponse<Enrollment, unknown>>} A promise that resolves to the response object containing the paginated list of students.
-     */
-    const getPaginatedStudents = async (
-        page: number,
-        size: number,
-        sortField?: string,
-        sortOrder?: 'asc' | 'desc',
-    ): Promise<AxiosResponse<Enrollment, unknown>> => {
-        if (sortField && sortOrder) {
-            sortOrder = getShortSortOrder(sortOrder)
-            sortField = sortedField(sortField)
-            return await getEnrolledStudents(schoolId, page, size, `${sortField}:${sortOrder}`)
-        }
-        return await getEnrolledStudents(schoolId, page, size)
-    };
+    const useGetPaginated = () => {
+        const {user} = useAuth()
+        return {
+            getPaginatedStudents : async (page: number,size: number,sortField?: string, sortOrder?: 'asc' | 'desc') => {
+                if (sortField && sortOrder) {
+                    sortOrder = getShortSortOrder(sortOrder)
+                    sortField = sortedField(sortField)
+                    return context === 'ALL'
+                        ? await getEnrolledStudents(schoolId, page, size, `${sortField}:${sortOrder}`)
+                        : await getEnrolledStudentsByTeacher(schoolId, user?.userId as string, page, size, `${sortField}:${sortOrder}`)
+                }
+                return context === 'ALL'
+                    ? await getEnrolledStudents(schoolId, page, size)
+                    : await getEnrolledStudentsByTeacher(schoolId, user?.userId as string, page, size)
+            },
 
-    const getSearchedEnrolledStudents = async (searchInput: string) => {
-        return await searchEnrolledStudents(schoolId, searchInput)
+            getSearchedEnrolledStudents:  async (searchInput: string) => {
+                return context === 'ALL'
+                    ? await searchEnrolledStudents(schoolId, searchInput)
+                    : await searchEnrolledStudentsByTeacher(schoolId, user?.userId as string, searchInput)
+            }
+        }
     }
 
     const useGetSearchUnenrolledStudents = (
@@ -259,8 +257,7 @@ export const useStudentRepo = () => {
     }, [])
 
     return {
-        getPaginatedStudents,
-        getSearchedEnrolledStudents,
+        useGetPaginated,
         useGetSearchUnenrolledStudents,
         findUnenrolledStudents,
         useGetSearchStudent,

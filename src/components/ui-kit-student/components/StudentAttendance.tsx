@@ -1,23 +1,27 @@
-import TabItem from "../../view/TabItem.tsx";
-import {Attendance, Enrollment} from "../../../entity";
-import {firstLetter, getUniqueness, setFirstName, startsWithVowel} from "../../../core/utils/utils.ts";
+import TabItem from "@/components/view/TabItem.tsx";
+import {Attendance, Enrollment} from "@/entity";
+import {firstLetter, getUniqueness, setFirstName, startsWithVowel} from "@/core/utils/utils.ts";
 import {TableColumnsType} from "antd";
 import {useState, useMemo, useRef, useEffect} from "react";
 import {AttendanceAnalysis} from "./AttendanceAnalysis.tsx";
-import {useAttendanceRepo} from "../../../hooks/actions/useAttendanceRepo.ts";
-import {AutoScrollTable} from "../../ui/layout/AutoScrollTable.tsx";
-import { attendanceTag } from "../../../entity/enums/attendanceStatus.ts";
-import { AttendanceRecord } from "../../../core/utils/interfaces.ts";
-import Datetime from "../../../core/datetime.ts";
-import Tag from "../../ui/layout/Tag.tsx";
-import PageError from "../../../pages/errors/PageError.tsx";
+import {useAttendanceRepo} from "@/hooks/actions/useAttendanceRepo.ts";
+import {AutoScrollTable} from "@/components/ui/layout/AutoScrollTable.tsx";
+import { attendanceTag } from "@/entity/enums/attendanceStatus.ts";
+import { AttendanceRecord } from "@/core/utils/interfaces.ts";
+import Datetime from "@/core/datetime.ts";
+import Tag from "@/components/ui/layout/Tag.tsx";
+import PageError from "@/pages/errors/PageError.tsx";
 import {LuEye} from "react-icons/lu";
 import {Link} from "react-router-dom";
-import {SelectAcademicYear} from "../../common/SelectAcademicYear.tsx";
+import {SelectAcademicYear} from "@/components/common/SelectAcademicYear.tsx";
 
 export const StudentAttendance = ({enrolledStudent, infinite = true}: {enrolledStudent: Enrollment, infinite?: boolean}) => {
 
-    const {academicYear, student: {personalInfo, enrollments}} = enrolledStudent
+    const {academicYear, personalInfo, enrollments} = useMemo(() => ({
+        academicYear: enrolledStudent?.academicYear,
+        personalInfo: enrolledStudent?.student?.personalInfo,
+        enrollments: enrolledStudent?.student?.enrollments
+    }), [enrolledStudent])
 
     const pageItemSize: number = 15
     const [academicYearId, setAcademicYearId] = useState<string>(academicYear?.id)

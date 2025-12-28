@@ -308,6 +308,7 @@ export type ListViewerProps<TData extends object, TError> = ListProps<TData> & {
     fetchId?: string | string[]
     callbackParams?: unknown[]
     searchCallbackParams?: unknown[]
+    emptyPage?: ReactNode
 }
 
 export type ActionButtonsProps<TData extends object> = {

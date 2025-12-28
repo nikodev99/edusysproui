@@ -35,6 +35,38 @@ export const searchEnrolledStudents = (schoolId: string, searchInput: string) =>
     })
 }
 
+export const getEnrolledStudentsByTeacher = (
+    schoolId: string,
+    teacherId: string,
+    page: number,
+    size: number,
+    sortCriteria?: string
+) => {
+    return request({
+        method: 'GET',
+        url: `/enroll/${schoolId}/${teacherId}`,
+        params: {
+            page: page,
+            size: size,
+            sortCriteria: `${sortCriteria ? `${sortCriteria},e.enrollmentDate:desc` : 'e.enrollmentDate:desc'}`
+        }
+    })
+}
+
+export const searchEnrolledStudentsByTeacher = (
+    schoolId: string,
+    teacherId: string,
+    searchInput: string
+) => {
+    return request({
+        method: 'GET',
+        url: `/enroll/search/${schoolId}/${teacherId}`,
+        params: {
+            query: searchInput
+        }
+    })
+}
+
 export const searchUnenrolledStudents = (schoolId: string, searchInput: string) => {
     return request({
         method: 'GET',

@@ -20,6 +20,7 @@ import {useStudentRepo} from "@/hooks/actions/useStudentRepo.ts";
 import {ItemType} from "antd/es/menu/interface";
 import {catchError} from "@/data/action/error_catch.ts";
 import {useRedirect} from "@/hooks/useRedirect.ts";
+import {usePermission} from "@/hooks/usePermission.ts";
 
 const StudentViewPage = () => {
     const {toViewGuardian} = useRedirect()
@@ -31,6 +32,8 @@ const StudentViewPage = () => {
     const {useGetStudent} = useStudentRepo()
 
     const {data, isLoading, error, refetch} = useGetStudent(id as string)
+
+    const {canEdit} = usePermission()
 
     const enrolledStudent = useMemo(() => data, [data])
     const errors = useMemo(() => catchError(error), [error])
@@ -81,6 +84,7 @@ const StudentViewPage = () => {
             <ViewHeader
                 pColor={setColor}
                 isLoading={isLoading}
+                hasEdit={canEdit}
                 setEdit={handleOpenDrawer}
                 closeState={openDrawer}
                 avatarProps={{
@@ -111,14 +115,14 @@ const StudentViewPage = () => {
                 ]}
                 tab={{centered: true}}
             />
-            <section>
+            {canEdit && <section>
                 <StudentEditDrawer
                     open={openDrawer}
                     close={handleCloseDrawer}
                     isLoading={isLoading}
                     data={enrolledStudent ? enrolledStudent.student : {} as Student}
                 />
-            </section>
+            </section>}
             <StudentActionLinks
                 data={enrolledStudent}
                 getItems={setLinkButtons}

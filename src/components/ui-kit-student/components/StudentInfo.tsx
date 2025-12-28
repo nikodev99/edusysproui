@@ -411,7 +411,7 @@ const DisciplinaryRecords = ({infoData, seeMore, color}: StudentInfoProps) => {
     const values = reprimands ? Object.values(
         reprimands.reduce((acc, curr) => {
             if (!acc[curr.type]) {
-                acc[curr.type] = {name: ReprimandType[curr.type], value: 0}
+                acc[curr.type] = {name: ReprimandType[curr.type]?.toLowerCase(), value: 0}
             }
             acc[curr.type].value += 1;
             return acc;

@@ -3,10 +3,10 @@ import {AcademicYear, Classe, Enrollment, Individual, Punishment, Reprimand} fro
 import {useEffect, useMemo, useState} from "react";
 import ListViewer from "@/components/custom/ListViewer.tsx";
 import {ReprimandFilterProps} from "@/data/repository/reprimandRepository.ts";
-import {TableColumnsType, Tag as AntTag} from "antd";
+import {Card, Empty, TableColumnsType, Tag as AntTag, Typography} from "antd";
 import {ReprimandFilters} from "@/components/filters/ReprimandFilters.tsx";
 import {useAcademicYearRepo} from "@/hooks/actions/useAcademicYearRepo.ts";
-import {LuCircleAlert} from "react-icons/lu";
+import {LuCircleAlert, LuSmile} from "react-icons/lu";
 import Tag from "@/components/ui/layout/Tag.tsx";
 import Datetime from "@/core/datetime.ts";
 import {ReprimandType, typeColor} from "@/entity/enums/reprimandType.ts";
@@ -32,6 +32,8 @@ export const StudentDiscipline = ({enrolledStudent}: StudentDisciplineProps) => 
         academicYear: enrolledStudent?.academicYear,
         student: enrolledStudent?.student,
     }), [enrolledStudent])
+
+    const {Title, Text} = Typography
 
     useEffect(() => {
         setFilters({
@@ -135,9 +137,30 @@ export const StudentDiscipline = ({enrolledStudent}: StudentDisciplineProps) => 
                 }
                 onSelectData={handleSelectReprimand}
                 noSearch={true}
+                emptyPage={
+                    <Card
+                        styles={{
+                            body: { padding: 32, textAlign: "center" }
+                        }}
+                    >
+                        <Empty
+                            image={<LuSmile style={{ fontSize: 64, color: "#52c41a" }} />}
+                            description={
+                                <div className="space-y-2">
+                                    <Title level={4} className="!mb-0">
+                                        Aucun blâme enregistré
+                                    </Title>
+                                    <Text type="secondary">
+                                        Cet élève n’a fait l’objet d’aucune réprimande disciplinaire.
+                                    </Text>
+                                </div>
+                            }
+                        />
+                    </Card>
+                }
             />
-            
-            <StudentReprimandDrawer 
+
+            <StudentReprimandDrawer
                 reprimand={selectedReprimand as Reprimand}
                 open={openDrawer} 
                 close={handleCloseDrawer}

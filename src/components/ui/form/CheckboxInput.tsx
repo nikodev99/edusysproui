@@ -18,17 +18,17 @@ export const CheckboxForm = <T extends FieldValues>(
                         <Space.Compact>
                             {options ? (
                                 <Checkbox.Group
+                                    {...field}
                                     options={options as []}
                                     defaultValue={[defaultValue]}
                                     value={field.value}
                                     onChange={field.onChange}
-                                    {...field}
                                 />
                             ) : (
                                 <Checkbox
+                                    {...field}
                                     checked={field.value}
                                     onChange={(e) => field.onChange(e.target.checked)}
-                                    {...field}
                                 >
                                     {checkLabel}
                                 </Checkbox>
@@ -38,17 +38,17 @@ export const CheckboxForm = <T extends FieldValues>(
                         <>
                         {options ? (
                             <Checkbox.Group
+                                {...field}
                                 options={options as []}
                                 defaultValue={[defaultValue]}
                                 value={field.value}
                                 onChange={field.onChange}
-                                {...field}
                             />
                         ) : (
                             <Checkbox
+                                {...field}
                                 checked={field.value}
                                 onChange={(e) => field.onChange(e.target.checked)}
-                                {...field}
                             >
                                 {checkLabel}
                             </Checkbox>

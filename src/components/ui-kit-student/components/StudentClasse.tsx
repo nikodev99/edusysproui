@@ -1,15 +1,16 @@
-import PageWrapper from "../../view/PageWrapper.tsx";
+import PageWrapper from "@/components/view/PageWrapper.tsx";
 import {Button, List, Select, Skeleton} from "antd";
 import {useEffect, useMemo, useRef, useState} from "react";
-import TabItem from "../../view/TabItem.tsx";
-import {Enrollment} from "../../../entity";
-import {setFirstName} from "../../../core/utils/utils.ts";
-import {useFetch} from "../../../hooks/useFetch.ts";
-import {getAllStudentClassmate} from "../../../data/repository/studentRepository.ts";
-import {Avatar} from "../../ui/layout/Avatar.tsx";
-import {redirectTo} from "../../../context/RedirectContext.ts";
-import {text} from "../../../core/utils/text_display.ts";
-import {LoadMoreList} from "../../ui/layout/LoadMoreList.tsx";
+import TabItem from "@/components/view/TabItem.tsx";
+import {Enrollment} from "@/entity";
+import {setFirstName} from "@/core/utils/utils.ts";
+import {useFetch} from "@/hooks/useFetch.ts";
+import {getAllStudentClassmate} from "@/data/repository/studentRepository.ts";
+import {Avatar} from "@/components/ui/layout/Avatar.tsx";
+import {redirectTo} from "@/context/RedirectContext.ts";
+import {text} from "@/core/utils/text_display.ts";
+import {LoadMoreList} from "@/components/ui/layout/LoadMoreList.tsx";
+import {usePermission} from "@/hooks/usePermission.ts";
 
 
 const count = 3;
@@ -24,6 +25,8 @@ export const StudentClasse = ({enrolledStudent, setActiveKey}: {enrolledStudent:
     const [allItems, setAllItems] = useState<number>(0)
     const [classmates, setClassmates] = useState<Enrollment[]>([]);
     const pageCount = useRef<number>(0)
+    
+    const {can} = usePermission()
     
     const {data, error, isLoading, isFetching, isSuccess, refetch} = useFetch('student-classmates', getAllStudentClassmate, [
         student.id, classeId, academicYearId, {page: pageCount.current, size: size}
@@ -92,7 +95,7 @@ export const StudentClasse = ({enrolledStudent, setActiveKey}: {enrolledStudent:
                             listProps={{
                                 dataSource: classmates,
                                 renderItem: (item) => (
-                                    <List.Item actions={[
+                                    <List.Item actions={can('showClassmates') ? [
                                         <Button
                                             disabled={isFetching}
                                             type='link'
@@ -101,7 +104,7 @@ export const StudentClasse = ({enrolledStudent, setActiveKey}: {enrolledStudent:
                                         >
                                             Voir plus
                                         </Button>
-                                    ]}>
+                                    ]: undefined}>
                                         <Skeleton avatar loading={isLoading} active={isLoading}>
                                             <List.Item.Meta
                                                 avatar={<Avatar

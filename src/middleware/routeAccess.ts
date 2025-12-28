@@ -9,15 +9,45 @@ import {
     isTopAdmin,
     Role
 } from "../auth/dto/role.ts";
-import {message} from "antd";
 import {text} from "../core/utils/text_display.ts";
 import {ItemType} from "antd/es/menu/interface";
+
+/**
+ * Permission Levels
+ *
+ * These define what a user can do within a module or on a specific resource.
+ * Think of them as layers of access, where each level builds on the previous:
+ *
+ * - NONE: Cannot access at all (used as a default/explicit denial)
+ * - VIEW: Can see the data but cannot make any changes
+ * - CREATE: Can create new records (implies VIEW)
+ * - EDIT: Can modify existing records (implies VIEW)
+ * - DELETE: Can remove records (implies VIEW)
+ * - FULL: Can do everything including special admin actions (implies all above)
+ */
+export enum PermissionLevel {
+    NONE = 'NONE',
+    CREATE = 'CREATE',
+    EDIT = 'EDIT',
+    DELETE = 'DELETE',
+    FULL = 'FULL'
+}
+
+interface ModulePermissions {
+    create: (() => boolean)[]
+    edit: (() => boolean)[]
+    delete: (() => boolean)[]
+    special?: {
+        [actionName: string]: (() => boolean)[]
+    }
+}
 
 interface RouteAccessMap {
     module?: (() => boolean)[]
     actions?: {
         [actionPath: string]: (() => boolean)[]
-    }
+    },
+    permissions?: ModulePermissions
 }
 
 interface MenuPermission {
@@ -27,12 +57,22 @@ interface MenuPermission {
 class RouteAccess {
 
     private routeAccessMap: Record<string, RouteAccessMap> = {
-        '/': {
-            module: []
+        '': {
+            module: [],
+            permissions: {
+                create: [],
+                edit: [],
+                delete: []
+            }
         },
 
-        'home': {
-            module: []
+        'dashboard': {
+            module: [],
+            permissions: {
+                create: [],
+                edit: [],
+                delete: []
+            }
         },
 
         /**
@@ -50,12 +90,43 @@ class RouteAccess {
          */
         'students': {
             module: [
-                () => isTopAdmin() || isEnroll() || isTeacher()
+                () => isTopAdmin() || isEnroll() || isTeacher() || isSecretary()
             ],
             actions: {
                 'new': [
                     () => isTopAdmin() || isEnroll()
+                ],
+                ':id': [
+                    () => isTopAdmin() || isTeacher() || isSecretary() || isGuardian()
+                ],
+                ':id/discipline': [
+                    () => isTopAdmin() || isTeacher()
                 ]
+            },
+            permissions: {
+                create: [
+                    () => isTopAdmin() || isEnroll()
+                ],
+                edit: [
+                    () => isTopAdmin() || isEnroll()
+                ],
+                delete: [
+                    () => isTopAdmin()
+                ],
+                special: {
+                    'export': [
+                        () => isTopAdmin() || isEnroll() || isTeacher()
+                    ],
+                    'reprimand': [
+                        () => isTopAdmin() || isTeacher()
+                    ],
+                    'showClassmates': [
+                        () => isTopAdmin() || isTeacher() || isEnroll()
+                    ],
+                    'teacherData': [
+                        () => isTeacher()
+                    ],
+                }
             }
         },
 
@@ -70,14 +141,39 @@ class RouteAccess {
          * 1. The user is a top administrator (`isTopAdmin`).
          * 2. The user has a finance-related role (`isFinance`).
          * 3. The user holds a teacher role (`isTeacher`).
-         * 4. The user is a guardian (`isGuardian`).
          *
          * The function grants access to anyone satisfying at least one of these conditions.
          */
         'guardians': {
             module: [
-                () => isTopAdmin() || isFinance() || isTeacher() || isGuardian()
-            ]
+                () => isTopAdmin() || isFinance() || isTeacher() || isEnroll()
+            ],
+            actions: {
+                ':id': [
+                    () => isTopAdmin() || isFinance() || isTeacher() || isEnroll() || isGuardian()
+                ]
+            },
+            permissions: {
+                create: [
+                    () => isTopAdmin() || isEnroll()
+                ],
+                edit: [
+                    () => isTopAdmin() || isEnroll()
+                ],
+                delete: [
+                    () => isTopAdmin()
+                ],
+                special: {
+                    // Finance can view payment information
+                    'viewPayments': [
+                        () => isTopAdmin() || isFinance() || isGuardian()
+                    ],
+                    // Guardians can update their own contact preferences
+                    'updateContactPreferences': [
+                        () => isGuardian()
+                    ]
+                }
+            }
         },
 
         /**
@@ -99,7 +195,31 @@ class RouteAccess {
             actions: {
                 'new': [
                     () => isTopAdmin() || isHR()
+                ],
+                ':id': [
+                    () => isTopAdmin() || isHR() || isTeacher()
                 ]
+            },
+            permissions: {
+                create: [
+                    () => isTopAdmin() || isHR()
+                ],
+                edit: [
+                    () => isTopAdmin() || isHR()
+                ],
+                delete: [
+                    () => isTopAdmin()
+                ],
+                special: {
+                    // Finance can view salary information
+                    'viewSalary': [
+                        () => isTopAdmin() || isFinance()
+                    ],
+                    // HR can manage employment contracts
+                    'manageContracts': [
+                        () => isTopAdmin() || isHR()
+                    ]
+                }
             }
         },
 
@@ -118,7 +238,28 @@ class RouteAccess {
         'classes-and-subjects': {
             module: [
                 () => isTopAdmin() || isAdmin() || isSecretary() || isTeacher()
-            ]
+            ],
+            permissions: {
+                create: [
+                    () => isTopAdmin() || isAdmin() || isSecretary()
+                ],
+                edit: [
+                    () => isTopAdmin() || isAdmin() || isSecretary()
+                ],
+                delete: [
+                    () => isTopAdmin() || isAdmin()
+                ],
+                special: {
+                    // Teachers can assign homework even if they can't create classes
+                    'assignHomework': [
+                        () => isTopAdmin() || isTeacher()
+                    ],
+                    // Only admins can modify the class schedule
+                    'modifySchedule': [
+                        () => isTopAdmin() || isAdmin() || isSecretary()
+                    ]
+                }
+            }
         },
 
         /**
@@ -138,8 +279,25 @@ class RouteAccess {
             ],
             actions: {
                 'new': [
-                    () => isTeacher()
+                    () => isTopAdmin() || isTeacher()
                 ]
+            },
+            permissions: {
+                create: [
+                    () => isTopAdmin() || isTeacher()
+                ],
+                edit: [
+                    () => isTopAdmin() || isTeacher()
+                ],
+                delete: [
+                    () => isTopAdmin() || isTeacher()
+                ],
+                special: {
+                    // Only admins can publish final results school-wide
+                    'publishResults': [
+                        () => isTopAdmin() || isTeacher()
+                    ]
+                }
             }
         },
 
@@ -157,7 +315,28 @@ class RouteAccess {
         'attendances': {
             module: [
                 () => isTopAdmin() || isSecretary()
-            ]
+            ],
+            permissions: {
+                create: [
+                    () => isTopAdmin() || isSecretary() || isTeacher()
+                ],
+                edit: [
+                    () => isTopAdmin() || isSecretary()
+                ],
+                delete: [
+                    () => isTopAdmin()
+                ],
+                special: {
+                    // Teachers can mark attendance for their classes
+                    'markAttendance': [
+                        () => isTopAdmin() || isTeacher() || isSecretary()
+                    ],
+                    // Only a secretary can correct historical records
+                    'correctRecords': [
+                        () => isTopAdmin() || isSecretary()
+                    ]
+                }
+            }
         },
 
         /**
@@ -171,7 +350,26 @@ class RouteAccess {
         'library': {
             module: [
                 () => isTopAdmin() || isSecretary()
-            ]
+            ],
+            permissions: {
+                create: [
+                    () => isTopAdmin() || isSecretary()
+                ],
+                edit: [
+                    () => isTopAdmin() || isSecretary()
+                ],
+                delete: [
+                    () => isTopAdmin()
+                ],
+                special: {
+                    'issueBooks': [
+                        () => isTopAdmin() || isSecretary()
+                    ],
+                    'returnBooks': [
+                        () => isTopAdmin() || isSecretary()
+                    ]
+                }
+            }
         },
 
         /**
@@ -188,11 +386,42 @@ class RouteAccess {
         'fee-and-finance': {
             module: [
                 () => isTopAdmin() || isFinance()
-            ]
+            ],
+            permissions: {
+                create: [
+                    () => isTopAdmin() || isFinance()
+                ],
+                edit: [
+                    () => isTopAdmin() || isFinance()
+                ],
+                delete: [
+                    () => isTopAdmin()
+                ],
+                special: {
+                    'recordPayment': [
+                        () => isTopAdmin() || isFinance()
+                    ],
+                    'generateInvoice': [
+                        () => isTopAdmin() || isFinance()
+                    ],
+                    'viewReports': [
+                        () => isTopAdmin() || isFinance()
+                    ],
+                    // Only top admin can approve refunds (financial control)
+                    'approveRefund': [
+                        () => isTopAdmin()
+                    ]
+                }
+            }
         },
 
         'chat': {
-            module: []
+            module: [],
+            permissions: {
+                create: [],
+                edit: [],
+                delete: []
+            }
         },
 
         /**
@@ -208,7 +437,26 @@ class RouteAccess {
         'staff-management': {
             module: [
                 () => isTopAdmin() || isHR()
-            ]
+            ],
+            permissions: {
+                create: [
+                    () => isTopAdmin() || isHR()
+                ],
+                edit: [
+                    () => isTopAdmin() || isHR()
+                ],
+                delete: [
+                    () => isTopAdmin()
+                ],
+                special: {
+                    'manageLeave': [
+                        () => isTopAdmin() || isHR()
+                    ],
+                    'viewPayroll': [
+                        () => isTopAdmin() || isFinance()
+                    ]
+                }
+            }
         },
 
         /**
@@ -227,28 +475,83 @@ class RouteAccess {
         'organization': {
             module: [
                 () => isAdmin() || isTopAdmin()
-            ]
+            ],
+            permissions: {
+                create: [
+                    () => isAdmin() || isTopAdmin()
+                ],
+                edit: [
+                    () => isAdmin() || isTopAdmin()
+                ],
+                delete: [
+                    () => isTopAdmin()
+                ]
+            }
         },
 
         'organization/school': {
             module: [
                 () => isAdmin() || isTopAdmin()
-            ]
+            ],
+            permissions: {
+                create: [
+                    () => isAdmin() || isTopAdmin()
+                ],
+                edit: [
+                    () => isAdmin() || isTopAdmin()
+                ],
+                delete: [
+                    () => isTopAdmin()
+                ]
+            }
         },
         'organization/academic_year': {
             module: [
                 () => isAdmin() || isTopAdmin()
-            ]
+            ],
+            permissions: {
+                create: [
+                    () => isAdmin() || isTopAdmin()
+                ],
+                edit: [
+                    () => isAdmin() || isTopAdmin()
+                ],
+                delete: [
+                    () => isTopAdmin()
+                ]
+            }
         },
         'organization/grades': {
             module: [
                 () => isAdmin() || isTopAdmin()
-            ]
+            ],
+            permissions: {
+                create: [
+                    () => isAdmin() || isTopAdmin()
+                ],
+                edit: [
+                    () => isAdmin() || isTopAdmin()
+                ],
+                delete: [
+                    () => isTopAdmin()
+                ]
+            }
         },
         'organization/departments': {
             module: [
                 () => isAdmin() || isTopAdmin()
-            ]
+            ],
+            permissions: {
+                create: [
+                    () => isAdmin() || isTopAdmin()
+                ],
+                edit: [
+                    () => isAdmin() || isTopAdmin()
+                ],
+                delete: [
+                    () => isTopAdmin()
+                ]
+            }
         },
         'organization/users': {
             module: [
@@ -261,18 +564,43 @@ class RouteAccess {
                 ':id/:slug/change-password': [],
                 ':slug/activity': [],
                 ':slug': []
+            },
+            permissions: {
+                create: [
+                    () => isAdmin() || isTopAdmin()
+                ],
+                edit: [
+                    () => isAdmin() || isTopAdmin()
+                ],
+                delete: [
+                    () => isTopAdmin()
+                ]
             }
         },
 
         'settings': {
-            module: [
-                () => isAdmin() || isTopAdmin()
-            ]
+            module: [],
+            permissions: {
+                create: [],
+                edit: [],
+                delete: []
+            }
         },
         'settings/customize': {
             module: [
                 () => isAdmin() || isTopAdmin()
-            ]
+            ],
+            permissions: {
+                create: [
+                    () => isAdmin() || isTopAdmin()
+                ],
+                edit: [
+                    () => isAdmin() || isTopAdmin()
+                ],
+                delete: [
+                    () => isTopAdmin()
+                ]
+            }
         },
         'settings/legal_certificate': {
             module: []
@@ -283,17 +611,32 @@ class RouteAccess {
         'settings/special_document': {
             module: [
                 () => isAdmin() || isTopAdmin()
-            ]
+            ],
+            permissions: {
+                create: [
+                    () => isAdmin() || isTopAdmin()
+                ],
+                edit: [
+                    () => isAdmin() || isTopAdmin()
+                ],
+                delete: [
+                    () => isTopAdmin()
+                ]
+            }
         },
     }
 
     private menuPermissions: Record<string, MenuPermission> = {
+        [text.home.href]: {
+            canView: () => true
+        },
+
         [text.student.href]: {
             canView: () => isTopAdmin() || isEnroll() || isTeacher()
         },
 
         [text.guardian.href]: {
-            canView: () => isTopAdmin() || isFinance() || isTeacher() || isGuardian()
+            canView: () => isTopAdmin() || isFinance() || isTeacher()
         },
 
         [text.teacher.href]: {
@@ -301,7 +644,7 @@ class RouteAccess {
         },
 
         [text.cc.href]: {
-            canView: () => isTopAdmin() || isAdmin() || isSecretary()
+            canView: () => isTopAdmin() || isAdmin() || isSecretary() || isTeacher()
         },
 
         [text.exam.href]: {
@@ -329,7 +672,7 @@ class RouteAccess {
         },
 
         [text.settings.href]: {
-            canView: () => isAdmin() || isTopAdmin()
+            canView: () => true
         }
     }
 
@@ -351,75 +694,195 @@ class RouteAccess {
 
     public checkRouteAccess (pathname: string, roles: Role[]): boolean {
         if (!roles || roles.length === 0) {
-            message.warning("User has no roles assigned, denying access").then()
+            console.warn("User has no roles assigned, denying access")
             return false
         }
 
-        const {fullRoute, module: moduleName, action} = this.extractRouteWithoutSchoolSlug(pathname)
-
-        const moduleConfig = this.routeAccessMap[moduleName] || this.routeAccessMap[fullRoute]
-
-        if (!moduleConfig) {
-            for (const [routePattern, config] of Object.entries(this.routeAccessMap)) {
-                if (fullRoute.startsWith(routePattern)) {
-                    return this.checkModuleAndAction(config, action)
-                }
-            }
-
-            return true
-        }
-
-        return this.checkModuleAndAction(moduleConfig, action)
-    }
-
-    private checkModuleAndAction (config: RouteAccessMap, action: string): boolean {
-        if (config.module && config.module.length > 0) {
-            const hasModuleAccess = config.module.some(checker => checker())
-            if (!hasModuleAccess) {
-                return false
-            }
-        }
-
-        if (action && config.actions) {
-            if (config.actions[action]) {
-                const actionCheckers = config.actions[action]
-
-                if (actionCheckers.length === 0)
-                    return true
-
-                return actionCheckers.some(checker => checker())
-            }
-        }
-
-        for (const [actionPattern, checkers] of Object.entries(config.actions || {})) {
-            if (actionPattern.startsWith(':') || action.match(new RegExp(action))) {
-                if (checkers.length === 0)
-                    return true
-
-                return checkers.some(checker => checker())
-            }
-        }
-
-        return true
-    }
-
-    private canViewMenuItem (menuKey: string): boolean {
         if (isTopAdmin()) {
             return true
         }
 
-        const permission = this.menuPermissions[menuKey]
+        const {fullRoute, module: moduleName, action} = this.extractRouteWithoutSchoolSlug(pathname)
 
-        if (!permission) {
+        let moduleConfig = this.routeAccessMap[fullRoute]
+
+        if (!moduleConfig) {
+            moduleConfig = this.routeAccessMap[moduleName]
+        }
+
+        if (!moduleConfig) {
+            for (const [routePattern, config] of Object.entries(this.routeAccessMap)) {
+                if (fullRoute.startsWith(routePattern + '/') || fullRoute === routePattern) {
+                    moduleConfig = config
+                    break
+                }
+            }
+
+            if (!moduleConfig) {
+                console.warn("No access configuration found for route: " + fullRoute + ' denying access')
+                return false
+            }
+        }
+
+        return this.checkModuleAndAction(moduleConfig, action, moduleName, fullRoute)
+    }
+
+    /**
+     * NEW METHOD: Check if a user can perform a specific permission action
+     *
+     * This is the core method for checking fine-grained permissions. It answers
+     * questions like "can this user create students?" or "can this user delete teachers?"
+     *
+     * @param module - The module name (e.g., 'students', 'teachers')
+     * @param permission - The permission type ('view', 'create', 'edit', 'delete') or special action name
+     * @param excludeToAdmin - In rare case, we will need to exclude Top Admins, we will give it a true value
+     * @returns boolean - true if user has this permission
+     *
+     * Usage in your components:
+     * if (routeAccess.can('students', 'create')) {
+     *   // Show "Add New Student" button
+     * }
+     */
+    public can(module: string, permission: string, excludeToAdmin: boolean = false): boolean {
+        // Top admins can do everything, always
+        if (isTopAdmin() && !excludeToAdmin) {
             return true
         }
 
-        return permission.canView()
+        const config = this.routeAccessMap[module]
+
+        if (!config || !config.permissions) {
+            console.warn(`No permission configuration found for module: ${module}`)
+            return false
+        }
+
+        const permissions = config.permissions
+
+        // Check if it's a standard permission (view, create, edit, delete)
+        if (permission in permissions && permission !== 'special') {
+            const checkers = permissions[permission as keyof Omit<ModulePermissions, 'special'>]
+
+            if (checkers.length === 0) {
+                return true
+            }
+
+            return checkers.some(checker => checker())
+        }
+
+        // Check if it's a special action
+        if (permissions.special && permissions.special[permission]) {
+            const checkers = permissions.special[permission]
+
+            if (checkers.length === 0) {
+                return true
+            }
+
+            return checkers.some(checker => checker())
+        }
+
+        console.warn(`No permission checker found for '${permission}' in module '${module}'`)
+        return false
+    }
+
+    /**
+     * NEW METHOD: Check if a user has view-only access
+     *
+     * View-only means the user can see data but cannot create, edit, or delete.
+     * This is useful for showing read-only versions of forms or disabling edit buttons.
+     *
+     * Example: A teacher viewing student information is view-only because they can
+     * see the students but cannot modify their records.
+     */
+    public isViewOnly(module: string): boolean {
+        if (isTopAdmin()) {
+            return false
+        }
+
+        const canCreate = this.can(module, 'create')
+        const canEdit = this.can(module, 'edit')
+        const canDelete = this.can(module, 'delete')
+
+        return !canCreate && !canEdit && !canDelete
+    }
+
+    /**
+     * NEW METHOD: Check if user can view and edit
+     *
+     * This checks if the user has both view and edit permissions, which is useful
+     * for enabling form fields or showing edit buttons without delete capabilities.
+     */
+    public canViewAndEdit(module: string): boolean {
+        return this.can(module, 'edit')
+    }
+
+    /**
+     * NEW METHOD: Check if user has full access
+     *
+     * Full access means the user can view, create, edit, and delete everything.
+     * This is typically only true for administrators.
+     */
+    public hasFullAccess(module: string): boolean {
+        if (isTopAdmin()) {
+            return true
+        }
+
+        return (
+            this.can(module, 'create') &&
+            this.can(module, 'edit') &&
+            this.can(module, 'delete')
+        )
+    }
+
+    /**
+     * Get permission level for a module
+     *
+     * This returns the highest permission level the user has in a module.
+     * Useful for showing appropriate UI elements based on overall access level.
+     *
+     * @param module - The module name
+     * @returns PermissionLevel - The highest permission level the user has
+     */
+    public getPermissionLevel(module: string): PermissionLevel {
+        if (this.hasFullAccess(module)) {
+            return PermissionLevel.FULL
+        }
+
+        if (this.can(module, 'delete')) {
+            return PermissionLevel.DELETE
+        }
+
+        if (this.can(module, 'edit')) {
+            return PermissionLevel.EDIT
+        }
+
+        if (this.can(module, 'create')) {
+            return PermissionLevel.CREATE
+        }
+
+        return PermissionLevel.NONE
+    }
+
+    /**
+     * NEW METHOD: Get a summary of permissions
+     *
+     * This returns an object showing all permissions a user has for a module.
+     * Useful for debugging or showing users what they can do.
+     */
+    public getPermissionSummary(module: string) {
+        return {
+            module,
+            canCreate: this.can(module, 'create'),
+            canEdit: this.can(module, 'edit'),
+            canDelete: this.can(module, 'delete'),
+            isViewOnly: this.isViewOnly(module),
+            canViewAndEdit: this.canViewAndEdit(module),
+            hasFullAccess: this.hasFullAccess(module)
+        }
     }
 
     public filterMenuItems (items: ItemType[]): ItemType[] {
         return items.map(item => {
-            if (!item || typeof item !== "object" || !('in' in item)) {
+            if (!item || typeof item !== "object" || !('key' in item)) {
                 return item
             }
 
@@ -445,6 +908,75 @@ class RouteAccess {
             return itemCopy
         })
             .filter(Boolean)
+    }
+
+    private checkModuleAndAction (config: RouteAccessMap, action: string, moduleName: string, fullRoute: string): boolean {
+        if (config.module && config.module.length > 0) {
+            const hasModuleAccess = config.module.some(checker => checker())
+            if (!hasModuleAccess) {
+                console.warn(`Module access denied for: ${moduleName}`)
+                return false
+            }
+        }
+
+        if (action && config.actions) {
+            if (config.actions[action]) {
+                const actionCheckers = config.actions[action]
+
+                if (actionCheckers.length === 0) {
+                    return true
+                }
+
+                const hasActionAccess = actionCheckers.some(checker => checker())
+                if (!hasActionAccess) {
+                    console.warn(`Action access denied for: ${fullRoute}`)
+                    return false
+                }
+                return true
+            }
+
+            // Try pattern matching for dynamic routes (like :id, :slug)
+            for (const [actionPattern, checkers] of Object.entries(config.actions)) {
+                if (actionPattern.includes(':')) {
+                    // Convert route pattern to regex (simple version)
+                    // :id, :slug, etc. match any segment
+                    const regexPattern = actionPattern.replace(/:[^/]+/g, '[^/]+')
+                    const regex = new RegExp(`^${regexPattern}$`)
+
+                    if (regex.test(action)) {
+                        if (checkers.length === 0) {
+                            return true
+                        }
+                        const hasActionAccess = checkers.some(checker => checker())
+                        if (!hasActionAccess) {
+                            console.log(`Pattern action access denied for: ${fullRoute}`)
+                            return false
+                        }
+                        return true
+                    }
+                }
+            }
+
+            console.warn(`No action configuration found for: ${action} in ${moduleName}, denying access`)
+            return false
+        }
+
+        // No action specified, just accessing the module itself - allow if module access passed
+        return true
+    }
+
+    private canViewMenuItem (menuKey: string): boolean {
+        if (isTopAdmin()) {
+            return true
+        }
+
+        const permission = this.menuPermissions[menuKey]
+
+        if (!permission) {
+            return false
+        }
+
+        return permission.canView()
     }
 }
 

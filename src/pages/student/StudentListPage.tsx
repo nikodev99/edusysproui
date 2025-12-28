@@ -12,11 +12,16 @@ import {LuClipboard, LuClipboardPlus, LuSearch} from "react-icons/lu";
 import {useMemo} from "react";
 import {setPlural} from "@/core/utils/utils.ts";
 import {useStudentRepo} from "@/hooks/actions/useStudentRepo.ts";
+import {usePermission} from "@/hooks/usePermission.ts";
 
 const StudentListPage = () => {
     const {toEnrollStudent, toReenrollStudent, toSearch} = useRedirect()
-    const {getPaginatedStudents, getSearchedEnrolledStudents} = useStudentRepo()
-    
+    const {canViewAndEdit, can} = usePermission()
+
+    const {useGetPaginated} = useStudentRepo(can('teacherData', true) ? 'TEACHER': 'ALL')
+
+    const {getPaginatedStudents, getSearchedEnrolledStudents} = useGetPaginated()
+
     const pageLabel = useMemo(() => setPlural(text.student.label), [])
 
     useDocumentTitle({
@@ -35,7 +40,7 @@ const StudentListPage = () => {
         <>
             <ListPageHierarchy
                 items={pageHierarchy as []}
-                hasDropdownButton={true}
+                hasDropdownButton={canViewAndEdit}
                 icon={<Button type='primary'><AiOutlineUserAdd /> {text.student.group.add.label}</Button>}
                 dropdownItems={[
                     {key: '1', icon: <LuClipboard />,label: text.student.group.add.label, onClick: toEnrollStudent},

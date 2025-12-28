@@ -21,7 +21,7 @@ const ListViewer = <TData extends object, TError>(
         callback, searchCallback, tableColumns, dropdownItems, throughDetails, hasCount, countTitle, localStorage,
         fetchId, cardData, cardNotAvatar, level, refetchCondition, callbackParams, searchCallbackParams, infinite,
         uuidKey, tableProps, descMargin, itemSize, displayItem, filters, shareSearchQuery, onSelectData, dataDescription,
-        tableHeight, hasDesc = true, pageTitle, noSearch = false, setLoading
+        tableHeight, hasDesc = true, pageTitle, noSearch = false, setLoading, emptyPage
     }: ListViewerProps<TData, TError>
 ) => {
 
@@ -175,8 +175,11 @@ const ListViewer = <TData extends object, TError>(
         shareSearchQuery?.(undefined)
     }
 
+    console.log("STUDENTS: ", dataSource)
+
     return(
         <>
+            {((dataSource && dataSource?.length > 0) || !emptyPage) ? <>
             {hasDesc && <PageTitle title={pageTitle} description={dataDescription} />}
             <div className='header__area'>
                 <Flex justify='space-between' align='middle' className='flex__between' wrap='wrap'>
@@ -304,7 +307,9 @@ const ListViewer = <TData extends object, TError>(
                     onChange={handleNavChange}
                     disabled={!!(isLoading || (searchQuery && !shareSearchQuery))}
                 />
-            </div>}
+            </div>} </> : <>
+                {emptyPage}
+            </>}
         </>
     )
 }

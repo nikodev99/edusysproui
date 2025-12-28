@@ -1,4 +1,4 @@
-import {ReactNode} from "react";
+import {ReactNode, useEffect, useState} from "react";
 import {useLocation} from "react-router-dom";
 import {loggedUser} from "../auth/jwt/LoggedUser.ts";
 import {routeAccess} from "./routeAccess.ts";
@@ -42,25 +42,42 @@ interface RoleBasedRouteGuardProps {
 export const RoleBasedRouteGuard = ({children, routePath, redirectTo: customRedirect}: RoleBasedRouteGuardProps) => {
     const location = useLocation()
     const pathname = routePath || location.pathname
+    const [hasCheckedAccess, setHasCheckedAccess] = useState<boolean>(false)
 
-    const userRoles = loggedUser.getRole() || []
+    useEffect(() => {
+        const userRoles = loggedUser.getRole() || []
+        const hasAccess = routeAccess.checkRouteAccess(pathname, userRoles)
 
-    const hasAccess = routeAccess.checkRouteAccess(pathname, userRoles)
+        if (!hasAccess) {
+            const {fullRoute, module: moduleName, action} = routeAccess.extractRouteWithoutSchoolSlug(pathname)
+            message.warning(
+                `You don't have permission to access this page. ` +
+                `Required permissions for: "${moduleName}"` +
+                (action ? ` → "${action}"` : '')
+            ).then()
 
-    if (!hasAccess) {
-        const {fullRoute, module: moduleName, action} = routeAccess.extractRouteWithoutSchoolSlug(pathname)
-        message.warning(
-            `[Access Denied] User with roles [${userRoles.join(', ')}] ` +
-            `attempted to access module: "${moduleName}"` +
-            (action ? `, action: "${action}"` : '') +
-            ` (full path: ${fullRoute})`
-        ).then()
+            console.warn(
+                `[Access Denied] User with roles [${userRoles.join(', ')}] ` +
+                `attempted to access module: "${moduleName}"` +
+                (action ? `, action: "${action}"` : '') +
+                ` (full path: ${fullRoute})`
+            )
 
-        const pathParts = pathname.split('/').filter(Boolean)
-        const schoolSlug = pathParts[0]
+            const pathParts = pathname.split('/').filter(Boolean)
+            const schoolSlug = pathParts[0]
+            const redirectPath = customRedirect || `/${schoolSlug}`
 
-        redirectTo(customRedirect || `/${schoolSlug}`)
+            redirectTo(redirectPath)
+        }
+        setHasCheckedAccess(true)
+    }, [customRedirect, pathname]);
+
+    if (!hasCheckedAccess) {
+        return null
     }
 
-    return <>{children}</>
+    const userRoles = loggedUser.getRole() || []
+    const hasAccess = routeAccess.checkRouteAccess(pathname, userRoles)
+
+    return hasAccess ? <>{children}</> : null
 }

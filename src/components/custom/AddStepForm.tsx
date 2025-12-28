@@ -2,7 +2,7 @@ import {useDocumentTitle} from "@/hooks/useDocumentTitle.ts";
 import {BreadcrumbType, useBreadCrumb} from "@/hooks/useBreadCrumb.tsx";
 import {Button, Flex, Form, Steps} from "antd";
 import {FieldValues, UseFormReturn} from "react-hook-form";
-import {ReactNode, useMemo} from "react";
+import {ReactNode, useCallback, useMemo} from "react";
 import {useLocation} from "react-router-dom";
 import queryString from 'query-string'
 import {Metadata} from "@/core/utils/interfaces.ts";
@@ -17,7 +17,7 @@ import {LoadingButton} from "../ui/layout/LoadingButton.tsx";
 interface AddStepsProps<TFieldValues extends FieldValues> {
     docTitle: Metadata,
     breadCrumb: BreadcrumbType[]
-    addLink: string
+    addLink?: string
     handleForm: UseFormReturn<TFieldValues>
     triggerNext: (current: number) => void
     onSubmit: (data: TFieldValues) => void
@@ -27,14 +27,16 @@ interface AddStepsProps<TFieldValues extends FieldValues> {
     currentNumber: number
     stepsDots?: boolean | ((iconDot: ReactNode, {index, status, title, description}: never) => ReactNode)
     errors?: string[]
-    setRedirect?: (url?: string) => void
+    prevRedirect?: (current: number) => void
+    setRedirect?: (url?: number |string, record?: object) => void
     setActivity?: () => Promise<boolean>
+    modalMessage?: ReactNode
 }
 
 const AddStepForm = <TFieldValues extends FieldValues>(
     {
         docTitle, breadCrumb, addLink, handleForm, triggerNext, onSubmit, steps, messages, isPending, stepsDots, currentNumber, errors,
-        setRedirect, setActivity
+        setRedirect, setActivity, prevRedirect, modalMessage
     }: AddStepsProps<TFieldValues>
 ) => {
 
@@ -54,7 +56,13 @@ const AddStepForm = <TFieldValues extends FieldValues>(
         triggerNext(current)
     }
 
-    const prev = () => redirectTo(`${addLink}?step=${current - 1}`)
+    const prev = useCallback(() => {
+        if (addLink)
+            redirectTo(`${addLink}?step=${current - 1}`)
+        else if (prevRedirect) {
+            prevRedirect(current - 1)
+        }
+    }, [addLink, current, prevRedirect])
 
     const stepItems = steps.map((item) => ({key: item.title, title: item.title}))
 
@@ -92,7 +100,7 @@ const AddStepForm = <TFieldValues extends FieldValues>(
                                         buttonText='Terminer'
                                         onConfirm={() => handleSubmit(onSubmit)()}
                                         isDisabled={isPending}
-                                        modalContent="Souhaitez vous vraiment poursuivre avec l'inscription ?"
+                                        modalContent={modalMessage ?? "Souhaitez vous vraiment poursuivre avec l'inscription ?"}
                                     />
                                 )}
                             </Flex>

@@ -1,19 +1,19 @@
 import {ChangeEvent, Key, ReactNode, useEffect, useLayoutEffect, useState} from "react";
 import {Button, Flex, Input, Pagination, Space, Table, TablePaginationConfig, Tooltip} from "antd";
 import {FilterValue, SorterResult } from "antd/es/table/interface";
-import LocalStorageManager from "../../core/LocalStorageManager.ts";
-import Responsive from "../../components/ui/layout/Responsive.tsx";
+import LocalStorageManager from "@/core/LocalStorageManager.ts";
+import Responsive from "@/components/ui/layout/Responsive.tsx";
 import CardList from "../view/CardList.tsx";
 import PageDescription from "./PageDescription.tsx";
-import PageError from "../../pages/errors/PageError.tsx";
-import {fetchFunc, useFetch} from "../../hooks/useFetch.ts";
+import PageError from "@/pages/errors/PageError.tsx";
+import {fetchFunc, useFetch} from "@/hooks/useFetch.ts";
 import {LuDownload, LuLayoutDashboard, LuListFilter, LuTableOfContents} from "react-icons/lu";
-import {Enrollment} from "../../entity";
-import {ListViewerProps, StudentListDataType} from "../../core/utils/interfaces.ts";
-import {getAge} from "../../core/utils/utils.ts";
+import {Enrollment} from "@/entity";
+import {ListViewerProps, StudentListDataType} from "@/core/utils/interfaces.ts";
+import {getAge} from "@/core/utils/utils.ts";
 import {AutoScrollTable} from "../ui/layout/AutoScrollTable.tsx";
 import Grid from "../ui/layout/Grid.tsx";
-import {useToggle} from "../../hooks/useToggle.ts";
+import {useToggle} from "@/hooks/useToggle.ts";
 import {PageTitle} from "./PageTitle.tsx";
 
 const ListViewer = <TData extends object, TError>(
@@ -153,6 +153,7 @@ const ListViewer = <TData extends object, TError>(
         ? content?.map(tData => {
             const c = tData as Enrollment
             return {
+                enrollmentId: c.id,
                 id: c.student.id,
                 academicYear: c.academicYear,
                 reference: c.student?.personalInfo?.reference,
@@ -160,6 +161,7 @@ const ListViewer = <TData extends object, TError>(
                 lastName: c.student?.personalInfo?.lastName,
                 gender: c.student?.personalInfo?.gender,
                 lastEnrolledDate: c.enrollmentDate,
+                classeId: c.classe.id,
                 classe: c.classe?.name,
                 age: getAge(c.student.personalInfo?.birthDate as number[]),
                 grade: c.classe?.grade?.section,

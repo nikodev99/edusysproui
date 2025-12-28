@@ -1,21 +1,21 @@
-import RightSidePane from "../../ui/layout/RightSidePane.tsx";
-import {EditProps} from "../../../core/utils/interfaces.ts";
-import {Employee, Individual} from "../../../entity";
+import RightSidePane from "@/components/ui/layout/RightSidePane.tsx";
+import {EditProps} from "@/core/utils/interfaces.ts";
+import {Employee, Individual} from "@/entity";
 import {useEffect, useState} from "react";
-import {useToggle} from "../../../hooks/useToggle.ts";
+import {useToggle} from "@/hooks/useToggle.ts";
 import {useForm} from "react-hook-form";
-import {EmployeeSchema} from "../../../schema";
+import {EmployeeSchema} from "@/schema";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {employeeSchema} from "../../../schema/models/employeeSchema.ts";
-import {hasField} from "../../../core/utils/utils.ts";
-import {PatchUpdate} from "../../../core/PatchUpdate.ts";
-import {AddressOwner, IndividualType, UpdateType} from "../../../core/shared/sharedEnums.ts";
-import FormSuccess from "../../ui/form/FormSuccess.tsx";
-import FormError from "../../ui/form/FormError.tsx";
-import {UpdatePersonalData} from "../../custom/UpdatePersonalData.tsx";
+import {employeeSchema} from "@/schema/models/employeeSchema.ts";
+import {hasField} from "@/core/utils/utils.ts";
+import {PatchUpdate} from "@/core/PatchUpdate.ts";
+import {AddressOwner, IndividualType, UpdateType} from "@/core/shared/sharedEnums.ts";
+import FormSuccess from "@/components/ui/form/FormSuccess.tsx";
+import FormError from "@/components/ui/form/FormError.tsx";
+import {UpdatePersonalData} from "@/components/custom/UpdatePersonalData.tsx";
 import {Button} from "antd";
-import {EmployeeForm} from "../../forms/EmployeeForm.tsx";
-import {UpdateAddress} from "../../custom/UpdateAddress.tsx";
+import {EmployeeForm} from "@/components/forms/EmployeeForm.tsx";
+import {UpdateAddress} from "@/components/custom/UpdateAddress.tsx";
 
 export const EmployeeEditDrawer = ({open, close, isLoading, data}: EditProps<Employee>) => {
     const [successMessage, setSuccessMessage] = useState<string | undefined>(undefined)

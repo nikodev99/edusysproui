@@ -1,16 +1,16 @@
 import {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
-import {academicYearSchema, AcademicYearSchema} from "../../../schema";
+import {academicYearSchema, AcademicYearSchema} from "@/schema";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {AcademicYear} from "../../../entity";
-import {hasField} from "../../../core/utils/utils.ts";
-import {PatchUpdate} from "../../../core/PatchUpdate.ts";
-import {UpdateType} from "../../../core/shared/sharedEnums.ts";
-import RightSidePane from "../../ui/layout/RightSidePane.tsx";
-import FormSuccess from "../../ui/form/FormSuccess.tsx";
-import FormError from "../../ui/form/FormError.tsx";
-import {EditProps} from "../../../core/utils/interfaces.ts";
-import {AcademicYearForm} from "../../forms/AcademicYearForm.tsx";
+import {AcademicYear} from "@/entity";
+import {hasField} from "@/core/utils/utils.ts";
+import {PatchUpdate} from "@/core/PatchUpdate.ts";
+import {UpdateType} from "@/core/shared/sharedEnums.ts";
+import RightSidePane from "@/components/ui/layout/RightSidePane.tsx";
+import FormSuccess from "@/components/ui/form/FormSuccess.tsx";
+import FormError from "@/components/ui/form/FormError.tsx";
+import {EditProps} from "@/core/utils/interfaces.ts";
+import {AcademicYearForm} from "@/components/forms/AcademicYearForm.tsx";
 
 export const AcademicYearEditDrawer = ({open, close, isLoading, data, resp}: EditProps<AcademicYear>) => {
     const [successMessage, setSuccessMessage] = useState<string | undefined>(undefined)
@@ -49,7 +49,7 @@ export const AcademicYearEditDrawer = ({open, close, isLoading, data, resp}: Edi
     }
 
     return(
-        <RightSidePane loading={isLoading} open={open} onClose={close} destroyOnClose>
+        <RightSidePane loading={isLoading} open={open} onClose={close} destroyOnHidden>
             {successMessage && (<FormSuccess message={successMessage} />)}
             {errorMessage && (<FormError message={errorMessage} />)}
             <AcademicYearForm

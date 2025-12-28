@@ -2,7 +2,7 @@ import {Button, Form, Select, Space} from "antd";
 import { FieldValues } from "react-hook-form";
 import Grid from "../layout/Grid.tsx";
 import { LuSave } from "react-icons/lu";
-import {SelectType, TypedInputType} from "../../../core/utils/interfaces.ts";
+import {SelectType, TypedInputType} from "@/core/utils/interfaces.ts";
 import FormItem from "./FormItem.tsx";
 
 export const FormSelect = <T extends FieldValues>(selectProps: SelectType<T>) => {
@@ -17,8 +17,6 @@ export const FormSelect = <T extends FieldValues>(selectProps: SelectType<T>) =>
             ? filterOption(input, option)
             : filterOption === true ? (option?.label ?? '').toLowerCase().includes(input.toLowerCase()) : undefined;
     }
-
-
 
     return(
         <FormItem {...selectProps} defaultValue={defaultValue || selectedValue} render={({field}) => {
@@ -35,12 +33,16 @@ export const FormSelect = <T extends FieldValues>(selectProps: SelectType<T>) =>
                                 onFocus={() => clearErrors ? clearErrors(field.name) : null}
                                 disabled={field.disabled || disabled}
                                 {...field}
-                                value={field.value || selectedValue}
+                                value={
+                                    field.value !== undefined && field.value !== null && field.value !== ''
+                                        ? field.value
+                                        : selectedValue
+                                }
                                 onSearch={onSearch}
                                 showSearch={showSearch}
                                 onChange={(value, options) => {
                                     onChange?.(value as never, options)
-                                    field.onChange
+                                    field.onChange(value)
                                 }}
                             />
                             <Button htmlType='submit' disabled={disabled ? disabled : field.value === selectedValue}><LuSave /></Button>
@@ -55,12 +57,16 @@ export const FormSelect = <T extends FieldValues>(selectProps: SelectType<T>) =>
                             mode={mode as "tags"}
                             disabled={field.disabled || disabled}
                             {...field}
-                            value={field.value || selectedValue}
+                            value={
+                                field.value !== undefined && field.value !== null && field.value !== ''
+                                    ? field.value
+                                    : selectedValue
+                            }
                             onSearch={onSearch}
                             showSearch={showSearch}
                             onChange={(value, options) => {
                                 onChange?.(value as never, options)
-                                field.onChange
+                                field.onChange(value)
                             }}
                         />
                     )}
@@ -89,7 +95,6 @@ const SelectInput = <T extends FieldValues>(selectProps: TypedInputType<T>) => {
             ): (
                 <FormSelect {...selectProps} />
             )}
-
         </Grid>
     )
 }

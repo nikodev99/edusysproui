@@ -7,26 +7,26 @@ import {
     UseFormStateReturn,
     ControllerFieldState,
     ControllerRenderProps,
-    FieldPath, UseFormClearErrors, UseFormReturn,
+    FieldPath, UseFormClearErrors, UseFormReturn, UseFormSetValue,
 } from "react-hook-form";
 import {ValidateStatus} from "antd/es/form/FormItem";
 import React, {CSSProperties, ReactNode} from "react";
-import {AcademicYear, Assignment, Course, Guardian, Student, Teacher, Employee, Individual, School} from "../../entity";
-import {SectionType} from "../../entity/enums/section.ts";
-import {Gender} from "../../entity/enums/gender.tsx";
-import {AttendanceStatus} from "../../entity/enums/attendanceStatus.ts";
+import {AcademicYear, Assignment, Course, Guardian, Student, Teacher, Employee, Individual, School} from "@/entity";
+import {SectionType} from "@/entity/enums/section.ts";
+import {Gender} from "@/entity/enums/gender.tsx";
+import {AttendanceStatus} from "@/entity/enums/attendanceStatus.ts";
 import {AddressOwner, IndividualType} from "../shared/sharedEnums.ts";
 import {CalendarProps, Event, SlotInfo, View, ViewsProps} from "react-big-calendar";
-import {ReprimandType} from "../../entity/enums/reprimandType.ts";
-import {PunishmentType} from "../../entity/enums/punishmentType.ts";
-import {PunishmentStatus} from "../../entity/enums/punishmentStatus.ts";
-import {Day} from "../../entity/enums/day.ts";
+import {ReprimandType} from "@/entity/enums/reprimandType.ts";
+import {PunishmentType} from "@/entity/enums/punishmentType.ts";
+import {PunishmentStatus} from "@/entity/enums/punishmentStatus.ts";
+import {Day} from "@/entity/enums/day.ts";
 import {AxiosError, AxiosResponse} from "axios";
 import {PercentPositionType, ProgressSize} from "antd/es/progress/progress";
 import {CheckboxOptionType, TableColumnsType, TableProps} from "antd";
 import {ItemType} from "antd/es/menu/interface";
 import {z} from "zod";
-import {AssignmentTypeLiteral} from "../../entity/enums/assignmentType.ts";
+import {AssignmentTypeLiteral} from "@/entity/enums/assignmentType.ts";
 import {RadioGroupButtonStyle, RadioGroupOptionType} from "antd/es/radio";
 import {DefaultOptionType} from "antd/es/select";
 import {UseMutationOptions} from "@tanstack/react-query";
@@ -68,6 +68,7 @@ export interface ZodProps<T extends FieldValues> {
     control: HookControl<T>
     errors: FieldErrors<T>
     clearErrors?: UseFormClearErrors<T>
+    setValue?: UseFormSetValue<FieldValues>
     validationTriggered?: boolean,
     showField?: boolean
 }
@@ -102,10 +103,19 @@ export interface ZodFormItemProps {
 export type FormType<T extends FieldValues> = ZodFormItemProps & ZodControl<T>
 export type FormItemType<T extends FieldValues> = FormType<T> & ZodControlRender<T> & Control<T>
 export type TypedInputType<T extends FieldValues> = Control<T> & FormType<T> & InputProps & ZodSelect<T> & ZodRadio<T> &
-    ZodListControl<T> & {wrapper?: ReactNode, hide?: boolean}
+    ZodListControl<T> & {
+    wrapper?: ReactNode,
+    hide?: boolean
+    showTime?: boolean
+    format?: string,
+    startDateValue?: keyof T
+    endDateValue?: keyof T
+    checked?: boolean
+    checkLabel?: ReactNode
+}
 export type InputType<T extends FieldValues> = TypedInputType<T> & {isCompact?: boolean}
 export type SelectType<T extends FieldValues> = TypedInputType<T> & { isCompact?: boolean, }
-export type DatePickerType<T extends FieldValues> = TypedInputType<T> & {isCompact?: boolean, showTime?: boolean, format?: string}
+export type DatePickerType<T extends FieldValues> = TypedInputType<T> & {isCompact?: boolean}
 export type TimeInputType<T extends FieldValues> = TypedInputType<T> & {isCompact?: boolean}
 export type DataType<TData> = TData;
 export type DataIndex<TData> = keyof DataType<TData>
@@ -213,7 +223,7 @@ export interface ZodRadio<T extends FieldValues> {
 }
 
 export interface InputProps extends ZodFormItemProps {
-    placeholder?: string
+    placeholder?: string | string[]
     xs?: number
     md?: number
     lg?: number
@@ -263,6 +273,7 @@ export interface MessageResponse {
 }
 
 export interface StudentListDataType {
+    enrollmentId?: number
     id: string
     academicYear: AcademicYear
     reference: string
@@ -271,6 +282,7 @@ export interface StudentListDataType {
     gender: Gender
     age: number
     lastEnrolledDate: Date | number
+    classeId?: number
     classe: string
     grade: SectionType | string
     image: string
@@ -590,7 +602,9 @@ export interface PutSchemaProps<TData extends FieldValues, TReturn> {
     putFunc: (data: TData, id: ID) => Promise<AxiosResponse<TReturn, unknown>>
 }
 
-export type Option = DefaultOptionType
+export type Option = DefaultOptionType & {
+    disabled?: boolean
+}
 export type Options = Option[]
 
 export type ActionsButtons = {

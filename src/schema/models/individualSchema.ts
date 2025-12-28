@@ -26,7 +26,7 @@ export const individualSchema = z.object({
     nationality: z.string().nullable().optional(),
     telephone: z.string().nullable().optional(),
     mobile: z.string().nullable().optional(),
-    address: addressSchema,
+    address: z.lazy(() => addressSchema),
     image: z.string().nullable().optional(),
     attachments: z.array(z.string()).nullable().optional(),
     individualType: z.union([

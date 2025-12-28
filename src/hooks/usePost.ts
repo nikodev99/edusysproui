@@ -92,7 +92,7 @@ export const useInsert = <
             // @ts-ignore
             mutate({postFn: func, data: data, params: params}, {
                 onSuccess: (response) => {
-                    const success = response.status === 200;
+                    const success = Boolean(response.status >= 200 && response.status < 300);
                     const data = success ? (response.data as TReturn) : undefined;
 
                     setResult(data);

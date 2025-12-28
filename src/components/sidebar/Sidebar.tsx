@@ -1,12 +1,12 @@
 import "./sidebar.scss"
 import {Button, Flex, Image, Layout, Menu} from "antd";
-import {getMenuItemForUser} from "../../core/menuItems.tsx";
-import {useToggle} from "../../hooks/useToggle.ts";
+import {getMenuItemForUser} from "@/core/menuItems.tsx";
+import {useToggle} from "@/hooks/useToggle.ts";
 import {LuChevronLeft, LuChevronRight} from "react-icons/lu";
-import {redirectTo} from "../../context/RedirectContext.ts";
+import {redirectTo} from "@/context/RedirectContext.ts";
 import {useLocation} from "react-router-dom";
 import {useMemo} from "react";
-import {useAuth} from "../../hooks/useAuth.ts";
+import {useAuth} from "@/hooks/useAuth.ts";
 
 const Sidebar = ({onCollapsed}: {onCollapsed?: boolean}) => {
 

@@ -14,7 +14,7 @@ export interface Enrollment {
 
 export const toEnrollment = (data: StudentListDataType): Enrollment => {
     return {
-        id: 0,
+        id: data?.enrollmentId,
         academicYear: data?.academicYear,
         student: {
             id: data?.id,
@@ -27,6 +27,7 @@ export const toEnrollment = (data: StudentListDataType): Enrollment => {
             } as Individual
         } as Student,
         classe: {
+            id: data?.classeId,
             name: data?.classe,
             grade: {
                 section: data?.grade

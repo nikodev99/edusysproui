@@ -1,11 +1,13 @@
 import {z} from "zod";
-import {classeSchemaMerge} from "./classeSchema.ts";
-import {courseSchemaMerge} from "./courseSchema.ts";
+import {
+    classeSchemaMerge,
+    courseSchemaMerge,
+    planningSchemaMerge,
+    individualSchemaMerge
+} from "@/schema";
 import {dateProcess, timeProcess} from "../commonSchema.ts";
-import {planningSchemaMerge} from "./planningSchema.ts";
-import {individualSchemaMerge} from "./individualSchema.ts";
 import {examSchemaMerge} from "./examSchema.ts";
-import {AssignmentType} from "../../entity/enums/assignmentType.ts";
+import {AssignmentType} from "@/entity/enums/assignmentType.ts";
 
 export const assignmentSchema = z.object({
     semester: planningSchemaMerge,

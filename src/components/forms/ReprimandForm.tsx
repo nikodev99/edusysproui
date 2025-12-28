@@ -1,5 +1,5 @@
 import {FormContentProps} from "@/core/utils/interfaces.ts";
-import {Enrollment, Reprimand} from "@/entity";
+import {Enrollment, Individual, Reprimand} from "@/entity";
 import FormContent from "@/components/ui/form/FormContent.tsx";
 import {FormUtils} from "@/core/utils/formUtils.ts";
 import {FormConfig} from "@/config/FormConfig.ts";
@@ -11,30 +11,26 @@ import {enumToObjectArray, setName} from "@/core/utils/utils.ts";
 import {text} from "@/core/utils/text_display.ts";
 import Datetime from "@/core/datetime.ts";
 import {ReprimandType} from "@/entity/enums/reprimandType.ts";
-import {loggedUser} from "@/auth/jwt/LoggedUser.ts";
+import {useAuth} from "@/hooks/useAuth.ts";
 
-type ReprimandFormProps = FormContentProps<ReprimandSchema, Reprimand> & {
+type ReprimandFormProps<T extends object> = FormContentProps<T, Reprimand> & {
     handleUpdate?: (field: keyof ReprimandSchema, value: unknown) => void,
     reprimandee: Enrollment
 }
-
-const user = loggedUser.getUser()
-
-console.log({user})
 
 export const ReprimandForm = <T extends object>(
     {errors, control, edit, data, handleUpdate, reprimandee}: ReprimandFormProps<T>
 ) => {
     const onlyField = FormUtils.onlyField(edit as boolean, 24, undefined)
-    const form = new FormConfig(errors, true)
+    const form = new FormConfig(errors, edit, true)
+    const {user} = useAuth()
 
     const {academicYearOptions} = useAcademicYearRepo()
     const classe = reprimandee?.classe
     const student = reprimandee?.student?.personalInfo
-    const recentDate = Datetime.now().UNIX
 
     const currentAcademicYearOptions = academicYearOptions(true)
-    const typeOptions = enumToObjectArray(ReprimandType)
+    const typeOptions = enumToObjectArray(ReprimandType, true)
 
     return <FormContent formItems={[
         {
@@ -42,19 +38,17 @@ export const ReprimandForm = <T extends object>(
             inputProps: {
                 hasForm: edit,
                 control: control,
-                name: form.name('academicYear') as Path<T>,
+                name:'student.academicYear.id' as Path<T>,
                 label: 'Année Académique',
                 lg: onlyField,
                 md: onlyField,
                 required: true,
                 disabled: true,
-                selectedValue: currentAcademicYearOptions[0].value,
                 placeholder: "Choisissez l'année académique",
                 options: currentAcademicYearOptions,
-                validateStatus: form.validate('id', 'academicYear'),
-                help: form.error('id', 'academicYear'),
-                defaultValue: (data ? data.academicYear.id : undefined) as PathValue<T, Path<T>>,
-                onFinish: edit && handleUpdate ? (value: unknown) => handleUpdate('academicYear.id', value) : undefined,
+                validateStatus: form.validate('id', 'student.academicYear'),
+                help: form.error('id', 'student.academicYear'),
+                defaultValue: (data ? data.student.academicYear.id : currentAcademicYearOptions[0].value) as PathValue<T, Path<T>>,
             }
         },
         {
@@ -62,21 +56,19 @@ export const ReprimandForm = <T extends object>(
             inputProps: {
                 hasForm: edit,
                 control: control,
-                name: form.name('classe') as Path<T>,
+                name: 'student.classe.id' as Path<T>,
                 label: 'Classe',
                 lg: onlyField,
                 md: onlyField,
                 required: true,
                 disabled: true,
-                selectedValue: classe?.id,
                 placeholder: "Choisissez la classe",
                 options: [
                     {value: classe?.id, label: classe?.name}
                 ],
-                validateStatus: form.validate('id', 'classe'),
-                help: form.error('id', 'classe'),
-                defaultValue: (data ? data.classe.id : undefined) as PathValue<T, Path<T>>,
-                onFinish: edit && handleUpdate ? (value: unknown) => handleUpdate('classe.id', value) : undefined,
+                validateStatus: form.validate('id', 'student.classe'),
+                help: form.error('id', 'student.classe'),
+                defaultValue: (data ? data.student.classe.id : classe?.id) as PathValue<T, Path<T>>,
             }
         },
         {
@@ -84,25 +76,23 @@ export const ReprimandForm = <T extends object>(
             inputProps: {
                 hasForm: edit,
                 control: control,
-                name: form.name('student') as Path<T>,
+                name: 'student.id' as Path<T>,
                 label: `${text.student.label} Réprimandé`,
                 lg: onlyField,
                 md: onlyField,
                 required: true,
                 disabled: true,
-                selectedValue: reprimandee?.id,
                 placeholder: "Choisissez l'élève réprimandé",
                 options: [
                     {value: reprimandee?.id, label: setName(student)}
                 ],
                 validateStatus: form.validate('id', 'student'),
                 help: form.error('id', 'student'),
-                defaultValue: (data ? data.academicYear.id : undefined) as PathValue<T, Path<T>>,
-                onFinish: edit && handleUpdate ? (value: unknown) => handleUpdate('student.id', value) : undefined,
+                defaultValue: (data ? data.student.id : reprimandee?.id) as PathValue<T, Path<T>>,
             }
         },
         {
-            type: InputTypeEnum.SELECT,
+            type: InputTypeEnum.DATE,
             inputProps: {
                 hasForm: edit,
                 control: control,
@@ -111,15 +101,12 @@ export const ReprimandForm = <T extends object>(
                 lg: onlyField,
                 md: onlyField,
                 required: true,
-                disabled: true,
-                selectedValue: recentDate,
+                showTime: true,
+                format: "DD/MM/YYYY HH:mm",
                 placeholder: "Choisissez l'année académique",
-                options: [
-                    {value: recentDate, label: Datetime.now().fDatetime()}
-                ],
                 validateStatus: form.validate('reprimandDate'),
                 help: form.error('reprimandDate'),
-                defaultValue: (data ? data.reprimandDate : undefined) as PathValue<T, Path<T>>,
+                defaultValue: (data ? data.reprimandDate : Datetime.now().toDayjs()) as PathValue<T, Path<T>>,
                 onFinish: edit && handleUpdate ? (value: unknown) => handleUpdate('reprimandDate', value) : undefined,
             }
         },
@@ -128,7 +115,7 @@ export const ReprimandForm = <T extends object>(
             inputProps: {
                 hasForm: edit,
                 control: control,
-                name: form.name('type') as Path<T>,
+                name: 'type' as Path<T>,
                 label: 'Type de reprimande',
                 lg: onlyField,
                 md: onlyField,
@@ -146,20 +133,38 @@ export const ReprimandForm = <T extends object>(
             inputProps: {
                 hasForm: edit,
                 control: control,
-                name: form.name('issuedBy') as Path<T>,
-                label: 'L’autorité ayant prononcé la réprimande',
+                name: 'issuedBy.id' as Path<T>,
+                label: 'Réprimandé par',
                 lg: onlyField,
                 md: onlyField,
                 required: true,
                 disabled: true,
-                placeholder: "Choisissez l'autorité'",
+                placeholder: "Choisissez l'autorité",
                 options: [
-                    {}
+                    {value: user?.personalInfo, label: setName({
+                            firstName: user?.firstName,
+                            lastName: user?.lastName
+                    } as Individual)}
                 ],
-                validateStatus: form.validate('type'),
-                help: form.error('type'),
+                validateStatus: form.validate('id', 'issuedBy'),
+                help: form.error('id', 'issuedBy'),
+                defaultValue: (data ? data.type : user?.personalInfo) as PathValue<T, Path<T>>,
+            }
+        },
+        {
+            type: InputTypeEnum.TEXTAREA,
+            inputProps: {
+                hasForm: edit,
+                control: control,
+                name: form.name('description') as Path<T>,
+                label: 'Description',
+                lg: 12,
+                md: onlyField,
+                placeholder: "Description (max. 2000 characters)",
+                validateStatus: form.validate('description'),
+                help: form.error('description'),
                 defaultValue: (data ? data.type : undefined) as PathValue<T, Path<T>>,
-                onFinish: edit && handleUpdate ? (value: unknown) => handleUpdate('type', value) : undefined,
+                onFinish: edit && handleUpdate ? (value: unknown) => handleUpdate('description', value) : undefined,
             }
         },
     ]} />

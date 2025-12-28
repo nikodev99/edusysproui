@@ -80,7 +80,7 @@ export const ConfirmationModal = <TData extends object, IData extends object>(
                 {...modalProps}
                 open={open}
                 onCancel={handleCancel}
-                destroyOnClose
+                destroyOnHidden
                 title={setTitle}
                 footer={null}
             >

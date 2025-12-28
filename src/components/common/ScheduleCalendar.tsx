@@ -1,21 +1,21 @@
 import {isValidElement, ReactNode, useEffect, useState} from "react";
-import {Schedule} from "../../entity";
-import {useRawFetch} from "../../hooks/useFetch.ts";
-import {ApiEvent, Color, EventProps} from "../../core/utils/interfaces.ts";
-import {Day} from "../../entity/enums/day.ts";
-import {fDate, getMinMaxTimes, setTime, transformEvents} from "../../core/utils/utils.ts";
+import {Schedule} from "@/entity";
+import {useRawFetch} from "@/hooks/useFetch.ts";
+import {ApiEvent, Color, EventProps} from "@/core/utils/interfaces.ts";
+import {Day} from "@/entity/enums/day.ts";
+import {fDate, getMinMaxTimes, setTime, transformEvents} from "@/core/utils/utils.ts";
 import {DescriptionsItemType} from "antd/es/descriptions";
-import {text} from "../../core/utils/text_display.ts";
-import {IconText, SuperWord} from "../../core/utils/tsxUtils.tsx";
+import {text} from "@/core/utils/text_display.ts";
+import {IconText, SuperWord} from "@/core/utils/tsxUtils.tsx";
 import {LuCalendarDays, LuClock, LuClock9} from "react-icons/lu";
-import {AvatarTitle} from "../ui/layout/AvatarTitle.tsx";
-import {BigCalendar} from "../graph/BigCalendar.tsx";
+import {AvatarTitle} from "@/components/ui/layout/AvatarTitle.tsx";
+import {BigCalendar} from "@/components/graph/BigCalendar.tsx";
 import {Card, Descriptions, Modal, Tag} from "antd";
 import {AxiosResponse} from "axios";
-import {SectionType} from "../../entity/enums/section.ts";
+import {SectionType} from "@/entity/enums/section.ts";
 import {View} from "react-big-calendar";
-import Datetime from "../../core/datetime.ts";
-import VoidData from "../view/VoidData.tsx";
+import Datetime from "@/core/datetime.ts";
+import VoidData from "@/components/view/VoidData.tsx";
 
 type ScheduleCalendarProps = {
     fetchFunc?: (...args: unknown[]) =>  Promise<AxiosResponse<Schedule>>
@@ -136,7 +136,7 @@ export const ScheduleCalendar = (
                     )
             }
 
-            <Modal title={selectedSchedule?.designation} open={isModalOpen} footer={null} onCancel={onModalCancel} destroyOnClose>
+            <Modal title={selectedSchedule?.designation} open={isModalOpen} footer={null} onCancel={onModalCancel} destroyOnHidden>
                 <Card>
                     <Descriptions items={assignmentDesc(
                         selectedSchedule as Schedule,

@@ -1,19 +1,19 @@
-import RightSidePane from "../../ui/layout/RightSidePane.tsx";
-import {EditProps} from "../../../core/utils/interfaces.ts";
-import {Guardian, Individual} from "../../../entity";
-import GuardianForm from "../../forms/GuardianForm.tsx";
+import RightSidePane from "@/components/ui/layout/RightSidePane.tsx";
+import {EditProps} from "@/core/utils/interfaces.ts";
+import {Guardian, Individual} from "@/entity";
+import GuardianForm from "@/components/forms/GuardianForm.tsx";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {guardianSchema, GuardianSchema} from "../../../schema";
-import {AddressOwner, IndividualType, UpdateType} from "../../../core/shared/sharedEnums.ts";
+import {guardianSchema, GuardianSchema} from "@/schema";
+import {AddressOwner, IndividualType, UpdateType} from "@/core/shared/sharedEnums.ts";
 import {Button} from "antd";
 import {useEffect, useState} from "react";
-import FormSuccess from "../../ui/form/FormSuccess.tsx";
-import FormError from "../../ui/form/FormError.tsx";
-import {hasField} from "../../../core/utils/utils.ts";
-import {UpdateAddress} from "../../custom/UpdateAddress.tsx";
-import {UpdatePersonalData} from "../../custom/UpdatePersonalData.tsx";
-import {PatchUpdate} from "../../../core/PatchUpdate.ts";
+import FormSuccess from "@/components/ui/form/FormSuccess.tsx";
+import FormError from "@/components/ui/form/FormError.tsx";
+import {hasField} from "@/core/utils/utils.ts";
+import {UpdateAddress} from "@/components/custom/UpdateAddress.tsx";
+import {UpdatePersonalData} from "@/components/custom/UpdatePersonalData.tsx";
+import {PatchUpdate} from "@/core/PatchUpdate.ts";
 
 export const GuardianEditDrawer = ({isLoading, open, close, data}: EditProps<Guardian>) => {
 
@@ -71,7 +71,7 @@ export const GuardianEditDrawer = ({isLoading, open, close, data}: EditProps<Gua
     }
 
     return(
-        <RightSidePane loading={isLoading} open={open} onClose={close} className='edit-drawer' destroyOnClose>
+        <RightSidePane loading={isLoading} open={open} onClose={close} className='edit-drawer' destroyOnHidden>
             {successMessage && (<FormSuccess message={successMessage} />)}
             {errorMessage && (<FormError message={errorMessage} />)}
             <UpdatePersonalData

@@ -37,6 +37,8 @@ export interface PieChartProps {
     startAngle?: number
     endAngle?: number
     isLoading?: boolean
+    nameKey?: keyof PieChartDataEntry
+    plainColor?: boolean
 }
 
 export interface ChartProps<T>{

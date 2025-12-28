@@ -1,19 +1,20 @@
-import {useReprimandRepo} from "../../../hooks/actions/useReprimandRepo.ts";
-import {AcademicYear, Classe, Enrollment, Individual, Punishment, Reprimand} from "../../../entity";
+import {useReprimandRepo} from "@/hooks/actions/useReprimandRepo.ts";
+import {AcademicYear, Classe, Enrollment, Individual, Punishment, Reprimand} from "@/entity";
 import {useEffect, useMemo, useState} from "react";
-import ListViewer from "../../custom/ListViewer.tsx";
-import {ReprimandFilterProps} from "../../../data/repository/reprimandRepository.ts";
+import ListViewer from "@/components/custom/ListViewer.tsx";
+import {ReprimandFilterProps} from "@/data/repository/reprimandRepository.ts";
 import {TableColumnsType, Tag as AntTag} from "antd";
-import {ReprimandFilters} from "../../filters/ReprimandFilters.tsx";
-import {useAcademicYearRepo} from "../../../hooks/actions/useAcademicYearRepo.ts";
+import {ReprimandFilters} from "@/components/filters/ReprimandFilters.tsx";
+import {useAcademicYearRepo} from "@/hooks/actions/useAcademicYearRepo.ts";
 import {LuCircleAlert} from "react-icons/lu";
-import Tag from "../../ui/layout/Tag.tsx";
-import Datetime from "../../../core/datetime.ts";
-import {ReprimandType, typeColor} from "../../../entity/enums/reprimandType.ts";
-import {PunishmentType} from "../../../entity/enums/punishmentType.ts";
-import {punishmentStatusTag} from "../../../entity/enums/punishmentStatus.ts";
+import Tag from "@/components/ui/layout/Tag.tsx";
+import Datetime from "@/core/datetime.ts";
+import {ReprimandType, typeColor} from "@/entity/enums/reprimandType.ts";
+import {PunishmentType} from "@/entity/enums/punishmentType.ts";
+import {punishmentStatusTag} from "@/entity/enums/punishmentStatus.ts";
 import {StudentReprimandDrawer} from "./StudentReprimandDrawer.tsx";
-import {useToggle} from "../../../hooks/useToggle.ts";
+import {useToggle} from "@/hooks/useToggle.ts";
+import {setFirstName} from "@/core/utils/utils.ts";
 
 interface StudentDisciplineProps {
     enrolledStudent: Enrollment
@@ -25,7 +26,7 @@ export const StudentDiscipline = ({enrolledStudent}: StudentDisciplineProps) => 
     const {academicYearOptions} = useAcademicYearRepo()
     const [openDrawer, setOpenDrawer] = useToggle(false)
     
-    const {useGetAllStudentReprimands} = useReprimandRepo()
+    const {useGetStudentReprimands} = useReprimandRepo()
     
     const {academicYear, student} = useMemo(() => ({
         academicYear: enrolledStudent?.academicYear,
@@ -38,7 +39,7 @@ export const StudentDiscipline = ({enrolledStudent}: StudentDisciplineProps) => 
         })
     }, [academicYear?.id]);
     
-    const {fetchReprimands} = useGetAllStudentReprimands(student?.id as string)
+    const {fetchReprimands} = useGetStudentReprimands(student?.id as string)
 
     const tableColumns: TableColumnsType<Reprimand> = [
         {
@@ -47,13 +48,13 @@ export const StudentDiscipline = ({enrolledStudent}: StudentDisciplineProps) => 
         },
         {
             title: "Année Academique",
-            dataIndex: 'academicYear',
+            dataIndex: ['student', 'academicYear'],
             key: '@AcademicYear',
             render: (a: AcademicYear) => a.academicYear
         },
         {
             title: "Classe",
-            dataIndex: 'classe',
+            dataIndex: ['student', 'classe'],
             key: '@Classe',
             render: (c: Classe) => <AntTag>{c.name}</AntTag>
         },
@@ -61,7 +62,9 @@ export const StudentDiscipline = ({enrolledStudent}: StudentDisciplineProps) => 
             title: 'Réprimande',
             dataIndex: 'type',
             key: '@reprimandType',
-            render: type => <Tag color={typeColor(ReprimandType[type])}>{ReprimandType[type]}</Tag>
+            render: type => <Tag color={typeColor(ReprimandType[type])}>
+                {setFirstName(ReprimandType[type])}
+            </Tag>
         },
         {
             title: 'Date',
@@ -73,7 +76,9 @@ export const StudentDiscipline = ({enrolledStudent}: StudentDisciplineProps) => 
             title: 'Punition',
             dataIndex: 'punishment',
             key: '@punishment',
-            render: (punishment: Punishment) => <Tag color='warning'>{PunishmentType[punishment?.type]}</Tag>
+            render: (punishment: Punishment) => <span>
+                {PunishmentType[punishment?.type]}
+            </span>
         },
         {
             title: 'Status',
@@ -119,11 +124,14 @@ export const StudentDiscipline = ({enrolledStudent}: StudentDisciplineProps) => 
                 fetchId='reprimand-list'
                 cardNotAvatar={true}
                 filters={
+                    <>
+                    {/* TODO The classe filter should be only of the student history */}
                     <ReprimandFilters
                         setFilters={handleFilters}
                         academicYear={academicYear?.id}
                         academicYearOptions={academicYearOption}
                     />
+                    </>
                 }
                 onSelectData={handleSelectReprimand}
                 noSearch={true}

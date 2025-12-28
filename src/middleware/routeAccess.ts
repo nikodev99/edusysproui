@@ -117,7 +117,7 @@ class RouteAccess {
          */
         'classes-and-subjects': {
             module: [
-                () => isTopAdmin() || isAdmin() || isSecretary()
+                () => isTopAdmin() || isAdmin() || isSecretary() || isTeacher()
             ]
         },
 

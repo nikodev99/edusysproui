@@ -13,14 +13,13 @@ import {message} from "antd";
 import {ItemType} from "antd/es/menu/interface";
 import {PiNotebook, PiStudent} from "react-icons/pi";
 import {text} from "./utils/text_display.ts";
-import {loggedUser} from "../auth/jwt/LoggedUser.ts";
 import {routeAccess} from "../middleware/routeAccess.ts";
+import {loggedUser} from "@/auth/jwt/LoggedUser.ts";
 
 export const getMenuItemForUser = (): ItemType[] => {
-    const user = loggedUser.getUser()
-    const roles = user?.roles ?? []
+    const roles = loggedUser.getRole()
 
-    if (!user || roles.length === 0) {
+    if (!roles || roles.length === 0) {
         message.warning("No user or no roles found").then()
 
         return [
@@ -119,5 +118,5 @@ export const getMenuItemForUser = (): ItemType[] => {
         },
     ]
 
-    return routeAccess.filterMenuItems(allMenuItems, roles)
+    return routeAccess.filterMenuItems(allMenuItems)
 }

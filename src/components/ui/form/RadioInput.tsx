@@ -1,5 +1,5 @@
 import {ControllerRenderProps, FieldValues} from "react-hook-form";
-import {SelectType, TypedInputType, ZodRadio} from "../../../core/utils/interfaces.ts";
+import {SelectType, TypedInputType, ZodRadio} from "@/core/utils/interfaces.ts";
 import FormItem from "./FormItem.tsx";
 import {Button, Form, Radio, RadioChangeEvent, Space} from "antd";
 import Grid from "../layout/Grid.tsx";
@@ -13,7 +13,7 @@ export const FormRadioInput = <T extends FieldValues>(radioProps: SelectType<T> 
     const processedRadioOptions = radioOptions?.map((option, index) => {
         const originalValue = option?.value;
 
-        let uniqueValue;
+        let uniqueValue: string | undefined;
         if (typeof originalValue === 'object' && originalValue !== null) {
             uniqueValue = option?.id;
         } else if (originalValue === undefined || originalValue === null) {
@@ -36,7 +36,6 @@ export const FormRadioInput = <T extends FieldValues>(radioProps: SelectType<T> 
         const selectedOption = radioOptions?.find(opt => opt.id === id);
         if (selectedOption) {
             const selectedValue = selectedOption.value;
-            console.log("Selected Value:", selectedValue);
             field.onChange(selectedValue);
             return selectedValue;
         }

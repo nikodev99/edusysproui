@@ -1,38 +1,38 @@
-import Section from "../../ui/layout/Section.tsx";
-import Block from "../../view/Block.tsx";
-import PanelSection from "../../ui/layout/PanelSection.tsx";
-import PanelTable from "../../ui/layout/PanelTable.tsx";
-import {CountType, InfoPageProps, ReprimandData} from "../../../core/utils/interfaces.ts";
-import {Classe, Course, Department, Teacher} from "../../../entity";
+import Section from "@/components/ui/layout/Section.tsx";
+import Block from "@/components/view/Block.tsx";
+import PanelSection from "@/components/ui/layout/PanelSection.tsx";
+import PanelTable from "@/components/ui/layout/PanelTable.tsx";
+import {CountType, InfoPageProps, ReprimandData} from "@/core/utils/interfaces.ts";
+import {Classe, Course, Department, Teacher} from "@/entity";
 import {
     getAge,
     getDistinctArray,
     cLowerName,
     setTime
-} from "../../../core/utils/utils.ts";
+} from "@/core/utils/utils.ts";
 import {useEffect, useMemo, useState} from "react";
 import {Flex, TableColumnsType, Tag, TimelineProps} from "antd";
-import {useRawFetch} from "../../../hooks/useFetch.ts";
-import {getNumberOfStudentTaughtByClasse} from "../../../data/repository/teacherRepository.ts";
-import {Timeline} from "../../graph/Timeline.tsx";
+import {useRawFetch} from "@/hooks/useFetch.ts";
+import {getNumberOfStudentTaughtByClasse} from "@/data/repository/teacherRepository.ts";
+import {Timeline} from "@/components/graph/Timeline.tsx";
 import {AiFillClockCircle} from "react-icons/ai";
-import {getSomeStudentReprimandedByTeacher} from "../../../data/repository/reprimandRepository.ts";
-import {Reprimand, Assignment} from "../../../entity";
-import {Table as CustomTable} from "../../ui/layout/Table.tsx";
-import {ReprimandType} from "../../../entity/enums/reprimandType.ts";
-import {ShapePieChart} from "../../graph/ShapePieChart.tsx";
-import {PieChartDataEntry} from "../../ui/ui_interfaces.ts";
-import {getSomeTeacherAssignments} from "../../../data/repository/assignmentRepository.ts";
-import {useGlobalStore} from "../../../core/global/store.ts";
-import {DatedListItem} from "../../ui/layout/DatedListItem.tsx";
-import {DepartmentDesc} from "../../common/DepartmentDesc.tsx";
-import Datetime from "../../../core/datetime.ts";
-import {useScoreRepo} from "../../../hooks/actions/useScoreRepo.ts";
-import {MarksHistogram} from "../../common/MarksHistogram.tsx";
-import {TeacherIndividual} from "../../common/TeacherIndividual.tsx";
-import {useTeacherRepo} from "../../../hooks/actions/useTeacherRepo.ts";
-import {ScheduleCalendar} from "../../common/ScheduleCalendar.tsx";
-import {useDepartmentRepo} from "../../../hooks/actions/useDepartmentRepo.ts";
+import {getSomeStudentReprimandedByTeacher} from "@/data/repository/reprimandRepository.ts";
+import {Reprimand, Assignment} from "@/entity";
+import {Table as CustomTable} from "@/components/ui/layout/Table.tsx";
+import {ReprimandType} from "@/entity/enums/reprimandType.ts";
+import {ShapePieChart} from "@/components/graph/ShapePieChart.tsx";
+import {PieChartDataEntry} from "@/components/ui/ui_interfaces.ts";
+import {getSomeTeacherAssignments} from "@/data/repository/assignmentRepository.ts";
+import {useGlobalStore} from "@/core/global/store.ts";
+import {DatedListItem} from "@/components/ui/layout/DatedListItem.tsx";
+import {DepartmentDesc} from "@/components/common/DepartmentDesc.tsx";
+import Datetime from "@/core/datetime.ts";
+import {useScoreRepo} from "@/hooks/actions/useScoreRepo.ts";
+import {MarksHistogram} from "@/components/common/MarksHistogram.tsx";
+import {TeacherIndividual} from "@/components/common/TeacherIndividual.tsx";
+import {useTeacherRepo} from "@/hooks/actions/useTeacherRepo.ts";
+import {ScheduleCalendar} from "@/components/common/ScheduleCalendar.tsx";
+import {useDepartmentRepo} from "@/hooks/actions/useDepartmentRepo.ts";
 
 type TeacherInfo = InfoPageProps<Teacher>
 

@@ -1,6 +1,6 @@
 import {FieldValues} from "react-hook-form";
-import {getCountryListInFrench} from "../../../core/utils/utils.ts";
-import {TypedInputType} from "../../../core/utils/interfaces.ts";
+import {getCountryListInFrench} from "@/core/utils/utils.ts";
+import {TypedInputType} from "@/core/utils/interfaces.ts";
 import {useMemo} from "react";
 import SelectInput from "./SelectInput.tsx";
 

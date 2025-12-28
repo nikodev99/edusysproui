@@ -161,7 +161,8 @@ export const StudentList = <TError extends AxiosError>(listProps: ListViewerProp
             description: [
                 `${c.grade} - ${c.classe}`,
                 `Inscrit le, ${Datetime.of(c.lastEnrolledDate).fDatetime({to: true})}`
-            ]
+            ],
+            record: c
         })) as DataProps<StudentListDataType>[]
     }
 

@@ -13,15 +13,15 @@ export class FormConfig<T extends FieldValues | FieldErrors> {
         this.onEnroll = onEnroll;
     }
 
-    name(fieldName: keyof T, parent?: string): Path<T> {
-        return FormUtils.setName(fieldName, this.toEdited as boolean, parent, this.onEnroll) as Path<T>
+    name(fieldName: keyof T | string, parent?: string | keyof T): Path<T> {
+        return FormUtils.setName(fieldName, this.toEdited as boolean, parent as string, this.onEnroll) as Path<T>
     }
 
-    validate(fieldName: keyof T, parent?: string): 'error' {
-        return FormUtils.getValidationStatus(fieldName, this.error_type, this.toEdited as boolean, parent, this.onEnroll) as 'error'
+    validate(fieldName: keyof T | string, parent?: string | keyof T): 'error' {
+        return FormUtils.getValidationStatus(fieldName, this.error_type, this.toEdited as boolean, parent as string, this.onEnroll) as 'error'
     }
 
-    error(fieldName: keyof T, parent?: string) {
-        return FormUtils.getErrorMessage(fieldName, this.error_type, this.toEdited as boolean, parent, this.onEnroll)
+    error(fieldName: keyof T | string, parent?: string | keyof T) {
+        return FormUtils.getErrorMessage(fieldName, this.error_type, this.toEdited as boolean, parent as string, this.onEnroll)
     }
 }

@@ -1,9 +1,7 @@
 import {z} from "zod";
-import {guardianSchema} from "./guardianSchema.ts";
-import {healthSchema} from "./healthSchema.ts";
-import {individualSchema} from "./individualSchema.ts";
+import {guardianSchema, healthSchema, individualSchema} from "@/schema";
 import {dateProcess} from "../commonSchema.ts";
-import {IndividualType} from "../../core/shared/sharedEnums.ts";
+import {IndividualType} from "@/core/shared/sharedEnums.ts";
 
 export const studentSchema = z.object({
     personalInfo: individualSchema.extend({
@@ -15,10 +13,10 @@ export const studentSchema = z.object({
     dadName: z.string().min(1, {message: "Nom et prénom du père est requis"}),
     momName: z.string().min(1, {message: "Nom et prénom de la mère est requis"}),
     guardian: guardianSchema,
-    healthCondition: healthSchema,
+    healthCondition: z.lazy(() => healthSchema),
     reference: z.string().optional(),
 })
 
 export const studentSchemaMerge = z.object({
-    id: z.string({required_error: 'Le student est requis'}).min(3, {message: "Le student est requis"}),
+    id: z.string({required_error: 'Etudiant est requis'}).min(3, {message: "Etudiant est requis"}),
 })

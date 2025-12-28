@@ -57,6 +57,7 @@ export interface UserProfile {
     email: string
     phoneNumber: string
     userType: UserType
+    personalInfo: number
     roles: Role[]
     schools: School[]
 }
@@ -131,6 +132,7 @@ export const toUser = (profil: UserProfileToken): UserProfile => ({
     email: profil?.email,
     username: profil?.username,
     phoneNumber: profil?.phoneNumber,
+    personalInfo: profil?.id,
     roles: profil?.roles
 });
 

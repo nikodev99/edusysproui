@@ -1,15 +1,15 @@
-import RightSidePane from "../../ui/layout/RightSidePane.tsx";
-import {EditProps} from "../../../core/utils/interfaces.ts";
-import {Assignment} from "../../../entity";
-import {AssignmentForm} from "../../forms/AssignmentForm.tsx";
+import RightSidePane from "@/components/ui/layout/RightSidePane.tsx";
+import {EditProps} from "@/core/utils/interfaces.ts";
+import {Assignment} from "@/entity";
+import {AssignmentForm} from "@/components/forms/AssignmentForm.tsx";
 import {useForm} from "react-hook-form";
-import {assignmentSchema, AssignmentSchema} from "../../../schema";
+import {assignmentSchema, AssignmentSchema} from "@/schema";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useEffect, useState} from "react";
-import {PatchUpdate} from "../../../core/PatchUpdate.ts";
-import {UpdateType} from "../../../core/shared/sharedEnums.ts";
-import FormSuccess from "../../ui/form/FormSuccess.tsx";
-import FormError from "../../ui/form/FormError.tsx";
+import {PatchUpdate} from "@/core/PatchUpdate.ts";
+import {UpdateType} from "@/core/shared/sharedEnums.ts";
+import FormSuccess from "@/components/ui/form/FormSuccess.tsx";
+import FormError from "@/components/ui/form/FormError.tsx";
 
 export const ExamEditDrawer = ({open, close, isLoading, data, hasMarks}: EditProps<Assignment> & {
     hasMarks: boolean
@@ -48,7 +48,7 @@ export const ExamEditDrawer = ({open, close, isLoading, data, hasMarks}: EditPro
     }
 
     return (
-        <RightSidePane open={open} onClose={close} loading={isLoading} destroyOnClose>
+        <RightSidePane open={open} onClose={close} loading={isLoading} destroyOnHidden>
             {successMessage && <FormSuccess message={successMessage} isNotif />}
             {errorMessage && <FormError message={errorMessage} isNotif />}
             <AssignmentForm

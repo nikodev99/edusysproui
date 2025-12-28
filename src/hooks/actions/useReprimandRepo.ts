@@ -1,16 +1,38 @@
 import {useFetch} from "../useFetch.ts";
 import {
-    getAllStudentReprimandedByTeacher,
-    getAllStudentReprimands,
-    getSomeStudentReprimandedByTeacher, ReprimandFilterProps
-} from "../../data/repository/reprimandRepository.ts";
-import {Pageable} from "../../core/utils/interfaces.ts";
+    createReprimand, getAllStudentReprimandedByTeacher, getStudentReprimands, getSomeStudentReprimandedByTeacher,
+    ReprimandFilterProps, getAllStudentReprimands, getClasseReprimands
+} from "@/data/repository/reprimandRepository.ts";
+import {Pageable, RepoOptions} from "@/core/utils/interfaces.ts";
+import {useInsert} from "@/hooks/usePost.ts";
+import {reprimandSchema} from "@/schema/models/reprimandSchema.ts";
 
 export const useReprimandRepo = () => {
-    const useGetAllStudentReprimands = (studentId: string) => {
+    const useInsertReprimand = () => useInsert(reprimandSchema, createReprimand, {
+        mutationKey: ['reprimand-post']
+    })
+
+    const useGetAllStudentReprimand = (studentId: string, options?: RepoOptions) =>{
+        const {data, refetch} = useFetch(['student-reprimands', studentId], getAllStudentReprimands, [studentId], !!studentId)
+
+        if (options?.shouldRefetch)
+            refetch().then()
+
+        return data;
+    }
+
+    const useGetStudentReprimands = (studentId: string) => {
         return {
             fetchReprimands: (filter: ReprimandFilterProps, page: number, size: number, sortField?: string, sortOrder?: string) => {
-                return getAllStudentReprimands(studentId, filter, page, size, sortField, sortOrder)
+                return getStudentReprimands(studentId, filter, page, size, sortField, sortOrder)
+            }
+        }
+    }
+
+    const useGetClasseReprimand = (classeId: number) => {
+        return {
+            fetchReprimands: (filter: ReprimandFilterProps, page: number, size: number, sortField?: string, sortOrder?: string) => {
+                return getClasseReprimands(classeId, filter, page, size, sortField, sortOrder)
             }
         }
     }
@@ -28,7 +50,10 @@ export const useReprimandRepo = () => {
     )
 
     return {
-        useGetAllStudentReprimands,
+        useInsertReprimand,
+        useGetAllStudentReprimand,
+        useGetClasseReprimand,
+        useGetStudentReprimands,
         useGetSomeStudentReprimandByTeacher,
         useGetAllStudentReprimandByTeacher,
     }

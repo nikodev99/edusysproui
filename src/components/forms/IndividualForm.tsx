@@ -1,14 +1,14 @@
-import {FormContentProps} from "../../core/utils/interfaces.ts";
-import {Individual as PersonalInfo} from "../../entity/domain/individual.ts";
+import {FormContentProps} from "@/core/utils/interfaces.ts";
+import {Individual as PersonalInfo} from "@/entity/domain/individual.ts";
 import {FieldValues, Path, PathValue} from "react-hook-form";
-import {IndividualType, InputTypeEnum} from "../../core/shared/sharedEnums.ts";
-import {FormUtils} from "../../core/utils/formUtils.ts";
+import {IndividualType, InputTypeEnum} from "@/core/shared/sharedEnums.ts";
+import {FormUtils} from "@/core/utils/formUtils.ts";
 import {useMemo} from "react";
-import {enumToObjectArray} from "../../core/utils/utils.ts";
-import {Gender} from "../../entity/enums/gender.tsx";
-import FormContent from "../ui/form/FormContent.tsx";
-import {FormConfig} from "../../config/FormConfig.ts";
-import {Status} from "../../entity/enums/status.ts";
+import {enumToObjectArray} from "@/core/utils/utils.ts";
+import {Gender} from "@/entity/enums/gender.tsx";
+import FormContent from "@/components/ui/form/FormContent.tsx";
+import {FormConfig} from "@/config/FormConfig.ts";
+import {Status} from "@/entity/enums/status.ts";
 
 type IndividualProps<T extends FieldValues, Q extends object> = FormContentProps<T, PersonalInfo> & {
     type: IndividualType
@@ -105,7 +105,7 @@ const IndividualForm = <T extends FieldValues, Q extends object>(individualProps
                     md: onlyField,
                     lg: onlyField,
                     hasForm: edit,
-                    selectedValue: (edit && data ? data.gender : '') as PathValue<T, Path<T>>,
+                    selectedValue: (edit && data ? data.gender : undefined) as PathValue<T, Path<T>>,
                     onFinish: edit && handleUpdate ? (value) => handleUpdate('gender', value) : undefined
                 }
             },

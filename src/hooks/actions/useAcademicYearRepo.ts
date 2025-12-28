@@ -5,12 +5,12 @@ import {
     getAcademicYearFromYear,
     getAllAcademicYears,
     getCurrentAcademicYear, saveAcademicYear
-} from "../../data/repository/academicYearRepository.ts";
+} from "@/data/repository/academicYearRepository.ts";
 import {useInsert} from "../usePost.ts";
-import {academicYearSchema} from "../../schema";
-import {Option, RepoOptions} from "../../core/utils/interfaces.ts";
-import {AcademicYear} from "../../entity";
-import {useGlobalStore} from "../../core/global/store.ts";
+import {academicYearSchema} from "@/schema";
+import {Option, RepoOptions} from "@/core/utils/interfaces.ts";
+import {AcademicYear} from "@/entity";
+import {useGlobalStore} from "@/core/global/store.ts";
 
 export const useAcademicYearRepo = () => {
     const schoolId = useGlobalStore(state => state.schoolId)

@@ -14,36 +14,22 @@ export enum RoleEnum {
 
 export type Role = keyof typeof RoleEnum;
 
-const userRoles = loggedUser.getRole()
-
-export const isTopAdmin = (): boolean => {
-    return userRoles?.some(role => role === 'TOP_ADMIN' || role === 'DIRECTOR') || false;
+const hasRole = (roles: Role[]) => {
+    const userRoles = loggedUser.getRole()
+    if (!userRoles || userRoles?.length === 0)
+        return false
+    return userRoles.some(userRole => roles.includes(userRole))
 }
 
-export const isAdmin = (): boolean => {
-    return userRoles?.some(role => role === 'ADMIN') || false;
+export const createRoleChecker = (...roles: Role[]) => {
+    return () => hasRole(roles)
 }
 
-export const isTeacher = (): boolean => {
-    return userRoles?.some(role => role === 'TEACHER') || false;
-}
-
-export const isHR = (): boolean => {
-    return userRoles?.some(role => role === 'HR') || false;
-}
-
-export const isFinance = (): boolean => {
-    return userRoles?.some(role => role === 'FINANCE') || false;
-}
-
-export const isEnroll = (): boolean => {
-    return userRoles?.some(role => role === 'ENROLL') || false;
-}
-
-export const isGuardian = (): boolean => {
-    return userRoles?.some(role => role === 'GUARDIAN') || false;
-}
-
-export const isSecretary = (): boolean => {
-    return userRoles?.some(role => role === 'SECRETARY') || false;
-}
+export const isTopAdmin = createRoleChecker("TOP_ADMIN", "DIRECTOR")
+export const isAdmin = createRoleChecker("ADMIN")
+export const isTeacher = createRoleChecker("TEACHER")
+export const isHR = createRoleChecker("HR")
+export const isFinance = createRoleChecker("FINANCE")
+export const isEnroll = createRoleChecker("ENROLL")
+export const isGuardian = createRoleChecker("GUARDIAN")
+export const isSecretary = createRoleChecker("SECRETARY")

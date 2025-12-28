@@ -44,7 +44,7 @@ const AddEmployeePage = () => {
     resolver: zodResolver(employeeSchema)
   })
 
-  const {formState: {isLoading, errors, submitCount, isSubmitting, isValidating}, watch, control, clearErrors, trigger, } = form
+  const {formState: {isLoading, errors, submitCount, isSubmitting, isValidating}, watch, control, clearErrors, trigger} = form
 
   const {insert, isLoading: insertLoading} = useInsertEmployee()
 

@@ -1,9 +1,9 @@
 import {Skeleton, TabsProps} from "antd";
-import {TabItemType} from "../../core/utils/interfaces.ts";
+import {TabItemType} from "@/core/utils/interfaces.ts";
 import {cloneElement, ReactElement, ReactNode, useEffect, useState} from "react";
-import LocalStorageManager from "../../core/LocalStorageManager.ts";
-import {firstLetter} from "../../core/utils/utils.ts";
-import {StickyTabs} from "../ui/layout/StickyTabs.tsx";
+import LocalStorageManager from "@/core/LocalStorageManager.ts";
+import {firstLetter} from "@/core/utils/utils.ts";
+import {StickyTabs} from "@/components/ui/layout/StickyTabs.tsx";
 import {TabsType} from "antd/es/tabs";
 
 interface ViewProps {
@@ -46,7 +46,7 @@ const ViewRoot = ({items, tab, exists, isLoading, skeleton, addMargin, memorized
             setActiveKey: handleTabChange
         })  : loadingSkeleton,
         closeIcon: item.closeIcon,
-        destroyInactiveTabPane: item.destroyInactiveTabPane ?? false,
+        destroyOnHidden: item.destroyInactiveTabPane ?? false,
         disabled: item.disabled ?? false,
         forceRender: item.forceRender ?? false,
         icon: item.icon,

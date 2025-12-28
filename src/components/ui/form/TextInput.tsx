@@ -1,7 +1,7 @@
 import {FieldValues, Path, PathValue} from "react-hook-form";
 import {Button, Form, Input, InputNumber, Space} from "antd";
-import {InputType, TypedInputType} from "../../../core/utils/interfaces.ts";
-import Grid from "../layout/Grid.tsx";
+import {InputType, TypedInputType} from "@/core/utils/interfaces.ts";
+import Grid from "@/components/ui/layout/Grid.tsx";
 import {LuSave} from "react-icons/lu";
 import FormItem from "./FormItem.tsx";
 import {useState} from "react";
@@ -15,80 +15,112 @@ export const FormInput = <T extends FieldValues>(inputProps: dataEntryProps<T>) 
 
     return(
         <FormItem {...inputProps} render={({field}) => (
-            <>
-                {isCompact ? (
-                        <Space.Compact style={{width: '100%'}}>
-                            {inputType === 'number' && <InputNumber
-                                placeholder={placeholder}
+            <>{isCompact ? (
+                <Space.Compact style={{width: '100%'}}>
+                    {addonAfter && <Space.Addon>
+                        {addonAfter}
+                    </Space.Addon>}
+                    {inputType === 'number' && <InputNumber
+                        placeholder={placeholder as string}
+                        disabled={disabled}
+                        min={min}
+                        {...field}
+                        defaultValue={defaultValue}
+                        style={{width: '100%'}}
+                    />}
+                    {inputType === 'password' && <Input.Password
+                        placeholder={placeholder as string}
+                        visibilityToggle={{ visible: passwordVisible, onVisibleChange: setPasswordVisible }}
+                        disabled={disabled}
+                        onFocus={() => clearErrors ? clearErrors(field.name) : null}
+                        {...field}
+                        defaultValue={defaultValue as PathValue<T, Path<T>>}
+                    />}
+                    {inputType === 'text_area' && <Input.TextArea
+                        placeholder={placeholder as string}
+                        disabled={disabled}
+                        onFocus={() => clearErrors ? clearErrors(field.name) : null}
+                        {...field}
+                        defaultValue={defaultValue as PathValue<T, Path<T>>}
+                        autoSize={{minRows: 3, maxRows: 5}}
+                    />}
+                    {!inputType && <Input
+                        onFocus={() => clearErrors ? clearErrors(field.name) : null}
+                        placeholder={placeholder as string}
+                        {...field}
+                        defaultValue={defaultValue as PathValue<T, Path<T>>}
+                    />}
+                    <Space.Addon>
+                        <Button disabled={field.value === defaultValue} htmlType='submit'>{buttonLabel ?? <LuSave/>}</Button>
+                    </Space.Addon>
+                </Space.Compact>
+            ) :
+            (
+                <>
+                    {inputType === 'number' && (addonAfter ? (
+                        <Space.Compact>
+                            <Space.Addon>
+                                {addonAfter}
+                            </Space.Addon>
+                            <InputNumber
+                                placeholder={placeholder as string}
                                 disabled={disabled}
+                                onFocus={() => clearErrors ? clearErrors(field.name) : null}
                                 min={min}
                                 {...field}
-                                defaultValue={defaultValue}
                                 style={{width: '100%'}}
-                            />}
-                            {inputType === 'password' && <Input.Password
-                                placeholder={placeholder}
-                                visibilityToggle={{ visible: passwordVisible, onVisibleChange: setPasswordVisible }}
-                                disabled={disabled}
-                                onFocus={() => clearErrors ? clearErrors(field.name) : null}
-                                {...field}
-                                defaultValue={defaultValue as PathValue<T, Path<T>>}
-                            />}
-                            {inputType === 'text_area' && <Input.TextArea
-                                placeholder={placeholder}
-                                disabled={disabled}
-                                onFocus={() => clearErrors ? clearErrors(field.name) : null}
-                                {...field}
-                                defaultValue={defaultValue as PathValue<T, Path<T>>}
-                                autoSize={{minRows: 3, maxRows: 5}}
-                            />}
-                            {!inputType && <Input
-                                onFocus={() => clearErrors ? clearErrors(field.name) : null}
-                                placeholder={placeholder}
-                                {...field}
-                                defaultValue={defaultValue as PathValue<T, Path<T>>}
-                            />}
-                            <Button disabled={field.value === defaultValue} htmlType='submit'>{buttonLabel ?? <LuSave/>}</Button>
+                                defaultValue={defaultValue}
+                            />
                         </Space.Compact>
-                    ) :
-                    (
-                        <>
-                            {inputType === 'number' && <InputNumber
-                                placeholder={placeholder}
-                                disabled={disabled}
-                                addonAfter={addonAfter}
+                    ) : (
+                        <InputNumber
+                            placeholder={placeholder as string}
+                            disabled={disabled}
+                            onFocus={() => clearErrors ? clearErrors(field.name) : null}
+                            min={min}
+                            {...field}
+                            style={{width: '100%'}}
+                            defaultValue={defaultValue}
+                        />
+                    ))}
+                    {inputType === 'password' && <Input.Password
+                        placeholder={placeholder as string}
+                        visibilityToggle={{ visible: passwordVisible, onVisibleChange: setPasswordVisible }}
+                        disabled={disabled}
+                        onFocus={() => clearErrors ? clearErrors(field.name) : null}
+                        {...field}
+                        defaultValue={defaultValue as PathValue<T, Path<T>>}
+                    />}
+                    {inputType === 'text_area' && <Input.TextArea
+                        placeholder={placeholder as string}
+                        disabled={disabled}
+                        onFocus={() => clearErrors ? clearErrors(field.name) : null}
+                        {...field}
+                        defaultValue={defaultValue as PathValue<T, Path<T>>}
+                        autoSize
+                    />}
+                    {!inputType && (addonAfter ? (
+                        <Space.Compact>
+                            <Space.Addon>
+                                {addonAfter}
+                            </Space.Addon>
+                            <Input
                                 onFocus={() => clearErrors ? clearErrors(field.name) : null}
-                                min={min}
-                                {...field}
-                                style={{width: '100%'}}
-                                defaultValue={defaultValue}
-                            />}
-                            {inputType === 'password' && <Input.Password
-                                placeholder={placeholder}
-                                visibilityToggle={{ visible: passwordVisible, onVisibleChange: setPasswordVisible }}
-                                disabled={disabled}
-                                onFocus={() => clearErrors ? clearErrors(field.name) : null}
+                                placeholder={placeholder as string}
                                 {...field}
                                 defaultValue={defaultValue as PathValue<T, Path<T>>}
-                            />}
-                            {inputType === 'text_area' && <Input.TextArea
-                                placeholder={placeholder}
-                                disabled={disabled}
-                                onFocus={() => clearErrors ? clearErrors(field.name) : null}
-                                {...field}
-                                defaultValue={defaultValue as PathValue<T, Path<T>>}
-                                autoSize={{minRows: 3, maxRows: 5}}
-                            />}
-                            {!inputType && <Input
-                                onFocus={() => clearErrors ? clearErrors(field.name) : null}
-                                placeholder={placeholder}
-                                addonAfter={addonAfter}
-                                {...field}
-                                defaultValue={defaultValue as PathValue<T, Path<T>>}
-                            />}
-                        </>
-                    )
-                }
+                            />
+                        </Space.Compact>
+                    ): (
+                        <Input
+                            onFocus={() => clearErrors ? clearErrors(field.name) : null}
+                            placeholder={placeholder as string}
+                            {...field}
+                            defaultValue={defaultValue as PathValue<T, Path<T>>}
+                        />
+                    ))}
+                </>
+            )}
             </>
         )}/>
     )

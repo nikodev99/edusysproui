@@ -1,35 +1,37 @@
-import Block from "../../view/Block.tsx";
-import {Divider, Table, TableColumnsType, Avatar as AntAvatar, Typography, Badge} from "antd";
+import Block from "@/components/view/Block.tsx";
+import {Divider, Table, TableColumnsType, Avatar as AntAvatar, Typography, Badge, Card} from "antd";
 import {HTMLProps, ReactNode, useEffect, useMemo, useState} from "react";
-import {Enrollment, HealthCondition, Schedule, Reprimand} from "../../../entity";
+import {Enrollment, HealthCondition, Schedule} from "@/entity";
 import {
     bloodLabel, convertToM, fDate, firstLetter, fullDay, getAge, getCountry,
     chooseColor, isNull, monthsBetween, setFirstName, currency
-} from "../../../core/utils/utils.ts";
-import PanelStat from "../../ui/layout/PanelStat.tsx";
-import { Table as CustomTable } from "../../ui/layout/Table.tsx";
-import {Gender} from "../../../entity/enums/gender.tsx";
-import PanelTable from "../../ui/layout/PanelTable.tsx";
-import {SectionType} from "../../../entity/enums/section.ts";
-import {text} from "../../../core/utils/text_display.ts";
-import {BloodType} from "../../../entity/enums/bloodType.ts";
+} from "@/core/utils/utils.ts";
+import PanelStat from "@/components/ui/layout/PanelStat.tsx";
+import { Table as CustomTable } from "@/components/ui/layout/Table.tsx";
+import {Gender} from "@/entity/enums/gender.tsx";
+import PanelTable from "@/components/ui/layout/PanelTable.tsx";
+import {SectionType} from "@/entity/enums/section.ts";
+import {text} from "@/core/utils/text_display.ts";
+import {BloodType} from "@/entity/enums/bloodType.ts";
 import {MdHealthAndSafety} from "react-icons/md";
 import {GiAchievement, GiHealthDecrease} from "react-icons/gi";
-import {redirectTo} from "../../../context/RedirectContext.ts";
-import RadarChart from "../../graph/RadarChart.tsx";
-import PieChart from "../../graph/PieChart.tsx";
-import Section from "../../ui/layout/Section.tsx";
-import PanelSection from "../../ui/layout/PanelSection.tsx";
-import {ExamData, InfoPageProps} from "../../../core/utils/interfaces.ts";
-import {initExamData} from "../../../entity/domain/score.ts";
-import {attendanceTag} from "../../../entity/enums/attendanceStatus.ts";
-import Tag from "../../ui/layout/Tag.tsx";
+import {redirectTo} from "@/context/RedirectContext.ts";
+import RadarChart from "@/components/graph/RadarChart.tsx";
+import PieChart from "@/components/graph/PieChart.tsx";
+import Section from "@/components/ui/layout/Section.tsx";
+import PanelSection from "@/components/ui/layout/PanelSection.tsx";
+import {ExamData, InfoPageProps} from "@/core/utils/interfaces.ts";
+import {initExamData} from "@/entity/domain/score.ts";
+import {attendanceTag} from "@/entity/enums/attendanceStatus.ts";
+import Tag from "@/components/ui/layout/Tag.tsx";
 import {LuBan} from "react-icons/lu";
-import {StudentCarousel} from "../../common/StudentCarousel.tsx";
-import {ScheduleCalendar} from "../../common/ScheduleCalendar.tsx";
-import Datetime from "../../../core/datetime.ts";
-import {LinkToStudent} from "../../../core/shared/sharedEnums.ts";
-import {useStudentRepo} from "../../../hooks/actions/useStudentRepo.ts";
+import {StudentCarousel} from "@/components/common/StudentCarousel.tsx";
+import {ScheduleCalendar} from "@/components/common/ScheduleCalendar.tsx";
+import Datetime from "@/core/datetime.ts";
+import {LinkToStudent} from "@/core/shared/sharedEnums.ts";
+import {useStudentRepo} from "@/hooks/actions/useStudentRepo.ts";
+import {useReprimandRepo} from "@/hooks/actions/useReprimandRepo.ts";
+import {ReprimandType} from "@/entity/enums/reprimandType.ts";
 
 type StudentInfoProps = InfoPageProps<Enrollment>
 
@@ -83,7 +85,7 @@ const IndividualInfo = ({infoData, color}: StudentInfoProps) => {
             <div className='panel'>
                 <PanelStat title={studentAge} subTitle='ans' src={true} media={country?.cca2} desc={nationality}/>
                 <PanelStat title={healthCondition?.weight} subTitle='kgs' desc='Poids'/>
-                <PanelStat title={healthCondition?.height} subTitle='m' media={convertToM(healthCondition?.height as number)} desc='Taille'/>
+                <PanelStat title={healthCondition?.height} subTitle='cm' media={convertToM(healthCondition?.height as number)} desc='Taille'/>
             </div>
             <div className='birth-Body'><p>Née le {birthDay} à {personalInfo?.birthCity}</p></div>
             <Divider/>
@@ -402,18 +404,19 @@ const CourseSchedule = ({infoData}: StudentInfoProps) => {
 }
 
 const DisciplinaryRecords = ({infoData, seeMore, color}: StudentInfoProps) => {
-
+    const {useGetAllStudentReprimand} = useReprimandRepo()
     const personalInfo = useMemo(() => infoData?.student?.personalInfo, [infoData?.student?.personalInfo])
-    const reprimands = [] as Reprimand[]
-    const values = Object.values(
+    const reprimands = useGetAllStudentReprimand(infoData?.student?.id)
+
+    const values = reprimands ? Object.values(
         reprimands.reduce((acc, curr) => {
             if (!acc[curr.type]) {
-                acc[curr.type] = {type: curr.type, value: 0}
+                acc[curr.type] = {name: ReprimandType[curr.type], value: 0}
             }
             acc[curr.type].value += 1;
             return acc;
-        }, {} as Record<string, { type: string; value: number }>)
-    )
+        }, {} as Record<string, { name: string; value: number }>)
+    ) : undefined
 
     const handClick = () => {
         seeMore && seeMore('4')
@@ -421,7 +424,17 @@ const DisciplinaryRecords = ({infoData, seeMore, color}: StudentInfoProps) => {
 
     return (
         <Section title={`Dossiers disciplinaires de ${setFirstName(personalInfo?.firstName)}`} more={true} seeMore={handClick}>
-            {reprimands.length !== 0 ? (<PieChart data={values} />) : (
+            {reprimands?.length !== 0 && values ? (<Card variant={'borderless'}>
+                <Card.Meta title={`Total réprimande: ${values?.length}`} style={{textAlign: 'center', marginTop: '5px'}} />
+                    <PieChart
+                        data={values}
+                        height={250}
+                        plainColor
+                        hasLabel
+                        hasLegend
+                        defaultColor={color}
+                    />
+                </Card>) : (
                 <div className='panel-table'>
                     <PanelTable title='Dossiers disciplinaires' data={[{
                         response: (
@@ -462,7 +475,7 @@ export const StudentInfo = ({enrollment, seeMore, color}: { enrollment: Enrollme
         <HealthData infoData={enrollment} dataKey='health-section' color={color} />,
         <SchoolColleagues infoData={enrollment} seeMore={seeMore} dataKey='classmates-block' color={color}/>,
         <CourseSchedule infoData={enrollment} dataKey='schedule-section' color={color} />,
-        <DisciplinaryRecords infoData={enrollment} dataKey='disciplinary-section' color={color} />
+        <DisciplinaryRecords infoData={enrollment} dataKey='disciplinary-section' seeMore={seeMore} color={color} />
     ]
 
     return (

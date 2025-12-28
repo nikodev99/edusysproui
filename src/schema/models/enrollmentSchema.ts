@@ -1,8 +1,6 @@
 import {z} from "zod";
-import {studentSchema, studentSchemaMerge} from "./studentSchema.ts";
-import {classeSchemaMerge} from "./classeSchema.ts";
-import {schoolMergeSchema} from "./schoolSchema.ts";
-import {loggedUser} from "../../auth/jwt/LoggedUser.ts";
+import {studentSchema, studentSchemaMerge, classeSchemaMerge, schoolMergeSchema} from "@/schema";
+import {loggedUser} from "@/auth/jwt/LoggedUser.ts";
 
 export const enrollmentSchema = (isRerun?: boolean) => z.object({
     academicYear: z.object({
@@ -13,4 +11,8 @@ export const enrollmentSchema = (isRerun?: boolean) => z.object({
     }),
     student: isRerun ? studentSchemaMerge : studentSchema,
     classe: classeSchemaMerge
+})
+
+export const enrollmentMergeSchema = z.object({
+    id: z.number({required_error: "Etudiant inscrit est réquis"})
 })

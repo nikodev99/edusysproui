@@ -1,26 +1,26 @@
-import {AddStepForm} from "../../components/custom/AddStepForm.tsx";
-import {Metadata} from "../../core/utils/interfaces.ts";
-import {text} from "../../core/utils/text_display.ts";
+import {AddStepForm} from "@/components/custom/AddStepForm.tsx";
+import {Metadata} from "@/core/utils/interfaces.ts";
+import {text} from "@/core/utils/text_display.ts";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {EnrollmentSchema, enrollmentSchema, GuardianSchema} from "../../schema";
+import {EnrollmentSchema, enrollmentSchema, GuardianSchema} from "@/schema";
 import {useMemo, useState, useTransition} from "react";
-import {Gender} from "../../entity/enums/gender.tsx";
-import {Status} from "../../entity/enums/status.ts";
-import {Address, Enrollment, Guardian, Individual, toGuardianSchema} from "../../entity";
-import {redirectTo} from "../../context/RedirectContext.ts";
-import {addStudent} from "../../data";
-import StudentForm from "../../components/forms/StudentForm.tsx";
-import AddressForm from "../../components/forms/AddressForm.tsx";
-import {AddressOwner, IndividualType} from "../../core/shared/sharedEnums.ts";
-import {AcademicForm, AttachmentForm, GuardianForm} from "../../components/ui-kit-student";
-import HealthConditionForm from "../../components/forms/HealthConditionForm.tsx";
-import {useToggle} from "../../hooks/useToggle.ts";
+import {Gender} from "@/entity/enums/gender.tsx";
+import {Status} from "@/entity/enums/status.ts";
+import {Address, Enrollment, Guardian, Individual, toGuardianSchema} from "@/entity";
+import {redirectTo} from "@/context/RedirectContext.ts";
+import {addStudent} from "@/data";
+import StudentForm from "@/components/forms/StudentForm.tsx";
+import AddressForm from "@/components/forms/AddressForm.tsx";
+import {AddressOwner, IndividualType} from "@/core/shared/sharedEnums.ts";
+import {AcademicForm, AttachmentForm, GuardianForm} from "@/components/ui-kit-student";
+import HealthConditionForm from "@/components/forms/HealthConditionForm.tsx";
+import {useToggle} from "@/hooks/useToggle.ts";
 import {OutputFileEntry} from "@uploadcare/blocks";
-import {IndividualForm} from "../../components/forms/IndividualForm.tsx";
-import {collectErrorMessages} from "../../core/utils/utils.ts";
-import {useRedirect} from "../../hooks/useRedirect.ts";
-import {useActivity} from "../../hooks/useActivity.ts";
+import {IndividualForm} from "@/components/forms/IndividualForm.tsx";
+import {collectErrorMessages} from "@/core/utils/utils.ts";
+import {useRedirect} from "@/hooks/useRedirect.ts";
+import {useActivity} from "@/hooks/useActivity.ts";
 
 const EnrollStudentPage = () => {
 

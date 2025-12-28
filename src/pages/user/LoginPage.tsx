@@ -1,13 +1,13 @@
-import {LoginForm} from "../../components/forms/LoginForm.tsx";
+import {LoginForm} from "@/components/forms/LoginForm.tsx";
 import {useForm} from "react-hook-form";
 import {Alert, Button, Card, Form, Typography} from "antd";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {LoginSchema, loginSchema} from "../../schema";
-import {useAuth} from "../../hooks/useAuth.ts";
-import {useQueryPost} from "../../hooks/usePost.ts";
+import {LoginSchema, loginSchema} from "@/schema";
+import {useAuth} from "@/hooks/useAuth.ts";
+import {useQueryPost} from "@/hooks/usePost.ts";
 import React from "react";
-import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
-import {useGlobalStore} from "../../core/global/store.ts";
+import {useDocumentTitle} from "@/hooks/useDocumentTitle.ts";
+import {useGlobalStore} from "@/core/global/store.ts";
 
 const LoginPage = () => {
     useDocumentTitle({
@@ -51,7 +51,7 @@ const LoginPage = () => {
             <div className="login__page__logo__wrapper">
                 <img src="/edusyspro.svg" alt="logo" className="login__page__logo"/>
             </div>
-            <Card title="Connexion" bordered={false} className="login__page__card">
+            <Card title="Connexion" variant={'outlined'} className="login__page__card">
                 {loginError?.message && (
                     <Alert
                         message={loginError.type ?? "Authentication Error"}

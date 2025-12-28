@@ -1,14 +1,15 @@
 import Responsive from "../layout/Responsive.tsx";
-import {TypedInputType} from "../../../core/utils/interfaces.ts";
+import {TypedInputType} from "@/core/utils/interfaces.ts";
 import {FieldValues} from "react-hook-form";
 import TextInput from "./TextInput.tsx";
 import SelectInput from "./SelectInput.tsx";
 import DateInput from "./DateInput.tsx";
 import CountrySelect from "./CountrySelect.tsx";
-import {InputTypeEnum} from "../../../core/shared/sharedEnums.ts";
+import {InputTypeEnum} from "@/core/shared/sharedEnums.ts";
 import ListInput, {FieldConfig} from "./ListInput.tsx";
 import RadioInput from "./RadioInput.tsx";
 import {TimeInput} from "./TimeInput.tsx";
+import CheckboxInput from "@/components/ui/form/CheckboxInput.tsx";
 
 interface InputProps<TFieldValues extends FieldValues> {
     inputProps: TypedInputType<TFieldValues> & { itemLabel?: string }
@@ -31,6 +32,8 @@ const FormContent = <T extends FieldValues>({formItems, responsiveness}: FormCon
                 return <SelectInput key={index} {...inputProps} />
             case InputTypeEnum.DATE:
                 return <DateInput key={index} {...inputProps} />
+            case InputTypeEnum.RANGE:
+                return <DateInput.Range key={index} {...inputProps} />
             case InputTypeEnum.COUNTRY:
                 return <CountrySelect key={index} {...inputProps} />
             case InputTypeEnum.NUMBER:
@@ -41,6 +44,8 @@ const FormContent = <T extends FieldValues>({formItems, responsiveness}: FormCon
                 return <TimeInput key={index} {...inputProps} />
             case InputTypeEnum.RADIO:
                 return <RadioInput key={index} {...inputProps} />
+            case InputTypeEnum.CHECKBOX:
+                return <CheckboxInput key={index} {...inputProps} />
             case InputTypeEnum.PASSWORD:
                 return <TextInput.Password key={index} {...inputProps} />
             case InputTypeEnum.TEXTAREA:

@@ -1,18 +1,18 @@
-import RightSidePane from "../../ui/layout/RightSidePane.tsx";
-import {EditProps} from "../../../core/utils/interfaces.ts";
-import {School} from "../../../entity";
-import {SchoolForm} from "../../forms/SchoolForm.tsx";
+import RightSidePane from "@/components/ui/layout/RightSidePane.tsx";
+import {EditProps} from "@/core/utils/interfaces.ts";
+import {School} from "@/entity";
+import {SchoolForm} from "@/components/forms/SchoolForm.tsx";
 import {useForm} from "react-hook-form";
-import {schoolSchema, SchoolSchema} from "../../../schema";
+import {schoolSchema, SchoolSchema} from "@/schema";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {hasField} from "../../../core/utils/utils.ts";
-import {PatchUpdate} from "../../../core/PatchUpdate.ts";
+import {hasField} from "@/core/utils/utils.ts";
+import {PatchUpdate} from "@/core/PatchUpdate.ts";
 import {useEffect, useState} from "react";
-import {AddressOwner, UpdateType} from "../../../core/shared/sharedEnums.ts";
-import FormSuccess from "../../ui/form/FormSuccess.tsx";
-import FormError from "../../ui/form/FormError.tsx";
+import {AddressOwner, UpdateType} from "@/core/shared/sharedEnums.ts";
+import FormSuccess from "@/components/ui/form/FormSuccess.tsx";
+import FormError from "@/components/ui/form/FormError.tsx";
 import {Button} from "antd";
-import {UpdateAddress} from "../../custom/UpdateAddress.tsx";
+import {UpdateAddress} from "@/components/custom/UpdateAddress.tsx";
 
 export const SchoolEditDrawer = ({open, close, data}: EditProps<School>) => {
     const [successMessage, setSuccessMessage] = useState<string | undefined>(undefined)

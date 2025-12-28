@@ -1,7 +1,7 @@
-import {CreateUser} from "../../common/CreateUser.tsx";
+import {CreateUser} from "@/components/common/CreateUser.tsx";
 import {memo, useMemo} from "react";
-import {UserType} from "../../../auth/dto/user.ts";
-import {ActionLinksProps, ActionsButtons} from "../../../core/utils/interfaces.ts";
+import {UserType} from "@/auth/dto/user.ts";
+import {ActionLinksProps, ActionsButtons} from "@/core/utils/interfaces.ts";
 
 type EmployeeActionButtons = ActionsButtons
 

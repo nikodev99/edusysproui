@@ -4,14 +4,14 @@ import {
     findAllEmployeesSearch,
     findEmployeeById, findEmployeeIndividuals,
     insertEmployee
-} from "../../data/repository/employeeRepository.ts";
-import {Pageable, SortCriteria} from "../../core/utils/interfaces.ts";
-import {Employee} from "../../entity";
+} from "@/data/repository/employeeRepository.ts";
+import {Pageable, SortCriteria} from "@/core/utils/interfaces.ts";
+import {Employee} from "@/entity";
 import {useInsert} from "../usePost.ts";
-import {employeeSchema} from "../../schema/models/employeeSchema.ts";
+import {employeeSchema} from "@/schema/models/employeeSchema.ts";
 import {useMemo} from "react";
-import {setFirstName} from "../../core/utils/utils.ts";
-import {useGlobalStore} from "../../core/global/store.ts";
+import {setFirstName} from "@/core/utils/utils.ts";
+import {useGlobalStore} from "@/core/global/store.ts";
 
 export const useEmployeeRepo = () => {
     const schoolId = useGlobalStore(state => state.schoolId)

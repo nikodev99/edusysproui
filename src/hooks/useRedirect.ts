@@ -37,8 +37,8 @@ export const useRedirect = () => {
         redirectTo(slugPath)
     }
 
-    const toDiscipline = (studentId: string, student?: Enrollment) => {
-        const path = text.student.group.view.href + studentId + '/discipline'
+    const toDiscipline = (studentId: string, student?: Enrollment, current?: number) => {
+        const path = text.student.group.view.href + studentId + `/discipline${current ? '?step=' + current : ''}`
         if (student)
             return redirectTo(path, {state: student})
         return redirectTo(path)

@@ -1,5 +1,5 @@
 import {AxiosResponse} from "axios";
-import {Exam} from "../../entity";
+import {Exam} from "@/entity";
 import {request} from "../axiosConfig.ts";
 
 export const getAllExams = (schoolId: string, academicYear: string): Promise<AxiosResponse<Exam[], unknown>> => {
@@ -26,6 +26,16 @@ export const getClasseExamAssignments = (examId: number, classeId: number, acade
     return request({
         method: 'GET',
         url: `/exam/${examId}/classe_${classeId}`,
+        params: {
+            academicYear: academicYear
+        }
+    })
+}
+
+export const getStudentExamAssignments = (examId: number, classeId: number, academicYear: string, studentId: string): Promise<AxiosResponse<Exam, unknown>> => {
+    return request({
+        method: 'GET',
+        url: `/exam/${examId}/${studentId}/${classeId}`,
         params: {
             academicYear: academicYear
         }

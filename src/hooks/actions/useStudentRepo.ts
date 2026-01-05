@@ -1,17 +1,12 @@
-import {GenderCounted, Options, Pageable} from "@/core/utils/interfaces.ts";
+import {GenderCounted, Options, Pageable, RepoOptions} from "@/core/utils/interfaces.ts";
 import {useFetch, useRawFetch} from "../useFetch.ts";
 import {UseQueryResult} from "@tanstack/react-query";
 import {Enrollment} from "@/entity";
 import {
-    countClasseStudents,
-    countSomeClasseStudents,
-    countStudent,
-    getAllStudentClassmate, getClasseEnrolledStudents,
-    getClasseEnrolledStudentsSearch,
-    getClasseStudents, getEnrolledStudents, getEnrolledStudentsByTeacher,
-    getRandomStudentClassmate,
-    getStudentById,
-    searchEnrolledStudents, searchEnrolledStudentsByTeacher, searchStudents, searchUnenrolledStudents
+    countClasseStudents, countSomeClasseStudents, countStudent, getAllStudentClassmate, getClasseEnrolledStudents,
+    getClasseEnrolledStudentsSearch, getClasseStudents, getEnrolledStudents, getEnrolledStudentsByTeacher,
+    getRandomStudentClassmate, getStudentById, searchEnrolledStudents, searchEnrolledStudentsByTeacher, searchStudents,
+    searchUnenrolledStudents
 } from "@/data/repository/studentRepository.ts";
 import {useCallback, useEffect, useState} from "react";
 import {useGlobalStore} from "@/core/global/store.ts";
@@ -135,17 +130,23 @@ export const useStudentRepo = (context: 'ALL' | 'TEACHER' = 'ALL') => {
      *
      * @param {number} classeId
      * @param {string} academicYear
+     * @param options
      * @returns {UseQueryResult<Enrollment[], unknown>}
      */
     const useGetClasseStudents = (
         classeId: number,
-        academicYear: string
+        academicYear: string,
+        options?: RepoOptions
     ): UseQueryResult<Enrollment[], unknown> => {
+        const enabled =
+            Boolean(classeId && academicYear) &&
+            (options?.enable ?? true);
+
         return useFetch(
             ['classe-students-all', classeId, academicYear],
             getClasseStudents,
             [classeId, academicYear],
-            !!classeId && !!academicYear
+            enabled
         );
     };
 

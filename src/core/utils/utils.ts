@@ -216,11 +216,11 @@ export const numberFormat = (input?: number, options?: {
 }) => {
     return input ?
         Intl.NumberFormat(options?.locale ?? 'fr-CG', {
-            style: options?.style ?? 'currency',
+            style: options?.style as 'currency' ?? 'currency',
             currency: options?.style ?? 'XAF'
         }).format(input) :
         Intl.NumberFormat(options?.locale ?? 'fr-CG', {
-            style: options?.style ?? 'currency',
+            style: (options?.style ?? 'currency') as 'currency',
             currency: options?.style ?? 'XAF'
         }).format(0)
 }

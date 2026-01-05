@@ -1,13 +1,13 @@
 import {Card, Modal} from "antd";
-import {AssignmentDescription} from "../../core/utils/tsxUtils.tsx";
-import {Assignment} from "../../entity";
-import {AssignmentScores} from "../ui/layout/AssignmentScores.tsx";
+import {AssignmentDescription} from "@/core/utils/tsxUtils.tsx";
+import {Assignment} from "@/entity";
+import {AssignmentScores} from "@/components/ui/layout/AssignmentScores.tsx";
 import {ReactNode, useState} from "react";
-import {removeAssignment} from "../../data/repository/assignmentRepository.ts";
-import {useRawFetch} from "../../hooks/useFetch.ts";
-import {UpdateAssignmentDates} from "../ui-kit-exam";
-import {useToggle} from "../../hooks/useToggle.ts";
-import FormSuccess from "../ui/form/FormSuccess.tsx";
+import {removeAssignment} from "@/data/repository/assignmentRepository.ts";
+import {useRawFetch} from "@/hooks/useFetch.ts";
+import {UpdateAssignmentDates} from "@/components/ui-kit-exam";
+import {useToggle} from "@/hooks/useToggle.ts";
+import FormSuccess from "@/components/ui/form/FormSuccess.tsx";
 
 type AssignmentViewDescProps = {
     assignment: Assignment | null
@@ -74,7 +74,7 @@ export const AssignmentViewDesc = (
         {deleteCompleted?.status && <FormSuccess message={'Evaluation Supprimer avec succès'} />}
         {
             isModal ? (
-                <Modal zIndex={900} title={modalTitle} open={isModalOpen} footer={null} onCancel={handleModalCancel} destroyOnClose>
+                <Modal zIndex={900} title={modalTitle} open={isModalOpen} footer={null} onCancel={handleModalCancel} destroyOnHidden>
                     <Card title={title} size={'small'}>
                         <AssignmentDescription
                             a={assignment as Assignment}

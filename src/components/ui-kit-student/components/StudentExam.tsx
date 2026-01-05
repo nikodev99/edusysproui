@@ -1,17 +1,18 @@
-import {Enrollment, Score} from "../../../entity";
-import {fDate, setFirstName, startsWithVowel} from "../../../core/utils/utils.ts";
+import {Enrollment, Score} from "@/entity";
+import {fDate, setFirstName, startsWithVowel} from "@/core/utils/utils.ts";
 import {Badge, Select, TableColumnsType, Tag, Typography} from "antd";
-import {ExamData} from "../../../core/utils/interfaces.ts";
-import LocalStorageManager from "../../../core/LocalStorageManager.ts";
+import {ExamData} from "@/core/utils/interfaces.ts";
+import LocalStorageManager from "@/core/LocalStorageManager.ts";
 import {useEffect, useMemo, useState} from "react";
-import {initExamData} from "../../../entity/domain/score.ts";
-import PageError from "../../../pages/errors/PageError.tsx";
+import {initExamData} from "@/entity/domain/score.ts";
+import PageError from "@/pages/errors/PageError.tsx";
 import {ColumnGroupType} from "antd/es/table";
-import {AutoScrollTable} from "../../ui/layout/AutoScrollTable.tsx";
-import {AssignmentView} from "../../common/AssignmentView.tsx";
-import {useAssignmentRepo} from "../../../hooks/actions/useAssignmentRepo.ts";
-import {useScoreRepo} from "../../../hooks/actions/useScoreRepo.ts";
-import {InitMarkType} from "../../../core/utils/tsxUtils.tsx";
+import {AutoScrollTable} from "@/components/ui/layout/AutoScrollTable.tsx";
+import {AssignmentView} from "@/components/common/AssignmentView.tsx";
+import {useAssignmentRepo} from "@/hooks/actions/useAssignmentRepo.ts";
+import {useScoreRepo} from "@/hooks/actions/useScoreRepo.ts";
+import {InitMarkType} from "@/core/utils/tsxUtils.tsx";
+import {ClasseExamView} from "@/components/ui-kit-cc";
 
 interface StudentExamProps {
     enrolledStudent: Enrollment
@@ -42,8 +43,6 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
 
     const assignments = useGetAllClasseAssignments(classe?.id, academicYearId)
     const {data, isSuccess, error, isLoading, isRefetching, refetch} = useGetAllStudentScores(student?.id, academicYearId, {size: size, page: 0}, subjectValue)
-
-    console.log("VIEWED STUDENT: ", enrolledStudent)
 
     const academicYears = useMemo(() => {
         return enrollments && [
@@ -205,7 +204,11 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
                 {
                     key: 'exam-table',
                     label: 'Performance aux examens',
-                    children: <div>ICI nous ajouterons les résultats aux examens</div>
+                    children: <ClasseExamView
+                        classeId={enrolledStudent?.classe?.id}
+                        academicYear={academicYearId ?? '0'}
+                        uniqueStudent={enrolledStudent}
+                    />
                 }
             ]}
             getSubject={setSubjectValue}

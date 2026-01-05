@@ -1,32 +1,32 @@
-import {useEffect, useLayoutEffect, useMemo, useRef, useState} from "react";
-import {Assignment, Course, Enrollment, Exam, Student} from "../../../entity";
-import {useFetch, useRawFetch} from "../../../hooks/useFetch.ts";
-import {getClasseExamAssignments, getClasseExams} from "../../../data/repository/examRepository.ts";
+import {useEffect, useLayoutEffect, useMemo, useState} from "react";
+import {Assignment, Course, Enrollment, Exam, Student} from "@/entity";
 import {Badge, Card, Segmented, TableColumnsType, Tag as AntTag, Typography} from "antd";
-import VoidData from "../../view/VoidData.tsx";
-import Responsive from "../../ui/layout/Responsive.tsx";
-import Grid from "../../ui/layout/Grid.tsx";
-import Datetime from "../../../core/datetime.ts";
-import {Widgets} from "../../ui/layout/Widgets.tsx";
+import VoidData from "@/components/view/VoidData.tsx";
+import Responsive from "@/components/ui/layout/Responsive.tsx";
+import Grid from "@/components/ui/layout/Grid.tsx";
+import Datetime from "@/core/datetime.ts";
+import {Widgets} from "@/components/ui/layout/Widgets.tsx";
 import {
     calculateGlobalAverage,
     calculateSubjectsAverage, calculateTotalMarks,
     calculeMarkAverage, findPercent,
     getAssignmentBarData, getGoodAverageMedian,
     getUniqueness, zeroFormat,
-} from "../../../core/utils/utils.ts";
-import {BarChart} from "../../graph/BarChart.tsx";
-import {AssignmentTypeLiteral, typeColors} from "../../../entity/enums/assignmentType.ts";
-import {getClasseStudents} from "../../../data/repository/studentRepository.ts";
-import {ExamView, NestedExamView, TypedAssignment} from "../../../core/utils/interfaces.ts";
-import {Table} from "../../ui/layout/Table.tsx";
-import {AvatarTitle} from "../../ui/layout/AvatarTitle.tsx";
-import {InitMarkType} from "../../../core/utils/tsxUtils.tsx";
-import {text} from "../../../core/utils/text_display.ts";
-import {redirectTo} from "../../../context/RedirectContext.ts";
+} from "@/core/utils/utils.ts";
+import {BarChart} from "@/components/graph/BarChart.tsx";
+import {AssignmentTypeLiteral, typeColors} from "@/entity/enums/assignmentType.ts";
+import {ExamView, NestedExamView, TypedAssignment} from "@/core/utils/interfaces.ts";
+import {Table} from "@/components/ui/layout/Table.tsx";
+import {AvatarTitle} from "@/components/ui/layout/AvatarTitle.tsx";
+import {InitMarkType} from "@/core/utils/tsxUtils.tsx";
+import {text} from "@/core/utils/text_display.ts";
+import {redirectTo} from "@/context/RedirectContext.ts";
+import {useRedirect} from "@/hooks/useRedirect.ts";
+import {useExamRepo} from "@/hooks/actions/useExamRepo.ts";
+import {useStudentRepo} from "@/hooks/actions/useStudentRepo.ts";
 
 const ExamDescription = (
-    {classeId, academicYear, examId}: {classeId: number, academicYear: string, examId: number},
+    {classeId, academicYear, examId, uniqueStudent}: {classeId: number, academicYear: string, examId: number, uniqueStudent?: Enrollment},
 ) => {
 
     const {Link, Title} = Typography
@@ -35,18 +35,18 @@ const ExamDescription = (
     const [assignments, setAssignments] = useState<Assignment[] | null>(null)
     const [loading, setLoading] = useState<boolean>(true)
     const [totalMarks, setTotalMarks] = useState<number>(0)
-    const studentLink = useRef<string>(text.student.group.view.href);
+    const {toViewStudent} = useRedirect()
+    const {useGetExamAssignments} = useExamRepo()
+    const {useGetClasseStudents} = useStudentRepo()
 
-    const fetch = useRawFetch()
-    const {data, isSuccess, isPending, isFetching, isRefetching, isLoading, error, refetch} = useFetch(
-        ['assignments-list-per-exam', examId],
-        getClasseExamAssignments,
-        [examId, classeId, academicYear],
-        !!examId && !!classeId && !!academicYear
+    const {data, isSuccess, isPending, isFetching, isRefetching, isLoading, refetch} = useGetExamAssignments(
+        examId, classeId, academicYear, uniqueStudent ? uniqueStudent?.student?.id : undefined
     )
 
-    console.log('fetching assignments per examId errors: ', error)
+    console.log("ASSIGNMENTS DATA: ", data)
 
+    const {data: classeStudents} = useGetClasseStudents(classeId, academicYear, {enable: !uniqueStudent})
+    
     useEffect(() => {
         if (examId || academicYear || classeId)
             refetch().then()
@@ -57,9 +57,12 @@ const ExamDescription = (
     }, [academicYear, classeId, data, examId, isSuccess, refetch])
 
     useEffect(() => {
-        fetch(getClasseStudents, [classeId, academicYear])
-            .then(resp => setStudents(resp.isSuccess ? resp.data as Enrollment[] : null))
-    }, [academicYear, classeId, fetch])
+        if (!uniqueStudent && classeStudents) {
+            setStudents(classeStudents)
+        }else {
+            setStudents([uniqueStudent as Enrollment])
+        }
+    }, [classeStudents, uniqueStudent])
 
     useEffect(() => {
         if (!isPending && !isFetching && !isRefetching && !isLoading) {
@@ -72,7 +75,6 @@ const ExamDescription = (
     }, [assignments, isFetching, isLoading, isPending, isRefetching])
 
     const barData = getAssignmentBarData(assignments)
-    
 
     const uniqueAssignmentTypes = useMemo(() => {
         return Array.from(new Set(assignments?.map(a => a?.type)))
@@ -186,12 +188,12 @@ const ExamDescription = (
             key: 'student',
             align: "left",
             width: '30%',
-            render: (text: Student) => <AvatarTitle
-                lastName={text?.personalInfo?.lastName}
-                firstName={text?.personalInfo?.firstName}
-                image={text?.personalInfo?.image}
-                reference={text?.personalInfo?.reference}
-                link={`${studentLink.current}${text?.id}`}
+            render: (student: Student) => <AvatarTitle
+                lastName={student?.personalInfo?.lastName}
+                firstName={student?.personalInfo?.firstName}
+                image={student?.personalInfo?.image}
+                reference={student?.personalInfo?.reference}
+                toView={() => toViewStudent(student?.id, student?.personalInfo)}
                 size={40}
             />
         },
@@ -216,11 +218,11 @@ const ExamDescription = (
             defaultSortOrder: 'ascend',
             showSorterTooltip: false,
             render: (text: number) => {
-                return (
-                    <Title level={4}>
+                return <div>
+                    {text ? <Title level={4}>
                         {text?.toFixed(2)} <Badge color={text >= 14 ? 'green' : text >= 10 ? 'gold' : 'red' } />
-                    </Title> ?? '-'
-                )
+                    </Title> : '-'}
+                </div>
             }
         },
         {
@@ -283,12 +285,12 @@ const ExamDescription = (
                     const ass = text?.filter(a => a.type === type);
                     const mark = ass[index]?.marks?.[0]?.obtainedMark
                     const coefficient = ass[index]?.coefficient || 1
-                    return mark || mark === 0 ? (mark * coefficient) : "-";
+                    return (mark || mark === 0) ? (mark * coefficient) : "-";
                 },
             }))
         })): []),
         {
-            title: 'Total',
+            title: 'Moyenne',
             dataIndex: 'assignments',
             key: 'subject-averages',
             align: 'center',
@@ -347,9 +349,11 @@ const ExamDescription = (
                                                 dataSource: record.nested,
                                                 rowKey: 'id',
                                                 pagination: false,
-                                                bordered: true
+                                                bordered: true,
+                                                size: 'small'
                                             }} />
-                                        )
+                                        ),
+                                        defaultExpandAllRows: !!uniqueStudent
                                     }
                                 }}
                             />
@@ -362,17 +366,13 @@ const ExamDescription = (
     )
 }
 
-export const ClasseExamView = ({classeId, academicYear}: {classeId: number, academicYear: string}) => {
-
-    const [classeExams, setClasseExams] = useState<Exam[]>([])
+export const ClasseExamView = (
+    {classeId, academicYear, uniqueStudent}: {classeId: number, academicYear: string, uniqueStudent?: Enrollment}
+) => {
     const [activeExam, setActiveExam] = useState<number>(0)
+    const {useGetClasseExams} = useExamRepo()
 
-    const {data: examData, isSuccess: examFetchSuccess} = useFetch(['classe-exam-list'], getClasseExams, [classeId, academicYear], !!classeId && !!academicYear)
-    useEffect(() => {
-        if (examFetchSuccess) {
-            setClasseExams(examData as Exam[])
-        }
-    }, [examData, examFetchSuccess])
+    const classeExams = useGetClasseExams(classeId, academicYear)
     
     useLayoutEffect(() => {
         if (classeExams && classeExams?.length > 0) {
@@ -398,6 +398,7 @@ export const ClasseExamView = ({classeId, academicYear}: {classeId: number, acad
                         classeId={classeId}
                         academicYear={academicYear}
                         examId={activeExam}
+                        uniqueStudent={uniqueStudent}
                     />
                 </main></>
                 : <VoidData />

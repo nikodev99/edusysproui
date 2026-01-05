@@ -1,7 +1,12 @@
-import {Exam} from "../../entity";
-import {getAllExams, getClasseExamAssignments, getClasseExams} from "../../data/repository/examRepository.ts";
+import {Exam} from "@/entity";
+import {
+    getAllExams,
+    getClasseExamAssignments,
+    getClasseExams,
+    getStudentExamAssignments
+} from "@/data/repository/examRepository.ts";
 import {useFetch} from "../useFetch.ts";
-import {useGlobalStore} from "../../core/global/store.ts";
+import {useGlobalStore} from "@/core/global/store.ts";
 
 export const useExamRepo = () => {
     const schoolId = useGlobalStore(state => state.schoolId)
@@ -25,13 +30,13 @@ export const useExamRepo = () => {
             ).data as Exam[]
         },
 
-        useGetClasseExamAssignments: (examId: number, classeId: number, academicYear: string): Exam => {
+        useGetExamAssignments: (examId: number, classeId: number, academicYear: string, studentId?: string) => {
             return useFetch(
-                ['exam-id', classeId],
-                getClasseExamAssignments,
-                [examId, classeId, academicYear],
+                ['exam-id', classeId, studentId && studentId],
+                studentId ? getStudentExamAssignments : getClasseExamAssignments,
+                [examId, classeId, academicYear, studentId],
                 !!examId && !!classeId && !!academicYear
-            ).data as Exam
+            )
         }
     }
 }

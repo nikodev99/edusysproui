@@ -1,9 +1,9 @@
-import {Planning} from "./planning.ts";
+import {Planning} from "@/entity";
 import {Exam} from "./exam.ts";
 import {Classe} from "./classe.ts";
 import {Course} from "./course.ts";
 import {Score} from "./score.ts";
-import {Individual} from "./individual.ts";
+import {Individual} from "@/entity";
 import {AssignmentType, AssignmentTypeLiteral} from "../enums/assignmentType.ts";
 
 export interface Assignment {
@@ -23,4 +23,9 @@ export interface Assignment {
     type?: AssignmentType | AssignmentTypeLiteral
     addedDate?: Date | number | string
     updatedDate?: Date | number | string
+}
+
+export interface AssignmentTypeAverage {
+    type: AssignmentType | AssignmentTypeLiteral,
+    average: number
 }

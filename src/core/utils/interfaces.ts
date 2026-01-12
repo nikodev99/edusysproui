@@ -11,7 +11,7 @@ import {
 } from "react-hook-form";
 import {ValidateStatus} from "antd/es/form/FormItem";
 import React, {CSSProperties, ReactNode} from "react";
-import {AcademicYear, Assignment, Course, Guardian, Student, Teacher, Employee, Individual, School} from "@/entity";
+import {AcademicYear, Guardian, Student, Teacher, Employee, Individual, School} from "@/entity";
 import {SectionType} from "@/entity/enums/section.ts";
 import {Gender} from "@/entity/enums/gender.tsx";
 import {AttendanceStatus} from "@/entity/enums/attendanceStatus.ts";
@@ -26,7 +26,6 @@ import {PercentPositionType, ProgressSize} from "antd/es/progress/progress";
 import {CheckboxOptionType, TableColumnsType, TableProps} from "antd";
 import {ItemType} from "antd/es/menu/interface";
 import {z} from "zod";
-import {AssignmentTypeLiteral} from "@/entity/enums/assignmentType.ts";
 import {RadioGroupButtonStyle, RadioGroupOptionType} from "antd/es/radio";
 import {DefaultOptionType} from "antd/es/select";
 import {UseMutationOptions} from "@tanstack/react-query";
@@ -347,41 +346,6 @@ export interface ListProps<TData extends object> {
     pageTitle?: ReactNode
     noSearch?: boolean
     setLoading?: (isLoading: boolean) => void
-}
-
-export interface ExamData {
-    examId?: number
-    examDate: string;
-    examName: string;
-    classe: string;
-    subject: string
-    obtainedMark: number;
-    coefficient: number
-}
-
-export interface ExamView {
-    id?: ID
-    student: Student
-    type: TypedAssignment[],
-    totalAverage: number
-    rank: number
-    nested: NestedExamView
-}
-
-export interface NestedExamView {
-    subject?: Course | string
-    assignments?: Assignment[]
-}
-
-export interface TypedAssignment {
-    type: AssignmentTypeLiteral
-    average: number
-    assignments?: Assignment[]
-}
-
-export interface SubjectAssignment {
-    subject?: Course | string
-    assignments?: Assignment[]
 }
 
 export interface AutoScrollProps {

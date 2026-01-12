@@ -1,4 +1,4 @@
-import {ApiEvent, Color, DateExplose, EnumType, ExamView, ID, Options, StudentListDataType} from "./interfaces.ts"
+import {ApiEvent, Color, DateExplose, EnumType, ID, Options, StudentListDataType} from "./interfaces.ts"
 import countries from 'world-countries'
 import dayjs from "dayjs";
 import 'dayjs/locale/fr.js'
@@ -10,6 +10,8 @@ import {AcademicYear, Assignment, Enrollment, Individual, Planning, Schedule} fr
 import Datetime from "../datetime.ts";
 import {BROWSERS} from "./browser.ts";
 import {FieldError} from "react-hook-form";
+import {AssignmentTypeLiteral} from "@/entity/enums/assignmentType.ts";
+import {ExamView} from "@/entity/domain/exam.ts";
 
 export const createElement = (htmlElement: string, parentNode: Element|null, attributes?: {[key: string]: string}, content?: string) => {
 
@@ -828,6 +830,42 @@ export const  setGraphColor = (color: Color | Color[], index: number): string =>
         return color
     }
     return COLOR[index]
+}
+
+export const calculateTypeColumns = (type:  AssignmentTypeLiteral, examView: ExamView[]) => {
+    if (!examView || !examView[0] || !examView[0].nested) {
+        return 0;
+    }
+    const counts = examView[0].nested.map(row => {
+        if (!row || !row.assignments) {
+            return 0;
+        }
+        return row.assignments.filter(a => a?.type === type).length;
+    });
+    if (!counts.length) {
+        return 0;
+    }
+
+    const maxCount = Math.max(...counts);
+
+    console.log("MAX COUNT: ", maxCount)
+
+    return Array.from({length: maxCount}, (_, index) =>({
+        title: `D${index + 1}`,
+        dataIndex: 'assignments',
+        key: `assignment-${type}-${index}`,
+        align: 'center',
+        render: (assignments: any[]) => {
+            const filtered = assignments?.filter((a: any) => a.type === type)
+            const assignment = filtered[index]
+            if (assignment && assignment.marks && assignment.marks.length > 0) {
+                const mark = assignment.marks[0].obtainedMark
+                const coefficient = assignment.coefficient || 1
+                return mark != null ? (mark * coefficient).toFixed(2) : '-'
+            }
+            return '-'
+        }
+    }))
 }
 
 export function getAssignmentBarData(assignments: Assignment[] | null): { matiere: string; valeur: number; }[] {

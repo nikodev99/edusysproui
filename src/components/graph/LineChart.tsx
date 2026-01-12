@@ -9,7 +9,7 @@ import {
     Legend,
     Line
 } from "recharts";
-import {setGraphColor} from "../../core/utils/utils.ts";
+import {setGraphColor} from "@/core/utils/utils.ts";
 import {Skeleton} from "antd";
 
 type LineChartProps<TData> = ChartProps<TData> & LineProps

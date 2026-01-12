@@ -1,11 +1,11 @@
 import Grid from "../layout/Grid.tsx";
 import {FieldValues, Path, PathValue} from "react-hook-form";
-import {TimeInputType, TypedInputType} from "../../../core/utils/interfaces.ts";
+import {TimeInputType, TypedInputType} from "@/core/utils/interfaces.ts";
 import FormItem from "./FormItem.tsx";
 import {Button, Form, Space, TimePicker} from "antd";
 import dayjs from "dayjs";
 import {LuSave} from "react-icons/lu";
-import Datetime from "../../../core/datetime.ts";
+import Datetime from "@/core/datetime.ts";
 
 export const FormTimeInput = <T extends FieldValues>(timePickerProps: TimeInputType<T>) => {
 
@@ -19,7 +19,7 @@ export const FormTimeInput = <T extends FieldValues>(timePickerProps: TimeInputT
                         <Space.Compact style={{width: '100%'}}>
                             <TimePicker
                                 {...field}
-                                placeholder={placeholder}
+                                placeholder={placeholder as string}
                                 onChange={(time) => field.onChange(time ? time.toDate() : null)}
                                 onFocus={() => clearErrors ? clearErrors(field.name) : null}
                                 value={field.value ? Datetime.timeToCurrentDate(field.value).toDayjs() : null}
@@ -35,7 +35,7 @@ export const FormTimeInput = <T extends FieldValues>(timePickerProps: TimeInputT
                     : (
                         <TimePicker
                             {...field}
-                            placeholder={placeholder}
+                            placeholder={placeholder as string}
                             onChange={(time) => field.onChange(time ? time.toDate() : null)}
                             onFocus={() => clearErrors ? clearErrors(field.name) : null}
                             value={field.value ? dayjs(field.value) : null}

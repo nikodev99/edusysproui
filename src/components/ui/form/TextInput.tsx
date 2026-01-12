@@ -50,9 +50,7 @@ export const FormInput = <T extends FieldValues>(inputProps: dataEntryProps<T>) 
                         {...field}
                         defaultValue={defaultValue as PathValue<T, Path<T>>}
                     />}
-                    <Space.Addon>
-                        <Button disabled={field.value === defaultValue} htmlType='submit'>{buttonLabel ?? <LuSave/>}</Button>
-                    </Space.Addon>
+                    <Button disabled={field.value === defaultValue} htmlType='submit'>{buttonLabel ?? <LuSave/>}</Button>
                 </Space.Compact>
             ) :
             (

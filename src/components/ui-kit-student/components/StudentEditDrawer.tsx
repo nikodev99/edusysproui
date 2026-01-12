@@ -102,13 +102,13 @@ export const StudentEditDrawer = ({open, close, isLoading, data}: EditProps<Stud
             {errorMessage && (<FormError message={errorMessage} isNotif />)}
             <section>
                 <div style={{marginBottom: 10}}>
-                    <Button type='dashed' onClick={showAddressDrawer}>Modifier l'adresse </Button>
+                    <Button type='link' onClick={showAddressDrawer}>Modifier l'adresse </Button>
                 </div>
                 <div style={{marginBottom: 10}}>
-                    <Button type='dashed' onClick={showHealthDrawer}>Modifier les conditions médicales </Button>
+                    <Button type='link' onClick={showHealthDrawer}>Modifier les conditions médicales </Button>
                 </div>
                 <div>
-                    <Button type='dashed' onClick={showDrawer}>Modifier les parents </Button>
+                    <Button type='link' onClick={showDrawer}>Modifier les parents </Button>
                 </div>
             </section>
             <RightSidePane loading={isLoading} open={parentDrawer} onClose={closeDrawer}>

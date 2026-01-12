@@ -3,7 +3,7 @@ import {
     getAllExams,
     getClasseExamAssignments,
     getClasseExams,
-    getStudentExamAssignments
+    getStudentExamAssignments, getStudentExamProgress
 } from "@/data/repository/examRepository.ts";
 import {useFetch} from "../useFetch.ts";
 import {useGlobalStore} from "@/core/global/store.ts";
@@ -32,11 +32,21 @@ export const useExamRepo = () => {
 
         useGetExamAssignments: (examId: number, classeId: number, academicYear: string, studentId?: string) => {
             return useFetch(
-                ['exam-id', classeId, studentId && studentId],
+                ['exam-id', examId, classeId, studentId && studentId],
                 studentId ? getStudentExamAssignments : getClasseExamAssignments,
-                [examId, classeId, academicYear, studentId],
-                !!examId && !!classeId && !!academicYear
+                studentId ? [examId, classeId, academicYear, studentId] : [examId, classeId, academicYear],
+                !!classeId && !!academicYear
             )
+        },
+
+        useGetStudentExamProgress: (studentId: string, classeId: number, academicYear: string) => {
+            const {data} = useFetch(
+                ['exam-progress', studentId, classeId],
+                getStudentExamProgress,
+                [studentId, classeId, academicYear],
+                !!studentId && !!classeId && !!academicYear
+            )
+            return data
         }
     }
 }

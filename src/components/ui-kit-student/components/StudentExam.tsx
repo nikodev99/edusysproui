@@ -1,7 +1,6 @@
 import {Enrollment, Score} from "@/entity";
 import {fDate, setFirstName, startsWithVowel} from "@/core/utils/utils.ts";
 import {Badge, Select, TableColumnsType, Tag, Typography} from "antd";
-import {ExamData} from "@/core/utils/interfaces.ts";
 import LocalStorageManager from "@/core/LocalStorageManager.ts";
 import {useEffect, useMemo, useState} from "react";
 import {initExamData} from "@/entity/domain/score.ts";
@@ -13,6 +12,7 @@ import {useAssignmentRepo} from "@/hooks/actions/useAssignmentRepo.ts";
 import {useScoreRepo} from "@/hooks/actions/useScoreRepo.ts";
 import {InitMarkType} from "@/core/utils/tsxUtils.tsx";
 import {ClasseExamView} from "@/components/ui-kit-cc";
+import {ExamData} from "@/entity/domain/exam.ts";
 
 interface StudentExamProps {
     enrolledStudent: Enrollment

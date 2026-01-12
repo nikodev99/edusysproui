@@ -1,6 +1,6 @@
 import Responsive from "./Responsive.tsx";
 import Grid from "./Grid.tsx";
-import {WidgetItem, WidgetProps} from "../../../core/utils/interfaces.ts";
+import {WidgetItem, WidgetProps} from "@/core/utils/interfaces.ts";
 import {Widget} from "./Widget.tsx";
 
 export const Widgets = ({items, hasShadow, responsiveness = false}: WidgetProps) => {

@@ -1,5 +1,5 @@
 import {Card, Progress, Statistic} from "antd";
-import {WidgetItem} from "../../../core/utils/interfaces.ts";
+import {WidgetItem} from "@/core/utils/interfaces.ts";
 
 const Widget = (
     {title, value, progress, precision, valueStyle, prefix, suffix, bottomValue, hasShadow}: WidgetItem
@@ -15,7 +15,7 @@ const Widget = (
         : undefined
 
     return (
-        <Card bordered={false} className={hasShadow ? 'widget': undefined}>
+        <Card className={hasShadow ? 'widget': undefined}>
             <Statistic
                 title={title}
                 value={value}

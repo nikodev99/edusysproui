@@ -136,7 +136,7 @@ export const AssignmentDesc = (
                         </Grid>)
                     }
                     {studentAllScore && <Grid xs={24} md={24} lg={24}>
-                        <Card size='small' title={listTitle} bordered={false}>
+                        <Card size='small' title={listTitle}>
                             {<ScoreItem
                                 scores={studentAllScore as Score[]}
                                 isLoading={scoreLoading ?? false}

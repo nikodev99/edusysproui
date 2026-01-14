@@ -7,11 +7,11 @@ import {
     getUserActivities,
     getUserById, getUserLogin,
     saveUserActivity
-} from "../../data/repository/userRepository.ts";
-import {useGlobalStore} from "../../core/global/store.ts";
-import {getShortSortOrder, isObjectEmpty, setSortFieldName} from "../../core/utils/utils.ts";
-import {User, UserActivity} from "../../auth/dto/user.ts";
-import {loggedUser} from "../../auth/jwt/LoggedUser.ts";
+} from "@/data/repository/userRepository.ts";
+import {useGlobalStore} from "@/core/global/store.ts";
+import {getShortSortOrder, isObjectEmpty, setSortFieldName} from "@/core/utils/utils.ts";
+import {User, UserActivity} from "@/auth/dto/user.ts";
+import {loggedUser} from "@/auth/jwt/LoggedUser.ts";
 
 export const useUserRepo = () => {
     const schoolId = useGlobalStore(state => state.schoolId)

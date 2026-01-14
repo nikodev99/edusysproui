@@ -1,13 +1,13 @@
 import FormContent from "../ui/form/FormContent.tsx";
-import {InputTypeEnum} from "../../core/shared/sharedEnums.ts";
-import {FormConfig} from "../../config/FormConfig.ts";
-import {FormContentProps} from "../../core/utils/interfaces.ts";
-import {SignupRequest} from "../../auth/dto/user.ts";
+import {InputTypeEnum} from "@/core/shared/sharedEnums.ts";
+import {FormConfig} from "@/config/FormConfig.ts";
+import {FormContentProps} from "@/core/utils/interfaces.ts";
+import {SignupRequest} from "@/auth/dto/user.ts";
 import {useMemo} from "react";
-import {enumToObjectArray} from "../../core/utils/utils.ts";
-import {RoleEnum} from "../../auth/dto/role.ts";
-import {AssignUserToSchoolSchema, SignupSchema} from "../../schema";
-import {loggedUser} from "../../auth/jwt/LoggedUser.ts";
+import {enumToObjectArray} from "@/core/utils/utils.ts";
+import {RoleEnum} from "@/auth/dto/role.ts";
+import {AssignUserToSchoolSchema, SignupSchema} from "@/schema";
+import {loggedUser} from "@/auth/jwt/LoggedUser.ts";
 
 type UserAccountFormProps = FormContentProps<SignupSchema | AssignUserToSchoolSchema, SignupRequest> & {
     flowType: 'create' | 'assign' | 'idle'

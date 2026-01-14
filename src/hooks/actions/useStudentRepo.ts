@@ -3,10 +3,21 @@ import {useFetch, useRawFetch} from "../useFetch.ts";
 import {UseQueryResult} from "@tanstack/react-query";
 import {Enrollment} from "@/entity";
 import {
-    countClasseStudents, countSomeClasseStudents, countStudent, getAllStudentClassmate, getClasseEnrolledStudents,
-    getClasseEnrolledStudentsSearch, getClasseStudents, getEnrolledStudents, getEnrolledStudentsByTeacher,
+    countClasseStudents,
+    countSomeClasseStudents,
+    countStudent,
+    getAllStudentClassmate,
+    getClasseEnrolledStudents,
+    getClasseEnrolledStudentsSearch,
+    getClasseStudents,
+    getEnrolledStudents,
+    getEnrolledStudentsByTeacher,
     getRandomStudentClassmate,
-    getStudentAddress, getStudentById, searchEnrolledStudents, searchEnrolledStudentsByTeacher, searchStudents,
+    getStudentAddress,
+    getStudentById,
+    searchEnrolledStudents,
+    searchEnrolledStudentsByTeacher,
+    searchStudents,
     searchUnenrolledStudents
 } from "@/data/repository/studentRepository.ts";
 import {useCallback, useEffect, useState} from "react";
@@ -14,8 +25,9 @@ import {useGlobalStore} from "@/core/global/store.ts";
 import {getShortSortOrder, setFirstName} from "@/core/utils/utils.ts";
 import {AxiosResponse} from "axios";
 import {useAuth} from "@/hooks/useAuth.ts";
+import {UserPermission} from "@/core/shared/sharedEnums.ts";
 
-export const useStudentRepo = (context: 'ALL' | 'TEACHER' = 'ALL') => {
+export const useStudentRepo = (context: UserPermission = UserPermission.ALL) => {
     const schoolId = useGlobalStore(state => state.schoolId)
 
     const useGetPaginated = () => {
@@ -25,17 +37,17 @@ export const useStudentRepo = (context: 'ALL' | 'TEACHER' = 'ALL') => {
                 if (sortField && sortOrder) {
                     sortOrder = getShortSortOrder(sortOrder)
                     sortField = sortedField(sortField)
-                    return context === 'ALL'
+                    return context === UserPermission.ALL
                         ? await getEnrolledStudents(schoolId, page, size, `${sortField}:${sortOrder}`)
                         : await getEnrolledStudentsByTeacher(schoolId, user?.userId as string, page, size, `${sortField}:${sortOrder}`)
                 }
-                return context === 'ALL'
+                return context === UserPermission.ALL
                     ? await getEnrolledStudents(schoolId, page, size)
                     : await getEnrolledStudentsByTeacher(schoolId, user?.userId as string, page, size)
             },
 
             getSearchedEnrolledStudents:  async (searchInput: string) => {
-                return context === 'ALL'
+                return context === UserPermission.ALL
                     ? await searchEnrolledStudents(schoolId, searchInput)
                     : await searchEnrolledStudentsByTeacher(schoolId, user?.userId as string, searchInput)
             }

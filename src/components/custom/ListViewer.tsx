@@ -175,8 +175,6 @@ const ListViewer = <TData extends object, TError>(
         shareSearchQuery?.(undefined)
     }
 
-    console.log("STUDENTS: ", dataSource)
-
     return(
         <>
             {((dataSource && dataSource?.length > 0) || !emptyPage) ? <>

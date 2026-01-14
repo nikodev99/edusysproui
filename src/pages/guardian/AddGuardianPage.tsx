@@ -12,10 +12,10 @@ import PageWrapper from "@/components/view/PageWrapper.tsx";
 import {useSearchParams} from "react-router-dom";
 import {ModalConfirmButton} from "@/components/ui/layout/ModalConfirmButton.tsx";
 import {useStudentRepo} from "@/hooks/actions/useStudentRepo.ts";
-import {useQueryUpdate} from "@/hooks/useUpdate.ts";
 import {changeGuardian} from "@/data/repository/guardianRepository.ts";
 import {catchError} from "@/data/action/error_catch.ts";
 import {getSlug} from "@/core/utils/utils.ts";
+import {useGuardianRepo} from "@/hooks/actions/useGuardianRepo.ts";
 
 const AddGuardianPage = () => {
     const [checked, setChecked] = useToggle(false)
@@ -26,6 +26,7 @@ const AddGuardianPage = () => {
     const [successMessage, setSuccessMessage] = useState<string | undefined>("")
     const [errorMessage, setErrorMessage] = useState<string | undefined>("")
     const {useGetStudentAddress} = useStudentRepo()
+    const {useChangeGuardian} = useGuardianRepo()
     const [param] = useSearchParams()
 
     const studentId = param.get('student')
@@ -37,7 +38,7 @@ const AddGuardianPage = () => {
         resolver: zodResolver(guardianSchema)
     })
 
-    const {mutate} = useQueryUpdate(guardianSchema)
+    const {mutate} = useChangeGuardian()
 
     useEffect(() => {
         if (checked && !guardianId && !isExists && address) {

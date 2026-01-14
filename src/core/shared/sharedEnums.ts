@@ -16,6 +16,10 @@ export enum UpdateType {
     ACADEMIC_YEAR, GRADE, DEPARTMENT, USER
 }
 
+export enum UserPermission {
+    GUARDIAN, TEACHER, ALL
+}
+
 export enum LinkToStudent {
     PERE = 'Père',
     MERE = 'Mère',

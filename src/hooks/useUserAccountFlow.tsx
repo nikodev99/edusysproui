@@ -1,10 +1,10 @@
-import {Individual} from "../entity";
+import {Individual} from "@/entity";
 import {User, UserType} from "../auth/dto/user.ts";
 import {useAccount} from "./useAccount.ts";
 import {useUserRepo} from "./actions/useUserRepo.ts";
 import {useAuth} from "./useAuth.ts";
 import {useMemo} from "react";
-import {assignUserToSchoolSchema, AssignUserToSchoolSchema, signupSchema, SignupSchema} from "../schema";
+import {assignUserToSchoolSchema, AssignUserToSchoolSchema, signupSchema, SignupSchema} from "@/schema";
 import {loggedUser} from "../auth/jwt/LoggedUser.ts";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";

@@ -13,12 +13,14 @@ import {useMemo} from "react";
 import {setPlural} from "@/core/utils/utils.ts";
 import {useStudentRepo} from "@/hooks/actions/useStudentRepo.ts";
 import {usePermission} from "@/hooks/usePermission.ts";
+import {UserPermission} from "@/core/shared/sharedEnums.ts";
 
 const StudentListPage = () => {
     const {toEnrollStudent, toReenrollStudent, toSearch} = useRedirect()
     const {canViewAndEdit, can} = usePermission()
+    const context = useMemo(() => can('teacherData', true) ? UserPermission.TEACHER: UserPermission.ALL, [can])
 
-    const {useGetPaginated} = useStudentRepo(can('teacherData', true) ? 'TEACHER': 'ALL')
+    const {useGetPaginated} = useStudentRepo(context)
 
     const {getPaginatedStudents, getSearchedEnrolledStudents} = useGetPaginated()
 

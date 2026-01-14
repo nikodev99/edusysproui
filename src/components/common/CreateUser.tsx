@@ -1,8 +1,8 @@
 import {InsertModal} from "../custom/InsertSchema.tsx";
-import {AssignUserToSchoolSchema, signupSchema, SignupSchema} from "../../schema";
+import {AssignUserToSchoolSchema, signupSchema, SignupSchema} from "@/schema";
 import {UserAccountForm} from "../forms/UserAccountForm.tsx";
-import {Individual} from "../../entity";
-import {UserType} from "../../auth/dto/user.ts";
+import {Individual} from "@/entity";
+import {UserType} from "@/auth/dto/user.ts";
 import {useUserAccountFlow} from "../../hooks/useUserAccountFlow.tsx";
 
 export type CreateUserProps = {

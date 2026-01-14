@@ -14,7 +14,7 @@ export const raw = {
         href: '/search'
     },
     student: {
-        label: 'Étudiant',
+        label: 'Étudiants',
         href: '/students',
         group: {
             add: {
@@ -32,7 +32,7 @@ export const raw = {
         }
     },
     teacher: {
-        label: 'Enseignant',
+        label: 'Enseignants',
         href: '/teachers',
         group: {
             view: {
@@ -46,7 +46,7 @@ export const raw = {
         }
     },
     guardian: {
-        label: 'Tuteur',
+        label: 'Tuteurs',
         href: '/guardians',
         group: {
             view: {

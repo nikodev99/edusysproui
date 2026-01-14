@@ -1,37 +1,30 @@
 import React, {useEffect, useState} from "react";
-import {useFetch} from "../../hooks/useFetch.ts";
 import {useParams} from "react-router-dom";
-import {fetchGuardianWithStudents} from "../../data";
-import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
-import {Guardian} from "../../entity";
-import {setLastName, setName} from "../../core/utils/utils.ts";
-import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
-import {text} from "../../core/utils/text_display.ts";
-import ViewHeader from "../../components/ui/layout/ViewHeader.tsx";
-import {GuardianEditDrawer, GuardianStudentList, GuardianActionLinks} from "../../components/ui-kit-guardian";
-import {Gender} from "../../entity/enums/gender.tsx";
-import {getStatusKey, Status} from "../../entity/enums/status.ts";
+import {Guardian} from "@/entity";
+import {setLastName, setName} from "@/core/utils/utils.ts";
+import {useBreadCrumb} from "@/hooks/useBreadCrumb.tsx";
+import {text} from "@/core/utils/text_display.ts";
+import ViewHeader from "@/components/ui/layout/ViewHeader.tsx";
+import {GuardianEditDrawer, GuardianStudentList, GuardianActionLinks} from "@/components/ui-kit-guardian";
+import {Gender} from "@/entity/enums/gender.tsx";
+import {getStatusKey, Status} from "@/entity/enums/status.ts";
 import {Tabs, Tag} from "antd";
-import {useAccount} from "../../hooks/useAccount.ts";
-import {LuUserPlus} from "react-icons/lu";
-
-type ActionsButtons = {
-    createUser?: boolean
-}
+import {useGuardianRepo} from "@/hooks/actions/useGuardianRepo.ts";
+import {useDocumentTitle} from "@/hooks/useDocumentTitle.ts";
+import {ItemType} from "antd/es/menu/interface";
 
 const GuardianViewPage: React.FC = () => {
 
-    const { id } = useParams();
+    const { id: guardianId } = useParams();
 
     const [guardian, setGuardian] = useState<Guardian | null>(null);
     const [openDrawer, setOpenDrawer] = useState<boolean>(false)
     const [color, setColor] = useState('')
-    const [openActions, setOpenActions] = useState<ActionsButtons>({})
-    const [showAction, setShowAction] = useState<ActionsButtons>({})
-    const {useAccountExists} = useAccount()
+    const [shouldRefresh, setShouldRefresh] = useState<boolean>(false)
+    const [linkButtons, setLinkButtons] = useState<ItemType[]>([])
+    const {useGetGuardianWithStudents} = useGuardianRepo()
 
-    const {data, isLoading, isSuccess, refetch} = useFetch(['guardian-id', id], fetchGuardianWithStudents, [id], !!id)
-    const accountExists = useAccountExists(guardian?.personalInfo?.id as number)
+    const {data, isLoading, isSuccess, refetch} = useGetGuardianWithStudents(guardianId)
     
     const guardianName = guardian ? setName(guardian?.personalInfo) : 'Tuteur'
 
@@ -56,8 +49,13 @@ const GuardianViewPage: React.FC = () => {
         if (isSuccess && data) {
             setGuardian(data as Guardian);
         }
-        setShowAction({createUser: accountExists})
-    }, [accountExists, data, isSuccess])
+    }, [data, isSuccess])
+
+    useEffect(() => {
+        if (shouldRefresh)
+            refetch()
+                .then()
+    }, [refetch, shouldRefresh]);
 
     const handleOpenDrawer = (state: boolean) => {
         setOpenDrawer(state)
@@ -93,14 +91,7 @@ const GuardianViewPage: React.FC = () => {
                         mention: guardian?.company ? guardian?.company : ''
                     }] : [])
                 ]}
-                items={[
-                ...(accountExists ? [] : [{
-                        key: 2,
-                        label: 'Compte Tuteur',
-                        icon: <LuUserPlus />,
-                        onClick: () => setOpenActions({createUser: true})
-                    }])
-                ]}
+                items={linkButtons}
                 pColor={setColor}
             />
             <section>
@@ -126,12 +117,13 @@ const GuardianViewPage: React.FC = () => {
                     open={openDrawer}
                 />
             </section>
-            <GuardianActionLinks
-                open={openActions}
-                setActions={setOpenActions}
-                show={showAction}
-                personalInfo={guardian?.personalInfo}
-            />
+            <section>
+                <GuardianActionLinks
+                    data={guardian}
+                    getItems={setLinkButtons}
+                    setRefresh={setShouldRefresh}
+                />
+            </section>
         </>
     )
 }

@@ -4,7 +4,6 @@ import Grid from "@/components/ui/layout/Grid.tsx";
 import {Alert, Button, Checkbox, Collapse, Divider, Modal} from "antd";
 import {useState} from "react";
 import { GuardianDetails } from "./GuardianDetails.tsx";
-import {fetchGuardian, fetchSearchedEnrolledStudentsGuardian} from "@/data";
 import {Guardian} from "@/entity";
 import GuardianFormContent from '@/components/forms/GuardianForm.tsx'
 import {AddressOwner, IndividualType} from "@/core/shared/sharedEnums.ts";
@@ -13,11 +12,13 @@ import {EnrollmentSchema} from "@/schema";
 import {setName} from "@/core/utils/utils.ts";
 import {IndividualForm} from "@/components/forms/IndividualForm.tsx";
 import {useSearch} from "@/hooks/useSearch.ts";
+import {useGuardianRepo} from "@/hooks/actions/useGuardianRepo.ts";
 
 export const GuardianForm = (
     {control, errors, showField, checked, onChecked, value, setValue, isExists, setIsExists, guardian, setGuardian, parents}: GuardianProps<EnrollmentSchema, Guardian>
 ) => {
-
+    const {useGetGuardian, useGetPaginated} = useGuardianRepo()
+    const {getSearchedGuardian} = useGetPaginated()
     const [open, setOPen] = useState<boolean>(false)
 
     /*const [data, setData] = useState<SelectProps['options']>([]);
@@ -34,9 +35,11 @@ export const GuardianForm = (
 
     const {fetching, options, handleSearch, handleChange} = useSearch({
         setValue: setValue as never,
-        fetchFunc: fetchSearchedEnrolledStudentsGuardian as never,
+        fetchFunc: getSearchedGuardian() as never,
         setCustomOptions: setOptions as never,
     })
+
+    const {data, isSuccess} = useGetGuardian(value)
 
     /*const fetch = (value: string, callback: (data: { text: string; value: string | undefined }[]) => void) => {
         if (timeout.current) {
@@ -82,13 +85,8 @@ export const GuardianForm = (
     }
 
     const onConfirm = () => {
-        if (value) {
-            fetchGuardian(value)
-                .then(response => {
-                    if (response && response.isSuccess) {
-                        setGuardian(response.data as Guardian)
-                    }
-                })
+        if (isSuccess && data) {
+            setGuardian(data)
         }
         setIsExists(true)
         setOPen(false)

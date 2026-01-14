@@ -315,12 +315,6 @@ export type ListViewerProps<TData extends object, TError> = ListProps<TData> & {
     emptyPage?: ReactNode
 }
 
-export type ActionButtonsProps<TData extends object> = {
-    data?: TData
-    getItems?: (items: ItemType[]) => void
-    setRefresh?: (value: boolean) => void
-}
-
 export interface ListProps<TData extends object> {
     tableColumns?: TableColumnsType<TData>
     tableHeight?: number
@@ -587,6 +581,12 @@ export interface ActionLinksProps<TButtonAction extends object> {
     setActions: (actions: TButtonAction) => void
     show: TButtonAction
     personalInfo?: Individual
+}
+
+export type ActionButtonsProps<TData extends object> = {
+    data?: TData
+    getItems?: (items: ItemType[]) => void
+    setRefresh?: (value: boolean) => void
 }
 
 export interface TableSearchProps {

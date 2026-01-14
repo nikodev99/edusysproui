@@ -1,10 +1,8 @@
 import {Student} from "@/entity";
 import './student_card.scss'
-import Responsive from "@/components/ui/layout/Responsive.tsx";
-import Grid from "@/components/ui/layout/Grid.tsx";
 import {bloodLabel, fDate} from "@/core/utils/utils.ts";
 import {Avatar} from "@/components/ui/layout/Avatar.tsx";
-import {QRCode} from "antd";
+import {QRCode, Space} from "antd";
 import {text} from "@/core/utils/text_display.ts";
 import {Link} from "react-router-dom";
 import {BloodType} from "@/entity/enums/bloodType.ts";
@@ -12,9 +10,9 @@ import {BloodType} from "@/entity/enums/bloodType.ts";
 export const GuardianStudentList = ({students}: {students?: Student[]}) => {
 
     return (
-        <Responsive gutter={[16, 16]}>
+        <Space wrap align='center'>
             {students && students.map((student, index) => (
-                <Grid xs={24} md={12} lg={8} xxl={6} key={index}>
+                <main key={`@student-list-${index}`}>
                     <div className="card-container">
                         <div className="header">
                             <img
@@ -70,8 +68,8 @@ export const GuardianStudentList = ({students}: {students?: Student[]}) => {
                             <Link style={{marginTop: '10px'}} className="qr-code-text" to={text.student.group.view.href + student.id}>{student.id}</Link>
                         </div>
                     </div>
-                </Grid>
+                </main>
             ))}
-        </Responsive>
+        </Space>
     )
 }

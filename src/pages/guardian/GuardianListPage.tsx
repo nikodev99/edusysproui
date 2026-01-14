@@ -5,22 +5,26 @@ import {useDocumentTitle} from "@/hooks/useDocumentTitle.ts";
 import ListViewer from "@/components/custom/ListViewer.tsx";
 import {TableColumnsType} from "antd";
 import {Avatar} from "@/components/ui/layout/Avatar.tsx";
-import {enumToObjectArrayForFiltering, setFirstName} from "@/core/utils/utils.ts";
+import {enumToObjectArrayForFiltering, getSlug, setFirstName} from "@/core/utils/utils.ts";
 import {Gender} from "@/entity/enums/gender.tsx";
 import {Guardian} from "@/entity";
-import {fetchEnrolledStudentsGuardians} from "@/data";
 import {ActionButton} from "@/components/ui/layout/ActionButton.tsx";
 import {LuEye} from "react-icons/lu";
-import {redirectTo} from "@/context/RedirectContext.ts";
-import {AxiosResponse} from "axios";
-import {AiOutlineUserDelete} from "react-icons/ai";
-import {BiSolidUserAccount} from "react-icons/bi";
 import {StatusTags} from "@/core/utils/tsxUtils.tsx";
 import {Status} from "@/entity/enums/status.ts";
 import {DataProps} from "@/core/utils/interfaces.ts";
-import {getSearchedEnrolledStudentGuardian} from "@/data/repository/guardianRepository.ts";
+import {useRedirect} from "@/hooks/useRedirect.ts";
+import {useGuardianRepo} from "@/hooks/actions/useGuardianRepo.ts";
+import {useState} from "react";
+import {ItemType} from "antd/es/menu/interface";
+import {GuardianActionLinks} from "@/components/ui-kit-guardian";
 
 const GuardianListPage = () => {
+    const [selectedGuardian, setSelectedGuardian] = useState<Guardian | undefined>(undefined)
+    const [linkButtons, setLinkButtons] = useState<ItemType[]>([])
+    const [refresh, setRefresh] = useState<boolean>(false)
+    const {useGetPaginated} = useGuardianRepo()
+    const {toViewGuardian} = useRedirect()
 
     useDocumentTitle({
         title: text.guardian.label,
@@ -33,30 +37,21 @@ const GuardianListPage = () => {
         }
     ])
 
-    const throughDetails = (link: string): void => {
-        redirectTo(`${text.guardian.group.view.href}${link}`)
+    const {getPaginatedGuardian, getSearchedGuardian} = useGetPaginated()
+
+    const throughDetails = (id: string | number, record?: Guardian): void => {
+        return toViewGuardian(id, getSlug({personalInfo: record?.personalInfo}))
     }
 
-    const getItems = (url: string) => {
+    const getItems = (_url?: string, record?: Guardian) => {
         return [
             {
-                key: `details-${url}`,
-                icon: <LuEye size={20} />,
+                key: `details-${record?.id}`,
+                icon: <LuEye />,
                 label: 'Voir le tuteur',
-                onClick: () => throughDetails(url)
+                onClick: () => throughDetails(record?.id)
             },
-            {
-                key: `account-${url}`,
-                icon: <BiSolidUserAccount size={20} />,
-                label: 'Créer compte tuteur',
-                onClick: () => alert('Création de compte')
-            },
-            {
-                key: `delete-${url}`,
-                icon: <AiOutlineUserDelete size={20} />,
-                label: 'Supprimer',
-                danger: true
-            }
+            ...linkButtons
         ]
     }
 
@@ -119,7 +114,7 @@ const GuardianListPage = () => {
             dataIndex: 'id',
             key: 'action',
             align: 'right',
-            render: (text) => (<ActionButton items={getItems(text)} />)
+            render: (id, record) => (<ActionButton items={getItems(id, record)} />)
         }
     ]
 
@@ -139,16 +134,25 @@ const GuardianListPage = () => {
         <>
             <ListPageHierarchy items={pageHierarchy as [BreadcrumbType]} />
             <ListViewer
-                callback={fetchEnrolledStudentsGuardians as () => Promise<AxiosResponse<Guardian[]>>}
-                searchCallback={getSearchedEnrolledStudentGuardian as (...input: unknown[]) => Promise<AxiosResponse<Guardian[]>>}
+                callback={getPaginatedGuardian}
+                searchCallback={getSearchedGuardian}
                 tableColumns={columns as TableColumnsType<Guardian>}
                 dropdownItems={getItems}
                 throughDetails={throughDetails}
                 countTitle='Liste de Tuteur'
                 hasCount={false}
-                cardData={cardData}
+                cardData={cardData as never}
                 fetchId='guardian-list'
+                onSelectData={setSelectedGuardian}
+                refetchCondition={refresh}
             />
+            <section>
+                <GuardianActionLinks
+                    getItems={setLinkButtons}
+                    data={selectedGuardian}
+                    setRefresh={setRefresh}
+                />
+            </section>
         </>
     )
 }

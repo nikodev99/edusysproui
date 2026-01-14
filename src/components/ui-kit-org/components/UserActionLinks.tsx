@@ -10,18 +10,18 @@ import {
     LuUserPen
 } from "react-icons/lu";
 import {AiOutlineUserDelete} from "react-icons/ai";
-import {User} from "../../../auth/dto/user.ts";
-import {useToggle} from "../../../hooks/useToggle.ts";
+import {User} from "@/auth/dto/user.ts";
+import {useToggle} from "@/hooks/useToggle.ts";
 import {UserRoles} from "./UserRoles.tsx";
 import {UserAccountEnabled} from "./UserAccountEnabled.tsx";
 import {UserAccountLocked} from "./UserAccountLocked.tsx";
 import {UserRemoveAccount} from "./UserRemoveAccount.tsx";
-import {useRedirect} from "../../../hooks/useRedirect.ts";
-import {getSlug} from "../../../core/utils/utils.ts";
+import {useRedirect} from "@/hooks/useRedirect.ts";
+import {getSlug} from "@/core/utils/utils.ts";
 import {ResetPassword} from "./ResetPassword.tsx";
-import {useUserRepo} from "../../../hooks/actions/useUserRepo.ts";
-import {ActionButtonsProps} from "../../../core/utils/interfaces.ts";
-import {useMenuItemsEffect} from "../../../hooks/useMenuItemsEffect.ts";
+import {useUserRepo} from "@/hooks/actions/useUserRepo.ts";
+import {ActionButtonsProps} from "@/core/utils/interfaces.ts";
+import {useMenuItemsEffect} from "@/hooks/useMenuItemsEffect.ts";
 
 export const UserActionLinks = ({data: user, getItems, setRefresh}: ActionButtonsProps<User>) => {
     const {toUserActivity, toChangePassword} = useRedirect()

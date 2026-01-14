@@ -1,8 +1,8 @@
 import {apiClient} from "../axiosConfig.ts";
-import {ChangePasswordRequest, User, UserActiveLogin, UserActivity} from "../../auth/dto/user.ts";
-import {MessageResponse, Pageable} from "../../core/utils/interfaces.ts";
-import {Role} from "../../auth/dto/role.ts";
-import {Individual} from "../../entity";
+import {ChangePasswordRequest, User, UserActiveLogin, UserActivity} from "@/auth/dto/user.ts";
+import {MessageResponse, Pageable} from "@/core/utils/interfaces.ts";
+import {Role} from "@/auth/dto/role.ts";
+import {Individual} from "@/entity";
 
 export interface ActivityFilterProps {
     dates: {

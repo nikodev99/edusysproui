@@ -1,22 +1,24 @@
 import FormContent from "../ui/form/FormContent.tsx";
-import {FormContentProps} from "../../core/utils/interfaces.ts";
-import {Guardian} from "../../entity";
+import {FormContentProps} from "@/core/utils/interfaces.ts";
+import {Guardian} from "@/entity";
 import {FieldValues, Path, PathValue} from "react-hook-form";
-import {FormUtils} from "../../core/utils/formUtils.ts";
-import {FormConfig} from "../../config/FormConfig.ts";
-import {InputTypeEnum, LinkToStudent} from "../../core/shared/sharedEnums.ts";
+import {FormUtils} from "@/core/utils/formUtils.ts";
+import {FormConfig} from "@/config/FormConfig.ts";
+import {InputTypeEnum, LinkToStudent} from "@/core/shared/sharedEnums.ts";
 import {useMemo} from "react";
-import {enumToObjectArray} from "../../core/utils/utils.ts";
-import {text} from "../../core/utils/text_display.ts";
+import {enumToObjectArray} from "@/core/utils/utils.ts";
+import {text} from "@/core/utils/text_display.ts";
 
 type GuardianFormProps<T extends FieldValues> = FormContentProps<T, Guardian> & {
-    handleUpdate?: (field: keyof Guardian, value: unknown) => void
+    handleUpdate?: (field: keyof Guardian, value: unknown) => void,
+    parent?: string
 }
 
-const GuardianForm = <T extends FieldValues>({control, edit, errors, enroll, data, handleUpdate}: GuardianFormProps<T>) => {
+const GuardianForm = <T extends FieldValues>(
+    {control, edit, errors, enroll, data, handleUpdate, parent = 'student.guardian'}: GuardianFormProps<T>
+) => {
 
     const onlyField = FormUtils.onlyField(edit as boolean, 24, undefined)
-    const parent: string = 'student.guardian'
 
     const form = new FormConfig(errors, edit, enroll)
 

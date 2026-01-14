@@ -82,7 +82,6 @@ const EnrollStudentPage = () => {
     }
 
     const setGuardianValues = (guardian: Guardian) => {
-        console.log("Existing guardian at setting value: ", guardian)
         const newGuardian = toGuardianSchema(guardian)
         setValue('student.guardian', newGuardian as GuardianSchema, {
             shouldValidate: true

@@ -13,6 +13,7 @@ import {Status} from "@/entity/enums/status.ts";
 type IndividualProps<T extends FieldValues, Q extends object> = FormContentProps<T, PersonalInfo> & {
     type: IndividualType
     handleUpdate?: (field: keyof Q | keyof PersonalInfo, value: unknown) => Promise<void>
+    parent?: string
 }
 
 const IndividualForm = <T extends FieldValues, Q extends object>(individualProps: IndividualProps<T, Q>) => {
@@ -20,7 +21,7 @@ const IndividualForm = <T extends FieldValues, Q extends object>(individualProps
     const genderOptions = useMemo(() => enumToObjectArray(Gender), [])
     const statusOptions = useMemo(() => enumToObjectArray(Status), [])
 
-    const {edit, data, control, errors, enroll, type, showField, handleUpdate} = individualProps
+    const {edit, data, control, errors, enroll, type, showField, handleUpdate, parent} = individualProps
     const onlyField = FormUtils.onlyField(edit as boolean, 24, undefined)
     const form = new FormConfig(errors, edit, enroll)
 
@@ -28,27 +29,27 @@ const IndividualForm = <T extends FieldValues, Q extends object>(individualProps
         switch (type) {
             case IndividualType.STUDENT:
                 return {
-                    name: form.name(fieldName, 'student.personalInfo'),
-                    validate: form.validate(fieldName, 'student.personalInfo'),
-                    error: form.error(fieldName, 'student.personalInfo'),
+                    name: form.name(fieldName, parent ?? 'student.personalInfo'),
+                    validate: form.validate(fieldName, parent ?? 'student.personalInfo'),
+                    error: form.error(fieldName, parent ?? 'student.personalInfo'),
                 }
             case IndividualType.TEACHER:
                 return {
-                    name: form.name(fieldName, 'teacher.personalInfo'),
-                    validate: form.validate(fieldName, 'teacher.personalInfo'),
-                    error: form.error(fieldName, 'teacher.personalInfo'),
+                    name: form.name(fieldName, parent ?? 'teacher.personalInfo'),
+                    validate: form.validate(fieldName, parent ?? 'teacher.personalInfo'),
+                    error: form.error(fieldName, parent ?? 'teacher.personalInfo'),
                 }
             case IndividualType.GUARDIAN:
                 return {
-                    name: form.name(fieldName, 'student.guardian.personalInfo'),
-                    validate: form.validate(fieldName, 'student.guardian.personalInfo'),
-                    error: form.error(fieldName, 'student.guardian.personalInfo'),
+                    name: form.name(fieldName, parent ?? 'student.guardian.personalInfo'),
+                    validate: form.validate(fieldName, parent ?? 'student.guardian.personalInfo'),
+                    error: form.error(fieldName, parent ?? 'student.guardian.personalInfo'),
                 }
             case IndividualType.EMPLOYEE:
                 return {
-                    name: form.name(fieldName, 'employee.personalInfo'),
-                    validate: form.validate(fieldName, 'employee.personalInfo'),
-                    error: form.error(fieldName, 'employee.personalInfo'),
+                    name: form.name(fieldName, parent ?? 'employee.personalInfo'),
+                    validate: form.validate(fieldName, parent ?? 'employee.personalInfo'),
+                    error: form.error(fieldName, parent ?? 'employee.personalInfo'),
                 }
             default:
                 return null

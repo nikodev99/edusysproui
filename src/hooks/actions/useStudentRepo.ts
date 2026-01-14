@@ -5,7 +5,8 @@ import {Enrollment} from "@/entity";
 import {
     countClasseStudents, countSomeClasseStudents, countStudent, getAllStudentClassmate, getClasseEnrolledStudents,
     getClasseEnrolledStudentsSearch, getClasseStudents, getEnrolledStudents, getEnrolledStudentsByTeacher,
-    getRandomStudentClassmate, getStudentById, searchEnrolledStudents, searchEnrolledStudentsByTeacher, searchStudents,
+    getRandomStudentClassmate,
+    getStudentAddress, getStudentById, searchEnrolledStudents, searchEnrolledStudentsByTeacher, searchStudents,
     searchUnenrolledStudents
 } from "@/data/repository/studentRepository.ts";
 import {useCallback, useEffect, useState} from "react";
@@ -192,6 +193,11 @@ export const useStudentRepo = (context: 'ALL' | 'TEACHER' = 'ALL') => {
         );
     };
 
+    const useGetStudentAddress = (studentId?: string) => {
+        const {data} = useFetch(['student-address', studentId], getStudentAddress, [studentId], !!studentId)
+        return data
+    }
+
     /**
      * Counts the number of students in a given class by gender.
      *
@@ -268,6 +274,7 @@ export const useStudentRepo = (context: 'ALL' | 'TEACHER' = 'ALL') => {
         useGetClasseStudents,
         useGetRandomStudentClassmate,
         useGetStudentClassmate,
+        useGetStudentAddress,
         useCountClasseStudents,
         useCountSomeClasseStudents,
         useCountStudent,

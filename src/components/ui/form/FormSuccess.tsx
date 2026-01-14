@@ -15,13 +15,29 @@ const FormSuccess = ({message, setRedirect, isNotif, type = 'success', onClose, 
 
     useEffect( () => {
         if (isNotif) {
+            const handleNotificationClose = () => {
+                if (onClose) {
+                    onClose();
+                }
+
+                if (setActivity) {
+                    setActivity().then(bool => {
+                        if (bool) {
+                            setRedirect?.();
+                        }
+                    });
+                } else {
+                    setRedirect?.();
+                }
+            }
+
             api.open({
                 key,
                 message: message,
                 type: type,
                 placement: 'topRight',
                 duration: 2,
-                onClose: onClose
+                onClose: handleNotificationClose
             })
         }else {
             messageApi.open({
@@ -29,23 +45,29 @@ const FormSuccess = ({message, setRedirect, isNotif, type = 'success', onClose, 
                 type: 'loading',
                 content: 'chargement...'
             }).then()
+
             setTimeout(() => {
+                console.log('2 seconds passed, showing success message');
                 messageApi.open({
                     key,
                     type: 'success',
                     content: message,
                     duration: 2,
-                }).then(() => {
+                }).then()
+
+                setTimeout(() => {
                     if (setActivity) {
                         setActivity().then(bool => {
                             if (bool) {
                                 setRedirect?.()
+                            } else {
+                                console.log('setActivity returned false, not redirecting');
                             }
                         })
-                    }else {
+                    } else {
                         setRedirect?.()
                     }
-                })
+                }, 2500)
             }, 2000)
         }
 

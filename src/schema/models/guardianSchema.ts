@@ -1,6 +1,6 @@
 import {z} from "zod";
-import {individualSchema} from "./individualSchema.ts";
-import {IndividualType} from "../../core/shared/sharedEnums.ts";
+import {individualSchema} from "@/schema";
+import {IndividualType} from "@/core/shared/sharedEnums.ts";
 
 export const guardianSchema = z.object({
     id: z.string().optional(),
@@ -11,7 +11,7 @@ export const guardianSchema = z.object({
         }),
         individualType: z.number({required_error: "Le type de l'individu est requis"}).default(IndividualType.GUARDIAN),
     }),
-    company: z.string().optional(),
-    jobTitle: z.string().optional(),
-    linkToStudent: z.string().optional(),
+    company: z.string().nullable().optional(),
+    jobTitle: z.string().nullable().optional(),
+    linkToStudent: z.string().nullable().optional(),
 })

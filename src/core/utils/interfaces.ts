@@ -89,6 +89,11 @@ export interface GuardianProps<T extends FieldValues, Q extends object> extends 
     setIsExists: (exists: boolean) => void
     guardian: Guardian
     setGuardian: (guardian: Guardian) => void
+    parents?: {
+        guardian?: string,
+        personalInfo?: string
+        address?: string
+    }
 }
 
 export interface ZodFormItemProps {

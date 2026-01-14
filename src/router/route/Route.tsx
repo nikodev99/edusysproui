@@ -52,6 +52,7 @@ import ReEnrollStudentPage from "@/pages/student/ReEnrollStudentPage.tsx";
 import StudentViewPage from "@/pages/student/StudentViewPage.tsx";
 import SearchablePage from "@/pages/search/SearchablePage.tsx";
 import StudentDisciplinePage from "@/pages/student/StudentDisciplinePage.tsx";
+import AddGuardianPage from "@/pages/guardian/AddGuardianPage.tsx";
 
 const DashboardPage = withAuthProtection(withRoleProtection(Dashboard));
 
@@ -67,6 +68,7 @@ const ListTeacherPage = withAuthProtection(withRoleProtection(TeacherListPage));
 const TeacherAddPage = withAuthProtection(withRoleProtection(AddTeacherPage));
 const ViewTeacherPage = withAuthProtection(withRoleProtection(TeacherViewPage));
 
+const GuardianAddingPage = withAuthProtection(withRoleProtection(AddGuardianPage))
 const ProtectedGuardianListPage = withAuthProtection(withRoleProtection(GuardianListPage));
 const ProtectedGuardianViewPage = withAuthProtection(withRoleProtection(GuardianViewPage));
 
@@ -154,7 +156,8 @@ export const Route = createBrowserRouter([
                 path: 'guardians',
                 children: [
                     { path: text.path.page, element: <ProtectedGuardianListPage /> },
-                    { path: text.path.view, element: <ProtectedGuardianViewPage /> }
+                    { path: text.path.view, element: <ProtectedGuardianViewPage /> },
+                    { path: text.path.new, element: <GuardianAddingPage /> }
                 ]
             },
             {

@@ -1,12 +1,12 @@
-import {ID, PutSchemaProps, SchemaProps} from "../../core/utils/interfaces.ts";
+import {ID, PutSchemaProps, SchemaProps} from "@/core/utils/interfaces.ts";
 import {FieldValues} from "react-hook-form";
 import {Alert, Button, Flex, Form, Modal, ModalProps} from "antd";
 import {PopConfirm} from "../ui/layout/PopConfirm.tsx";
-import {useQueryUpdate} from "../../hooks/useUpdate.ts";
-import {useToggle} from "../../hooks/useToggle.ts";
+import {useQueryUpdate} from "@/hooks/useUpdate.ts";
+import {useToggle} from "@/hooks/useToggle.ts";
 import React, {useState} from "react";
-import {useGlobalStore} from "../../core/global/store.ts";
-import {catchError} from "../../data/action/error_catch.ts";
+import {useGlobalStore} from "@/core/global/store.ts";
+import {catchError} from "@/data/action/error_catch.ts";
 
 type UpdateSchemaProps<TData extends FieldValues, TReturn> = SchemaProps<TData> & {
     id: ID,
@@ -15,7 +15,7 @@ type UpdateSchemaProps<TData extends FieldValues, TReturn> = SchemaProps<TData> 
 } & ModalProps & PutSchemaProps<TData, TReturn>
 
 export const UpdateSchema = <TData extends FieldValues, TReturn extends object>(
-    {data, messageSuccess, handleForm, customForm, id, resp, open, title, description, cancelText, onCancel, putFunc, okText, confirmBtnText}: UpdateSchemaProps<TData, TReturn>
+    {data, messageSuccess, handleForm, customForm, id, resp, open, title, description, cancelText, onCancel, putFunc, okText = 'Modifier', confirmBtnText}: UpdateSchemaProps<TData, TReturn>
 ) => {
 
     const [openConfirm, setOpenConfirm] = useToggle(false);
@@ -68,7 +68,7 @@ export const UpdateSchema = <TData extends FieldValues, TReturn extends object>(
                         okText={confirmBtnText ?? "Confirmer"}
                         onConfirm={handleForm.handleSubmit(onSubmit)}
                     >
-                        <Button disabled={isPending} type='primary' onClick={setOpenConfirm}>{'Modifier' ?? okText}</Button>
+                        <Button disabled={isPending} type='primary' onClick={setOpenConfirm}>{okText}</Button>
                     </PopConfirm>
                 </Flex>
             </Form>

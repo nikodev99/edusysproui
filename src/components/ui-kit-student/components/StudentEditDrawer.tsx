@@ -5,7 +5,7 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {healthSchema, HealthSchema, studentSchema, StudentSchema} from "@/schema";
 import {HealthCondition, Student} from "@/entity";
 import StudentForm from "@/components/forms/StudentForm.tsx";
-import {Button} from "antd";
+import {Button, Space} from "antd";
 import {useEffect, useState} from "react";
 import {AddressOwner, IndividualType, UpdateType} from "@/core/shared/sharedEnums.ts";
 import HealthConditionForm from "@/components/forms/HealthConditionForm.tsx";
@@ -16,6 +16,7 @@ import {PatchUpdate} from "@/core/PatchUpdate.ts";
 import {useToggle} from "@/hooks/useToggle.ts";
 import {UpdateAddress} from "@/components/custom/UpdateAddress.tsx";
 import {UpdatePersonalData} from "@/components/custom/UpdatePersonalData.tsx";
+import {useRedirect} from "@/hooks/useRedirect.ts";
 
 export const StudentEditDrawer = ({open, close, isLoading, data}: EditProps<Student>) => {
 
@@ -24,6 +25,8 @@ export const StudentEditDrawer = ({open, close, isLoading, data}: EditProps<Stud
     const [healthDrawer, showHealthDrawer] = useToggle(false)
     const [successMessage, setSuccessMessage] = useState<string | undefined>(undefined)
     const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined)
+
+    const {toAddGuardian} = useRedirect()
 
     const {watch, control, formState: {errors}} = useForm<StudentSchema>({
         resolver: zodResolver(studentSchema)
@@ -90,6 +93,10 @@ export const StudentEditDrawer = ({open, close, isLoading, data}: EditProps<Stud
         }
     }
 
+    const toChangeGuardian = () => {
+        toAddGuardian(data?.id)
+    }
+
     return (
         <RightSidePane loading={isLoading} open={open} onClose={close} className='edit-drawer' destroyOnHidden>
             <UpdatePersonalData
@@ -100,17 +107,12 @@ export const StudentEditDrawer = ({open, close, isLoading, data}: EditProps<Stud
             />
             {successMessage && (<FormSuccess message={successMessage} isNotif />)}
             {errorMessage && (<FormError message={errorMessage} isNotif />)}
-            <section>
-                <div style={{marginBottom: 10}}>
-                    <Button type='link' onClick={showAddressDrawer}>Modifier l'adresse </Button>
-                </div>
-                <div style={{marginBottom: 10}}>
-                    <Button type='link' onClick={showHealthDrawer}>Modifier les conditions médicales </Button>
-                </div>
-                <div>
-                    <Button type='link' onClick={showDrawer}>Modifier les parents </Button>
-                </div>
-            </section>
+            <Space direction='vertical' align='start'>
+                <Button type='link' onClick={showAddressDrawer}>Modifier l'adresse </Button>
+                <Button type='link' onClick={showHealthDrawer}>Modifier les conditions médicales </Button>
+                <Button type='link' onClick={showDrawer}>Modifier les parents </Button>
+                <Button type='link' onClick={toChangeGuardian}>Changer de tuteur </Button>
+            </Space>
             <RightSidePane loading={isLoading} open={parentDrawer} onClose={closeDrawer}>
                 <StudentForm
                     control={control}

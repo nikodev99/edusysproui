@@ -7,16 +7,17 @@ export type NotificationProps = {
     responseMessages?: {success?: ReactNode, error?: ReactNode}
     setRedirect?: (url?: string) => void
     isNotif?: boolean
+    onClose?: () => void
 }
 
-export const Notification = ({responseMessages, setRedirect, isNotif = true}: NotificationProps) => {
+export const Notification = ({responseMessages, setRedirect, isNotif = true, onClose}: NotificationProps) => {
     return(
         <>
             {responseMessages?.success && <FormSuccess message={responseMessages?.success} setRedirect={setRedirect} isNotif={isNotif}/>}
             {responseMessages?.error && <FormError message={responseMessages?.error} isNotif={isNotif}/>}
 
-            {responseMessages?.success && <Alert type={'success'} message={responseMessages?.success} closeIcon showIcon style={{marginBottom: '10px'}}/>}
-            {responseMessages?.error && <Alert type={'error'} message={responseMessages?.error} closeIcon showIcon style={{marginBottom: '10px'}}/>}
+            {responseMessages?.success && <Alert type={'success'} message={responseMessages?.success} closeIcon showIcon  onClose={onClose} style={{marginBottom: '10px'}}/>}
+            {responseMessages?.error && <Alert type={'error'} message={responseMessages?.error} closeIcon showIcon onClose={onClose} style={{marginBottom: '10px'}}/>}
         </>
     )
 }

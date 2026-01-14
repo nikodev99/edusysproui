@@ -1,6 +1,6 @@
 import {GenderCounted, Pageable} from "@/core/utils/interfaces.ts";
 import {AxiosResponse} from "axios";
-import {Enrollment} from "@/entity";
+import {Address, Enrollment} from "@/entity";
 import {apiClient, request} from "@/data/axiosConfig.ts";
 import {EnrollmentSchema} from "@/schema";
 
@@ -147,6 +147,10 @@ export const countClasseStudents = (classeId: number, academicYearId: string) =>
             academicYear: academicYearId
         }
     })
+}
+
+export const getStudentAddress = (studentId: string) => {
+    return apiClient.get<Address>(`/student/address/${studentId}`)
 }
 
 export const countSomeClasseStudents = (classeId: number[], academicYearId: string) => {

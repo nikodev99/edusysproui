@@ -1,13 +1,13 @@
-import {Student} from "../../../entity";
+import {Student} from "@/entity";
 import './student_card.scss'
-import Responsive from "../../ui/layout/Responsive.tsx";
-import Grid from "../../ui/layout/Grid.tsx";
-import {bloodLabel, fDate} from "../../../core/utils/utils.ts";
-import {Avatar} from "../../ui/layout/Avatar.tsx";
+import Responsive from "@/components/ui/layout/Responsive.tsx";
+import Grid from "@/components/ui/layout/Grid.tsx";
+import {bloodLabel, fDate} from "@/core/utils/utils.ts";
+import {Avatar} from "@/components/ui/layout/Avatar.tsx";
 import {QRCode} from "antd";
-import {text} from "../../../core/utils/text_display.ts";
+import {text} from "@/core/utils/text_display.ts";
 import {Link} from "react-router-dom";
-import {BloodType} from "../../../entity/enums/bloodType.ts";
+import {BloodType} from "@/entity/enums/bloodType.ts";
 
 export const GuardianStudentList = ({students}: {students?: Student[]}) => {
 
@@ -64,9 +64,10 @@ export const GuardianStudentList = ({students}: {students?: Student[]}) => {
                                 value={`${text.http}${text.student.group.view.href}${student.id}`}
                                 errorLevel='H'
                                 size={120}
-                                color='#FFF'
+                                style={{background: '#fff'}}
+                                icon={"/edusyspro.svg"}
                             />
-                            <Link className="qr-code-text" to={text.student.group.view.href + student.id}>{student.id}</Link>
+                            <Link style={{marginTop: '10px'}} className="qr-code-text" to={text.student.group.view.href + student.id}>{student.id}</Link>
                         </div>
                     </div>
                 </Grid>

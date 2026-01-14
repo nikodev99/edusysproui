@@ -57,9 +57,11 @@ export const useRedirect = () => {
 
     const toGuardian = () => redirectTo(text.guardian.href)
 
+    const toAddGuardian = (studentId?: string) => redirectTo(text.guardian.group.add.href + '?student=' + studentId)
+
     const toViewGuardian = (guardianId: string, guardianSlug?: string) => {
         if (guardianSlug) {
-            return redirectTo(text.guardian.group.view.href + guardianSlug, {state: guardianId})
+            return redirectTo(text.guardian.group.view.href + guardianId, {state: guardianId})
         }
         return redirectTo(text.guardian.group.view.href + guardianId)
     }
@@ -185,6 +187,7 @@ export const useRedirect = () => {
         toTeacher,
         toAddTeacher,
         toViewTeacher,
+        toAddGuardian,
         toGuardian,
         toViewGuardian,
         toClasseAndCourse,

@@ -149,6 +149,9 @@ class RouteAccess {
                 () => isTopAdmin() || isFinance() || isTeacher() || isEnroll()
             ],
             actions: {
+                'new': [
+                    () => isTopAdmin() || isEnroll()
+                ],
                 ':id': [
                     () => isTopAdmin() || isFinance() || isTeacher() || isEnroll() || isGuardian()
                 ]

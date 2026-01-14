@@ -1,6 +1,11 @@
 import {AxiosResponse} from "axios";
-import {Guardian} from "../../entity";
+import {Guardian} from "@/entity";
 import {apiClient, request} from "../axiosConfig.ts";
+import {GuardianSchema} from "@/schema";
+
+export const changeGuardian = (data: GuardianSchema, student: string) => {
+    return apiClient.post<Guardian>(`/student/${student}`, data)
+}
 
 export const getEnrolledStudentsGuardians = (schoolId: string, page: number, size: number, sortCriteria?: string): Promise<AxiosResponse<Guardian[]>> => {
     return apiClient.get<Guardian[]>("/enroll/guardians/" + schoolId, {

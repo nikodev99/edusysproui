@@ -1,20 +1,22 @@
-import {GuardianProps} from "../../../core/utils/interfaces.ts";
-import Responsive from "../../ui/layout/Responsive.tsx";
-import Grid from "../../ui/layout/Grid.tsx";
+import {GuardianProps} from "@/core/utils/interfaces.ts";
+import Responsive from "@/components/ui/layout/Responsive.tsx";
+import Grid from "@/components/ui/layout/Grid.tsx";
 import {Alert, Button, Checkbox, Collapse, Divider, Modal} from "antd";
 import {useState} from "react";
 import { GuardianDetails } from "./GuardianDetails.tsx";
-import {fetchGuardian, fetchSearchedEnrolledStudentsGuardian} from "../../../data";
-import {Guardian} from "../../../entity";
-import GuardianFormContent from '../../forms/GuardianForm.tsx'
-import {AddressOwner, IndividualType} from "../../../core/shared/sharedEnums.ts";
-import AddressForm from "../../forms/AddressForm.tsx";
-import {EnrollmentSchema} from "../../../schema";
-import {setName} from "../../../core/utils/utils.ts";
-import {IndividualForm} from "../../forms/IndividualForm.tsx";
-import {useSearch} from "../../../hooks/useSearch.ts";
+import {fetchGuardian, fetchSearchedEnrolledStudentsGuardian} from "@/data";
+import {Guardian} from "@/entity";
+import GuardianFormContent from '@/components/forms/GuardianForm.tsx'
+import {AddressOwner, IndividualType} from "@/core/shared/sharedEnums.ts";
+import AddressForm from "@/components/forms/AddressForm.tsx";
+import {EnrollmentSchema} from "@/schema";
+import {setName} from "@/core/utils/utils.ts";
+import {IndividualForm} from "@/components/forms/IndividualForm.tsx";
+import {useSearch} from "@/hooks/useSearch.ts";
 
-export const GuardianForm = ({control, errors, showField, checked, onChecked, value, setValue, isExists, setIsExists, guardian, setGuardian}: GuardianProps<EnrollmentSchema, Guardian>) => {
+export const GuardianForm = (
+    {control, errors, showField, checked, onChecked, value, setValue, isExists, setIsExists, guardian, setGuardian, parents}: GuardianProps<EnrollmentSchema, Guardian>
+) => {
 
     const [open, setOPen] = useState<boolean>(false)
 
@@ -92,6 +94,12 @@ export const GuardianForm = ({control, errors, showField, checked, onChecked, va
         setOPen(false)
     }
 
+    const onAlertClose = () => {
+        setGuardian({} as Guardian)
+        setIsExists(false)
+        setValue("")
+    }
+
     return(
         <>
             <Responsive gutter={[16, 16]}>
@@ -100,16 +108,25 @@ export const GuardianForm = ({control, errors, showField, checked, onChecked, va
                         <Button type='link' onClick={onModalOpen}>Rechercher un tuteur existant</Button>
                     </div>
                     <Divider />
-                    <Modal title="Rechercher le tuteur" centered open={open} width={1000}
-                           okText='Confirmer'
-                           cancelText='Annuler'
-                           onOk={() => onConfirm()}
-                           onCancel={() => onModalOpen()}
+                    <Modal
+                        title="Rechercher le tuteur"
+                        centered open={open}
+                        width={1000}
+                        okText='Confirmer'
+                        cancelText='Annuler'
+                        onOk={() => onConfirm()}
+                        onCancel={() => onModalOpen()}
                     >
                         <GuardianDetails data={options} value={value} fetching={fetching} onSearch={handleSearch} onChange={handleChange}/>
                     </Modal>
                     {isExists && <>
-                            <Alert type='success' message={setName(guardian?.personalInfo)} showIcon />
+                            <Alert
+                                type='success'
+                                message={setName(guardian?.personalInfo)}
+                                showIcon
+                                onClose={onAlertClose}
+                                closable={true}
+                            />
                             <Divider />
                         </>
                     }
@@ -122,12 +139,14 @@ export const GuardianForm = ({control, errors, showField, checked, onChecked, va
                 errors={errors}
                 type={IndividualType.GUARDIAN}
                 showField={showField}
+                parent={parents?.personalInfo}
             />
             <GuardianFormContent
                 control={control}
                 errors={errors}
                 edit={false}
                 enroll={true}
+                parent={parents?.guardian}
             />
             <Responsive>
                 <Grid xs={24} md={24} lg={24} className='guardian__address__check'>
@@ -141,6 +160,7 @@ export const GuardianForm = ({control, errors, showField, checked, onChecked, va
                                 type={AddressOwner.GUARDIAN}
                                 edit={false}
                                 errors={errors}
+                                parent={parents?.address}
                             />,
                             showArrow: false,
                             collapsible: 'icon'

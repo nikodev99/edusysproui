@@ -1,22 +1,23 @@
 import {FieldValues, Path, PathValue} from "react-hook-form";
-import {FormContentProps} from "../../core/utils/interfaces.ts";
+import {FormContentProps} from "@/core/utils/interfaces.ts";
 import FormContent from "../ui/form/FormContent.tsx";
-import {AddressOwner, InputTypeEnum} from "../../core/shared/sharedEnums.ts";
-import {Address} from "../../entity";
-import {FormUtils} from "../../core/utils/formUtils.ts";
+import {AddressOwner, InputTypeEnum} from "@/core/shared/sharedEnums.ts";
+import {Address} from "@/entity";
+import {FormUtils} from "@/core/utils/formUtils.ts";
 import Responsive from "../ui/layout/Responsive.tsx";
 import Grid from "../ui/layout/Grid.tsx";
-import {FormConfig} from "../../config/FormConfig.ts";
+import {FormConfig} from "@/config/FormConfig.ts";
 
 
 type AddressFormProps<T extends FieldValues> = FormContentProps<T, Address> & {
     type: AddressOwner,
     handleUpdate?: (field: keyof Address, value: unknown) => void
+    parent?: string
 };
 
 const AddressForm = <T extends FieldValues>(addressProps: AddressFormProps<T>) => {
 
-    const {edit, data, control, errors, enroll, type, handleUpdate} = addressProps
+    const {edit, data, control, errors, enroll, type, handleUpdate, parent} = addressProps
 
     const onlyField = FormUtils.onlyField(edit as boolean, 24, undefined)
     const lg = FormUtils.onlyField(edit as boolean, 24, 16)
@@ -27,33 +28,33 @@ const AddressForm = <T extends FieldValues>(addressProps: AddressFormProps<T>) =
         switch (type) {
             case AddressOwner.STUDENT:
                 return {
-                    name: form.name(fieldName, 'student.personalInfo.address'),
-                    validate: form.validate(fieldName, 'student.personalInfo.address'),
-                    error: form.error(fieldName, 'student.personalInfo.address'),
+                    name: form.name(fieldName, parent ?? 'student.personalInfo.address'),
+                    validate: form.validate(fieldName, parent ?? 'student.personalInfo.address'),
+                    error: form.error(fieldName, parent ?? 'student.personalInfo.address'),
                 }
             case AddressOwner.TEACHER:
                 return {
-                    name: form.name(fieldName, 'teacher.personalInfo.address'),
-                    validate: form.validate(fieldName, 'teacher.personalInfo.address'),
-                    error: form.error(fieldName, 'teacher.personalInfo.address'),
+                    name: form.name(fieldName, parent ?? 'teacher.personalInfo.address'),
+                    validate: form.validate(fieldName, parent ?? 'teacher.personalInfo.address'),
+                    error: form.error(fieldName, parent ?? 'teacher.personalInfo.address'),
                 }
             case AddressOwner.EMPLOYEE:
                 return {
-                    name: form.name(fieldName, 'employee.personalInfo.address'),
-                    validate: form.validate(fieldName, 'employee.personalInfo.address'),
-                    error: form.error(fieldName, 'employee.personalInfo.address'),
+                    name: form.name(fieldName, parent ?? 'employee.personalInfo.address'),
+                    validate: form.validate(fieldName, parent ?? 'employee.personalInfo.address'),
+                    error: form.error(fieldName, parent ?? 'employee.personalInfo.address'),
                 }
             case AddressOwner.GUARDIAN:
                 return {
-                    name: form.name(fieldName, 'student.guardian.personalInfo.address'),
-                    validate: form.validate(fieldName, 'student.guardian.personalInfo.address'),
-                    error: form.error(fieldName, 'student.guardian.personalInfo.address'),
+                    name: form.name(fieldName, parent ?? 'student.guardian.personalInfo.address'),
+                    validate: form.validate(fieldName, parent ?? 'student.guardian.personalInfo.address'),
+                    error: form.error(fieldName, parent ?? 'student.guardian.personalInfo.address'),
                 }
             case AddressOwner.SCHOOL:
                 return {
-                    name: form.name(fieldName, 'school.address'),
-                    validate: form.validate(fieldName, 'school.address'),
-                    error: form.error(fieldName, 'school.address'),
+                    name: form.name(fieldName, parent ?? 'school.address'),
+                    validate: form.validate(fieldName, parent ?? 'school.address'),
+                    error: form.error(fieldName, parent ?? 'school.address'),
                 }
             default:
                 return null

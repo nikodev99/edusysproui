@@ -47,7 +47,7 @@ const FormError = (
                 }, 2000)
             }
         }
-    }, [api, isNotif, key, message, messageApi]);
+    }, [api, isNotif, key, message, messageApi, onClose]);
 
     return(
         <>

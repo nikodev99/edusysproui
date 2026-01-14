@@ -9,9 +9,10 @@ export type OutletPageProps = {
     breadCrumb: BCProps
     content: ReactNode
     setActivity?: () => Promise<boolean>
+    onNotifClose?: () => void
 } & NotificationProps
 
-const OutletPage = ({metadata, breadCrumb, content, responseMessages, setRedirect, isNotif}: OutletPageProps) => {
+const OutletPage = ({metadata, breadCrumb, content, responseMessages, setRedirect, isNotif, onNotifClose}: OutletPageProps) => {
     useDocumentTitle(metadata)
 
     const {context} = useBreadCrumb(breadCrumb)
@@ -19,7 +20,7 @@ const OutletPage = ({metadata, breadCrumb, content, responseMessages, setRedirec
     return <>
         {context}
         {responseMessages && (
-            <Notification isNotif={isNotif} setRedirect={setRedirect} responseMessages={responseMessages} />
+            <Notification isNotif={isNotif} setRedirect={setRedirect} responseMessages={responseMessages} onClose={onNotifClose} />
         )}
         {content}
     </>

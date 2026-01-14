@@ -52,6 +52,10 @@ export const raw = {
             view: {
                 label: 'Voir',
                 href: '/guardians/'
+            },
+            add: {
+                label: 'Ajouter Tuteur',
+                href: '/guardians/new'
             }
         }
     },

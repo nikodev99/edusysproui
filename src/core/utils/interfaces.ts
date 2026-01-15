@@ -583,6 +583,14 @@ export interface ActionLinksProps<TButtonAction extends object> {
     personalInfo?: Individual
 }
 
+export interface ActionDrawer<TData extends object> {
+    data: TData,
+    open: boolean,
+    close: () => void,
+    setRefresh?: (value: boolean) => void
+    sameUser?: boolean,
+}
+
 export type ActionButtonsProps<TData extends object> = {
     data?: TData
     getItems?: (items: ItemType[]) => void

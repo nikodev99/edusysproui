@@ -1,24 +1,19 @@
 import {Alert, Badge, Button, Card, Divider, Flex, message, Modal, Select, Space} from "antd";
 import {ReactNode, useEffect, useMemo, useState} from "react";
-import FormSuccess from "../../ui/form/FormSuccess.tsx";
-import FormError from "../../ui/form/FormError.tsx";
-import {User} from "../../../auth/dto/user.ts";
-import {Role, RoleEnum} from "../../../auth/dto/role.ts";
-import Tag from "../../ui/layout/Tag.tsx";
-import {enumToObjectArray, MAIN_COLOR} from "../../../core/utils/utils.ts";
+import FormSuccess from "@/components/ui/form/FormSuccess.tsx";
+import FormError from "@/components/ui/form/FormError.tsx";
+import {User} from "@/auth/dto/user.ts";
+import {Role, RoleEnum} from "@/auth/dto/role.ts";
+import Tag from "@/components/ui/layout/Tag.tsx";
+import {enumToObjectArray, MAIN_COLOR} from "@/core/utils/utils.ts";
 import {LuMinus} from "react-icons/lu";
-import {ModalConfirmButton} from "../../ui/layout/ModalConfirmButton.tsx";
-import {PatchUpdate} from "../../../core/PatchUpdate.ts";
-import {setAccountRoles} from "../../../data/repository/userRepository.ts";
-import {loggedUser} from "../../../auth/jwt/LoggedUser.ts";
+import {ModalConfirmButton} from "@/components/ui/layout/ModalConfirmButton.tsx";
+import {PatchUpdate} from "@/core/PatchUpdate.ts";
+import {setAccountRoles} from "@/data/repository/userRepository.ts";
+import {loggedUser} from "@/auth/jwt/LoggedUser.ts";
+import {ActionDrawer} from "@/core/utils/interfaces.ts";
 
-export const UserRoles = ({user, open, close, setRefresh, sameUser}: {
-    user: User,
-    open: boolean,
-    close: () => void,
-    setRefresh?: (value: boolean) => void,
-    sameUser?: boolean,
-}) => {
+export const UserRoles = ({data, open, close, setRefresh, sameUser}: ActionDrawer<User>) => {
     const [roles, setRoles] = useState<Role[]>([])
     const [roleToDelete, setRoleToDelete] = useState<Role[]>([])
     const [successMessage, setSuccessMessage] = useState<string | undefined>(undefined)
@@ -26,22 +21,22 @@ export const UserRoles = ({user, open, close, setRefresh, sameUser}: {
 
     const options = useMemo(() => enumToObjectArray(RoleEnum, true), [])
     const accountRoles = useMemo(() => {
-        const userRoles = user?.roles
+        const userRoles = data?.roles
         if (roleToDelete && roleToDelete.length > 0) {
             return userRoles?.filter(r => !roleToDelete.includes(r))
         }
         return userRoles
-    }, [roleToDelete, user?.roles])
+    }, [roleToDelete, data?.roles])
 
     useEffect(() => {
-        setRoles(user?.roles)
+        setRoles(data?.roles)
 
         if (open) {
             setErrorMessage(undefined)
             setSuccessMessage(undefined)
             setRefresh && setRefresh(false)
         }
-    }, [open, setRefresh, setErrorMessage, setSuccessMessage, user?.roles])
+    }, [open, setRefresh, setErrorMessage, setSuccessMessage, data?.roles])
 
     const tagRender = (props: { label: ReactNode }) => {
         const { label } = props;
@@ -67,7 +62,7 @@ export const UserRoles = ({user, open, close, setRefresh, sameUser}: {
             // if already queued for deletion, do nothing
             if (prev.some(p => p === role)) return prev;
 
-            const currentUserRoles = user?.roles ?? [];
+            const currentUserRoles = data?.roles ?? [];
 
             // build the candidate delete list
             const newRoleToDelete = [...prev, role];
@@ -93,7 +88,7 @@ export const UserRoles = ({user, open, close, setRefresh, sameUser}: {
             setAccountRoles as () => never,
             () => setSuccessMessage("Les roles ont été mis à jour avec succès"),
             setErrorMessage,
-            [user?.account, roles]
+            [data?.account, roles]
         )
         updateRole(roles)
     }
@@ -105,7 +100,7 @@ export const UserRoles = ({user, open, close, setRefresh, sameUser}: {
             setAccountRoles as () => never,
             () => setSuccessMessage("Les roles ont été mis à jour avec succès"),
             setErrorMessage,
-            [user?.account, accountRoles]
+            [data?.account, accountRoles]
         )
         updateRole(accountRoles)
     }

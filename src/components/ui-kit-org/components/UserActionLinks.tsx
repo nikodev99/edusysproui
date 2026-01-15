@@ -99,11 +99,11 @@ export const UserActionLinks = ({data: user, getItems, setRefresh}: ActionButton
 
     return(
         <section>
-            <UserRoles user={user as User} open={roleManage} close={handleCloseUserRole} setRefresh={setRefresh} sameUser={sameUser} />
-            <UserAccountEnabled user={user as User} open={enable} close={setEnable} setRefetch={setRefresh} />
-            <UserAccountLocked user={user as User} open={accountNoLocked} close={setAccountNoLocked} setRefetch={setRefresh}/>
-            <UserRemoveAccount user={user as User} open={removeUser} close={setRemoveUser} setRefetch={setRefresh}/>
-            <ResetPassword user={user as User} open={passwordReset} close={setPasswordReset}/>
+            <UserRoles data={user as User} open={roleManage} close={handleCloseUserRole} setRefresh={setRefresh} sameUser={sameUser} />
+            <UserAccountEnabled data={user as User} open={enable} close={setEnable} setRefresh={setRefresh} />
+            <UserAccountLocked data={user as User} open={accountNoLocked} close={setAccountNoLocked} setRefresh={setRefresh}/>
+            <UserRemoveAccount data={user as User} open={removeUser} close={setRemoveUser} setRefresh={setRefresh}/>
+            <ResetPassword data={user as User} open={passwordReset} close={setPasswordReset}/>
         </section>
     )
 }

@@ -1,24 +1,21 @@
-import {User} from "../../../auth/dto/user.ts";
-import {setName} from "../../../core/utils/utils.ts";
-import {Individual} from "../../../entity";
+import {User} from "@/auth/dto/user.ts";
+import {setName} from "@/core/utils/utils.ts";
+import {Individual} from "@/entity";
 import {LuRotateCcw} from "react-icons/lu";
 import {useState} from "react";
-import {ConfirmationModal} from "../../ui/layout/ConfirmationModal.tsx";
-import {resetPasswordRequest} from "../../../auth/services/AuthService.ts.tsx";
-import {useUserRepo} from "../../../hooks/actions/useUserRepo.ts";
+import {ConfirmationModal} from "@/components/ui/layout/ConfirmationModal.tsx";
+import {resetPasswordRequest} from "@/auth/services/AuthService.ts.tsx";
+import {useUserRepo} from "@/hooks/actions/useUserRepo.ts";
+import {ActionDrawer} from "@/core/utils/interfaces.ts";
 
-export const ResetPassword = ({user, open, close}: {
-    user: User,
-    open: boolean,
-    close: () => void
-}) => {
+export const ResetPassword = ({data, open, close}: ActionDrawer<User>) => {
     const [successMessage, setSuccessMessage] = useState<string | undefined>(undefined)
     const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined)
 
     const {saveActivity} = useUserRepo()
 
     const handleSendTokenEMail = async () => {
-        await resetPasswordRequest(user?.id).then(res => {
+        await resetPasswordRequest(data?.id).then(res => {
             if (res.status === 200) {
                 setSuccessMessage(res.data.message)
                 saveActivity({
@@ -37,7 +34,7 @@ export const ResetPassword = ({user, open, close}: {
 
     return(
         <ConfirmationModal
-            data={user}
+            data={data}
             open={open}
             close={handleCancel}
             handleFunc={handleSendTokenEMail}

@@ -1,4 +1,4 @@
-import {GenderCounted, Pageable} from "@/core/utils/interfaces.ts";
+import {GenderCounted, MessageResponse, Pageable} from "@/core/utils/interfaces.ts";
 import {AxiosResponse} from "axios";
 import {Address, Enrollment} from "@/entity";
 import {apiClient, request} from "@/data/axiosConfig.ts";
@@ -139,6 +139,10 @@ export const getAllStudentClassmate = (studentId: string, classeId: number, acad
             size: pageable.size,
         }
     })
+}
+
+export const archiveStudent = async (schoolId: string, studentId: string) => {
+    return await apiClient.put<MessageResponse>(`/enroll/archive/${schoolId}/${studentId}`)
 }
 
 export const countClasseStudents = (classeId: number, academicYearId: string) => {

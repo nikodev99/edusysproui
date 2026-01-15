@@ -11,3 +11,4 @@ export { StudentDiscipline } from "./components/StudentDiscipline.tsx";
 export { StudentInfo } from "./components/StudentInfo.tsx";
 export { StudentActionLinks } from "./components/StudentActionLinks.tsx";
 export { StudentResult } from "./components/StudentResult.tsx"
+export { RemoveStudent } from "./components/RemoveStudent.tsx"

@@ -1,48 +1,44 @@
-import FormSuccess from "../../ui/form/FormSuccess.tsx";
-import FormError from "../../ui/form/FormError.tsx";
+import FormSuccess from "@/components/ui/form/FormSuccess.tsx";
+import FormError from "@/components/ui/form/FormError.tsx";
 import {Alert, Modal} from "antd";
-import {ModalConfirmButton} from "../../ui/layout/ModalConfirmButton.tsx";
+import {ModalConfirmButton} from "@/components/ui/layout/ModalConfirmButton.tsx";
 import {useCallback, useMemo, useState} from "react";
-import {PatchUpdate} from "../../../core/PatchUpdate.ts";
-import {User} from "../../../auth/dto/user.ts";
-import {firstLetter, setName} from "../../../core/utils/utils.ts";
-import {Individual} from "../../../entity";
+import {PatchUpdate} from "@/core/PatchUpdate.ts";
+import {User} from "@/auth/dto/user.ts";
+import {firstLetter, setName} from "@/core/utils/utils.ts";
+import {Individual} from "@/entity";
 import {LuToggleLeft, LuToggleRight} from "react-icons/lu";
-import {setDisableAccount, setEnableAccount} from "../../../data/repository/userRepository.ts";
+import {setDisableAccount, setEnableAccount} from "@/data/repository/userRepository.ts";
+import {ActionDrawer} from "@/core/utils/interfaces.ts";
 
-export const UserAccountEnabled = ({user, open, close, setRefetch}: {
-    user: User,
-    open: boolean,
-    close: () => void,
-    setRefetch?: (refetch: boolean) => void
-}) => {
+export const UserAccountEnabled = ({data, open, close, setRefresh}: ActionDrawer<User>) => {
     const [successMessage, setSuccessMessage] = useState<string | undefined>(undefined)
     const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined)
     
-    const enableText = useMemo(() => user?.enabled ? 'désactiver' : 'activer', [user?.enabled])
-    const enableCons = useMemo(() => !user?.enabled
+    const enableText = useMemo(() => data?.enabled ? 'désactiver' : 'activer', [data?.enabled])
+    const enableCons = useMemo(() => !data?.enabled
         ? "L'activation autorise l'utilisateur à se connecter et à utiliser toutes les fonctionnalités associées à ses roles"
         : "La désactivation bloque l'accès, suspend les actions et restreint la visibilité de données de l'utilisateur jusqu'à réactivation.",
-        [user?.enabled]
+        [data?.enabled]
     )
     
     const enableMethod = useCallback((accountId: number) => 
-        user?.enabled ? setDisableAccount(accountId) : setEnableAccount(accountId), [user?.enabled])
+        data?.enabled ? setDisableAccount(accountId) : setEnableAccount(accountId), [data?.enabled])
 
     const handleFinish = useCallback(async () => {
-        setRefetch?.(false)
+        setRefresh?.(false)
         await PatchUpdate.setWithCustom(
             enableMethod as () => Promise<never> ,
             () => setSuccessMessage(`Le compte a été ${enableText} avec succès!!`),
             setErrorMessage,
-            [user?.account]
+            [data?.account]
         )
-    }, [enableMethod, enableText, setRefetch, user?.account])
+    }, [enableMethod, enableText, setRefresh, data?.account])
     
     const handleCancel = () => {
         setErrorMessage(undefined)
         setSuccessMessage(undefined)
-        setRefetch?.(true)
+        setRefresh?.(true)
         close()
     }
 
@@ -53,8 +49,8 @@ export const UserAccountEnabled = ({user, open, close, setRefetch}: {
             <Modal
                 open={open}
                 onCancel={handleCancel}
-                destroyOnClose
-                title={`${firstLetter(enableText)} le compte de  ${setName({firstName: user?.firstName, lastName: user?.lastName} as Individual)}`}
+                destroyOnHidden
+                title={`${firstLetter(enableText)} le compte de  ${setName({firstName: data?.firstName, lastName: data?.lastName} as Individual)}`}
                 footer={null}
             >
                 {successMessage && <Alert type={'success'} message={successMessage} closeIcon showIcon style={{marginBottom: '10px'}} />}
@@ -68,9 +64,9 @@ export const UserAccountEnabled = ({user, open, close, setRefetch}: {
                         tooltipTxt={`Cliquer pour ${enableText}`}
                         btnTxt={firstLetter(enableText)}
                         btnProps={{
-                            icon: user?.enabled ? <LuToggleRight /> : <LuToggleLeft />,
+                            icon: data?.enabled ? <LuToggleRight /> : <LuToggleLeft />,
                             variant: 'solid',
-                            color: user?.enabled ? 'red' : 'green',
+                            color: data?.enabled ? 'red' : 'green',
                         }}
                     />
                 </div>

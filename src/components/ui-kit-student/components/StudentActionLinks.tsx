@@ -4,14 +4,16 @@ import {useMemo} from "react";
 import {LuBan, LuCircleArrowOutUpRight, LuUserMinus, LuUserPlus} from "react-icons/lu";
 import {useMenuItemsEffect} from "@/hooks/useMenuItemsEffect.ts";
 import {Tooltip} from "antd";
-import {Enrollment} from "@/entity";
+import {Enrollment, Student} from "@/entity";
 import {useToggle} from "@/hooks/useToggle.ts";
 import {StudentPromotion} from "./StudentPromotion.tsx";
 import {useRedirect} from "@/hooks/useRedirect.ts";
 import {usePermission} from "@/hooks/usePermission.ts";
+import {RemoveStudent} from "@/components/ui-kit-student";
 
 export const StudentActionLinks = ({data, getItems, setRefresh}: ActionButtonsProps<Enrollment>) => {
     const [openPromoteStudent, setOpenPromoteStudent] = useToggle(false)
+    const [openRemoveStudent, setOpenRemoveStudent] = useToggle(false)
     const {toDiscipline} = useRedirect()
     const {canDelete, canCreate, can} = usePermission()
     
@@ -48,11 +50,13 @@ export const StudentActionLinks = ({data, getItems, setRefresh}: ActionButtonsPr
             label: 'Rétiré',
             icon: <LuUserMinus />,
             danger: true,
-            onClick: () => alert("Archive the student")
+            onClick: setOpenRemoveStudent
         }] : [])
-    ], [can, canCreate, canDelete, enrollment, setOpenPromoteStudent, studentId, toDiscipline])
+    ], [can, canCreate, canDelete, enrollment, setOpenPromoteStudent, setOpenRemoveStudent, studentId, toDiscipline])
     
     useMenuItemsEffect(items, getItems)
+
+    console.log('Open delete student pane: ', openRemoveStudent)
     
     return(
         <section>
@@ -62,6 +66,12 @@ export const StudentActionLinks = ({data, getItems, setRefresh}: ActionButtonsPr
                 close={setOpenPromoteStudent}
                 setRefresh={setRefresh}
             />
+            {canDelete && openRemoveStudent && <RemoveStudent
+                data={data?.student as Student}
+                open={openRemoveStudent}
+                close={setOpenRemoveStudent}
+                setRefresh={setRefresh}
+            />}
         </section>
     )
 }

@@ -1,23 +1,23 @@
-import {assignUserToSchoolSchema, AssignUserToSchoolSchema, SignupSchema, signupSchema} from "../../schema";
+import {assignUserToSchoolSchema, AssignUserToSchoolSchema, SignupSchema, signupSchema} from "@/schema";
 import {ReactNode, useMemo, useState} from "react";
-import {useUserRepo} from "../../hooks/actions/useUserRepo.ts";
+import {useUserRepo} from "@/hooks/actions/useUserRepo.ts";
 import PageWrapper from "../view/PageWrapper.tsx";
 import {Form, Select} from "antd";
 import Responsive from "../ui/layout/Responsive.tsx";
-import {Individual} from "../../entity";
-import {useSearch} from "../../hooks/useSearch.ts";
-import {MessageResponse} from "../../core/utils/interfaces.ts";
-import {useUserAccountFlow} from "../../hooks/useUserAccountFlow.tsx";
-import {IndividualType, individualTypeToUserType} from "../../entity/domain/individual.ts";
+import {Individual} from "@/entity";
+import {useSearch} from "@/hooks/useSearch.ts";
+import {MessageResponse} from "@/core/utils/interfaces.ts";
+import {useUserAccountFlow} from "@/hooks/useUserAccountFlow.tsx";
+import {IndividualType, individualTypeToUserType} from "@/entity/domain/individual.ts";
 import {LuLockOpen} from "react-icons/lu";
 import {ModalConfirmButton} from "../ui/layout/ModalConfirmButton.tsx";
 import {UserAccountForm} from "../forms/UserAccountForm.tsx";
-import {useQueryPost} from "../../hooks/usePost.ts";
+import {useQueryPost} from "@/hooks/usePost.ts";
 import {AxiosResponse} from "axios";
 import Grid from "../ui/layout/Grid.tsx";
 import {ZodSchema} from "zod";
-import {catchError} from "../../data/action/error_catch.ts";
-import {individualOptions} from "../../core/utils/utils.ts";
+import {catchError} from "@/data/action/error_catch.ts";
+import {individualOptions} from "@/core/utils/utils.ts";
 
 export const AssignUser = (
     {setErrorMessage, setSuccessMessage}: {setErrorMessage: (errorMsg: ReactNode) => void, setSuccessMessage: (successMsg: ReactNode) => void}

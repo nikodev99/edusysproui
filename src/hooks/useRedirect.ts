@@ -66,6 +66,14 @@ export const useRedirect = () => {
         return redirectTo(text.guardian.group.view.href + guardianId)
     }
 
+    const toGuardianPay = (guardianId: string) => {
+        return redirectTo(text.guardian.group.view.href + guardianId + '/payments')
+    }
+
+    const toGuardianInv = (guardianId: string)=> redirectTo(text.guardian.group.view.href + guardianId + '/invoices')
+
+    const toGuardianBilling = (guardianId: string) => redirectTo(text.guardian.group.view.href + guardianId + '/billing-settings')
+
     const toClasseAndCourse = () => redirectTo(text.cc.href)
 
     const toClassePath = (classeId: string) => redirectTo(text.cc.group.classe.path.view + classeId)
@@ -190,6 +198,9 @@ export const useRedirect = () => {
         toAddGuardian,
         toGuardian,
         toViewGuardian,
+        toGuardianPay,
+        toGuardianInv,
+        toGuardianBilling,
         toClasseAndCourse,
         toClassePath,
         toAddClasse,

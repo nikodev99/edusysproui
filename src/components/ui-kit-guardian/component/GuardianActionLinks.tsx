@@ -7,13 +7,16 @@ import {AiOutlineUserDelete} from "react-icons/ai";
 import {useMenuItemsEffect} from "@/hooks/useMenuItemsEffect.ts";
 import {useToggle} from "@/hooks/useToggle.ts";
 import {useAccount} from "@/hooks/useAccount.ts";
-import {LuMessageCircle, LuReceipt, LuUserPlus} from "react-icons/lu";
+import {LuDollarSign, LuMessageCircle, LuReceipt, LuUserPlus} from "react-icons/lu";
+import {useRedirect} from "@/hooks/useRedirect.ts";
+import {isGuardian} from "@/auth/dto/role.ts";
 
 type GuardianActionButtons = ActionButtonsProps<Guardian>
 
 export const GuardianActionLinks = ({data, getItems, setRefresh}: GuardianActionButtons) => {
     const [openCreateUser, setOpenCreateUser] = useToggle(false)
     const {useAccountExists} = useAccount()
+    const {toGuardianPay, toGuardianInv, toGuardianBilling} = useRedirect()
 
     const {personalInfo} = useMemo(() => ({
         personalInfo: data?.personalInfo
@@ -25,15 +28,27 @@ export const GuardianActionLinks = ({data, getItems, setRefresh}: GuardianAction
         {
             key: `account-${data?.id}`,
             icon: <LuUserPlus />,
-            label: 'Créer compte tuteur',
+            label: accountExists ? 'Affilier le tuteur' : 'Créer compte tuteur',
             onClick: () => setOpenCreateUser()
         },
         {
-            key: `@payments-${data?.id}`,
+            key: `@invoice-${data?.id}`,
             icon: <LuReceipt />,
-            label: 'Paiements',
-            onClick: () => alert('Création de compte')
+            label: 'Facture à payer',
+            onClick: () => toGuardianInv(data?.id as string)
         },
+        {
+            key: `@payments-${data?.id}`,
+            icon: <LuDollarSign />,
+            label: 'Historique de Paiements',
+            onClick: () => toGuardianPay(data?.id as string)
+        },
+        ...(isGuardian() ? [{
+            key: `@billing-${data?.id}`,
+            icon: <LuDollarSign />,
+            label: 'Paramètres de facturation',
+            onClick: () => toGuardianBilling(data?.id as string)
+        }] : []),
         {
             key: `@contact-${data?.id}`,
             icon: <LuMessageCircle />,
@@ -52,12 +67,12 @@ export const GuardianActionLinks = ({data, getItems, setRefresh}: GuardianAction
 
     return (
         <section>
-            {!accountExists && <CreateUser
+            <CreateUser
                 open={openCreateUser}
                 onCancel={setOpenCreateUser}
                 personalInfo={personalInfo}
                 userType={UserType.GUARDIAN}
-            />}
+            />
         </section>
     )
 }

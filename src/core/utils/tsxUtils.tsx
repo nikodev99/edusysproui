@@ -1,27 +1,28 @@
-import {getStatusKey, Status} from "../../entity/enums/status.ts";
+import {getStatusKey, Status} from "@/entity/enums/status.ts";
 import {ReactNode} from "react";
-import Tag from "../../components/ui/layout/Tag.tsx";
+import Tag from "@/components/ui/layout/Tag.tsx";
 import {Badge, Button, Card, Descriptions, Flex, Popover, Skeleton, Space, StepsProps, Tooltip, Typography} from "antd";
 import {Color} from "./interfaces.ts";
-import {MarkType} from "../../entity/enums/MarkType.ts";
-import {Assignment} from "../../entity";
+import {MarkType} from "@/entity/enums/MarkType.ts";
+import {Assignment} from "@/entity";
 import {
     LuAward,
     LuCalendarDays,
-    LuCheck,
-    LuCircleCheck,
+    LuCheck, LuCircleAlert,
+    LuCircleCheck, LuCircleX,
     LuClock,
-    LuClock9,
+    LuClock9, LuCreditCard, LuFileText,
     LuMedal,
-    LuRefreshCcw, LuThumbsDown, LuThumbsUp, LuTrendingDown,
+    LuRefreshCcw, LuSend, LuThumbsDown, LuThumbsUp, LuTrendingDown,
     LuX
 } from "react-icons/lu";
 import Datetime from "../datetime.ts";
 import {dateCompare, setName, setTime} from "./utils.ts";
-import {ModalConfirmButton} from "../../components/ui/layout/ModalConfirmButton.tsx";
-import {redirectTo} from "../../context/RedirectContext.ts";
+import {ModalConfirmButton} from "@/components/ui/layout/ModalConfirmButton.tsx";
+import {redirectTo} from "@/context/RedirectContext.ts";
 import {text} from "./text_display.ts";
-import {AssignmentType, getAssignmentType} from "../../entity/enums/assignmentType.ts";
+import {AssignmentType, getAssignmentType} from "@/entity/enums/assignmentType.ts";
+import {InvoiceStatus, StatusInput} from "@/finance/models/invoice.ts";
 
 export const StatusTags = ({status, female}: {status: Status, female?: boolean}): ReactNode => {
     const label = getStatusKey(status, female)
@@ -224,5 +225,85 @@ export const MarkBadge = ({score, coefficient, level = 4}: {score: number, coeff
             }
             />
         </Typography.Title>
+    )
+}
+
+export const GetStatusTag = ({status, isOverdue}: { status: StatusInput, isOverdue?: boolean }): ReactNode => {
+    // Normalize to the enum key name string (e.g. "DRAFT", "PAID", etc.)
+    const key =
+        typeof status === "number"
+            ? InvoiceStatus[status as InvoiceStatus] // numeric enum -> string key
+            : String(status);
+
+    // If flagged overdue and not paid, force the overdue tag
+    if (isOverdue && key !== "PAID") {
+        return (
+            <Space>
+                <Tag icon={<LuCircleAlert size={14} />} color="danger">
+                    En retard
+                </Tag>
+            </Space>
+        );
+    }
+
+    const statusConfig: Record<string, { color: string; icon: ReactNode; text: string }> = {
+        DRAFT: {
+            color: "processing",
+            icon: <LuFileText size={14} />,
+            text: "Active"
+        },
+        SENT: {
+            color: "#6C8EF5",
+            icon: <LuSend size={14} />,
+            text: "Envoyée"
+        },
+        PARTIALLY_PAID: {
+            color: "warning",
+            icon: <LuCreditCard size={14} />,
+            text: "Partiellement payé"
+        },
+        PAID: {
+            color: "success",
+            icon: <LuCircleCheck size={14} />,
+            text: "Payée"
+        },
+        OVERDUE: {
+            color: "danger",
+            icon: <LuCircleAlert size={14} />,
+            text: "En retard"
+        },
+        CANCELLED: {
+            color: "danger",
+            icon: <LuCircleX size={14} />,
+            text: "Annulée"
+        }
+    }
+
+    const cfg = statusConfig[key] ?? statusConfig.DRAFT;
+    return (
+        <Tag icon={cfg.icon} color={cfg.color}>
+            {cfg.text}
+        </Tag>
+    );
+}
+
+export const SummaryRow = ({label, value, strong, hideDivider}: {label: ReactNode, value: ReactNode, strong?: boolean, hideDivider?: boolean}) => {
+    const {Text} = Typography
+    return(
+        <div
+            style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                padding: "20px 18px",
+                borderBottom: hideDivider ? "none" : "1px solid #fff",
+                // ensure each row uses the same background so no white gaps appear
+                background: "transparent",
+                minHeight: 48,
+            }}
+        >
+            <Text strong={strong}>{label}</Text>
+            <Text strong={strong}>{value}</Text>
+        </div>
     )
 }

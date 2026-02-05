@@ -68,7 +68,7 @@ const InsertModal = <TData extends FieldValues>(
             onCancel={handleModalClose}
             width={breakpoints}
             footer={null}
-            destroyOnClose
+            destroyOnHidden
         >
             <InsertSchema
                 data={data}

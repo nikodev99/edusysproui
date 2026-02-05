@@ -7,6 +7,8 @@ import {
     getSearchedEnrolledStudentGuardian
 } from "@/data/repository/guardianRepository.ts";
 import {useFetch} from "@/hooks/useFetch.ts";
+import {GuardianPayment} from "@/finance/apis/guardianPayment.ts";
+import {RepoOptions} from "@/core/utils/interfaces.ts";
 
 export const useGuardianRepo = () => {
     const schoolId = useGlobalStore(state => state.schoolId)
@@ -43,11 +45,53 @@ export const useGuardianRepo = () => {
         !!guardianId
     )
 
+    const useGetPaymentSummary = (guardianId: string, academicYear: string) => {
+        const {data} = useFetch(["payment-summary", guardianId, academicYear], GuardianPayment.getPaymentSummary, [guardianId, academicYear], !!guardianId && !!academicYear)
+        return data
+    }
+
+    const useGetAllInvoices = (guardianId: string, options?: RepoOptions) => useFetch(
+        ["all-invoices", guardianId, schoolId],
+        GuardianPayment.getAllGuardianInvoices,
+        [guardianId, schoolId],
+        options?.enable ? options?.enable && !!guardianId && !!schoolId : !!guardianId && !!schoolId
+    )
+
+    const useGetCurrentInvoices = (guardianId: string, academicYear: string, options?: RepoOptions) => useFetch(
+        ["current-invoices", guardianId, academicYear],
+        GuardianPayment.getGuardianCurrentInvoices,
+        [guardianId, academicYear],
+        (options?.enable ?? true) &&
+        !!guardianId &&
+        !!academicYear
+    )
+
+    const useGetActiveInvoices = (guardianId: string, academicYear: string, options?: RepoOptions) => useFetch(
+        ["active-invoices", guardianId, academicYear],
+        GuardianPayment.getGuardianActiveInvoice,
+        [guardianId, academicYear],
+        (options?.enable ?? true) &&
+        !!guardianId &&
+        !!academicYear
+    )
+
+    const useGetPaymentHistory = (guardianId: string, academicYear: string) => useFetch(
+        ["payment-history", guardianId, academicYear],
+        GuardianPayment.getGuardianPaymentHistory,
+        [guardianId, academicYear],
+        !!guardianId && !!academicYear
+    )
+
     return {
         useGetPaginated,
         useChangeGuardian,
         useGetGuardianWithStudents,
-        useGetGuardian
+        useGetGuardian,
+        useGetPaymentSummary,
+        useGetAllInvoices,
+        useGetCurrentInvoices,
+        useGetActiveInvoices,
+        useGetPaymentHistory
     }
 }
 

@@ -53,6 +53,9 @@ import StudentViewPage from "@/pages/student/StudentViewPage.tsx";
 import SearchablePage from "@/pages/search/SearchablePage.tsx";
 import StudentDisciplinePage from "@/pages/student/StudentDisciplinePage.tsx";
 import AddGuardianPage from "@/pages/guardian/AddGuardianPage.tsx";
+import GuardianPaymentPage from "@/pages/guardian/GuardianPaymentPage.tsx";
+import GuardianPaymentHistoryPage from "@/pages/guardian/GuardianPaymentHistoryPage.tsx";
+import GuardianBillingSettingPage from "@/pages/guardian/GuardianBillingSettingPage.tsx";
 
 const DashboardPage = withAuthProtection(withRoleProtection(Dashboard));
 
@@ -71,6 +74,9 @@ const ViewTeacherPage = withAuthProtection(withRoleProtection(TeacherViewPage));
 const GuardianAddingPage = withAuthProtection(withRoleProtection(AddGuardianPage))
 const ProtectedGuardianListPage = withAuthProtection(withRoleProtection(GuardianListPage));
 const ProtectedGuardianViewPage = withAuthProtection(withRoleProtection(GuardianViewPage));
+const GuardianPaymentPortal = withAuthProtection(withRoleProtection(GuardianPaymentPage))
+const GuardianPaymentHistory = withAuthProtection(withRoleProtection(GuardianPaymentHistoryPage))
+const GuardianBillingSetting = withAuthProtection(withRoleProtection(GuardianBillingSettingPage))
 
 const ProtectedClasseSubjectListsPage = withAuthProtection(withRoleProtection(ClasseSubjectListsPage));
 const ProtectedClasseViewPage = withAuthProtection(withRoleProtection(ClasseViewPage));
@@ -157,7 +163,10 @@ export const Route = createBrowserRouter([
                 children: [
                     { path: text.path.page, element: <ProtectedGuardianListPage /> },
                     { path: text.path.view, element: <ProtectedGuardianViewPage /> },
-                    { path: text.path.new, element: <GuardianAddingPage /> }
+                    { path: text.path.new, element: <GuardianAddingPage /> },
+                    { path: text.path.view + '/invoices', element: <GuardianPaymentPortal /> },
+                    { path: text.path.view + '/payments', element: <GuardianPaymentHistory /> },
+                    { path: text.path.view + '/billing-settings', element: <GuardianBillingSetting /> },
                 ]
             },
             {

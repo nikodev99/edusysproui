@@ -27,6 +27,10 @@ const App = () => {
                     components: {
                         Timeline: {
                             dotBg: 'transparent',
+                        },
+                        Table: {
+                            rowSelectedBg: '#D0E7FAFF',
+                            rowSelectedHoverBg: '#bae0ff'
                         }
                     }
                 }}>

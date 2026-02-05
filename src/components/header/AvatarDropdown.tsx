@@ -1,27 +1,23 @@
 import {Alert, Button, Divider, Dropdown, MenuProps} from "antd";
 import {LuCog, LuLogOut, LuShoppingCart, LuUser} from "react-icons/lu";
-import {firstWord, getSlug} from "../../core/utils/utils.ts";
-import {useAuth} from "../../hooks/useAuth.ts";
-import {useRedirect} from "../../hooks/useRedirect.ts";
-import {UserType} from "../../auth/dto/user.ts";
+import {firstWord, getSlug} from "@/core/utils/utils.ts";
+import {useAuth} from "@/hooks/useAuth.ts";
+import {useRedirect} from "@/hooks/useRedirect.ts";
+import {isEmploye, isGuardian, isTeacher} from "@/auth/dto/role.ts";
 
 const AvatarDropdown = () => {
-
     const {user, logoutUser} = useAuth()
-    const {toViewEmployee, toViewTeacher, toViewGuardian} = useRedirect()
+    const {toViewEmployee, toViewTeacher, toViewGuardian, toGuardianPay} = useRedirect()
 
     const redirectToProfile = () => {
-        const userSlug = getSlug({firstName: user?.firstName, lastName: user?.lastName})
-        switch (user?.userType) {
-            case UserType.TEACHER:
-                return toViewTeacher(user?.userId as string)
-            case UserType.GUARDIAN:
-                return toViewGuardian(user?.userId as string)
-            case UserType.EMPLOYEE:
-                return toViewEmployee(user?.userId, userSlug)
-            default:
-                alert('Profile Inexistant')
-        }
+        if (isTeacher())
+            return toViewTeacher(user?.userId as string)
+        if(isGuardian())
+            return toViewGuardian(user?.userId as string)
+        if(isEmploye())
+            return toViewEmployee(user?.userId as string, getSlug({firstName: user?.firstName, lastName: user?.lastName}))
+
+        alert('Profile Inexistant')
     }
 
     const items: MenuProps['items'] = [
@@ -31,11 +27,12 @@ const AvatarDropdown = () => {
             icon: <LuUser />,
             onClick: redirectToProfile
         },
-        {
+        ...(isGuardian() ? [{
             key: '2',
-            label: 'Payements',
-            icon: <LuShoppingCart />
-        },
+            label: 'À payer',
+            icon: <LuShoppingCart />,
+            onClick: () => toGuardianPay(user?.userId as string)
+        }] : []),
         {
             key: '3',
             label: 'Paramètres',
@@ -52,8 +49,6 @@ const AvatarDropdown = () => {
     function handleLogout() {
         logoutUser()
     }
-
-    console.log(user)
 
     return(
         <div className="avatar-dropdown">

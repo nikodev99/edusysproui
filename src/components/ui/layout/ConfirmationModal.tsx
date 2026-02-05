@@ -31,6 +31,7 @@ export interface ConfirmationProps<T extends object> {
     setRedirect?: (url?: string) => void
     setActivity?: () => Promise<boolean>
     modalProps?: ModalProps
+    isConfirm?: boolean
 }
 
 const DEFAULT_ALERT: Required<AlertDesc> = {
@@ -45,7 +46,7 @@ export const ConfirmationModal = <TData extends object, IData extends object>(
     {
         data, open, close, setRefetch, handleFunc, modalTitle, alertDesc, customComponent, justify = 'flex-end',
         hasCancelBtn = false, title = 'Souhaitez vous poursuivre ?', content = 'Veuillez cliquer sur OUI pour confirmer', tooltipTxt,
-        btnTxt, btnProps, okTxt, cancelTxt, messages, setRedirect, modalProps, setActivity
+        btnTxt, btnProps, okTxt, cancelTxt, messages, setRedirect, modalProps, setActivity, isConfirm = true
     }: ConfirmationTYpe<TData, IData>
 ) => {
 
@@ -87,18 +88,23 @@ export const ConfirmationModal = <TData extends object, IData extends object>(
                 {successMessage && <Alert type={'success'} message={successMessage} closeIcon showIcon style={{marginBottom: '10px'}} />}
                 {errorMessage && <Alert type={'error'} message={errorMessage} closeIcon showIcon style={{marginBottom: '10px'}} />}
                 {alerting?.alert ? <Alert style={{marginBottom: '15px'}} type={alerting.type} message={descMessage} showIcon /> : alerting?.msg}
-                {component}
+                {component && component}
                 <Flex style={{marginTop: '20px'}} justify={justify} gap={10}>
-                    <ModalConfirmButton
-                        handleFunc={handleFunc}
-                        title={title}
-                        content={content}
-                        tooltipTxt={tooltipTxt}
-                        btnTxt={btnTxt}
-                        btnProps={btnProps}
-                        okTxt={okTxt}
-                        cancelTxt={cancelTxt}
-                    />
+                    {isConfirm ? (
+                            <ModalConfirmButton
+                                handleFunc={handleFunc}
+                                title={title}
+                                content={content}
+                                tooltipTxt={tooltipTxt}
+                                btnTxt={btnTxt}
+                                btnProps={btnProps}
+                                okTxt={okTxt}
+                                cancelTxt={cancelTxt}
+                            />
+                        ) : (
+                            <Button {...btnProps} onClick={() => handleFunc(data as never)}>{btnTxt}</Button>
+                        )
+                    }
                 </Flex>
                 {hasCancelBtn && <Flex justify={'flex-end'} gap={10} style={{marginTop: '20px'}}>
                     <Button onClick={close}>Annuler</Button>

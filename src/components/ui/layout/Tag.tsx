@@ -1,7 +1,7 @@
 import {ReactNode, useMemo} from "react";
 import '../ui.scss'
 import {LuBadgeAlert, LuBadgeCheck, LuBadgeHelp, LuBadgeInfo} from "react-icons/lu";
-import {Color} from "../../../core/utils/interfaces.ts";
+import {Color} from "@/core/utils/interfaces.ts";
 
 interface TagProps {
     children?: ReactNode;

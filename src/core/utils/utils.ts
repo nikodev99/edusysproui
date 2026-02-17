@@ -1,4 +1,4 @@
-import {ApiEvent, Color, DateExplose, EnumType, ID, Options, StudentListDataType} from "./interfaces.ts"
+import {ApiEvent, Color, DateExplose, EnumType, ID, Options, RepoOptions, StudentListDataType} from "./interfaces.ts"
 import countries from 'world-countries'
 import dayjs from "dayjs";
 import 'dayjs/locale/fr.js'
@@ -687,6 +687,12 @@ export const convertToM = (cm?: number) => {
 
 export const isNull = (word: string | undefined) => {
     return word === null || word === undefined || word === '' || word.length === 0;
+}
+
+export const isEnabled = (options?: RepoOptions, ...bool: boolean[]): boolean => {
+    const booleansValid = bool.length === 0 || bool.every(Boolean)
+    if (options?.enable !== undefined) return options.enable && booleansValid
+    return booleansValid
 }
 
 export const checkAcademicYearEnded = (academicYear?: AcademicYear): boolean => {

@@ -1,13 +1,13 @@
 import {ModalProps} from "antd";
-import {InsertModal} from "../../custom/InsertSchema.tsx";
+import {InsertModal} from "@/components/custom/InsertSchema.tsx";
 import {useForm} from "react-hook-form";
-import {courseSchema, CourseSchema} from "../../../schema";
+import {courseSchema, CourseSchema} from "@/schema";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {addCourse} from "../../../data/repository/courseRepository.ts";
-import {CourseForm} from "../../forms/CourseForm.tsx";
+import {addCourse} from "@/data/repository/courseRepository.ts";
+import {CourseForm} from "@/components/forms/CourseForm.tsx";
 import {useMemo} from "react";
-import {anyIsCollege} from "../../../entity/enums/section.ts";
-import {useGradeRepo} from "../../../hooks/actions/useGradeRepo.ts";
+import {anyIsCollege} from "@/entity/enums/section.ts";
+import {useGradeRepo} from "@/hooks/actions/useGradeRepo.ts";
 
 export const AddCourse = ({open, onCancel}: ModalProps) => {
     const {useGetAllGrades} = useGradeRepo()

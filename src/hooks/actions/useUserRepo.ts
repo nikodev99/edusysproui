@@ -1,7 +1,7 @@
 import {useFetch} from "../useFetch.ts";
 import {
     ActivityFilterProps,
-    countAllUsers, findUserByPersonalInfo, findUserPersonalInfo,
+    countAllUsers, findUserAddress, findUserByPersonalInfo, findUserPersonalInfo,
     getAllSearchedUsers, getAllUserLogins,
     getAllUsers,
     getUserActivities,
@@ -9,13 +9,17 @@ import {
     saveUserActivity
 } from "@/data/repository/userRepository.ts";
 import {useGlobalStore} from "@/core/global/store.ts";
-import {getShortSortOrder, isObjectEmpty, setSortFieldName} from "@/core/utils/utils.ts";
+import {getShortSortOrder, isEnabled, isObjectEmpty, setSortFieldName} from "@/core/utils/utils.ts";
 import {User, UserActivity} from "@/auth/dto/user.ts";
+import {useAuth} from "@/hooks/useAuth.ts";
+import {useMemo} from "react";
 import {loggedUser} from "@/auth/jwt/LoggedUser.ts";
+import {RepoOptions} from "@/core/utils/interfaces.ts";
 
 export const useUserRepo = () => {
     const schoolId = useGlobalStore(state => state.schoolId)
-    const logged = loggedUser.getUser()
+    const {user} = useAuth()
+    const logged = useMemo(() => user || loggedUser.getUser(), [user])
 
     const useGetAllUsers = () => useFetch(['users', schoolId], getAllUsers, [schoolId], !!schoolId)
 
@@ -99,6 +103,17 @@ export const useUserRepo = () => {
 
     const findSearchedUserPersonalInfo = (searchKey: string) => findUserPersonalInfo(searchKey)
 
+    const useGetUserAddress = (options?: RepoOptions) => {
+        const {data} = useFetch(
+            ['user-address', logged?.personalInfo],
+            findUserAddress,
+            [logged?.personalInfo],
+            isEnabled(options, !!logged?.personalInfo)
+        )
+
+        return data
+    }
+
     const useGetUserByPersonalInfo = (personalInfoId: number) => {
         const {data} = useFetch(['user-by-personalInfo', personalInfoId], findUserByPersonalInfo, [personalInfoId], !!personalInfoId)
         return data
@@ -119,6 +134,7 @@ export const useUserRepo = () => {
         isSameUser,
         useSearchUserPersonalInfo,
         findSearchedUserPersonalInfo,
+        useGetUserAddress,
         useGetUserByPersonalInfo
     }
 }

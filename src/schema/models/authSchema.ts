@@ -62,7 +62,7 @@ class PasswordGenerator {
 }
 
 export const passwordGenerator = new PasswordGenerator()
-const samePassword = passwordGenerator.generatePassword()
+const samePassword = '@Toto99'//passwordGenerator.generatePassword()
 
 export const loginSchema = z.object({
     username: z.string({required_error: 'Le nom d\'utilisateur est requis'})

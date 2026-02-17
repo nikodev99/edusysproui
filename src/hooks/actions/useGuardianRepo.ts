@@ -9,6 +9,8 @@ import {
 import {useFetch} from "@/hooks/useFetch.ts";
 import {GuardianPayment} from "@/finance/apis/guardianPayment.ts";
 import {RepoOptions} from "@/core/utils/interfaces.ts";
+import {useInsert} from "@/hooks/usePost.ts";
+import {PaymentSchema, paymentSchema, PaymentResponse} from "@/finance/models/payment.ts";
 
 export const useGuardianRepo = () => {
     const schoolId = useGlobalStore(state => state.schoolId)
@@ -82,6 +84,8 @@ export const useGuardianRepo = () => {
         !!guardianId && !!academicYear
     )
 
+    const useInitPayment = () => useInsert<PaymentSchema, PaymentResponse>(paymentSchema, GuardianPayment.initPayment as never)
+
     return {
         useGetPaginated,
         useChangeGuardian,
@@ -91,7 +95,8 @@ export const useGuardianRepo = () => {
         useGetAllInvoices,
         useGetCurrentInvoices,
         useGetActiveInvoices,
-        useGetPaymentHistory
+        useGetPaymentHistory,
+        useInitPayment
     }
 }
 

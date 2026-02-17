@@ -1,5 +1,5 @@
 import {apiClient} from "@/data/axiosConfig.ts";
-import {PaymentHistory, PaymentSummary} from "@/finance/models/payment.ts";
+import {PaymentHistory, PaymentSchema, PaymentSummary, PaymentResponse} from "@/finance/models/payment.ts";
 import {Invoice} from "@/finance/models/invoice.ts";
 
 export const GuardianPayment = {
@@ -37,5 +37,9 @@ export const GuardianPayment = {
                 academicYear: academicYear
             }
         })
+    },
+
+    initPayment: (data: PaymentSchema) => {
+        return apiClient.post<PaymentResponse>(`/guardian/payment/initiate`, data)
     }
 }

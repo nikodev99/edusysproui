@@ -28,7 +28,7 @@ const CreateUser = ({open, onCancel, personalInfo, userType}: CreateUserProps) =
             data={signupSchema}
             customForm={
                 <UserAccountForm
-                    control={control}
+                    control={control as never}
                     errors={errors}
                     flowType={flowType}
                 />

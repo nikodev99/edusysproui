@@ -15,11 +15,11 @@ export interface InvoiceDetailsProps {
     data: Invoice | null,
     open: boolean,
     onClose: () => void
-    handleDownload?: () => void
-    handlePay?: () => void
+    handleDownload?: (id: number) => void
+    handlePay?: (id: number) => void
 }
 
-export const InvoiceDetails = ({data, open, onClose}: InvoiceDetailsProps) => {
+export const InvoiceDetails = ({data, open, onClose, handleDownload, handlePay}: InvoiceDetailsProps) => {
     const {toViewStudent} = useRedirect()
 
     return(
@@ -30,7 +30,7 @@ export const InvoiceDetails = ({data, open, onClose}: InvoiceDetailsProps) => {
                         key="download"
                         type='link'
                         icon={<LuDownload />}
-                        onClick={() => alert('Télécharger la facture ' + data?.invoiceNumber)}
+                        onClick={() => handleDownload?.(data?.invoiceId as number)}
                         children="Télécharger"
                     />
                 </Grid>
@@ -40,7 +40,7 @@ export const InvoiceDetails = ({data, open, onClose}: InvoiceDetailsProps) => {
                         type='primary'
                         icon={<LuCreditCard />}
                         children='Payer'
-                        onClick={() => alert('Payer la facture ' + data?.invoiceNumber)}
+                        onClick={() => handlePay?.(data?.invoiceId as number)}
                     />
                 </Grid>
             </Responsive>

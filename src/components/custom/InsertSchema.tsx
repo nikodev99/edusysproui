@@ -1,11 +1,11 @@
 import React, {ReactNode, useState} from "react";
 import {FieldValues} from "react-hook-form";
-import {useQueryPost} from "../../hooks/usePost.ts";
-import {useGlobalStore} from "../../core/global/store.ts";
-import {catchError} from "../../data/action/error_catch.ts";
+import {useQueryPost} from "@/hooks/usePost.ts";
+import {useGlobalStore} from "@/core/global/store.ts";
+import {catchError} from "@/data/action/error_catch.ts";
 import {Alert, Button, Flex, Form, Modal, ModalProps} from "antd";
 import {PopConfirm} from "../ui/layout/PopConfirm.tsx";
-import {PostSchemaProps, SchemaProps} from "../../core/utils/interfaces.ts";
+import {PostSchemaProps, SchemaProps} from "@/core/utils/interfaces.ts";
 import Marquee from "react-fast-marquee";
 import FormSuccess from "../ui/form/FormSuccess.tsx";
 import FormError from "../ui/form/FormError.tsx";
@@ -128,10 +128,13 @@ const InsertSchema = <TData extends FieldValues>(
     const onSubmit = (formData: TData) => {
         clearMessages();
 
+        console.log({addedData: formData})
+
         mutate(
             { postFn: postFunc, data: formData },
             {
                 onSuccess: (response) => {
+                    console.log({response: response})
                     if (response.status === 200) {
                         setSuccessMessage(messageSuccess);
                         toReset ? handleForm.reset() : undefined;
@@ -139,6 +142,7 @@ const InsertSchema = <TData extends FieldValues>(
                     }
                 },
                 onError: (error) => {
+                    console.log({errorCaptured: error})
                     const errorMsg = catchError(error) as string;
                     setErrorMessage(errorMsg);
                     onError?.(errorMsg);

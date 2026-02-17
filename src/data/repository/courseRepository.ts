@@ -1,8 +1,8 @@
 import {apiClient} from "../axiosConfig.ts";
-import {Course} from "../../entity";
+import {Course} from "@/entity";
 import {AxiosResponse} from "axios";
-import {ID, Pageable} from "../../core/utils/interfaces.ts";
-import {CourseSchema} from "../../schema";
+import {ID, Pageable} from "@/core/utils/interfaces.ts";
+import {CourseSchema} from "@/schema";
 
 export const addCourse = async (course: CourseSchema): Promise<AxiosResponse<CourseSchema>> => {
     return await apiClient.post("/courses", course, {

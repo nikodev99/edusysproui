@@ -1,6 +1,7 @@
 import {Enrollment, Guardian, Individual} from "@/entity";
 import {Moment} from "@/core/utils/interfaces.ts";
 import {FeeCategories} from "@/finance/models/fee.ts";
+import {z} from "zod";
 
 export interface Invoice {
     invoiceId: number
@@ -33,6 +34,10 @@ export interface InvoiceItem {
     discountAmount: number
     totalAmount: number
 }
+
+export const invoiceMerge = z.object({
+    id: z.number()
+})
 
 export enum InvoiceStatus {
     DRAFT,

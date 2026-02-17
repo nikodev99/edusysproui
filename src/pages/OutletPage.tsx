@@ -14,7 +14,7 @@ export type OutletPageProps = {
     onNotifClose?: () => void
 } & NotificationProps
 
-const OutletPage = ({metadata, breadCrumb, content, responseMessages, setRedirect, isNotif, onNotifClose, children}: OutletPageProps) => {
+const OutletPage = ({metadata, breadCrumb, content, responseMessages, setRedirect, isNotif, onNotifClose, children, onlyNotif}: OutletPageProps) => {
     useDocumentTitle(metadata)
 
     const {context} = useBreadCrumb(breadCrumb)
@@ -22,12 +22,12 @@ const OutletPage = ({metadata, breadCrumb, content, responseMessages, setRedirec
     return <>
         {context}
         {(responseMessages && !children) && (
-            <Notification isNotif={isNotif} setRedirect={setRedirect} responseMessages={responseMessages} onClose={onNotifClose} />
+            <Notification isNotif={isNotif} setRedirect={setRedirect} responseMessages={responseMessages} onClose={onNotifClose} onlyNotif={onlyNotif} />
         )}
         {content ? content : (
             children && <PageWrapper>
                 {responseMessages && (
-                    <Notification isNotif={isNotif} setRedirect={setRedirect} responseMessages={responseMessages} onClose={onNotifClose} />
+                    <Notification isNotif={isNotif} setRedirect={setRedirect} responseMessages={responseMessages} onClose={onNotifClose} onlyNotif={onlyNotif} />
                 )}
                 {children}
             </PageWrapper>

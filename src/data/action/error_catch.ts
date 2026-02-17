@@ -1,5 +1,5 @@
 import {isAxiosError} from "../axiosConfig.ts";
-import {isString} from "../../core/utils/utils.ts";
+import {isString} from "@/core/utils/utils.ts";
 
 export const ErrorCatch = (err: unknown) => {
     if (isAxiosError(err)) {

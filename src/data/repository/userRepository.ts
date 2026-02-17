@@ -2,7 +2,7 @@ import {apiClient} from "../axiosConfig.ts";
 import {ChangePasswordRequest, User, UserActiveLogin, UserActivity} from "@/auth/dto/user.ts";
 import {MessageResponse, Pageable} from "@/core/utils/interfaces.ts";
 import {Role} from "@/auth/dto/role.ts";
-import {Individual} from "@/entity";
+import {Address, Individual} from "@/entity";
 
 export interface ActivityFilterProps {
     dates: {
@@ -101,6 +101,10 @@ export const findUserPersonalInfo = (search: string) => {
 
 export const findUserByPersonalInfo = (personalInfoId: number) => {
     return apiClient.get<User>(`/users/personal/${personalInfoId}`)
+}
+
+export const findUserAddress = (personalId: number) =>{
+    return apiClient.get<Address>(`/users/address/${personalId}`)
 }
 
 export const changePassword = async (request: ChangePasswordRequest) => {

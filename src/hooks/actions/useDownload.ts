@@ -7,7 +7,7 @@ import {catchError} from "@/data/action/error_catch.ts";
 export const useDownload = () => {
     const schoolId = useGlobalStore(state => state.schoolId)
 
-    const useDownloadInvoice = () => useMutation<AxiosResponse<Blob>, unknown, {invoiceId: number}>({
+    const useDownloadInvoice = () => useMutation<AxiosResponse<Blob>, unknown, {invoiceId: number, invoiceNumber?: string}>({
         mutationFn: ({invoiceId}) => DownloadApi.downloadInvoice(invoiceId, schoolId),
         onSuccess: async (response: AxiosResponse<Blob>, variables) => {
             const blob = response.data;
@@ -16,7 +16,7 @@ export const useDownload = () => {
                 response.headers['content-disposition'] ||
                 response.headers['Content-Disposition'];
 
-            let filename = `invoice-${variables.invoiceId}.pdf`;
+            let filename = `invoice-${variables.invoiceNumber}.pdf`;
 
             if (contentDisposition) {
                 const match =

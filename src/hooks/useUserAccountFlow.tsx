@@ -39,21 +39,24 @@ export const useUserAccountFlow = (personalInfo?: Individual, userType?: UserTyp
             userType: userType
         }
     })
+
+    console.log({personalInfo, accountExists, userToAssign})
     
     const handleSubmit = async (data: SignupSchema | AssignUserToSchoolSchema) => {
         if (!personalInfo) return
-
-        console.log({user: data})
         
-        if (accountExists && userToAssign) {
+        if (flowType === 'assign' && userToAssign) {
             const assignData: AssignUserToSchoolSchema = {
                 ...data,
-                userId: userToAssign.id as number,
+                userId: userToAssign?.id as number,
             } as AssignUserToSchoolSchema
+
+            console.log({assignData})
+
             return assignUser(assignData);
         }
         
-        if (!accountExists) {
+        if (flowType === 'create') {
             const createData: SignupSchema = {
                 ...data,
                 email: personalInfo.emailId,
@@ -62,8 +65,6 @@ export const useUserAccountFlow = (personalInfo?: Individual, userType?: UserTyp
                 roles: {...data.roles, schoolId: loggedUser.getSchool()?.id},
                 userType: userType
             } as SignupSchema
-
-            console.log({createData})
 
             return registerUser(createData);
         }

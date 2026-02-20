@@ -52,6 +52,15 @@ export const userExists = async (personalInfoId: number) => {
     }
 }
 
+export const userExistsInSchool = async (schoolId: string, personalInfoId: number) => {
+    try {
+        return await apiClient.get<boolean>(`/auth/account/${schoolId}/${personalInfoId}`)
+    }catch (error) {
+        handleError(error)
+        throw error
+    }
+}
+
 export const logoutApi = async () => {
     const refreshToken = loggedUser.getRefreshToken()
     await apiClient.post('/auth/logout', {refreshToken: refreshToken})

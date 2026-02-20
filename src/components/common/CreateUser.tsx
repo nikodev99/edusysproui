@@ -1,5 +1,5 @@
 import {InsertModal} from "../custom/InsertSchema.tsx";
-import {AssignUserToSchoolSchema, signupSchema, SignupSchema} from "@/schema";
+import {assignUserToSchoolSchema, AssignUserToSchoolSchema, signupSchema, SignupSchema} from "@/schema";
 import {UserAccountForm} from "../forms/UserAccountForm.tsx";
 import {Individual} from "@/entity";
 import {UserType} from "@/auth/dto/user.ts";
@@ -17,18 +17,16 @@ const CreateUser = ({open, onCancel, personalInfo, userType}: CreateUserProps) =
 
     const {control, formState: {errors, submitCount}, watch} = useForm
 
-    console.log({submitCount, errors, formData: watch()})
+    console.log({submitCount, errors, formData: watch(), flowType})
 
     const createUser = async (data: SignupSchema | AssignUserToSchoolSchema) => {
         console.log({userToCreate: data})
-        if (submitCount <= 0) {
-            return handleSubmitFlow(data)
-        }
+        return handleSubmitFlow(data)
     }
 
     return(
         <InsertModal
-            data={signupSchema}
+            data={flowType === 'create' ? signupSchema as never : assignUserToSchoolSchema as never}
             customForm={
                 <UserAccountForm
                     control={control as never}

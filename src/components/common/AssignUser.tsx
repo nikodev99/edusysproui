@@ -31,8 +31,6 @@ export const AssignUser = (
         fetchFunc: findSearchedUserPersonalInfo as never,
         setCustomOptions: individualOptions,
     })
-
-    console.log('OPTIONS: ', options)
     
     const personalInfo: Individual | undefined = useMemo(() => {
         const image = resource?.image

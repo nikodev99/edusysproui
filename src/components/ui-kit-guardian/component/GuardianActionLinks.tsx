@@ -10,12 +10,13 @@ import {useAccount} from "@/hooks/useAccount.ts";
 import {LuDollarSign, LuMessageCircle, LuReceipt, LuUserPlus} from "react-icons/lu";
 import {useRedirect} from "@/hooks/useRedirect.ts";
 import {usePermission} from "@/hooks/usePermission.ts";
+import {ItemType} from "antd/es/menu/interface";
 
 type GuardianActionButtons = ActionButtonsProps<Guardian>
 
-export const GuardianActionLinks = ({data, getItems, setRefresh}: GuardianActionButtons) => {
+export const GuardianActionLinks = ({data, getItems}: GuardianActionButtons) => {
     const [openCreateUser, setOpenCreateUser] = useToggle(false)
-    const {useAccountExists} = useAccount()
+    const {useAccountExists, useAccountExistsInSchool} = useAccount()
     const {toGuardianPay, toGuardianInv, toGuardianBilling} = useRedirect()
     const {canCreate, canDelete, can} = usePermission()
 
@@ -24,13 +25,15 @@ export const GuardianActionLinks = ({data, getItems, setRefresh}: GuardianAction
     }), [data])
 
     const accountExists = useAccountExists(personalInfo?.id as number)
+    const isPresent = useAccountExistsInSchool(personalInfo?.id as number)
 
-    const items = [
+    const items: ItemType[] = useMemo(() => [
         ...(canCreate ? [{
             key: `account-${data?.id}`,
             icon: <LuUserPlus />,
             label: accountExists ? 'Affilier le tuteur' : 'Créer compte tuteur',
-            onClick: () => setOpenCreateUser()
+            onClick: () => setOpenCreateUser(),
+            disabled: isPresent
         }] : []),
         ...(can('pay', true) ? [{
             key: `@invoice-${data?.id}`,
@@ -63,7 +66,7 @@ export const GuardianActionLinks = ({data, getItems, setRefresh}: GuardianAction
             label: 'Supprimer',
             danger: true
         }] : [])
-    ]
+    ] as ItemType[], [accountExists, can, canCreate, canDelete, data?.id, isPresent, setOpenCreateUser, toGuardianBilling, toGuardianInv, toGuardianPay])
 
     useMenuItemsEffect(items, getItems)
 

@@ -6,7 +6,7 @@ import {
     LuCog,
     LuContact,
     LuLayoutDashboard,
-    LuLibrary, LuUniversity,
+    LuLibrary, LuScale, LuUniversity,
     LuUsers, LuUsersRound,
 } from "react-icons/lu";
 import {message} from "antd";
@@ -109,13 +109,17 @@ export const getMenuItemForUser = (): ItemType[] => {
             key: text.settings.href,
             icon: <LuCog />,
             label: text.settings.label,
-            children: [
-                {key: text.settings.group.customize.href, label: text.settings.group.customize.label},
-                {key: '/settings/legal_certificate', label: "Certificat Légal"},
-                {key: '/settings/general_term', label: "Terme Général"},
-                {key: '/settings/special_document', label: "Document Spéciale & Contrat"}
-            ]
         },
+        {
+            key: text.legal.href,
+            icon: <LuScale />,
+            label: text.legal.label,
+            children: [
+                {key: text.legal.group.certificates.href, label: text.legal.group.certificates.label},
+                {key: text.legal.group.term.href, label: text.legal.group.term.label},
+                {key: text.legal.group.document.href, label: text.legal.group.document.label},
+            ]
+        }
     ]
 
     return routeAccess.filterMenuItems(allMenuItems)

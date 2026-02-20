@@ -10,12 +10,12 @@ import {
     getClasseEnrolledStudents,
     getClasseEnrolledStudentsSearch,
     getClasseStudents,
-    getEnrolledStudents,
+    getEnrolledStudents, getEnrolledStudentsByGuardian,
     getEnrolledStudentsByTeacher,
     getRandomStudentClassmate,
     getStudentAddress,
     getStudentById,
-    searchEnrolledStudents,
+    searchEnrolledStudents, searchEnrolledStudentsByGuardian,
     searchEnrolledStudentsByTeacher,
     searchStudents,
     searchUnenrolledStudents
@@ -37,19 +37,34 @@ export const useStudentRepo = (context: UserPermission = UserPermission.ALL) => 
                 if (sortField && sortOrder) {
                     sortOrder = getShortSortOrder(sortOrder)
                     sortField = sortedField(sortField)
-                    return context === UserPermission.ALL
-                        ? await getEnrolledStudents(schoolId, page, size, `${sortField}:${sortOrder}`)
-                        : await getEnrolledStudentsByTeacher(schoolId, user?.userId as string, page, size, `${sortField}:${sortOrder}`)
+                    switch (context) {
+                        case UserPermission.ALL:
+                            return await getEnrolledStudents(schoolId, page, size, `${sortField}:${sortOrder}`)
+                        case UserPermission.TEACHER:
+                            return await getEnrolledStudentsByTeacher(schoolId, user?.userId as string, page, size, `${sortField}:${sortOrder}`)
+                        case UserPermission.GUARDIAN:
+                            return await getEnrolledStudentsByGuardian(schoolId, user?.userId as string, page, size, `${sortField}:${sortOrder}`)
+                    }
                 }
-                return context === UserPermission.ALL
-                    ? await getEnrolledStudents(schoolId, page, size)
-                    : await getEnrolledStudentsByTeacher(schoolId, user?.userId as string, page, size)
+                switch (context) {
+                    case UserPermission.ALL:
+                        return await getEnrolledStudents(schoolId, page, size)
+                    case UserPermission.TEACHER:
+                        return await getEnrolledStudentsByTeacher(schoolId, user?.userId as string, page, size)
+                    case UserPermission.GUARDIAN:
+                        return getEnrolledStudentsByGuardian(schoolId, user?.userId as string, page, size)
+                }
             },
 
             getSearchedEnrolledStudents:  async (searchInput: string) => {
-                return context === UserPermission.ALL
-                    ? await searchEnrolledStudents(schoolId, searchInput)
-                    : await searchEnrolledStudentsByTeacher(schoolId, user?.userId as string, searchInput)
+                switch(context) {
+                    case UserPermission.ALL:
+                        return await searchEnrolledStudents(schoolId, searchInput)
+                    case UserPermission.TEACHER:
+                        return await searchEnrolledStudentsByTeacher(schoolId, user?.userId as string, searchInput)
+                    case UserPermission.GUARDIAN:
+                        return searchEnrolledStudentsByGuardian(schoolId, user?.userId as string, searchInput)
+                }
             }
         }
     }

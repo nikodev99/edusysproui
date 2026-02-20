@@ -20,6 +20,11 @@ export enum UserPermission {
     GUARDIAN, TEACHER, ALL
 }
 
+export enum SearchType {
+    CLASSIC = 1,
+    GLOBAL = 10
+}
+
 export enum LinkToStudent {
     PERE = 'Père',
     MERE = 'Mère',

@@ -1,16 +1,16 @@
-import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
-import Responsive from "../../components/ui/layout/Responsive.tsx";
-import Grid from "../../components/ui/layout/Grid.tsx";
+import {useDocumentTitle} from "@/hooks/useDocumentTitle.ts";
+import Responsive from "@/components/ui/layout/Responsive.tsx";
+import Grid from "@/components/ui/layout/Grid.tsx";
 import {Button, Card, Divider, Space, Typography, Avatar, Flex, Tag} from "antd";
-import {useSchoolRepo} from "../../hooks/actions/useSchoolRepo.ts";
+import {useSchoolRepo} from "@/hooks/actions/useSchoolRepo.ts";
 import {
     AiOutlineDelete,
     AiOutlineEdit,
     AiOutlineFileText,
     AiOutlineProfile
 } from "react-icons/ai";
-import {chooseColor, cutStatement} from "../../core/utils/utils.ts";
-import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
+import {chooseColor, cutStatement} from "@/core/utils/utils.ts";
+import {useBreadCrumb} from "@/hooks/useBreadCrumb.tsx";
 import {
     LuBuilding2,
     LuCalendarClock,
@@ -19,17 +19,18 @@ import {
     LuPencilOff,
     LuUsersRound
 } from "react-icons/lu";
-import {useAcademicYearRepo} from "../../hooks/actions/useAcademicYearRepo.ts";
-import {useUserRepo} from "../../hooks/actions/useUserRepo.ts";
-import {useGradeRepo} from "../../hooks/actions/useGradeRepo.ts";
-import {useDepartmentRepo} from "../../hooks/actions/useDepartmentRepo.ts";
-import {text} from "../../core/utils/text_display.ts";
+import {useAcademicYearRepo} from "@/hooks/actions/useAcademicYearRepo.ts";
+import {useUserRepo} from "@/hooks/actions/useUserRepo.ts";
+import {useGradeRepo} from "@/hooks/actions/useGradeRepo.ts";
+import {useDepartmentRepo} from "@/hooks/actions/useDepartmentRepo.ts";
+import {text} from "@/core/utils/text_display.ts";
 import {Link} from "react-router-dom";
-import {SchoolEditDrawer} from "../../components/ui-kit-org";
-import {useToggle} from "../../hooks/useToggle.ts";
+import {SchoolEditDrawer} from "@/components/ui-kit-org";
+import {useToggle} from "@/hooks/useToggle.ts";
 import {useEffect, useState} from "react";
-import {School} from "../../entity";
-import {SectionType} from "../../entity/enums/section.ts";
+import {School} from "@/entity";
+import {SectionType} from "@/entity/enums/section.ts";
+import {useRedirect} from "@/hooks/useRedirect.ts";
 
 export const OrganizationPage = () => {
 
@@ -46,6 +47,7 @@ export const OrganizationPage = () => {
 
     const [openEditDrawer, setOpenEditDrawer] = useToggle(false)
     const [refetch, setRefetch] = useState(false)
+    const {toSettings} = useRedirect()
     const {useGetSchool} = useSchoolRepo()
     const {useGetCurrentAcademicYear} = useAcademicYearRepo()
     const {useCountUsers} = useUserRepo()
@@ -78,7 +80,7 @@ export const OrganizationPage = () => {
         <Divider orientation='left'><h3>Mon Organisation</h3></Divider>
         <Responsive gutter={[16, 16]}>
             <Grid xs={24} md={12} lg={6}>
-                <Card bordered={false}>
+                <Card variant={"borderless"}>
                     <Card.Meta title={
                         <Flex align='center' justify={'space-between'} wrap>
                             <h3>{cutStatement(school?.name as string, 30, school?.abbr)}</h3>
@@ -115,11 +117,11 @@ export const OrganizationPage = () => {
             <Grid xs={24} md={12} lg={16} xl={18}>
                 <Responsive gutter={[16, 16]}>
                     <Grid xs={24} md={24} lg={24}>
-                        <Card bordered={false}>
+                        <Card variant={"borderless"}>
                             <Card.Meta title={
                                 <Flex align='center' justify={'space-between'}>
                                     <h3>Customisation</h3>
-                                    <Link to={text.settings.group.customize.href}>Modifier</Link>
+                                    <Button type='link' onClick={toSettings}>Modifier</Button>
                                 </Flex>
                             } style={{marginBottom: '5px'}} />
                             <Space>

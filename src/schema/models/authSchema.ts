@@ -95,7 +95,7 @@ export const signupSchema = z.object({
             message: "Le mot de passe doit contenir au moins une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial."
         }).optional().default(samePassword),
     passwordConfirm: z.string({ required_error: 'La confirmation du mot de passe est requise' })
-        .optional().default(passwordGenerator.generatePassword()),
+        .optional().default(samePassword),
     email: z.string()
         .email({message: "Veuillez fournir une adresse email valide"})
         .min(5, {message: "L'email doit contenir au moins 5 characters"})

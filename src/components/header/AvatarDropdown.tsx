@@ -7,7 +7,7 @@ import {isEmploye, isGuardian, isTeacher} from "@/auth/dto/role.ts";
 
 const AvatarDropdown = () => {
     const {user, logoutUser} = useAuth()
-    const {toViewEmployee, toViewTeacher, toViewGuardian, toGuardianPay} = useRedirect()
+    const {toViewEmployee, toViewTeacher, toViewGuardian, toGuardianInv} = useRedirect()
 
     const redirectToProfile = () => {
         if (isTeacher())
@@ -31,7 +31,7 @@ const AvatarDropdown = () => {
             key: '2',
             label: 'À payer',
             icon: <LuShoppingCart />,
-            onClick: () => toGuardianPay(user?.userId as string)
+            onClick: () => toGuardianInv(user?.userId as string)
         }] : []),
         {
             key: '3',

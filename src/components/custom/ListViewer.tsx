@@ -15,6 +15,7 @@ import {AutoScrollTable} from "../ui/layout/AutoScrollTable.tsx";
 import Grid from "../ui/layout/Grid.tsx";
 import {useToggle} from "@/hooks/useToggle.ts";
 import {PageTitle} from "./PageTitle.tsx";
+import {useGlobalStore} from "@/core/global/store.ts";
 
 const ListViewer = <TData extends object, TError>(
     {
@@ -42,8 +43,10 @@ const ListViewer = <TData extends object, TError>(
     const [filterUI, setFilterUI] = useState<ReactNode | undefined>(undefined)
     const [showFilters, setShowFilters] = useToggle(false)
 
+    const schoolId = useGlobalStore(state => state.schoolId)
+
     const { data, error, isLoading, refetch, isFetching, isRefetching } = useFetch(
-        fetchId ?? 'students', callback, callbackParams 
+        fetchId ? [fetchId, schoolId] : ['students',schoolId], callback, callbackParams
             ? [...callbackParams, pageCount, size, sortField, sortOrder] 
             : [pageCount, size, sortField, sortOrder]
     )

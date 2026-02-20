@@ -213,11 +213,17 @@ export const raw = {
     settings: {
         label: 'Paramètres',
         href: '/settings',
+    },
+    legal: {
+        label: 'Legal',
+        href: '/legal',
         group: {
-            customize: {
-                label: 'Customiser',
-                href: '/settings/customize'
+            certificates: {
+                href: '/legal/certificates',
+                label: "Certificat Légal",
             },
+            term: {href: '/legal/general_term', label: "Terme Général"},
+            document: {href: '/legal/special_document', label: "Document Spéciale & Contrat"}
         }
     },
     path: {
@@ -282,4 +288,5 @@ export const jwt = {
     roles: '@edusyspro-roles',
 }
 
-export const text = withSlug(toLower(loggedUser.getSchool()?.abbr as string) as string)
+const school = loggedUser.getSchool()
+export const text = withSlug(toLower(school?.abbr as string) as string)

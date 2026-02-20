@@ -1,5 +1,6 @@
-import {Form, Select, SelectProps, Spin} from "antd";
-import {useMemo} from "react";
+import {Form, Radio, RadioChangeEvent, Select, SelectProps, Spin} from "antd";
+import {useMemo, useState} from "react";
+import {SearchType} from "@/core/shared/sharedEnums.ts";
 
 interface GuardianDetailsProps {
     data: SelectProps['options'],
@@ -7,10 +8,12 @@ interface GuardianDetailsProps {
     fetching?: boolean,
     onSearch?: (value: string) => void,
     onChange?: (value: string) => void,
+    getType?: (value: number) => void,
 }
 
-export const GuardianDetails = ({data, value, fetching, onSearch, onChange}: GuardianDetailsProps) => {
+export const GuardianDetails = ({data, value, fetching, onSearch, onChange, getType}: GuardianDetailsProps) => {
 
+    const [searchType, setSearchType] = useState<SearchType>(SearchType.CLASSIC)
     const filterOption = (input: string, option?: { label: string; value: string }) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
 
     const options = useMemo(() => data?.map(d => ({
@@ -18,9 +21,27 @@ export const GuardianDetails = ({data, value, fetching, onSearch, onChange}: Gua
         label: d.text,
     })), [data])
 
+    const handleSearch = (e: RadioChangeEvent) => {
+        setSearchType(e.target.value)
+        getType?.(e.target.value)
+    }
+
     return(
         <>
             <Form>
+                <Form.Item>
+                    <Radio.Group
+                        value={searchType}
+                        onChange={handleSearch}
+                        optionType='button'
+                        buttonStyle='solid'
+                        block
+                        options={[
+                            {value: SearchType.CLASSIC, label: 'Recherche classique'},
+                            {value: SearchType.GLOBAL, label: 'Recherche Globale'}
+                        ]}
+                    />
+                </Form.Item>
                 <Form.Item>
                     <Select
                         showSearch

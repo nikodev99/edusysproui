@@ -35,6 +35,7 @@ export const signupApi = async (data: SignupSchema) => {
 
 export const assignToUser = async (data: AssignUserToSchoolSchema) => {
     try {
+        console.log({newUser: data})
         return await apiClient.post<MessageResponse>('/auth/register-new-school', data)
     }catch (error) {
         handleError(error)

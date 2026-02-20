@@ -3,30 +3,61 @@ import {useQueryUpdate} from "@/hooks/useUpdate.ts";
 import {useGlobalStore} from "@/core/global/store.ts";
 import {getShortSortOrder, setSortFieldName} from "@/core/utils/utils.ts";
 import {
-    getEnrolledStudentsGuardians, getGuardianById, getGuardianWithStudentsById,
-    getSearchedEnrolledStudentGuardian
+    getEnrolledStudentsGuardians, getEnrolledStudentsGuardiansByTeacher, getEnrolledStudentsSelfGuardians,
+    getGuardianById,
+    getGuardianWithStudentsById,
+    getSearchedEnrolledStudentGuardian, getSearchedEnrolledStudentGuardianByTeacher,
+    getSearchedEnrolledStudentSelfGuardian, globalGuardianSearch
 } from "@/data/repository/guardianRepository.ts";
 import {useFetch} from "@/hooks/useFetch.ts";
 import {GuardianPayment} from "@/finance/apis/guardianPayment.ts";
 import {RepoOptions} from "@/core/utils/interfaces.ts";
 import {useInsert} from "@/hooks/usePost.ts";
-import {PaymentSchema, paymentSchema, PaymentResponse} from "@/finance/models/payment.ts";
+import {PaymentResponse, paymentSchema, PaymentSchema} from "@/finance/models/payment.ts";
+import {UserPermission} from "@/core/shared/sharedEnums.ts";
+import {useAuth} from "@/hooks/useAuth.ts";
 
-export const useGuardianRepo = () => {
+export const useGuardianRepo = (context: UserPermission = UserPermission.ALL) => {
     const schoolId = useGlobalStore(state => state.schoolId)
 
     const useGetPaginated = () => {
+        const {user} = useAuth()
         return {
             getPaginatedGuardian: async (page: number, size: number, sortField?: string, sortOrder?: string) => {
                 if (sortField && sortOrder) {
                     sortOrder = getShortSortOrder(sortOrder)
                     sortField = sortedField(sortField)
-                    return await getEnrolledStudentsGuardians(schoolId, page, size, `${sortField}:${sortOrder}`);
+                    switch (context) {
+                        case UserPermission.ALL:
+                            return await getEnrolledStudentsGuardians(schoolId, page, size, `${sortField}:${sortOrder}`);
+                        case UserPermission.TEACHER:
+                            return await getEnrolledStudentsGuardiansByTeacher(schoolId, user?.userId as string, page, size, `${sortField}:${sortOrder}`)
+                        case UserPermission.GUARDIAN:
+                            return await getEnrolledStudentsSelfGuardians(schoolId, user?.userId as string, page, size, `${sortField}:${sortOrder}`)
+                    }
                 }
-                return await getEnrolledStudentsGuardians(schoolId, page, size)
+                switch (context) {
+                    case UserPermission.ALL:
+                        return await getEnrolledStudentsGuardians(schoolId, page, size);
+                    case UserPermission.TEACHER:
+                        return await getEnrolledStudentsGuardiansByTeacher(schoolId, user?.userId as string, page, size)
+                    case UserPermission.GUARDIAN:
+                        return await getEnrolledStudentsSelfGuardians(schoolId, user?.userId as string, page, size)
+                }
             },
             getSearchedGuardian: async (searchInput: string) => {
-                return await getSearchedEnrolledStudentGuardian(schoolId, searchInput)
+                switch (context) {
+                    case UserPermission.ALL:
+                        return await getSearchedEnrolledStudentGuardian(schoolId, searchInput)
+                    case UserPermission.TEACHER:
+                        return await getSearchedEnrolledStudentGuardianByTeacher(schoolId, user?.userId as string, searchInput)
+                    case UserPermission.GUARDIAN:
+                        return await getSearchedEnrolledStudentSelfGuardian(schoolId, user?.userId as string, searchInput)
+                }
+            },
+
+            getGlobalSearchGuardian: async (searchInput: string) => {
+                return await globalGuardianSearch(searchInput)
             }
         }
     }
@@ -34,9 +65,9 @@ export const useGuardianRepo = () => {
     const useChangeGuardian = () => useQueryUpdate(guardianSchema)
 
     const useGetGuardianWithStudents = (guardianId: string) => useFetch(
-        ['guardian-with-students', guardianId],
+        ['guardian-with-students', schoolId, guardianId],
         getGuardianWithStudentsById,
-        [guardianId],
+        [schoolId, guardianId],
         !!guardianId
     )
 

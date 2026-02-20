@@ -45,6 +45,8 @@ const StudentViewPage = () => {
         hasEdu: false
     })
 
+    console.log('ITEMS: ', linkButtons)
+
     const {context} = useBreadCrumb({
         bCItems: [
             {

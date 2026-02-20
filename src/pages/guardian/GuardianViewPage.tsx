@@ -24,7 +24,7 @@ const GuardianViewPage: React.FC = () => {
     const [linkButtons, setLinkButtons] = useState<ItemType[]>([])
     const {useGetGuardianWithStudents} = useGuardianRepo()
 
-    const {data, isLoading, isSuccess, refetch} = useGetGuardianWithStudents(guardianId)
+    const {data, isLoading, isSuccess, refetch} = useGetGuardianWithStudents(guardianId as string)
     
     const guardianName = guardian ? setName(guardian?.personalInfo) : 'Tuteur'
 
@@ -119,7 +119,7 @@ const GuardianViewPage: React.FC = () => {
             </section>
             <section>
                 <GuardianActionLinks
-                    data={guardian}
+                    data={guardian as Guardian}
                     getItems={setLinkButtons}
                     setRefresh={setShouldRefresh}
                 />

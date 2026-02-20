@@ -142,7 +142,6 @@ const InsertSchema = <TData extends FieldValues>(
                     }
                 },
                 onError: (error) => {
-                    console.log({errorCaptured: error})
                     const errorMsg = catchError(error) as string;
                     setErrorMessage(errorMsg);
                     onError?.(errorMsg);

@@ -34,17 +34,22 @@ export const useUserAccountFlow = (personalInfo?: Individual, userType?: UserTyp
     }, [accountExists, personalInfo])
 
     const form = useForm<AssignUserToSchoolSchema | SignupSchema>({
-        resolver: zodResolver(flowType === 'assign' ? assignUserToSchoolSchema : signupSchema)
+        resolver: zodResolver(flowType === 'assign' ? assignUserToSchoolSchema : signupSchema),
+        defaultValues: {
+            userType: userType
+        }
     })
     
     const handleSubmit = async (data: SignupSchema | AssignUserToSchoolSchema) => {
         if (!personalInfo) return
+
+        console.log({user: data})
         
         if (accountExists && userToAssign) {
             const assignData: AssignUserToSchoolSchema = {
                 ...data,
                 userId: userToAssign.id as number,
-            }
+            } as AssignUserToSchoolSchema
             return assignUser(assignData);
         }
         
@@ -56,7 +61,10 @@ export const useUserAccountFlow = (personalInfo?: Individual, userType?: UserTyp
                 personalInfoId: personalInfo.id as number,
                 roles: {...data.roles, schoolId: loggedUser.getSchool()?.id},
                 userType: userType
-            }
+            } as SignupSchema
+
+            console.log({createData})
+
             return registerUser(createData);
         }
     }
@@ -67,6 +75,6 @@ export const useUserAccountFlow = (personalInfo?: Individual, userType?: UserTyp
         accountExists,
         userToAssign,
         isReady: !!personalInfo,
-        useForm: form
+        useForm: form as never
     }
 }

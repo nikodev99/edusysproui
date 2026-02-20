@@ -9,7 +9,7 @@ export const classeSchema = z.object({
     category: z.string().optional(),
     grade: gradeSchemaMerge,
     department: departmentSchemaMerge.optional().nullable(),
-    roomNumber: z.number().optional(),
+    roomNumber: z.number().optional().default(0),
     monthCost: z.number({required_error: 'Le montant par mois de la classe est requis'}),
 })
 

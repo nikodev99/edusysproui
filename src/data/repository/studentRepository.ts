@@ -53,6 +53,24 @@ export const getEnrolledStudentsByTeacher = (
     })
 }
 
+export const getEnrolledStudentsByGuardian = (
+    schoolId: string,
+    guardianId: string,
+    page: number,
+    size: number,
+    sortCriteria?: string
+) => {
+    return request({
+        method: 'GET',
+        url: `/enroll/guardian-student/${schoolId}/${guardianId}`,
+        params: {
+            page: page,
+            size: size,
+            sortCriteria: `${sortCriteria ? `${sortCriteria},e.enrollmentDate:desc` : 'e.enrollmentDate:desc'}`
+        }
+    })
+}
+
 export const searchEnrolledStudentsByTeacher = (
     schoolId: string,
     teacherId: string,
@@ -61,6 +79,20 @@ export const searchEnrolledStudentsByTeacher = (
     return request({
         method: 'GET',
         url: `/enroll/search/${schoolId}/${teacherId}`,
+        params: {
+            query: searchInput
+        }
+    })
+}
+
+export const searchEnrolledStudentsByGuardian = (
+    schoolId: string,
+    guardianId: string,
+    searchInput: string
+) => {
+    return request({
+        method: 'GET',
+        url: `/enroll/guardian-student-search/${schoolId}/${guardianId}`,
         params: {
             query: searchInput
         }

@@ -1,12 +1,13 @@
 import {Button, Dropdown, Flex, Skeleton} from "antd";
 import {LuChevronDown, LuPencil} from "react-icons/lu";
-import {useToggle} from "../../../hooks/useToggle.ts";
+import {useToggle} from "@/hooks/useToggle.ts";
 import {ReactNode, useEffect, useState} from "react";
 import {ItemType} from "antd/es/menu/interface";
 import {AvatarProps} from "../ui_interfaces.ts";
 import {AvatarTitle} from "./AvatarTitle.tsx";
-import {assignKeys, firstLetter} from "../../../core/utils/utils.ts";
+import {assignKeys, firstLetter} from "@/core/utils/utils.ts";
 import {ValidationAlert} from "../form/ValidationAlert.tsx";
+import {usePermission} from "@/hooks/usePermission.ts";
 
 interface ViewProps {
     isLoading: boolean,
@@ -38,6 +39,7 @@ const ViewHeader = (
 
     const [color, setColor] = useState<string>('#000C40')
     const [open, setOpen] = useToggle(false);
+    const {canEdit} = usePermission()
 
     useEffect(() => {
         if (pColor) {
@@ -60,7 +62,7 @@ const ViewHeader = (
     }
 
     const baseItems: ItemType[] = [
-        ...(hasEdit ? [{key: 1, label: editText ?? 'Editer', icon: <LuPencil />, onClick: handleClick}] : [])
+        ...(hasEdit && canEdit ? [{key: 1, label: editText ?? 'Editer', icon: <LuPencil />, onClick: handleClick}] : [])
     ]
     const additionalItems = items ? items : []
 
@@ -85,11 +87,11 @@ const ViewHeader = (
                 </Dropdown>
             </Flex>}
 
-            {errors && <ValidationAlert
+            {errors ? <ValidationAlert
                 alertMessage={"Une erreur inattendue est survenue"}
-                messsage={errors as string}
+                message={errors as unknown[]}
                 type='error'
-            />}
+            /> : undefined}
         </Flex>
     )
 }

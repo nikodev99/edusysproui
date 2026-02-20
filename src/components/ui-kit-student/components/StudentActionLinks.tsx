@@ -25,7 +25,7 @@ export const StudentActionLinks = ({data, getItems, setRefresh}: ActionButtonsPr
     console.log({data, enrollment})
     
     const items: ItemType[] = useMemo(() => [
-        {type: 'divider'},
+        ...(canCreate ? [{type: 'divider'}]: []),
         ...(canCreate ? [{
             key: `reinscription-${studentId}`,
             label: 'Réinscrire',
@@ -44,7 +44,7 @@ export const StudentActionLinks = ({data, getItems, setRefresh}: ActionButtonsPr
             icon: <LuBan />,
             onClick: () => toDiscipline(studentId as string, enrollment as Enrollment)
         }] : []),
-        {type: 'divider'},
+        ...(canDelete ? [{type: 'divider'}]: []),
         ...(canDelete ? [{
             key: `delete-${studentId}`,
             label: 'Rétiré',
@@ -52,7 +52,7 @@ export const StudentActionLinks = ({data, getItems, setRefresh}: ActionButtonsPr
             danger: true,
             onClick: setOpenRemoveStudent
         }] : [])
-    ], [can, canCreate, canDelete, enrollment, setOpenPromoteStudent, setOpenRemoveStudent, studentId, toDiscipline])
+    ] as [], [can, canCreate, canDelete, enrollment, setOpenPromoteStudent, setOpenRemoveStudent, studentId, toDiscipline])
     
     useMenuItemsEffect(items, getItems)
 

@@ -259,9 +259,7 @@ export const Route = createBrowserRouter([
             },
             {
                 path: 'settings',
-                children: [
-                    {path: 'customize', element: <SettingCustomizePage />},
-                ]
+                element: <SettingCustomizePage />
             }
         ]
     }

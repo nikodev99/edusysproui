@@ -1,7 +1,7 @@
 import {LoginRequest, UserProfile} from "../auth/dto/user.ts";
 import React, {createContext} from "react";
-import {School} from "../entity";
-import {AssignUserToSchoolSchema, SignupSchema} from "../schema";
+import {School} from "@/entity";
+import {AssignUserToSchoolSchema, SignupSchema} from "@/schema";
 import {AxiosResponse} from "axios";
 import {MessageResponse} from "../core/utils/interfaces.ts";
 

@@ -3,10 +3,10 @@ import Responsive from "@/components/ui/layout/Responsive.tsx";
 import Grid from "@/components/ui/layout/Grid.tsx";
 import {Alert, Button, Checkbox, Collapse, Divider, Modal} from "antd";
 import {useState} from "react";
-import { GuardianDetails } from "./GuardianDetails.tsx";
+import {GuardianDetails} from "./GuardianDetails.tsx";
 import {Guardian} from "@/entity";
 import GuardianFormContent from '@/components/forms/GuardianForm.tsx'
-import {AddressOwner, IndividualType} from "@/core/shared/sharedEnums.ts";
+import {AddressOwner, IndividualType, SearchType} from "@/core/shared/sharedEnums.ts";
 import AddressForm from "@/components/forms/AddressForm.tsx";
 import {EnrollmentSchema} from "@/schema";
 import {setName} from "@/core/utils/utils.ts";
@@ -17,9 +17,11 @@ import {useGuardianRepo} from "@/hooks/actions/useGuardianRepo.ts";
 export const GuardianForm = (
     {control, errors, showField, checked, onChecked, value, setValue, isExists, setIsExists, guardian, setGuardian, parents}: GuardianProps<EnrollmentSchema, Guardian>
 ) => {
-    const {useGetGuardian, useGetPaginated} = useGuardianRepo()
-    const {getSearchedGuardian} = useGetPaginated()
     const [open, setOPen] = useState<boolean>(false)
+    const [searchType, setSearchType] = useState<SearchType>(SearchType.CLASSIC)
+    const {useGetGuardian, useGetPaginated} = useGuardianRepo()
+    const {getSearchedGuardian, getGlobalSearchGuardian} = useGetPaginated()
+
 
     /*const [data, setData] = useState<SelectProps['options']>([]);
     const timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -29,17 +31,17 @@ export const GuardianForm = (
     const setOptions = (guardians: Guardian[]) => {
         return guardians?.map((g: Guardian) => ({
             value: g.id,
-            text: `[${g.personalInfo.telephone}] ${g.personalInfo.lastName} ${g.personalInfo.firstName}`
+            text: `[${g.personalInfo.reference}] ${g.personalInfo.lastName} ${g.personalInfo.firstName}`
         }))
     }
 
     const {fetching, options, handleSearch, handleChange} = useSearch({
         setValue: setValue as never,
-        fetchFunc: getSearchedGuardian() as never,
+        fetchFunc: searchType === SearchType.GLOBAL ? getGlobalSearchGuardian as never : getSearchedGuardian as never,
         setCustomOptions: setOptions as never,
     })
 
-    const {data, isSuccess} = useGetGuardian(value)
+    const {data, isSuccess} = useGetGuardian(value as string)
 
     /*const fetch = (value: string, callback: (data: { text: string; value: string | undefined }[]) => void) => {
         if (timeout.current) {
@@ -115,7 +117,14 @@ export const GuardianForm = (
                         onOk={() => onConfirm()}
                         onCancel={() => onModalOpen()}
                     >
-                        <GuardianDetails data={options} value={value} fetching={fetching} onSearch={handleSearch} onChange={handleChange}/>
+                        <GuardianDetails
+                            data={options}
+                            value={value}
+                            fetching={fetching}
+                            onSearch={handleSearch}
+                            onChange={handleChange}
+                            getType={setSearchType}
+                        />
                     </Modal>
                     {isExists && <>
                             <Alert

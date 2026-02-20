@@ -27,7 +27,7 @@ export const InvoiceDetails = ({data, open, onClose, handleDownload, handlePay}:
             <Responsive gutter={[16, 16]} justify='space-between'>
                 <Grid>
                     <Button
-                        key="download"
+                        key="detail-download"
                         type='link'
                         icon={<LuDownload />}
                         onClick={() => handleDownload?.(data?.invoiceId as number)}
@@ -36,7 +36,7 @@ export const InvoiceDetails = ({data, open, onClose, handleDownload, handlePay}:
                 </Grid>
                 <Grid>
                     <Button
-                        key="pay"
+                        key="detail-pay"
                         type='primary'
                         icon={<LuCreditCard />}
                         children='Payer'
@@ -47,7 +47,7 @@ export const InvoiceDetails = ({data, open, onClose, handleDownload, handlePay}:
         }>
             <Descriptions items={[
                 {
-                    key: "1",
+                    key: "8",
                     children: <AvatarTitle
                         personalInfo={data?.enrolledStudent?.student?.personalInfo}
                         toView={() => toViewStudent(data?.enrolledStudent?.student?.id as string, data?.enrolledStudent?.student?.personalInfo)}
@@ -55,55 +55,55 @@ export const InvoiceDetails = ({data, open, onClose, handleDownload, handlePay}:
                     span: 3
                 },
                 {
-                    key: "2",
+                    key: "9",
                     label: 'Numéro de la facture',
                     children: data?.invoiceNumber,
                     span: 3
                 },
                 {
-                    key: "3",
+                    key: "10",
                     label: 'Date de création',
                     children: Datetime.of(data?.invoiceDate as string).fDatetime(),
                     span: 3
                 },
                 {
-                    key: "4",
+                    key: "11",
                     label: 'Date de Paiement',
                     children: Datetime.of(data?.dueDate as string).fullDay(),
                     span: 3
                 },
                 {
-                    key: "5",
+                    key: "12",
                     label: 'Date de création',
                     children: Datetime.of(data?.invoiceDate as string).fDatetime(),
                     span: 3
                 },
                 {
-                    key: "6",
+                    key: "13",
                     label: 'Montant hors taxe',
                     children: currency(data?.subTotalAmount),
                     span: 3
                 },
                 {
-                    key: "7",
+                    key: "14",
                     label: 'Remise',
                     children: currency(data?.discount),
                     span: 3
                 },
                 {
-                    key: "8",
+                    key: "15",
                     label: 'TVA',
                     children: currency(data?.taxAmount),
                     span: 3
                 },
                 {
-                    key: "9",
+                    key: "16",
                     label: 'Montant à payer',
                     children: currency(data?.totalAmount),
                     span: 3
                 },
                 {
-                    key: "10",
+                    key: "17",
                     label: 'Status',
                     children: <Space>
                         {data?.isOverdue && <Tag icon={<LuBadgeAlert />} color='danger'>Non payé</Tag>}
@@ -112,13 +112,13 @@ export const InvoiceDetails = ({data, open, onClose, handleDownload, handlePay}:
                     span: 3
                 },
                 {
-                    key: "11",
+                    key: "18",
                     label: 'Facture pour',
                     children: undefined,
                     span: 3
                 },
                 {
-                    key: "12",
+                    key: "19",
                     children: data?.items?.map(item => (
                         <ItemDescriptions item={item} />
                     )),

@@ -66,8 +66,8 @@ export const RemoveStudent = ({data, open, close, setRefresh}: ActionDrawer<Stud
                 handleFunc={handleFinish}
                 title='Souhaitez vous poursuivre ?'
                 content={`Veuillez cliquer sur OUI pour rétiré cet étudiant`}
-                tooltipTxt={`Cliquer pour rétiré l'utilisateur`}
-                btnTxt={'Rétiré l\'utilisateur'}
+                tooltipTxt={`Cliquer pour rétiré l'élève`}
+                btnTxt={`Rétirez l'apprenant`}
                 btnProps={{
                     icon: <LuTrash2 />,
                     type: 'default',

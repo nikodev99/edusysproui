@@ -15,16 +15,32 @@ import {Status} from "@/entity/enums/status.ts";
 import {DataProps} from "@/core/utils/interfaces.ts";
 import {useRedirect} from "@/hooks/useRedirect.ts";
 import {useGuardianRepo} from "@/hooks/actions/useGuardianRepo.ts";
-import {useState} from "react";
+import {useMemo, useState} from "react";
 import {ItemType} from "antd/es/menu/interface";
 import {GuardianActionLinks} from "@/components/ui-kit-guardian";
+import {UserPermission} from "@/core/shared/sharedEnums.ts";
+import {usePermission} from "@/hooks/usePermission.ts";
 
 const GuardianListPage = () => {
     const [selectedGuardian, setSelectedGuardian] = useState<Guardian | undefined>(undefined)
     const [linkButtons, setLinkButtons] = useState<ItemType[]>([])
     const [refresh, setRefresh] = useState<boolean>(false)
-    const {useGetPaginated} = useGuardianRepo()
+    const { can } = usePermission()
     const {toViewGuardian} = useRedirect()
+
+    const context = useMemo(() => {
+        if (can('viewSome', true)) {
+            return UserPermission.TEACHER
+        }
+
+        if (can('viewSelf', true)) {
+            return UserPermission.GUARDIAN
+        }
+
+        return UserPermission.ALL
+    }, [can])
+
+    const {useGetPaginated} = useGuardianRepo(context)
 
     useDocumentTitle({
         title: text.guardian.label,
@@ -40,7 +56,7 @@ const GuardianListPage = () => {
     const {getPaginatedGuardian, getSearchedGuardian} = useGetPaginated()
 
     const throughDetails = (id: string | number, record?: Guardian): void => {
-        return toViewGuardian(id, getSlug({personalInfo: record?.personalInfo}))
+        return toViewGuardian(id as string, getSlug({personalInfo: record?.personalInfo}))
     }
 
     const getItems = (_url?: string, record?: Guardian) => {
@@ -49,7 +65,7 @@ const GuardianListPage = () => {
                 key: `details-${record?.id}`,
                 icon: <LuEye />,
                 label: 'Voir le tuteur',
-                onClick: () => throughDetails(record?.id)
+                onClick: () => throughDetails(record?.id as string, record),
             },
             ...linkButtons
         ]
@@ -132,10 +148,12 @@ const GuardianListPage = () => {
 
     return(
         <>
-            <ListPageHierarchy items={pageHierarchy as [BreadcrumbType]} />
+            <ListPageHierarchy
+                items={pageHierarchy as [BreadcrumbType]}
+            />
             <ListViewer
-                callback={getPaginatedGuardian}
-                searchCallback={getSearchedGuardian}
+                callback={getPaginatedGuardian as never}
+                searchCallback={getSearchedGuardian as never}
                 tableColumns={columns as TableColumnsType<Guardian>}
                 dropdownItems={getItems}
                 throughDetails={throughDetails}

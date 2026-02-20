@@ -1,5 +1,5 @@
 import {
-    isAdmin,
+    isAdmin, isEmploye,
     isEnroll,
     isFinance,
     isGuardian,
@@ -75,6 +75,17 @@ class RouteAccess {
             }
         },
 
+        'search': {
+            module: [
+                () => isTopAdmin() || isEnroll() || isSecretary() || isGuardian()
+            ],
+            permissions: {
+                create: [],
+                edit: [],
+                delete: []
+            }
+        },
+
         /**
          * Represents an array of access control functions for the 'students' feature.
          * Each function in the array determines if a user has the necessary role
@@ -90,7 +101,7 @@ class RouteAccess {
          */
         'students': {
             module: [
-                () => isTopAdmin() || isEnroll() || isTeacher() || isSecretary()
+                () => isTopAdmin() || isEnroll() || isTeacher() || isSecretary() || isGuardian()
             ],
             actions: {
                 'new': [
@@ -126,6 +137,9 @@ class RouteAccess {
                     'teacherData': [
                         () => isTeacher()
                     ],
+                    'guardianData': [
+                        () => isGuardian()
+                    ],
                 }
             }
         },
@@ -146,7 +160,7 @@ class RouteAccess {
          */
         'guardians': {
             module: [
-                () => isTopAdmin() || isFinance() || isTeacher() || isEnroll()
+                () => isTopAdmin() || isFinance() || isTeacher() || isEnroll() || isGuardian()
             ],
             actions: {
                 'new': [
@@ -154,7 +168,16 @@ class RouteAccess {
                 ],
                 ':id': [
                     () => isTopAdmin() || isFinance() || isTeacher() || isEnroll() || isGuardian()
-                ]
+                ],
+                ':id/payments': [
+                    () => isTopAdmin() || isFinance() || isGuardian()
+                ],
+                ':id/invoices': [
+                    () => isTopAdmin() || isFinance() || isGuardian()
+                ],
+                ':id/billing-settings': [
+                    () => isTopAdmin() || isFinance() || isGuardian()
+                ],
             },
             permissions: {
                 create: [
@@ -167,13 +190,17 @@ class RouteAccess {
                     () => isTopAdmin()
                 ],
                 special: {
-                    // Finance can view payment information
-                    'viewPayments': [
-                        () => isTopAdmin() || isFinance() || isGuardian()
+                    "pay": [
+                        () => isGuardian()
                     ],
-                    // Guardians can update their own contact preferences
                     'updateContactPreferences': [
                         () => isGuardian()
+                    ],
+                    'viewSome': [
+                        () =>  isTeacher()
+                    ],
+                    'viewSelf': [
+                        () =>  isGuardian()
                     ]
                 }
             }
@@ -633,13 +660,17 @@ class RouteAccess {
         [text.home.href]: {
             canView: () => true
         },
-
+        
+        [text.search.href]: {
+            canView: () => isTopAdmin() || isEnroll() || isSecretary() || isGuardian()
+        },
+        
         [text.student.href]: {
-            canView: () => isTopAdmin() || isEnroll() || isTeacher()
+            canView: () => isTopAdmin() || isEnroll() || isTeacher() || isGuardian()
         },
 
         [text.guardian.href]: {
-            canView: () => isTopAdmin() || isFinance() || isTeacher()
+            canView: () => isTopAdmin() || isFinance() || isTeacher() || isGuardian()
         },
 
         [text.teacher.href]: {
@@ -657,9 +688,17 @@ class RouteAccess {
         [text.att.href]: {
             canView: () => isTopAdmin() || isSecretary()
         },
+        
+        [text.library.href]: {
+            canView: () => true
+        },
 
         [text.finance.href]: {
             canView: () => isTopAdmin() || isFinance()
+        },
+        
+        [text.chat.href]: {
+            canView: () => true
         },
 
         '/report-and-analytics': {
@@ -667,7 +706,7 @@ class RouteAccess {
         },
 
         [text.employee.href]: {
-            canView: () => isTopAdmin() || isHR()
+            canView: () => isTopAdmin() || isHR() || isEmploye()
         },
 
         [text.org.href]: {
@@ -677,7 +716,7 @@ class RouteAccess {
         [text.settings.href]: {
             canView: () => true
         }
-    }
+    } as Record<string, MenuPermission>
 
     public extractRouteWithoutSchoolSlug (pathname: string): { fullRoute: string; module: string; action: string } {
         const parts = pathname.split('/').filter(Boolean);

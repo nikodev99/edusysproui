@@ -1,7 +1,7 @@
 import {LoginRequest, UserProfile} from "../auth/dto/user.ts";
 import React, {createContext} from "react";
 import {School} from "@/entity";
-import {AssignUserToSchoolSchema, SignupSchema} from "@/schema";
+import {AssignUserToSchoolSchema, SchoolSelectionSchema, SignupSchema} from "@/schema";
 import {AxiosResponse} from "axios";
 import {MessageResponse} from "../core/utils/interfaces.ts";
 
@@ -15,7 +15,9 @@ export type UserAuthContext = {
     assignUser: (data: AssignUserToSchoolSchema) => Promise<AxiosResponse<MessageResponse>> | false
 
     loginUser: (data: LoginRequest) => Promise<boolean>
+    schoolSelection: (data: SchoolSelectionSchema) => Promise<boolean>
     refresh: () => Promise<boolean>
+    change: () => Promise<boolean>
     logoutUser: () => void
     isLoggedIn: () => boolean
     shouldRedirectToHome: () => boolean

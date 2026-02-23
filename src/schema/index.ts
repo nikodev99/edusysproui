@@ -12,7 +12,13 @@ import {assignmentDateUpdateSchema, assignmentSchema} from "./models/assignmentS
 import {attendanceSchema} from "./models/attendanceSchema.ts";
 import {planningSchema, planningSchemaMerge} from "./models/planningSchema.ts";
 import {scoreSchema, singleScoreSchema} from "./models/scoreSchema.ts";
-import {assignUserToSchoolSchema, loginSchema, logoutSchema, signupSchema} from "./models/authSchema.ts";
+import {
+    assignUserToSchoolSchema,
+    loginSchema,
+    logoutSchema,
+    selectSchoolSchema,
+    signupSchema
+} from "./models/authSchema.ts";
 import {employeeSchema} from "./models/employeeSchema.ts";
 import {schoolSchema} from "./models/schoolSchema.ts";
 import {academicYearSchema} from "./models/academicYearSchema.ts";
@@ -66,6 +72,7 @@ export type AssignmentSchema = z.infer<typeof assignmentSchema>
 export type ScoreSchema = z.infer<typeof scoreSchema>
 export type SingleScoreSchema = z.infer<typeof singleScoreSchema>
 export type LoginSchema = z.infer<typeof loginSchema>
+export type SchoolSelectionSchema = z.infer<typeof selectSchoolSchema>
 export type LogoutSchema = z.infer<typeof logoutSchema>
 export type SignupSchema = z.infer<typeof signupSchema>
 export type EmployeeSchema = z.infer<typeof employeeSchema>

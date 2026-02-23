@@ -134,7 +134,6 @@ const InsertSchema = <TData extends FieldValues>(
             { postFn: postFunc, data: formData },
             {
                 onSuccess: (response) => {
-                    console.log({response: response})
                     if (response.status === 200) {
                         setSuccessMessage(messageSuccess);
                         toReset ? handleForm.reset() : undefined;
@@ -142,7 +141,6 @@ const InsertSchema = <TData extends FieldValues>(
                     }
                 },
                 onError: (error) => {
-                    console.log({error})
                     const errorMsg = catchError(error) as string;
                     setErrorMessage(errorMsg);
                     onError?.(errorMsg);

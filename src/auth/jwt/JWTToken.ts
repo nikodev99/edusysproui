@@ -200,6 +200,13 @@ export class JWTTokenManager {
         return (decodeResult.payload as never)[claimName] ?? null;
     }
 
+    public requiresSchoolSelection(forceRefresh: boolean = false): boolean {
+        const requires = this.getTokenClaim("requiresSchoolSelection", forceRefresh);
+        if (!requires) return false;
+
+        return requires
+    }
+
     /**
      * Check if the token is expired based on 'exp' claim
      * Useful for proactive token refresh logic

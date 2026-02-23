@@ -1,13 +1,24 @@
-import {Alert, Button, Divider, Dropdown, MenuProps} from "antd";
-import {LuCog, LuLogOut, LuShoppingCart, LuUser} from "react-icons/lu";
+import {Alert, Button, Divider, Dropdown, MenuProps, Space} from "antd";
+import {LuCog, LuLogOut, LuRefreshCcw, LuShoppingCart, LuUser} from "react-icons/lu";
 import {firstWord, getSlug} from "@/core/utils/utils.ts";
 import {useAuth} from "@/hooks/useAuth.ts";
 import {useRedirect} from "@/hooks/useRedirect.ts";
 import {isEmploye, isGuardian, isTeacher} from "@/auth/dto/role.ts";
+import {ModalConfirmButton} from "@/components/ui/layout/ModalConfirmButton.tsx";
+import {useMemo} from "react";
+import {jwtTokenManager} from "@/auth/jwt/JWTToken.ts";
+import {useMutation} from "@tanstack/react-query";
 
 const AvatarDropdown = () => {
-    const {user, logoutUser} = useAuth()
-    const {toViewEmployee, toViewTeacher, toViewGuardian, toGuardianInv} = useRedirect()
+    const {user, logoutUser, change} = useAuth()
+    const {toViewEmployee, toViewTeacher, toViewGuardian, toGuardianInv, toSchoolSelection} = useRedirect()
+
+    const {mutate} = useMutation({
+        mutationFn: change,
+        onSuccess: toSchoolSelection
+    })
+
+    const showChangeBtn = useMemo(() => jwtTokenManager.requiresSchoolSelection(), [])
 
     const redirectToProfile = () => {
         if (isTeacher())
@@ -39,15 +50,20 @@ const AvatarDropdown = () => {
             icon: <LuCog />
         },
         {
-            key: '4',
+            key: '5',
             label: 'Déconnexion',
             icon: <LuLogOut />,
+            danger: true,
             onClick: handleLogout,
         }
     ]
 
     function handleLogout() {
         logoutUser()
+    }
+
+    function handleChangeSchool () {
+        mutate()
     }
 
     return(
@@ -67,9 +83,17 @@ const AvatarDropdown = () => {
                 </div>
             </div>
             <Divider/>
-            <div className='avatar-btn--logout'>
-                <Button icon={<LuLogOut  size={15}/>} onClick={handleLogout}>Déconnexion</Button>
-            </div>
+            <Space direction={'vertical'} align={'center'}>
+                {showChangeBtn && <ModalConfirmButton
+                    handleFunc={handleChangeSchool}
+                    title="Changer d'établissement"
+                    btnTxt='Changer'
+                    btnProps={{
+                        icon: <LuRefreshCcw size={15} />,
+                    }}
+                />}
+                <Button icon={<LuLogOut  size={15}/>} onClick={handleLogout} danger>Déconnexion</Button>
+            </Space>
         </div>
     )
 }

@@ -13,7 +13,9 @@ export const useRedirect = () => {
 
     const toLogin = () => redirectTo("/login")
 
-    const toDashboard = () => redirectTo(text.home.href)
+    const toSchoolSelection = () => redirectTo('/active_school')
+
+    const toDashboard = (show: boolean = true) => redirectTo(show ? text.home.href : '/')
 
     const toStudent = () => redirectTo(text.student.href)
 
@@ -185,6 +187,7 @@ export const useRedirect = () => {
 
     return {
         toLogin,
+        toSchoolSelection,
         toDashboard,
         toStudent,
         toEnrollStudent,

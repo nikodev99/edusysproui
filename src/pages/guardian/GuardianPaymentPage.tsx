@@ -388,6 +388,7 @@ const GuardianPaymentPage = () => {
                     <Flex justify='space-around' align='center' vertical>
                         <div style={{marginBottom: '50px'}}>
                             <Segmented
+                                block
                                 onChange={setPayementGateway as never}
                                 size='large'
                                 options={[

@@ -76,6 +76,10 @@ export const loginSchema = z.object({
         })
 })
 
+export const selectSchoolSchema = z.object({
+    schoolId: z.string({required_error: "Le nom de l'établissement est requis"}),
+})
+
 export const userSchoolRoleSchema = z.object({
     schoolId: z.string().optional(),
     roles: z.array(z.string()).optional(),

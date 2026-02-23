@@ -1,12 +1,19 @@
 import {useEffect, useState} from "react";
 import {LoginRequest, toUser, UserProfile, UserProfileToken} from "@/auth/dto/user.ts";
 import LocalStorageManager from "@/core/LocalStorageManager.ts";
-import {loginApi, logoutApi, signupApi, tokenRefresh, assignToUser} from "@/auth/services/AuthService.ts.tsx";
+import {
+    loginApi,
+    logoutApi,
+    signupApi,
+    tokenRefresh,
+    assignToUser,
+    loginToSchool, tokenChange
+} from "@/auth/services/AuthService.ts.tsx";
 import {UserContext, UserContextProps} from "@/context/UserContext.ts";
 import {jwtTokenManager} from "@/auth/jwt/JWTToken.ts";
 import {loggedUser} from "@/auth/jwt/LoggedUser.ts";
 import {School} from "@/entity";
-import {AssignUserToSchoolSchema, SignupSchema} from "@/schema";
+import {AssignUserToSchoolSchema, SchoolSelectionSchema, SignupSchema} from "@/schema";
 import {isAxiosError} from "axios";
 import {useUserRepo} from "@/hooks/actions/useUserRepo.ts";
 import {useQueryClient} from "@tanstack/react-query";
@@ -107,13 +114,56 @@ export const UserProvider = ({children}: UserContextProps) => {
         }
     }
 
+    const schoolSelection = async (data: SchoolSelectionSchema) => {
+        setErrorMessage(null)
+        setErrorType(null)
+        try {
+            const resp = await loginToSchool(data)
+
+            if (resp && 'status' in resp && resp.status >= 200 && resp.status < 300) {
+                if ('data' in resp) {
+                    return cashedLoggedUser(resp.data, user?.username)
+                }
+                setErrorMessage("Token Invalid")
+                return false
+            }else {
+                setErrorMessage("Votre token ne vous permet pas de vous connecter à cet établissement")
+                return false
+            }
+        }catch(error) {
+            if (isAxiosError(error)) {
+                const response = error.response
+                if (response && 'status' in response) {
+                    setErrorType(response.data?.message)
+                    switch (response.status) {
+                        case 401:
+                            setErrorMessage("Connection à l'établissement réfusé")
+                            return false
+                        case 423:
+                            setErrorMessage("Votre compte n'est pas activé, pour cet établissement. Veuillez contacter l'administrateur pour activer votre compte.")
+                            return false
+                        case 403:
+                            setErrorMessage("Votre compte a été verrouillé, pour cet établissement. Veuillez contacter l'administrateur pour déverrouiller votre compte.")
+                            return false
+                        default:
+                            setErrorMessage("Echec de l'authentification.")
+                            return false
+                    }
+                }
+            }
+            setErrorMessage("Une erreur s'est produite lors de la connexion. Veuillez réessayer...")
+            return false
+        }
+    }
+
     const handleRefreshToken = async () => {
         setErrorMessage(null)
         setErrorType(null)
         try {
             const response = await tokenRefresh()
-            if (response && response?.status === 200 && 'data' in response) {
+            if ('status' in response && response?.status >= 200  && response?.status < 300 && 'data' in response) {
                 const success = cashedLoggedUser(response.data, undefined)
+
                 if (success) {
                     jwtTokenManager.clearCache()
                     jwtTokenManager.refreshTokenCache()
@@ -128,6 +178,32 @@ export const UserProvider = ({children}: UserContextProps) => {
         }catch (error) {
             console.error("Error during token refresh:", error)
             setErrorType("Refresh Error")
+            return false
+        }
+    }
+
+    const handleChangeToken = async () => {
+        setErrorMessage(null)
+        setErrorType(null)
+        try {
+            const response = await tokenChange()
+            if ('status' in response && response?.status >= 200  && response?.status < 300 && 'data' in response) {
+                const success = cashedLoggedUser(response.data, undefined)
+
+                if (success) {
+                    jwtTokenManager.clearCache()
+                    jwtTokenManager.refreshTokenCache()
+                    return true
+                }
+                return false
+            }else {
+                setErrorMessage("An error occurred while changing your token, please try again...")
+                setErrorType("Change Error")
+                return false
+            }
+        }catch (error) {
+            console.error("Error during token change:", error)
+            setErrorType("Change Error")
             return false
         }
     }
@@ -156,29 +232,15 @@ export const UserProvider = ({children}: UserContextProps) => {
         }catch (error) {
             console.error("Error calling logout API:", error)
         }finally {
-            loggedUser.removeToken()
-            loggedUser.removeRefreshToken()
-            loggedUser.removeUser()
-            loggedUser.removeSchool()
-            loggedUser.clearCache()
-            loggedUser.removeRoles()
-            LocalStorageManager.remove('lastActivity')
-
-            jwtTokenManager.clearCache()
-            LocalStorageManager.clear()
+            clearAll()
             queryClient.clear()
-
-            setUser(null)
-            setToken(null)
-            setRefreshToken(null)
-            setErrorMessage(null)
-            setErrorType(null)
-            setUserSchool(null)
         }
     }
 
     const cashedLoggedUser = (data: UserProfileToken, username?: string) => {
         try {
+            clearAll()
+
             // Update storage first
             loggedUser.setToken(data.accessToken)
             loggedUser.setRefreshToken(data.refreshToken)
@@ -202,7 +264,7 @@ export const UserProvider = ({children}: UserContextProps) => {
             setUserSchool(school)
 
             //Save the login activity
-            if (username)
+            if (username && data.accountId)
                 saveActivity({
                     accountId: data.accountId,
                     action: 'Login successful with cookie',
@@ -214,6 +276,26 @@ export const UserProvider = ({children}: UserContextProps) => {
             console.error("Error caching logged user:", error)
             return false
         }
+    }
+
+    const clearAll = () => {
+        loggedUser.removeToken()
+        loggedUser.removeRefreshToken()
+        loggedUser.removeUser()
+        loggedUser.removeSchool()
+        loggedUser.clearCache()
+        loggedUser.removeRoles()
+        LocalStorageManager.remove('lastActivity')
+
+        jwtTokenManager.clearCache()
+        LocalStorageManager.clear()
+
+        setUser(null)
+        setToken(null)
+        setRefreshToken(null)
+        setErrorMessage(null)
+        setErrorType(null)
+        setUserSchool(null)
     }
 
     const logout = () => {
@@ -229,7 +311,9 @@ export const UserProvider = ({children}: UserContextProps) => {
             registerUser: register,
             assignUser: assignSchoolToUser,
             loginUser: login,
+            schoolSelection,
             refresh: handleRefreshToken,
+            change: handleChangeToken,
             logoutUser: logout,
             isLoggedIn: isLoggedIn,
             shouldRedirectToHome: shouldRedirectToHome,

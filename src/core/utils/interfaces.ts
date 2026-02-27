@@ -308,11 +308,16 @@ export type ListViewerProps<TData extends object, TError> = ListProps<TData> & {
     callback: () => Promise<AxiosResponse<TData | TData[], TError>>
     searchCallback?: (...args: unknown[]) => Promise<AxiosResponse<TData[]>>
     hasCount?: boolean,
-    countTitle?: string,
+    countTitle?: string | ReactNode,
     fetchId?: string | string[]
     callbackParams?: unknown[]
     searchCallbackParams?: unknown[]
     emptyPage?: ReactNode
+}
+
+export interface BtnFilter<TData extends object> {
+    key?: keyof TData
+    value?: TData[keyof TData]
 }
 
 export interface ListProps<TData extends object> {
@@ -345,6 +350,9 @@ export interface ListProps<TData extends object> {
     pageTitle?: ReactNode
     noSearch?: boolean
     setLoading?: (isLoading: boolean) => void
+    btnFilter?: BtnFilter<TData> | null
+    searchInputPlaceholder?: string
+    onInputSearch?: (data: TData[], searchQuery?: string) => TData[]
 }
 
 export interface AutoScrollProps {
@@ -612,6 +620,7 @@ export interface SelectEntityProps<
     multiple?: boolean
     defaultValue?: EntityID | EntityID[]
     getResource?: (resource: Entity | Entity[]) => void
+    style?: CSSProperties
 }
 
 export type SelectEntity<

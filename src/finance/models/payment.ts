@@ -70,7 +70,8 @@ export interface PaymentResponse {
 export interface PaymentSummary {
     totalOutstanding: number,
     totalPaidThisYear: number,
-    overdueInvoices: number
+    overdueInvoices: number,
+    countStudent: number
 }
 
 export enum PaymentGateway {
@@ -86,6 +87,12 @@ export enum PaymentMethod {
     BANK_TRANSFER
 }
 
+export const GATEWAY_META = {
+    [PaymentGateway.MTN_MOMO]: { label: "MTN MoMo",     color: "#92400e", bg: "#fef3c7" },
+    [PaymentGateway.AIRTEL_MOMO]: { label: "Airtel Money", color: "#991b1b", bg: "#fee2e2" },
+    [PaymentGateway.STRIPE]: { label: "Visa",       color: "#3730a3", bg: "#e0e7ff" },
+};
+
 export enum PaymentStatus {
     PENDING,
     COMPLETED,
@@ -93,6 +100,14 @@ export enum PaymentStatus {
     REFUNDED,
     CANCELLED
 }
+
+export const STATUS_META = {
+    [PaymentStatus.COMPLETED]: { label: "Complété",   bg: "#d1fae5", color: "#065f46", dot: "#10b981" },
+    [PaymentStatus.PENDING]:   { label: "En attente", bg: "#fef9c3", color: "#78350f", dot: "#f59e0b" },
+    [PaymentStatus.FAILED]:    { label: "Échoué",     bg: "#fee2e2", color: "#991b1b", dot: "#ef4444" },
+    [PaymentStatus.REFUNDED]:  { label: "Remboursé",  bg: "#e0e7ff", color: "#3730a3", dot: "#6366f1" },
+    [PaymentStatus.CANCELLED]: { label: "Annulé",     bg: "#f3f4f6", color: "#374151", dot: "#6b7280" },
+};
 
 export type PaymentSchema = z.infer<typeof paymentSchema>
 export type MobileMobilePayment = z.infer<typeof mobileMoneyPayment>

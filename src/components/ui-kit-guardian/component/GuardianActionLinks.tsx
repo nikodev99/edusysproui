@@ -7,7 +7,13 @@ import {AiOutlineUserDelete} from "react-icons/ai";
 import {useMenuItemsEffect} from "@/hooks/useMenuItemsEffect.ts";
 import {useToggle} from "@/hooks/useToggle.ts";
 import {useAccount} from "@/hooks/useAccount.ts";
-import {LuDollarSign, LuMessageCircle, LuReceipt, LuUserPlus} from "react-icons/lu";
+import {
+    LuBanknote,
+    LuMessageCircle,
+    LuReceipt,
+    LuSettings2,
+    LuUserPlus
+} from "react-icons/lu";
 import {useRedirect} from "@/hooks/useRedirect.ts";
 import {usePermission} from "@/hooks/usePermission.ts";
 import {ItemType} from "antd/es/menu/interface";
@@ -43,13 +49,13 @@ export const GuardianActionLinks = ({data, getItems}: GuardianActionButtons) => 
         }] : []),
         {
             key: `@payments-${data?.id}`,
-            icon: <LuDollarSign />,
+            icon: <LuBanknote />,
             label: 'Historique de Paiements',
             onClick: () => toGuardianPay(data?.id as string)
         },
         ...(can('pay', true) ? [{
             key: `@billing-${data?.id}`,
-            icon: <LuDollarSign />,
+            icon: <div><LuSettings2 /></div>,
             label: 'Paramètres de facturation',
             onClick: () => toGuardianBilling(data?.id as string)
         }] : []),

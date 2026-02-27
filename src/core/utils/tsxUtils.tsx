@@ -6,13 +6,14 @@ import {Color} from "./interfaces.ts";
 import {MarkType} from "@/entity/enums/MarkType.ts";
 import {Assignment} from "@/entity";
 import {
-    LuAward,
+    LuArrowRight,
+    LuAward, LuBadgeDollarSign,
     LuCalendarDays,
     LuCheck, LuCircleAlert,
     LuCircleCheck, LuCircleX,
     LuClock,
-    LuClock9, LuCreditCard, LuFileText,
-    LuMedal,
+    LuClock9, LuCreditCard, LuFileText, LuHandCoins,
+    LuMedal, LuPhoneOutgoing,
     LuRefreshCcw, LuSend, LuThumbsDown, LuThumbsUp, LuTrendingDown,
     LuX
 } from "react-icons/lu";
@@ -23,6 +24,7 @@ import {redirectTo} from "@/context/RedirectContext.ts";
 import {text} from "./text_display.ts";
 import {AssignmentType, getAssignmentType} from "@/entity/enums/assignmentType.ts";
 import {InvoiceStatus, StatusInput} from "@/finance/models/invoice.ts";
+import {GATEWAY_META, PaymentGateway, PaymentMethod, PaymentStatus, STATUS_META} from "@/finance/models/payment.ts";
 
 export const StatusTags = ({status, female}: {status: Status, female?: boolean}): ReactNode => {
     const label = getStatusKey(status, female)
@@ -284,6 +286,51 @@ export const GetStatusTag = ({status, isOverdue}: { status: StatusInput, isOverd
         <Tag icon={cfg.icon} color={cfg.color}>
             {cfg.text}
         </Tag>
+    );
+}
+
+export const PaymentMethodChip = ({method, gateway}: {method: keyof PaymentMethod, gateway: keyof PaymentGateway}) => {
+    const METHOD_META = {
+        [PaymentMethod.MOBILE_MONEY]: { label: "Mobile Money", icon: <LuPhoneOutgoing /> },
+        [PaymentMethod.BANK_TRANSFER]: { label: "Virement",     icon: <LuBadgeDollarSign /> },
+        [PaymentMethod.BANK_CARD]: { label: "Carte",        icon: <LuCreditCard /> },
+        [PaymentMethod.CASH]: { label: "Espèces",      icon: <LuHandCoins /> },
+    };
+
+    const m = METHOD_META[method] || { label: method, icon: <LuArrowRight /> }
+
+    const g = gateway ? GATEWAY_META[gateway] : null;
+
+    return (
+        <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+            <span style={{ fontSize: 12, fontWeight: 600, color: '#4b5563' }}>{m.icon} {m.label}</span>
+            {g && (
+                <span style={{
+                    fontSize: 10, fontWeight: 700, letterSpacing: "0.04em",
+                    color: g.color, background: g.bg,
+                    padding: "1px 7px", borderRadius: 4, width: "fit-content",
+                }}>
+          {g.label}
+        </span>
+            )}
+        </div>
+    );
+}
+
+export const PaymentStatusBadge = ({status}: {status: keyof PaymentStatus}) => {
+    const m = STATUS_META[status] || { label: status, bg: "#f3f4f6", color: "#374151", dot: "#9ca3af" };
+
+    return (
+        <span style={{
+            display: "inline-flex", alignItems: "center", gap: 5,
+            padding: "3px 10px", borderRadius: 20,
+            background: m.bg, color: m.color,
+            fontSize: 11, fontWeight: 700, letterSpacing: "0.04em",
+            textTransform: "uppercase", whiteSpace: "nowrap",
+        }}>
+      <span style={{ width: 6, height: 6, borderRadius: "50%", background: m.dot, flexShrink: 0, display: "inline-block" }} />
+            {m.label}
+    </span>
     );
 }
 

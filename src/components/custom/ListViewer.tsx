@@ -1,4 +1,4 @@
-import {ChangeEvent, Key, ReactNode, useEffect, useLayoutEffect, useState} from "react";
+import {ChangeEvent, Key, ReactNode, useEffect, useLayoutEffect, useMemo, useState} from "react";
 import {Button, Flex, Input, Pagination, Space, Table, TablePaginationConfig, Tooltip} from "antd";
 import {FilterValue, SorterResult } from "antd/es/table/interface";
 import LocalStorageManager from "@/core/LocalStorageManager.ts";
@@ -22,7 +22,7 @@ const ListViewer = <TData extends object, TError>(
         callback, searchCallback, tableColumns, dropdownItems, throughDetails, hasCount, countTitle, localStorage,
         fetchId, cardData, cardNotAvatar, level, refetchCondition, callbackParams, searchCallbackParams, infinite,
         uuidKey, tableProps, descMargin, itemSize, displayItem, filters, shareSearchQuery, onSelectData, dataDescription,
-        tableHeight, hasDesc = true, pageTitle, noSearch = false, setLoading, emptyPage
+        tableHeight, hasDesc = true, pageTitle, noSearch = false, setLoading, emptyPage, btnFilter, searchInputPlaceholder, onInputSearch
     }: ListViewerProps<TData, TError>
 ) => {
 
@@ -50,7 +50,43 @@ const ListViewer = <TData extends object, TError>(
             ? [...callbackParams, pageCount, size, sortField, sortOrder] 
             : [pageCount, size, sortField, sortOrder]
     )
-    
+
+    const dataSource = useMemo(() => {
+        let data: TData[] | StudentListDataType[] | undefined
+        if (!fetchId) {
+            data = content?.map(tData => {
+                const c = tData as Enrollment
+                return {
+                    enrollmentId: c?.id,
+                    id: c?.student?.id,
+                    academicYear: c?.academicYear,
+                    reference: c?.student?.personalInfo?.reference,
+                    firstName: c?.student?.personalInfo?.firstName,
+                    lastName: c?.student?.personalInfo?.lastName,
+                    gender: c?.student?.personalInfo?.gender,
+                    lastEnrolledDate: c?.enrollmentDate,
+                    classeId: c?.classe.id,
+                    classe: c?.classe?.name,
+                    age: getAge(c?.student.personalInfo?.birthDate as number[]),
+                    grade: c?.classe?.grade?.section,
+                    image: c?.student?.personalInfo?.image,
+                };
+            }) as StudentListDataType[]
+        } else {
+            data = content as TData[]
+        }
+
+        if (btnFilter) {
+            return data?.filter(c => c[btnFilter.key as keyof typeof c] === btnFilter.value)
+        }
+
+        if (searchQuery && onInputSearch) {
+            return onInputSearch(data as unknown as TData[], searchQuery)
+        }
+
+        return data
+    }, [btnFilter, content, fetchId, onInputSearch, searchQuery])
+
     useEffect( () => {
         if (searchCallback && searchQuery) {
             fetchFunc(searchCallback, searchCallbackParams ? [...searchCallbackParams, searchQuery] : [searchQuery])
@@ -152,27 +188,6 @@ const ListViewer = <TData extends object, TError>(
         return record[uuidKey as keyof TData] || uuidKey
     }
 
-    const dataSource = !fetchId
-        ? content?.map(tData => {
-            const c = tData as Enrollment
-            return {
-                enrollmentId: c.id,
-                id: c.student.id,
-                academicYear: c.academicYear,
-                reference: c.student?.personalInfo?.reference,
-                firstName: c.student?.personalInfo?.firstName,
-                lastName: c.student?.personalInfo?.lastName,
-                gender: c.student?.personalInfo?.gender,
-                lastEnrolledDate: c.enrollmentDate,
-                classeId: c.classe.id,
-                classe: c.classe?.name,
-                age: getAge(c.student.personalInfo?.birthDate as number[]),
-                grade: c.classe?.grade?.section,
-                image: c.student?.personalInfo?.image,
-            } as StudentListDataType;
-        }).filter((item): item is StudentListDataType => item !== null)
-        : content;
-
     const handleUpdateSearchQuery = () => {
         setSearchQuery(undefined)
         shareSearchQuery?.(undefined)
@@ -187,11 +202,11 @@ const ListViewer = <TData extends object, TError>(
                     <PageDescription
                         count={dataCount}
                         title={
-                            countTitle
+                            typeof countTitle === 'string'
                                 ? (countTitle.endsWith('s')
                                     ? countTitle
                                     : `${countTitle}${dataCount > 1 ? 's' : ''}`)
-                                : undefined
+                                : countTitle
                         }
                         isCount={hasCount !== undefined ? hasCount : true}
                         description={!hasDesc ? dataDescription : undefined}
@@ -201,7 +216,7 @@ const ListViewer = <TData extends object, TError>(
                         {!noSearch && <Input
                             allowClear
                             size='middle'
-                            placeholder='Recherche...'
+                            placeholder={searchInputPlaceholder ?? 'Recherche...'}
                             style={{width: '300px'}}
                             className='search__input'
                             onChange={handleSearchInput}

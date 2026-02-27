@@ -1,12 +1,12 @@
-import {SelectEntity} from "../../core/utils/interfaces.ts";
+import {SelectEntity} from "@/core/utils/interfaces.ts";
 import {useCallback, useEffect, useMemo, useState} from "react";
 import {Select} from "antd";
-import {useToggle} from "../../hooks/useToggle.ts";
+import {useToggle} from "@/hooks/useToggle.ts";
 
 export const CustomEntitySelect = <TEntity extends object, TEntityID extends string | number | number[]>(
     {
         data, getEntity, uniqueValue, options: {id, label}, width = '200px', getResource,
-        entities, onlyCurrent, variant = 'borderless', placeholder, isLoading, multiple,
+        entities, onlyCurrent, variant = 'borderless', placeholder, isLoading, multiple, style
     }: SelectEntity<TEntity, TEntityID>
 ) => {
     const [activeResource, setActiveResource] = useState<TEntity | TEntity[]>()
@@ -29,7 +29,7 @@ export const CustomEntitySelect = <TEntity extends object, TEntityID extends str
      * - `uniqueValue?.key`
      *
      * Returns:
-     * The filtered or unfiltered list of entities based on the applied conditions.
+     * The filtered or unfiltered list of entities is based on the applied conditions.
      */
     const allEntities = useMemo(() => {
         let base = entities && entities.length > 0 ? entities : data;
@@ -118,7 +118,7 @@ export const CustomEntitySelect = <TEntity extends object, TEntityID extends str
                 placeholder={placeholder}
                 loading={isLoading}
                 mode={multiple ? 'multiple' : undefined}
-                style={{width: '100%'}}
+                style={{width: '100%', ...style}}
             />
         </div>
     )

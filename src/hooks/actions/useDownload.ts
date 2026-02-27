@@ -7,40 +7,26 @@ import {catchError} from "@/data/action/error_catch.ts";
 export const useDownload = () => {
     const schoolId = useGlobalStore(state => state.schoolId)
 
-    const useDownloadInvoice = () => useMutation<AxiosResponse<Blob>, unknown, {invoiceId: number, invoiceNumber?: string}>({
-        mutationFn: ({invoiceId}) => DownloadApi.downloadInvoice(invoiceId, schoolId),
-        onSuccess: async (response: AxiosResponse<Blob>, variables) => {
-            const blob = response.data;
-
-            const contentDisposition =
-                response.headers['content-disposition'] ||
-                response.headers['Content-Disposition'];
-
-            let filename = `invoice-${variables.invoiceNumber}.pdf`;
-
-            if (contentDisposition) {
-                const match =
-                    /filename\*?=(?:UTF-8'')?["']?([^;"']+)/i.exec(contentDisposition);
-                if (match?.[1]) {
-                    filename = decodeURIComponent(match[1].replace(/(^"|"$)/g, ''));
-                }
-            }
-
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            window.URL.revokeObjectURL(url);
-        },
-        onError: async (error: unknown) => {
-            catchError(error);
-        }
+    const useDownloadInvoice = () =>
+        useMutation<AxiosResponse<Blob>, unknown, {invoiceId: number, invoiceNumber?: string}>({
+            mutationFn: ({invoiceId}) =>
+                DownloadApi.downloadInvoice(invoiceId, schoolId),
+            onSuccess: async (response: AxiosResponse<Blob>, variables) =>
+                DownloadApi.fileDownload(response, `Invoice-${variables?.invoiceNumber}`),
+            onError: async (error: unknown) => catchError(error)
     })
+
+    const useDownloadReceipt = () =>
+        useMutation<AxiosResponse<Blob>, unknown, {paymentId: string, voucherNumber?: string}>({
+            mutationFn: ({paymentId}) =>
+                DownloadApi.downloadPayment(paymentId, schoolId),
+            onSuccess: async (response: AxiosResponse<Blob>, variables) =>
+                DownloadApi.fileDownload(response, `Paiement-${variables?.voucherNumber}`),
+            onError: async (error: unknown) => catchError(error)
+        })
 
     return {
         useDownloadInvoice,
+        useDownloadReceipt,
     }
 }

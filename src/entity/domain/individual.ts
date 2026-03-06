@@ -1,7 +1,7 @@
 import {Gender} from "../enums/gender.tsx";
-import {Address} from "./address.ts";
+import {Address} from "@/entity";
 import {Status} from "../enums/status.ts";
-import {UserType} from "../../auth/dto/user.ts";
+import {UserType} from "@/auth/dto/user.ts";
 
 export interface Individual {
     id: bigint | number;

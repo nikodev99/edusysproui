@@ -65,8 +65,9 @@ const UserActivityPage = () => {
         }
     ], [])
 
-    const handleSelectMenu = (e: ItemType) => {
-        setCurrent(e?.key as React.Key);
+    //TODO Revoir ce que ceci fait j'ai remplacer (e: ItemType) à ({key})
+    const handleSelectMenu = ({key}) => {
+        setCurrent(key as React.Key);
     };
 
     return(

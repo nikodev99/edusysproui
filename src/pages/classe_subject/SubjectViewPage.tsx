@@ -1,23 +1,23 @@
 import {useParams} from "react-router-dom";
 import {useEffect, useMemo, useState} from "react";
-import {Classe, Course, Schedule, Teacher} from "../../entity";
-import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
-import {cutStatement, getUniqueness} from "../../core/utils/utils.ts";
+import {Classe, Course, Schedule, Teacher} from "@/entity";
+import {useDocumentTitle} from "@/hooks/useDocumentTitle.ts";
+import {cutStatement, getUniqueness} from "@/core/utils/utils.ts";
 import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
-import {text} from "../../core/utils/text_display.ts";
+import {text} from "@/core/utils/text_display.ts";
 import {SuperWord} from "../../core/utils/tsxUtils.tsx";
 import ViewHeader from "../../components/ui/layout/ViewHeader.tsx";
 import {Tag} from "antd";
 import {ItemType} from "antd/es/menu/interface";
 import {LuFileArchive} from "react-icons/lu";
 import {ViewRoot} from "../../components/custom/ViewRoot.tsx";
-import {CourseExam, CourseInfo, CourseSchedule} from "../../components/ui-kit-cc";
-import {Color} from "../../core/utils/interfaces.ts";
-import {useAcademicYear} from "../../hooks/useAcademicYear.ts";
-import {useScheduleRepo} from "../../hooks/actions/useScheduleRepo.ts";
-import {useCourseRepo} from "../../hooks/actions/useCourseRepo.ts";
+import {CourseExam, CourseInfo, CourseSchedule} from "@/components/ui-kit-cc";
+import {Color} from "@/core/utils/interfaces.ts";
+import {useAcademicYear} from "@/hooks/useAcademicYear.ts";
+import {useScheduleRepo} from "@/hooks/actions/useScheduleRepo.ts";
+import {useCourseRepo} from "@/hooks/actions/useCourseRepo.ts";
 import {CourseEditDrawer} from "../../components/ui-kit-cc/component/CourseEditDrawer.tsx";
-import {useToggle} from "../../hooks/useToggle.ts";
+import {useToggle} from "@/hooks/useToggle.ts";
 
 const SubjectViewPage = () => {
 
@@ -61,9 +61,9 @@ const SubjectViewPage = () => {
             t => `${t?.personalInfo?.lastName}-${t?.personalInfo?.firstName}`
         );
 
-        teachers.forEach(teacher => {
+        teachers?.forEach(teacher => {
             if (teacher)
-                teacher.classes = uniqueClasses.filter(c =>
+                teacher.classes = uniqueClasses?.filter(c =>
                     schedules.some(s =>
                         s?.classe?.name === c?.name &&
                         s?.classe?.grade.section === c?.grade?.section &&
@@ -120,7 +120,7 @@ const SubjectViewPage = () => {
                             color={color}
                             infoData={course as Course}
                             dataKey='course-info'
-                            classes={uniqueClasses.length ? uniqueClasses as Classe[] : undefined}
+                            classes={uniqueClasses?.length ? uniqueClasses as Classe[] : undefined}
                             teachers={uniqueTeachers as Teacher[] || undefined}
                             academicYear={usedAcademicYearId as string}
                         />

@@ -17,5 +17,17 @@ export default defineConfig({
         silenceDeprecations: ['legacy-js-api'],
       }
     }
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          "react-vendor": ['react', 'react-dom', 'react-router-dom'],
+          'ui-vendor': ['antd'],
+          'form-vendor':   ['react-hook-form', 'zod', '@hookform/resolvers'],
+          'utils-vendor':  ['date-fns', 'axios']
+        }
+      }
+    }
   }
 })

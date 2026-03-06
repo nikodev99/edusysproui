@@ -20,7 +20,7 @@ import RadarChart from "@/components/graph/RadarChart.tsx";
 import PieChart from "@/components/graph/PieChart.tsx";
 import Section from "@/components/ui/layout/Section.tsx";
 import PanelSection from "@/components/ui/layout/PanelSection.tsx";
-import {ExamData, InfoPageProps} from "@/core/utils/interfaces.ts";
+import {InfoPageProps} from "@/core/utils/interfaces.ts";
 import {initExamData} from "@/entity/domain/score.ts";
 import {attendanceTag} from "@/entity/enums/attendanceStatus.ts";
 import Tag from "@/components/ui/layout/Tag.tsx";
@@ -32,6 +32,7 @@ import {LinkToStudent} from "@/core/shared/sharedEnums.ts";
 import {useStudentRepo} from "@/hooks/actions/useStudentRepo.ts";
 import {useReprimandRepo} from "@/hooks/actions/useReprimandRepo.ts";
 import {ReprimandType} from "@/entity/enums/reprimandType.ts";
+import {ExamData} from "@/entity/domain/exam.ts";
 
 type StudentInfoProps = InfoPageProps<Enrollment>
 

@@ -19,7 +19,7 @@ export const ClasseEditDrawer = ({open, close, data}: EditProps<Classe>) => {
 
     return(
         <UpdateSchema
-            data={classeSchema}
+            data={classeSchema as never}
             customForm={<ClasseForm control={control} data={data} errors={errors} gradeOptions={gradeOptions} />}
             handleForm={form}
             id={data?.id}

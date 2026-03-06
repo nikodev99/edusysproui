@@ -58,7 +58,7 @@ export const SchoolEditDrawer = ({open, close, data}: EditProps<School>) => {
     }
 
     return(
-        <RightSidePane open={open} onClose={close} destroyOnClose>
+        <RightSidePane open={open} onClose={close}>
             {successMessage && (<FormSuccess message={successMessage} />)}
             {errorMessage && (<FormError message={errorMessage} />)}
             <SchoolForm

@@ -7,7 +7,7 @@ import {CSSProperties} from "react";
 type SelectAcademicYearProps = {
     getAcademicYear: (value: string | string[]) => void
     academicYears?: AcademicYear[]
-    style: CSSProperties;
+    style?: CSSProperties;
 } & SelectEntityProps<AcademicYear, string>
 
 export const SelectAcademicYear = (

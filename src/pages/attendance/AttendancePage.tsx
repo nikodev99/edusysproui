@@ -1,17 +1,17 @@
-import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
-import {text} from "../../core/utils/text_display.ts";
+import {useDocumentTitle} from "@/hooks/useDocumentTitle.ts";
+import {text} from "@/core/utils/text_display.ts";
 import {useMemo, useState} from "react";
 import ViewHeader from "../../components/ui/layout/ViewHeader.tsx";
 import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
 import Datetime from "../../core/datetime.ts";
 import {ViewRoot} from "../../components/custom/ViewRoot.tsx";
-import {AttendanceAnalysis} from "../../components/ui-kit-att";
+import {AttendanceAnalysis} from "@/components/ui-kit-att";
 import {SelectAcademicYear} from "../../components/common/SelectAcademicYear.tsx";
 import {LuCalendarPlus} from "react-icons/lu";
-import {redirectTo} from "../../context/RedirectContext.ts";
+import {redirectTo} from "@/context/RedirectContext.ts";
 import {Dayjs} from "dayjs";
 import {DatePicker} from "antd";
-import {AcademicYear} from "../../entity";
+import {AcademicYear} from "@/entity";
 
 const AttendancePage = () => {
 

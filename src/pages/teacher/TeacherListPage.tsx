@@ -199,8 +199,8 @@ const TeacherListPage = () => {
                 callback={fetchTeachers as () => Promise<AxiosResponse<Teacher[]>>}
                 searchCallback={getSearchedTeachers as ((...input: unknown[]) => Promise<AxiosResponse<Teacher[]>>)}
                 tableColumns={columns as TableColumnsType<Teacher>}
-                dropdownItems={getItems}
-                throughDetails={throughDetails}
+                dropdownItems={getItems as never}
+                throughDetails={throughDetails as never}
                 countTitle={text.teacher.label}
                 cardData={cardData}
                 localStorage={{

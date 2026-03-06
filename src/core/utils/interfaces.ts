@@ -11,7 +11,7 @@ import {
 } from "react-hook-form";
 import {ValidateStatus} from "antd/es/form/FormItem";
 import React, {CSSProperties, ReactNode} from "react";
-import {AcademicYear, Guardian, Student, Teacher, Employee, Individual, School} from "@/entity";
+import {AcademicYear, Guardian, Individual} from "@/entity";
 import {SectionType} from "@/entity/enums/section.ts";
 import {Gender} from "@/entity/enums/gender.tsx";
 import {AttendanceStatus} from "@/entity/enums/attendanceStatus.ts";
@@ -501,8 +501,8 @@ export type TabItemType = {
     closable?: boolean
 }
 
-export type CustomUpdateProps = {
-    data: Student | Teacher | Employee | Guardian | School,
+export type CustomUpdateProps<T extends object> = {
+    data: T,
     open?: boolean, close?: () => void,
     personal: AddressOwner | IndividualType,
     setSuccessMessage: (msg: string | undefined) => void,

@@ -1,14 +1,14 @@
-import {CustomUpdateProps} from "../../core/utils/interfaces.ts";
-import {IndividualType, UpdateType} from "../../core/shared/sharedEnums.ts";
+import {CustomUpdateProps} from "@/core/utils/interfaces.ts";
+import {IndividualType, UpdateType} from "@/core/shared/sharedEnums.ts";
 import {IndividualForm} from "../forms/IndividualForm.tsx";
 import {useForm} from "react-hook-form";
-import {individualSchema, IndividualSchema} from "../../schema";
+import {individualSchema, IndividualSchema} from "@/schema";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {PatchUpdate} from "../../core/PatchUpdate.ts";
-import {Individual} from "../../entity";
+import {PatchUpdate} from "@/core/PatchUpdate.ts";
+import {Employee, Guardian, Individual, Student, Teacher} from "@/entity";
 import {Gender} from "../../entity/enums/gender.tsx";
 
-export const UpdatePersonalData = ({data, setSuccessMessage, setErrorMessage, personal}: CustomUpdateProps) => {
+export const UpdatePersonalData = ({data, setSuccessMessage, setErrorMessage, personal}: CustomUpdateProps<Student | Teacher | Employee | Guardian>) => {
 
     const {control, formState: {errors}, watch} = useForm<IndividualSchema>({
         resolver: zodResolver(individualSchema)

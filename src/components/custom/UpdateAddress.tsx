@@ -1,23 +1,23 @@
 import RightSidePane from "../ui/layout/RightSidePane.tsx";
-import {Address} from "../../entity";
+import {Address, Employee, Guardian, School, Student, Teacher} from "@/entity";
 import AddressForm from "../forms/AddressForm.tsx";
 import {useForm} from "react-hook-form";
-import {addressSchema, AddressSchema} from "../../schema";
+import {addressSchema, AddressSchema} from "@/schema";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {PatchUpdate} from "../../core/PatchUpdate.ts";
-import {CustomUpdateProps} from "../../core/utils/interfaces.ts";
-import {AddressOwner} from "../../core/shared/sharedEnums.ts";
+import {PatchUpdate} from "@/core/PatchUpdate.ts";
+import {CustomUpdateProps} from "@/core/utils/interfaces.ts";
+import {AddressOwner} from "@/core/shared/sharedEnums.ts";
 import {useMemo} from "react";
 
-export const UpdateAddress = ({data, open, close, personal, setSuccessMessage, setErrorMessage}: CustomUpdateProps) => {
+export const UpdateAddress = ({data, open, close, personal, setSuccessMessage, setErrorMessage}: CustomUpdateProps<Student | Teacher | Employee | Guardian | School>) => {
 
     const {control, formState: {errors}, watch} = useForm<AddressSchema>({
         resolver: zodResolver(addressSchema)
     })
     
-    const address: Address | undefined = useMemo(() => {
+    const address = useMemo(() => {
         return personal === AddressOwner.SCHOOL && 'address' in data 
-            ? data.address : 'personalInfo' in data 
+            ? data?.address : 'personalInfo' in data
                 ? data?.personalInfo?.address 
                 : {} as Address
     }, [data, personal])
@@ -25,11 +25,11 @@ export const UpdateAddress = ({data, open, close, personal, setSuccessMessage, s
     const addressData = watch()
 
     const handleAddressUpdate = async (field: keyof Address) => {
-        if (address?.id) {
+        if ((address as Address)?.id) {
             await PatchUpdate.address(
                 field,
                 addressData,
-                address?.id,
+                (address as Address)?.id,
                 setSuccessMessage,
                 setErrorMessage,
             )
@@ -43,7 +43,7 @@ export const UpdateAddress = ({data, open, close, personal, setSuccessMessage, s
                 errors={errors}
                 type={personal as AddressOwner}
                 edit={true}
-                data={address}
+                data={address as Address}
                 handleUpdate={handleAddressUpdate}
             />
         </RightSidePane>

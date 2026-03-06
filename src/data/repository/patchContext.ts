@@ -1,8 +1,8 @@
-import {UpdateType} from "../../core/shared/sharedEnums.ts";
+import {UpdateType} from "@/core/shared/sharedEnums.ts";
 import {request} from "../axiosConfig.ts";
-import {ID} from "../../core/utils/interfaces.ts";
+import {ID} from "@/core/utils/interfaces.ts";
 import {ResponseRepo as CustomResponse} from "../action/responseRepo.ts";
-import {studentSchema} from "../../schema";
+import {studentSchema} from "@/schema";
 import {AxiosResponse} from "axios";
 import {ErrorCatch} from "../action/error_catch.ts";
 
@@ -57,7 +57,7 @@ export class PatchContext {
         studentId: ID,
         type?: UpdateType
     ): Promise<CustomResponse<string>> => {
-        const dynamicSchema = studentSchema.pick({[field]: true});
+        const dynamicSchema = studentSchema.pick({[field]: true as never});
         const validation = dynamicSchema.safeParse({[field]: value});
 
         if (!validation.success) {

@@ -1,13 +1,13 @@
 import {ModalProps} from "antd";
-import {ClasseForm} from "../../forms/ClasseForm.tsx";
+import {ClasseForm} from "@/components/forms/ClasseForm.tsx";
 import {useForm} from "react-hook-form";
-import {classeSchema, ClasseSchema} from "../../../schema";
+import {classeSchema, ClasseSchema} from "@/schema";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {addClasse} from "../../../data/repository/classeRepository.ts";
+import {addClasse} from "@/data/repository/classeRepository.ts";
 import {InsertModal} from "../../custom/InsertSchema.tsx";
-import {useGradeRepo} from "../../../hooks/actions/useGradeRepo.ts";
+import {useGradeRepo} from "@/hooks/actions/useGradeRepo.ts";
 import {useMemo} from "react";
-import {isUniversity} from "../../../entity/enums/section.ts";
+import {isUniversity} from "@/entity/enums/section.ts";
 
 export const AddClasse = ({open, onCancel}: ModalProps) => {
     const {gradeOptions, useGetGrade} = useGradeRepo()
@@ -34,7 +34,7 @@ export const AddClasse = ({open, onCancel}: ModalProps) => {
 
     return(
         <InsertModal
-            data={classeSchema}
+            data={classeSchema as never}
             customForm={<ClasseForm control={control} errors={errors} gradeOptions={gradeOptions} showField={showField} />}
             postFunc={addClasse}
             open={open}

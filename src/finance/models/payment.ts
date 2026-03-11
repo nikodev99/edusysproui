@@ -32,7 +32,7 @@ export const paymentSchema = z.object({
     transactionId: z.string().optional(),
     paymentGateway: z.number(),
     processedBy: z.number(),
-    notes: z.string(),
+    notes: z.string().optional(),
     schoolId: z.string().optional(),
 })
 

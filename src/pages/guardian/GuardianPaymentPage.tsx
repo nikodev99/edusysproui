@@ -4,7 +4,7 @@ import {useGuardianRepo} from "@/hooks/actions/useGuardianRepo.ts";
 import {useParams} from "react-router-dom";
 import {currency, setName, sumInArray} from "@/core/utils/utils.ts";
 import {text} from "@/core/utils/text_display.ts";
-import {Key, useMemo, useState} from "react";
+import {Key, useEffect, useMemo, useState} from "react";
 import {PageTitle} from "@/components/custom/PageTitle.tsx";
 import Responsive from "@/components/ui/layout/Responsive.tsx";
 import Grid from "@/components/ui/layout/Grid.tsx";
@@ -22,10 +22,13 @@ import {useDownload} from "@/hooks/actions/useDownload.ts";
 import {ConfirmationModal} from "@/components/ui/layout/ConfirmationModal.tsx";
 import {PaymentGateway} from "@/finance/models/payment.ts";
 import {SinglePayComponent} from "@/components/ui-kit-finance";
+import {usePermission} from "@/hooks/usePermission.ts";
+import {UserPermission} from "@/core/shared/sharedEnums.ts";
 
 const GuardianPaymentPage = () => {
     const {id: guardianId} = useParams()
 
+    const [invoices, setInvoices] = useState<Invoice[] | undefined>([])
     const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
     const [selectedInvoices, setSelectedInvoices] = useState<Invoice[]>([]);
     const [payementGateway, setPayementGateway] = useState<PaymentGateway>(PaymentGateway.MTN_MOMO)
@@ -33,29 +36,46 @@ const GuardianPaymentPage = () => {
     const [showDownloadPane, setShowDownloadPane] = useToggle(false)
     const [showPaymentPane, setShowPaymentPane] = useToggle(false)
 
+    const {Link} = Typography
+
     const {toViewGuardian, toGuardian, toGuardianPay} = useRedirect()
     const {currentAcademicYear} = useAcademicYearRepo()
-    const {useGetGuardian, useGetActiveInvoices} = useGuardianRepo()
+    
+    const {can} = usePermission()
+
+    const isPayer = useMemo(() => can("pay", true), [can])
 
     const {useDownloadInvoice} = useDownload()
     const download = useDownloadInvoice()
 
+    const {useGetGuardian, useGetInvoices} = useGuardianRepo(isPayer ? UserPermission.GUARDIAN : UserPermission.ALL)
+
     const {data: guardian} = useGetGuardian(guardianId as string)
     const guardianName = useMemo(() => setName(guardian?.personalInfo), [guardian?.personalInfo])
 
-    const {data: guardianActiveInv, refetch} = useGetActiveInvoices(guardianId as string, currentAcademicYear?.id as string, /*{enable: isGuardian()}*/)
-    const invoicesCount = useMemo(() => guardianActiveInv?.length || 0, [guardianActiveInv?.length])
+    console.log('ACADEMIC YEAR: ', currentAcademicYear?.id)
+
+    const {data: guardianActiveInv, refetch} = useGetInvoices(guardianId as string, currentAcademicYear?.id as string)
+
+    const invoicesCount = useMemo(() => invoices?.length || 0, [invoices?.length])
     const valueToPay = useMemo(() => ({
         totalTax: sumInArray(selectedInvoices, "taxAmount"),
         subTotal: (sumInArray(selectedInvoices, "subTotalAmount") - sumInArray(selectedInvoices, 'discount')),
         totalAmount: sumInArray(selectedInvoices, 'totalAmount')
     }), [selectedInvoices])
+    
+    useEffect(() => {
+        setInvoices(guardianActiveInv)
+    }, [guardianActiveInv])
 
     const columns: TableColumnsType<Invoice> = [
         {
             title: 'Numéro de facture',
             dataIndex: 'invoiceNumber',
             key: 'invoiceId',
+            render: (invoiceNumber: string, record) => {
+                return <Link onClick={() => handleShowDetails(record?.invoiceId)}>{invoiceNumber}</Link>
+            }
         },
         {
             title: 'Etudiant',
@@ -102,8 +122,8 @@ const GuardianPaymentPage = () => {
                             onClick={() => handleShowDetails(record?.invoiceId)}>Details</Button>
                     <Button type='link' size='small' icon={<LuDownload/>}
                             onClick={() => handleOpnDownload(record?.invoiceId)}>Telecharger</Button>
-                    <Button type='primary' size='small' icon={<LuCreditCard/>}
-                            onClick={() => handleOpenPayment(record?.invoiceId)}>Payer</Button>
+                    {isPayer && <Button type='primary' size='small' icon={<LuCreditCard/>}
+                            onClick={() => handleOpenPayment(record?.invoiceId)}>Payer</Button>}
                 </Space>
             ),
             width: 200
@@ -147,12 +167,12 @@ const GuardianPaymentPage = () => {
     }
 
     const onSelectChange = (selectedRowKeys: Key[]) => {
-        const selected = guardianActiveInv?.filter(inv => selectedRowKeys.includes(inv.invoiceId));
+        const selected = invoices?.filter(inv => selectedRowKeys.includes(inv.invoiceId));
         setSelectedInvoices(selected ?? []);
     };
 
     const handleShowDetails = (invoiceId: number) => {
-        const selected = guardianActiveInv?.find(i => i?.invoiceId === invoiceId)
+        const selected = invoices?.find(i => i?.invoiceId === invoiceId)
         setSelectedInvoice(selected ?? null)
         setShowDetailPane()
     }
@@ -163,7 +183,7 @@ const GuardianPaymentPage = () => {
     }
 
     const handleOpnDownload = (invoiceId: number) => {
-        const selected = guardianActiveInv?.find(i => i?.invoiceId === invoiceId)
+        const selected = invoices?.find(i => i?.invoiceId === invoiceId)
         setSelectedInvoice(selected ?? null)
         setShowDownloadPane()
     }
@@ -181,7 +201,7 @@ const GuardianPaymentPage = () => {
     }
 
     const handleOpenPayment = (invoiceId: number) => {
-        const selected = guardianActiveInv?.find(i => i?.invoiceId === invoiceId)
+        const selected = invoices?.find(i => i?.invoiceId === invoiceId)
         setSelectedInvoice(selected ?? null)
         setShowPaymentPane()
     }
@@ -208,38 +228,44 @@ const GuardianPaymentPage = () => {
                 mBottom: 20
         }}>
             <main>
-                <PageTitle title={"Portail de Paiement"} margins={'0 0 30px 0'} description={<p>
-                    Le portail de paiement permet aux utilisateurs de consulter leurs factures et d’effectuer des
-                    paiements sécurisés en ligne en toute simplicité. <Typography.Link onClick={toPayHistory}>Voir l'historique des paiements</Typography.Link>
-                </p>}/>
+                <PageTitle title={isPayer ? "Portail de Paiement" : 'Factures de ' + guardianName} margins={'0 0 30px 0'} description={
+                    isPayer ? <p>
+                        Le portail de paiement permet aux utilisateurs de consulter leurs factures et d’effectuer des
+                        paiements sécurisés en ligne en toute simplicité. <Link onClick={toPayHistory}>Voir l'historique des paiements</Link>
+                    </p> : <Button onClick={toPayHistory}>Voir l'historique des paiements</Button>
+                }/>
                 <Divider/>
                 <Responsive gutter={[16, 16]}>
                     <Grid xs={24} md={24} lg={24}>
                         <Table tableProps={{
-                            rowSelection: {
-                                selectedRowKeys: selectedInvoices.map(inv => inv.invoiceId),
-                                onChange: onSelectChange,
-                            },
+                            ...(isPayer ? {
+                                rowSelection: {
+                                    selectedRowKeys: selectedInvoices.map(inv => inv.invoiceId),
+                                    onChange: onSelectChange,
+                                }
+                            }: {}),
                             columns: columns,
-                            dataSource: guardianActiveInv,
+                            dataSource: invoices,
                             rowKey: 'invoiceId',
-                            size: 'large',
+                            size: isPayer ? 'large' : 'small',
                             pagination: invoicesCount > 10 ? {pageSize: 10} : false,
                             style: {marginBottom: '80px'},
-                            expandable: {
-                                expandedRowRender: (record) => (
-                                    <Table tableProps={{
-                                        columns: nestedColumns,
-                                        dataSource: record?.items,
-                                        rowKey: 'id',
-                                        pagination: false,
-                                        size: 'small',
-                                        scroll: {x: 1300}
-                                    }}/>
-                                )
-                            }
+                            ...(isPayer ? {
+                                expandable: {
+                                    expandedRowRender: (record: Invoice) => (
+                                        <Table tableProps={{
+                                            columns: nestedColumns,
+                                            dataSource: record?.items,
+                                            rowKey: 'id',
+                                            pagination: false,
+                                            size: 'small',
+                                            scroll: {x: 1300}
+                                        }}/>
+                                    )
+                                }
+                            } : {})
                         }}/>
-                        <Card style={{borderRadius: 0, padding: 0, border: 'none'}} styles={{
+                        {isPayer && <Card style={{borderRadius: 0, padding: 0, border: 'none'}} styles={{
                             body: {padding: "0px 0px"}
                         }}>
                             <div style={{background: '#f7f7f7', borderRadius: 0, padding: 0, marginBottom: '10px'}}>
@@ -253,7 +279,7 @@ const GuardianPaymentPage = () => {
                                     <Button type='primary'>PAYER LA SELECTION</Button>
                                 </Space>
                             </Responsive>
-                        </Card>
+                        </Card>}
                     </Grid>
                 </Responsive>
             </main>
@@ -263,6 +289,7 @@ const GuardianPaymentPage = () => {
                 open={showDetailPane}
                 onClose={handleCloseDetails}
                 data={selectedInvoice}
+                canPay={isPayer}
             />}
             {showDownloadPane && <ConfirmationModal
                 data={selectedInvoice as Invoice}

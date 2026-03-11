@@ -17,9 +17,10 @@ export interface InvoiceDetailsProps {
     onClose: () => void
     handleDownload?: (id: number) => void
     handlePay?: (id: number) => void
+    canPay?: boolean
 }
 
-export const InvoiceDetails = ({data, open, onClose, handleDownload, handlePay}: InvoiceDetailsProps) => {
+export const InvoiceDetails = ({data, open, onClose, handleDownload, handlePay, canPay}: InvoiceDetailsProps) => {
     const {toViewStudent} = useRedirect()
 
     return(
@@ -34,7 +35,7 @@ export const InvoiceDetails = ({data, open, onClose, handleDownload, handlePay}:
                         children="Télécharger"
                     />
                 </Grid>
-                <Grid>
+                {canPay && <Grid>
                     <Button
                         key="detail-pay"
                         type='primary'
@@ -42,7 +43,7 @@ export const InvoiceDetails = ({data, open, onClose, handleDownload, handlePay}:
                         children='Payer'
                         onClick={() => handlePay?.(data?.invoiceId as number)}
                     />
-                </Grid>
+                </Grid>}
             </Responsive>
         }>
             <Descriptions items={[

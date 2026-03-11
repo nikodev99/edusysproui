@@ -41,12 +41,21 @@ export const GuardianActionLinks = ({data, getItems}: GuardianActionButtons) => 
             onClick: () => setOpenCreateUser(),
             disabled: isPresent
         }] : []),
-        ...(can('pay', true) ? [{
-            key: `@invoice-${data?.id}`,
-            icon: <LuReceipt />,
-            label: 'Facture à payer',
-            onClick: () => toGuardianInv(data?.id as string)
-        }] : []),
+        ...(can('pay', true) ? [
+            {
+                key: `@invoice-${data?.id}`,
+                icon: <LuReceipt />,
+                label: 'Facture à payer',
+                onClick: () => toGuardianInv(data?.id as string)
+            }
+        ] : [
+            {
+                key: `@invoice-${data?.id}`,
+                icon: <LuReceipt />,
+                label: 'Factures',
+                onClick: () => toGuardianInv(data?.id as string)
+            }
+        ]),
         {
             key: `@payments-${data?.id}`,
             icon: <LuBanknote />,

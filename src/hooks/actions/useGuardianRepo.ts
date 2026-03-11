@@ -3,11 +3,15 @@ import {useQueryUpdate} from "@/hooks/useUpdate.ts";
 import {useGlobalStore} from "@/core/global/store.ts";
 import {getShortSortOrder, setSortFieldName} from "@/core/utils/utils.ts";
 import {
-    getEnrolledStudentsGuardians, getEnrolledStudentsGuardiansByTeacher, getEnrolledStudentsSelfGuardians,
+    getEnrolledStudentsGuardians,
+    getEnrolledStudentsGuardiansByTeacher,
+    getEnrolledStudentsSelfGuardians,
     getGuardianById,
     getGuardianWithStudentsById,
-    getSearchedEnrolledStudentGuardian, getSearchedEnrolledStudentGuardianByTeacher,
-    getSearchedEnrolledStudentSelfGuardian, globalGuardianSearch
+    getSearchedEnrolledStudentGuardian,
+    getSearchedEnrolledStudentGuardianByTeacher,
+    getSearchedEnrolledStudentSelfGuardian,
+    globalGuardianSearch
 } from "@/data/repository/guardianRepository.ts";
 import {useFetch} from "@/hooks/useFetch.ts";
 import {GuardianPayment} from "@/finance/apis/guardianPayment.ts";
@@ -16,9 +20,12 @@ import {useInsert} from "@/hooks/usePost.ts";
 import {PaymentResponse, paymentSchema, PaymentSchema} from "@/finance/models/payment.ts";
 import {UserPermission} from "@/core/shared/sharedEnums.ts";
 import {useAuth} from "@/hooks/useAuth.ts";
+import {useMemo} from "react";
 
 export const useGuardianRepo = (context: UserPermission = UserPermission.ALL) => {
     const schoolId = useGlobalStore(state => state.schoolId)
+
+    const isPayer = useMemo(() => context === UserPermission.GUARDIAN, [context])
 
     const useGetPaginated = () => {
         const {user} = useAuth()
@@ -108,6 +115,21 @@ export const useGuardianRepo = (context: UserPermission = UserPermission.ALL) =>
         !!academicYear
     )
 
+    const useGetInvoices = (guardianId: string, academicYear?: string, options?: RepoOptions) => {
+        return useFetch(
+            isPayer
+                ? ["current-invoices", guardianId, academicYear]
+                : ["all-invoices", guardianId, schoolId],
+            isPayer
+                ? GuardianPayment.getGuardianActiveInvoice
+                : GuardianPayment.getGuardianCurrentInvoices,
+            isPayer ? [guardianId, academicYear] : [guardianId, academicYear],
+            isPayer
+                ? (options?.enable ?? true) && !!guardianId && !!academicYear
+                : (options?.enable ?? true) && !!guardianId && !!academicYear
+        )
+    }
+
     const useGetPaymentHistory = (guardianId: string, academicYear: string) => useFetch(
         ["payment-history", guardianId, academicYear],
         GuardianPayment.getGuardianPaymentHistory,
@@ -126,6 +148,7 @@ export const useGuardianRepo = (context: UserPermission = UserPermission.ALL) =>
         useGetAllInvoices,
         useGetCurrentInvoices,
         useGetActiveInvoices,
+        useGetInvoices,
         useGetPaymentHistory,
         useInitPayment
     }

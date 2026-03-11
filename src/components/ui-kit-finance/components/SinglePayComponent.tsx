@@ -55,15 +55,6 @@ export const SinglePayComponent = (
         }
     })
 
-    const handleInitiatePayment = paymentFormData.handleSubmit((data) => {
-        insert(data, [])
-            .then(r => {
-                if (r.success) {
-                    setSuccessMessage(r.data?.message)
-                }
-            })
-    })
-
     useEffect(() => {
         if (!selectedInvoice || !guardian) return
         paymentFormData.reset({
@@ -79,6 +70,18 @@ export const SinglePayComponent = (
             schoolId: loggedUser.getSchool()?.id
         })
     }, [selectedInvoice, guardian, isStripe, paymentFormData, payementGateway, form, transactionId])
+
+    const handleInitiatePayment = paymentFormData.handleSubmit(
+        (data) => insert(data, []).then(r => {
+            if (r.success) {
+                setSuccessMessage(r?.data?.message)
+            }
+        }),
+        (errors) => {
+            console.log('ERROR ENCOUNTER: ', errors)
+        }
+    )
+
 
     const handlePay = (data: MobileMobilePayment | CreditCardPayment) => {
         switch (payementGateway) {

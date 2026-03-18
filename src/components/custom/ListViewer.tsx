@@ -27,7 +27,7 @@ const ListViewer = <TData extends object, TError>(
 ) => {
 
     const iconActive = localStorage?.activeIcon ? LocalStorageManager.get<number>(localStorage?.activeIcon) ?? 1 : 1
-    const pageSizeCount = !infinite && localStorage?.pageSize ? LocalStorageManager.get<number>(localStorage?.pageSize) ?? itemSize ?? 10 : itemSize ? itemSize : 10
+    const pageSizeCount = !infinite && itemSize ? itemSize : localStorage?.pageSize ? LocalStorageManager.get<number>(localStorage?.pageSize) ?? itemSize ?? 10 : 10
     const paginationPage = !infinite && localStorage?.page ? LocalStorageManager.get<number>(localStorage?.page) ?? 1 : 1
     const count = !infinite && localStorage?.pageCount ? LocalStorageManager.get<number>(localStorage?.pageCount) ?? 0 : 0
 

@@ -1,6 +1,6 @@
 import {Avatar as AntAvatar} from "antd";
-import {chooseColor} from "../../../core/utils/utils.ts";
-import {useEffect} from "react";
+import {chooseColor} from "@/core/utils/utils.ts";
+import {CSSProperties, useEffect} from "react";
 
 interface AvatarProps {
     image?: string
@@ -9,9 +9,10 @@ interface AvatarProps {
     size?: number | object
     setColor?: (color: string) => void,
     onClick?: () => void
+    style?: CSSProperties
 }
 
-export const Avatar = ({image, firstText, lastText, size, setColor, onClick}: AvatarProps) => {
+export const Avatar = ({image, firstText, lastText, size, setColor, onClick, style}: AvatarProps) => {
     
     const color: string = chooseColor(firstText as string) as string
 
@@ -24,9 +25,9 @@ export const Avatar = ({image, firstText, lastText, size, setColor, onClick}: Av
     return(
         <>
         {
-            image ? <AntAvatar src={image} size={size} onClick={onClick} />
+            image ? <AntAvatar style={style} src={image} size={size} onClick={onClick} />
                 : <AntAvatar
-                    style={onClick ? {background: color, cursor: 'pointer'} : {background: color}}
+                    style={onClick ? {background: color, cursor: 'pointer', ...style} : {background: color, ...style}}
                     size={size}
                     onClick={onClick}
                 >

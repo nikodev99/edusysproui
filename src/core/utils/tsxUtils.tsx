@@ -1,5 +1,5 @@
 import {getStatusKey, Status} from "@/entity/enums/status.ts";
-import {ReactNode} from "react";
+import {CSSProperties, ReactNode} from "react";
 import Tag from "@/components/ui/layout/Tag.tsx";
 import {Badge, Button, Card, Descriptions, Flex, Popover, Skeleton, Space, StepsProps, Tooltip, Typography} from "antd";
 import {Color} from "./interfaces.ts";
@@ -76,7 +76,7 @@ export const IconText = ({ icon, text, color }: {
     </Space>
 );
 
-export const SuperWord = ({ input, isUpper, textSize = .6 }: { input: string; isUpper?: boolean, textSize?: number /** @range {0-1} */ }) => {
+export const SuperWord = ({ input, isUpper, textSize = .6, isSpan = false, style }: { input: string; isUpper?: boolean, textSize?: number /** @range {0-1} */, isSpan?: boolean, style?: CSSProperties }) => {
     const regex = /\b(\d)([a-zA-Z]{1,3})\b/g;
 
     const parts: (string | ReactNode)[] = [];
@@ -112,9 +112,17 @@ export const SuperWord = ({ input, isUpper, textSize = .6 }: { input: string; is
     }
 
     return (
-        <p style={isUpper ? { textTransform: 'uppercase', padding: 0, margin: 0 } : { pointerEvents: 'auto', padding: 0, margin: 0 }}>
-            {parts}
-        </p>
+        <>
+            {isSpan ? (
+                <span style={isUpper ? { textTransform: 'uppercase', padding: 0, margin: 0, ...style } : { pointerEvents: 'auto', padding: 0, margin: 0, ...style }}>
+                    {parts}
+                </span>
+            ) : (
+                <p style={isUpper ? { textTransform: 'uppercase', padding: 0, margin: 0, ...style } : { pointerEvents: 'auto', padding: 0, margin: 0, ...style }}>
+                    {parts}
+                </p>
+            )}
+        </>
     );
 }
 

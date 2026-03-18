@@ -1,14 +1,14 @@
 import {DataProps, ListViewerProps, StudentListDataType} from "@/core/utils/interfaces.ts";
 import {AxiosError} from "axios";
 import ListViewer from "@/components/custom/ListViewer.tsx";
-import {TableColumnsType, Tag} from "antd";
+import {TableColumnsType} from "antd";
 import {Avatar} from "@/components/ui/layout/Avatar.tsx";
 import {
     checkAcademicYearEnded,
     enumToObjectArrayForFiltering,
     setFirstName
 } from "@/core/utils/utils.ts";
-import {Gender} from "@/entity/enums/gender.tsx";
+import {Gender, SelectedGenderIcon} from "@/entity/enums/gender.tsx";
 import Tagger from "@/components/ui/layout/Tagger.tsx";
 import {AiOutlineEllipsis} from "react-icons/ai";
 import {ActionButton} from "@/components/ui/layout/ActionButton.tsx";
@@ -22,6 +22,9 @@ import {StudentActionLinks} from "./StudentActionLinks.tsx";
 import {useCallback, useState} from "react";
 import {ItemType} from "antd/es/menu/interface";
 import {toEnrollment} from "@/entity/domain/enrollment.ts";
+import {StudentCard} from "@/components/ui-kit-student";
+import {formatGrade} from "@/entity/enums/section.ts";
+import Tag from "@/components/ui/layout/Tag.tsx";
 
 export const StudentList = <TError extends AxiosError>(listProps: ListViewerProps<StudentListDataType, TError>) => {
     const [selectedStudent, setSelectedStudent] = useState<Enrollment | undefined>(undefined)
@@ -81,7 +84,8 @@ export const StudentList = <TError extends AxiosError>(listProps: ListViewerProp
             width: '12%',
             //TODO the filter directly to the database
             filters: enumToObjectArrayForFiltering(Gender),
-            onFilter: (value, record) => record.gender.indexOf(value as string) === 0
+            onFilter: (value, record) => record.gender.indexOf(value as string) === 0,
+            render: gender => <Tag icon={<SelectedGenderIcon gender={gender} />}>{gender?.toUpperCase()}</Tag>
         },
         {
             title: 'Age',
@@ -132,7 +136,7 @@ export const StudentList = <TError extends AxiosError>(listProps: ListViewerProp
             key: 'grade',
             align: 'center',
             width: '11%',
-            render: (text) => (<Tag>{text}</Tag>)
+            render: grade => (<Tag icon={'none'}>{formatGrade(grade)?.toUpperCase()}</Tag>)
             //TODO getting all the grade distinct grade and filter by grade
         },
         {
@@ -147,21 +151,8 @@ export const StudentList = <TError extends AxiosError>(listProps: ListViewerProp
 
     const cardData = (data: StudentListDataType[]) => {
         return data?.map(c => ({
-            id: c?.id,
-            lastName: c?.lastName,
-            firstName: c?.firstName,
-            gender: c?.gender,
-            image: c?.image,
-            reference: c?.reference,
-            tag: <Tagger
-                status={checkAcademicYearEnded(c.academicYear)}
-                successMessage='inscrit'
-                warnMessage='fin_annee_scolaire'
-            />,
-            description: [
-                `${c.grade} - ${c.classe}`,
-                `Inscrit le, ${Datetime.of(c.lastEnrolledDate).fDatetime({to: true})}`
-            ],
+            description: <StudentCard student={c} redirectTo={throughDetails} dropdownItems={getItems} />,
+            bodyLess: true,
             record: c
         })) as DataProps<StudentListDataType>[]
     }
@@ -179,8 +170,11 @@ export const StudentList = <TError extends AxiosError>(listProps: ListViewerProp
                 cardData={cardData}
                 hasDesc={false}
                 level={5}
+                displayItem={4}
+                itemSize={12}
                 onSelectData={(data) => setSelectedStudent(toEnrollment(data))}
                 refetchCondition={refresh}
+                cardNotAvatar={true}
             />
            <StudentActionLinks
                data={selectedStudent}

@@ -1,5 +1,5 @@
 import {School} from "./school.ts";
-import {Planning} from "./planning.ts";
+import {Planning} from "@/entity";
 import {SectionType} from "../enums/section.ts";
 
 export interface Grade {

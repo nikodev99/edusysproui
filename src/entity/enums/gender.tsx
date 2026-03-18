@@ -1,7 +1,6 @@
 import {
     PiGenderFemaleBold,
-    PiGenderIntersexBold,
-    PiGenderMaleBold,
+    PiGenderIntersexBold, PiGenderMaleBold,
     PiGenderNeuterBold,
     PiGenderNonbinaryBold,
     PiGenderTransgenderBold
@@ -21,7 +20,7 @@ export enum Gender {
     TRAVESTI = 'TRAVESTI'
 }
 
-export const selectedGenderIcon = (gender?: Gender) => {
+export const SelectedGenderIcon = ({gender}: {gender?: Gender}) => {
     if (gender) {
         switch (gender) {
             case Gender.HOMME: return <PiGenderMaleBold />

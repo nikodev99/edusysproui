@@ -57,3 +57,7 @@ export const isCollege = (section: SectionType | string) => {
     }
     return COLLEGE_SECTIONS.has(section)
 }
+
+export function formatGrade(grade: string): string {
+    return grade.charAt(0).toUpperCase() + grade.slice(1).toLowerCase();
+}

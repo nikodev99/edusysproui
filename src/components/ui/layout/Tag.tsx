@@ -6,17 +6,17 @@ import {Color} from "@/core/utils/interfaces.ts";
 interface TagProps {
     children?: ReactNode;
     color?: 'success' | 'warning' | 'danger' | 'processing' | Color;
-    icon?: ReactNode;
+    icon?: ReactNode | 'none';
     textColor?: Color;
     white?: boolean;
 }
 
-const Tag = ({color, children, icon, textColor, white}: TagProps) => {
-    const isOtherColor = useMemo(() => 
-        color && color !== 'success' && color !== 'danger' && color !== 'warning' && color !== 'processing', [color])
+const Tag = ({color = 'processing', children, icon, textColor, white}: TagProps) => {
+    const isOtherColor = useMemo(() =>
+        Boolean(color && color !== 'success' && color !== 'danger' && color !== 'warning' && color !== 'processing'), [color])
     
     const customIcon = useMemo(() => {
-        if (isOtherColor)
+        if (isOtherColor || icon === 'none')
             return undefined
 
         switch(color) {
@@ -29,7 +29,7 @@ const Tag = ({color, children, icon, textColor, white}: TagProps) => {
             default:
                 return <LuBadgeInfo />
         }
-    }, [color, isOtherColor])
+    }, [color, icon, isOtherColor])
 
     return (
         <div
@@ -37,7 +37,7 @@ const Tag = ({color, children, icon, textColor, white}: TagProps) => {
             style={isOtherColor ? {backgroundColor: color} : undefined}
         >
             <div className='tagged' style={textColor || white ? {color: textColor ?? '#dddde1'} : undefined}>
-                {icon ? icon : customIcon}
+                {icon && icon !== "none" ? icon : customIcon}
                 {children}
             </div>
         </div>

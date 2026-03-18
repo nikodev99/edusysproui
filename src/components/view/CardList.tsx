@@ -4,7 +4,7 @@ import {ActionButton} from "@/components/ui/layout/ActionButton.tsx";
 import {setFirstName} from "@/core/utils/utils.ts";
 import {Avatar} from "@/components/ui/layout/Avatar.tsx";
 import {ItemType} from "antd/es/menu/interface";
-import {Gender, selectedGenderIcon} from "@/entity/enums/gender.tsx";
+import {Gender, SelectedGenderIcon} from "@/entity/enums/gender.tsx";
 import {AiOutlineMore} from "react-icons/ai";
 import {DataProps} from "@/core/utils/interfaces.ts";
 import {SuperWord} from "@/core/utils/tsxUtils.tsx";
@@ -17,7 +17,7 @@ interface CardListProps<TData extends object> {
     throughDetails: (id: string, record?: TData) => void
     avatarLess?: boolean
     titleLevel?: 1 | 4 | 5 | 2 | 3
-    displayItem?: 1 | 2 | 3 | 4
+    displayItem?: 1 | 2 | 3 | 4 | 6
     onSelectData?: (data: never) => void
 }
 
@@ -26,13 +26,13 @@ const CardList = <TData extends object>(
 ) => {
 
     const selectedGender = (gender?: Gender) => {
-        return selectedGenderIcon(gender)
+        return <SelectedGenderIcon gender={gender} />
     }
 
     const {Title, Paragraph, Text} = Typography
     //TODO Adding the filter by name or whatever
 
-    const xl = displayItem === 1 ? 24 : displayItem === 2 ? 12 : displayItem === 3 ? 8 : 6
+    const xl = displayItem === 1 ? 24 : displayItem === 2 ? 12 : displayItem === 3 ? 8 : displayItem === 4 ? 6 : displayItem === 6 ? 4 : 8
     const lg = displayItem === 1 ? 24 : displayItem === 2 ? 12 : 8
     const md = displayItem === 1 ? 24 : 12
 
@@ -42,8 +42,12 @@ const CardList = <TData extends object>(
                 isActive && (<Skeleton loading={isLoading} active={isLoading} avatar={isLoading}>
                     {content && content?.map(c => (
                         <Grid key={c?.id} xs={24} md={md} lg={lg} xl={xl} style={{marginTop: '15px'}}>
-                            <Card loading={!content || isLoading} className='card__list' onClick={() => onSelectData?.(c?.record as never)}>
-                                {dropdownItems && <ActionButton
+                            <Card loading={!content || isLoading} className='card__list' onClick={() => onSelectData?.(c?.record as never)} styles={{
+                                body: {
+                                    padding: c.bodyLess ? 0 : 24
+                                }
+                            }}>
+                                {dropdownItems && c.lastName && <ActionButton
                                     icon={<AiOutlineMore className='cardIcon' size={30} />}
                                     items={dropdownItems(c.id as string, c.record)}
                                     placement="bottom"

@@ -155,7 +155,8 @@ export const Route = createBrowserRouter([
                 children: [
                     { path: text.path.page, element: <ListTeacherPage /> },
                     { path: text.path.new, element: <TeacherAddPage /> },
-                    { path: text.path.view, element: <ViewTeacherPage /> }
+                    { path: text.path.view, element: <ViewTeacherPage /> },
+                    { path: text.path.view + '/discipline', element: <StudentDiscipline /> }
                 ]
             },
             {

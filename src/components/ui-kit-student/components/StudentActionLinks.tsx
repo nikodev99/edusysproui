@@ -55,8 +55,6 @@ export const StudentActionLinks = ({data, getItems, setRefresh}: ActionButtonsPr
     ] as [], [can, canCreate, canDelete, enrollment, setOpenPromoteStudent, setOpenRemoveStudent, studentId, toDiscipline])
     
     useMenuItemsEffect(items, getItems)
-
-    console.log('Open delete student pane: ', openRemoveStudent)
     
     return(
         <section>

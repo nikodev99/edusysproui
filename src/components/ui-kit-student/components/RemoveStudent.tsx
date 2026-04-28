@@ -1,6 +1,6 @@
 import {Alert, Modal} from "antd";
 import {setName} from "@/core/utils/utils.ts";
-import {Individual, Student} from "@/entity";
+import {Student} from "@/entity";
 import {ModalConfirmButton} from "@/components/ui/layout/ModalConfirmButton.tsx";
 import {LuTrash2} from "react-icons/lu";
 import {useRedirect} from "@/hooks/useRedirect.ts";
@@ -50,7 +50,7 @@ export const RemoveStudent = ({data, open, close, setRefresh}: ActionDrawer<Stud
         open={open}
         onCancel={handleCancel}
         destroyOnHidden
-        title={`Supprimé ${setName({firstName: data?.personalInfo?.firstName, lastName: data?.personalInfo?.lastName} as Individual)} de votre établissement`}
+        title={`Supprimé ${setName(data?.personalInfo)} de votre établissement`}
         footer={null}
     >
         <Notification

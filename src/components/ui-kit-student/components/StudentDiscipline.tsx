@@ -3,10 +3,9 @@ import {AcademicYear, Classe, Enrollment, Individual, Punishment, Reprimand} fro
 import {useEffect, useMemo, useState} from "react";
 import ListViewer from "@/components/custom/ListViewer.tsx";
 import {ReprimandFilterProps} from "@/data/repository/reprimandRepository.ts";
-import {Card, Empty, TableColumnsType, Tag as AntTag, Typography} from "antd";
-import {ReprimandFilters} from "@/components/filters/ReprimandFilters.tsx";
+import {Button, Card, Empty, TableColumnsType, Tag as AntTag, Typography} from "antd";
 import {useAcademicYearRepo} from "@/hooks/actions/useAcademicYearRepo.ts";
-import {LuCircleAlert, LuSmile} from "react-icons/lu";
+import {LuCircleAlert, LuPlus, LuSmile} from "react-icons/lu";
 import Tag from "@/components/ui/layout/Tag.tsx";
 import Datetime from "@/core/datetime.ts";
 import {ReprimandType, typeColor} from "@/entity/enums/reprimandType.ts";
@@ -15,6 +14,10 @@ import {punishmentStatusTag} from "@/entity/enums/punishmentStatus.ts";
 import {StudentReprimandDrawer} from "./StudentReprimandDrawer.tsx";
 import {useToggle} from "@/hooks/useToggle.ts";
 import {setFirstName} from "@/core/utils/utils.ts";
+import PageDescription from "@/components/custom/PageDescription.tsx";
+import {ReprimandFilters} from "@/components/filters/ReprimandFilters.tsx";
+import {usePermission} from "@/hooks/usePermission.ts";
+import {useRedirect} from "@/hooks/useRedirect.ts";
 
 interface StudentDisciplineProps {
     enrolledStudent: Enrollment
@@ -25,6 +28,8 @@ export const StudentDiscipline = ({enrolledStudent}: StudentDisciplineProps) => 
     const [selectedReprimand, setSelectedReprimand] = useState<Reprimand | null>(null)
     const {academicYearOptions} = useAcademicYearRepo()
     const [openDrawer, setOpenDrawer] = useToggle(false)
+    const {toDiscipline} = useRedirect()
+    const {can} = usePermission()
     
     const {useGetStudentReprimands} = useReprimandRepo()
     
@@ -118,6 +123,14 @@ export const StudentDiscipline = ({enrolledStudent}: StudentDisciplineProps) => 
     
     return(
         <>
+            {can('reprimand') && <PageDescription title={
+                <Button onClick={() => toDiscipline(
+                    enrolledStudent?.student?.id,
+                    enrolledStudent
+                )} type={'primary'} icon={<LuPlus />}>
+                    Ajouter une réprimande
+                </Button>
+            } addMargin={{position: 'bottom', size: 20}} />}
             <ListViewer
                 callback={fetchReprimands as () => never}
                 callbackParams={filterParams}
@@ -160,11 +173,11 @@ export const StudentDiscipline = ({enrolledStudent}: StudentDisciplineProps) => 
                 }
             />
 
-            <StudentReprimandDrawer
+            {selectedReprimand && <StudentReprimandDrawer
                 reprimand={selectedReprimand as Reprimand}
                 open={openDrawer} 
                 close={handleCloseDrawer}
-            />
+            />}
         </>
     )
 }

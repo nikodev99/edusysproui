@@ -220,7 +220,7 @@ class RouteAccess {
          */
         'teachers': {
             module: [
-                () => isTopAdmin() || isFinance() || isHR()
+                () => isTopAdmin() || isFinance() || isHR() || isTeacher()
             ],
             actions: {
                 'new': [
@@ -248,6 +248,9 @@ class RouteAccess {
                     // HR can manage employment contracts
                     'manageContracts': [
                         () => isTopAdmin() || isHR()
+                    ],
+                    'onlyTeacher': [
+                        () => isTopAdmin() || isTeacher()
                     ]
                 }
             }
@@ -674,7 +677,7 @@ class RouteAccess {
         },
 
         [text.teacher.href]: {
-            canView: () => isTopAdmin() || isFinance() || isHR()
+            canView: () => isTopAdmin() || isFinance() || isHR() || isTeacher()
         },
 
         [text.cc.href]: {

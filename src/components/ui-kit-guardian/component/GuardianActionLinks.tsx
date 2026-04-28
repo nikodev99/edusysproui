@@ -17,11 +17,13 @@ import {
 import {useRedirect} from "@/hooks/useRedirect.ts";
 import {usePermission} from "@/hooks/usePermission.ts";
 import {ItemType} from "antd/es/menu/interface";
+import {RemoveGuardian} from "@/components/ui-kit-guardian/component/RemoveGuardian.tsx";
 
 type GuardianActionButtons = ActionButtonsProps<Guardian>
 
 export const GuardianActionLinks = ({data, getItems}: GuardianActionButtons) => {
     const [openCreateUser, setOpenCreateUser] = useToggle(false)
+    const [removeGuardian, setRemoveGuardian] = useToggle(false)
     const {useAccountExists, useAccountExistsInSchool} = useAccount()
     const {toGuardianPay, toGuardianInv, toGuardianBilling} = useRedirect()
     const {canCreate, canDelete, can} = usePermission()
@@ -79,20 +81,26 @@ export const GuardianActionLinks = ({data, getItems}: GuardianActionButtons) => 
             key: `@remove-${data?.id}`,
             icon: <AiOutlineUserDelete />,
             label: 'Supprimer',
+            onClick: setRemoveGuardian,
             danger: true
         }] : [])
-    ] as ItemType[], [accountExists, can, canCreate, canDelete, data?.id, isPresent, setOpenCreateUser, toGuardianBilling, toGuardianInv, toGuardianPay])
+    ] as ItemType[], [accountExists, can, canCreate, canDelete, data?.id, isPresent, setOpenCreateUser, setRemoveGuardian, toGuardianBilling, toGuardianInv, toGuardianPay])
 
     useMenuItemsEffect(items, getItems)
 
     return (
         <section>
-            <CreateUser
-                open={openCreateUser}
-                onCancel={setOpenCreateUser}
-                personalInfo={personalInfo}
-                userType={UserType.GUARDIAN}
-            />
+            {canCreate && openCreateUser && (
+                <CreateUser
+                    open={openCreateUser}
+                    onCancel={setOpenCreateUser}
+                    personalInfo={personalInfo}
+                    userType={UserType.GUARDIAN}
+                />
+            )}
+            {canDelete && removeGuardian && (
+                <RemoveGuardian data={data as Guardian} open={removeGuardian} close={setRemoveGuardian} />
+            )}
         </section>
     )
 }

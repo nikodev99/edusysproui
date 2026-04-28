@@ -164,13 +164,13 @@ const GuardianListPage = () => {
                 onSelectData={setSelectedGuardian}
                 refetchCondition={refresh}
             />
-            <section>
+            {selectedGuardian && <section>
                 <GuardianActionLinks
                     getItems={setLinkButtons}
                     data={selectedGuardian}
                     setRefresh={setRefresh}
                 />
-            </section>
+            </section>}
         </>
     )
 }

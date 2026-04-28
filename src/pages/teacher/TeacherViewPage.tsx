@@ -1,23 +1,17 @@
-import {useParams} from "react-router-dom";
+import {useLocation, useParams} from "react-router-dom";
 import {useEffect, useLayoutEffect, useState} from "react";
-import {Teacher} from "../../entity";
-import {chooseColor, MAIN_COLOR, setLastName, setName} from "../../core/utils/utils.ts";
-import {count} from "../../data";
-import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
-import {text} from "../../core/utils/text_display.ts";
-import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
-import {Widgets} from "../../components/ui/layout/Widgets.tsx";
-import {WidgetItem} from "../../core/utils/interfaces.ts";
+import {Teacher} from "@/entity";
+import {chooseColor, MAIN_COLOR, setLastName, setName} from "@/core/utils/utils.ts";
+import {count} from "@/data";
+import {useDocumentTitle} from "@/hooks/useDocumentTitle.ts";
+import {text} from "@/core/utils/text_display.ts";
+import {useBreadCrumb} from "@/hooks/useBreadCrumb.tsx";
+import {Widgets} from "@/components/ui/layout/Widgets.tsx";
+import {WidgetItem} from "@/core/utils/interfaces.ts";
 import {Progress, Tag} from "antd";
-import ViewHeader from "../../components/ui/layout/ViewHeader.tsx";
-import {getStatusKey, Status} from "../../entity/enums/status.ts";
-import {Gender} from "../../entity/enums/gender.tsx";
-import {
-    LuClipboardPenLine,
-    LuListChecks, LuListTodo,
-    LuTrash2, LuUserCheck,
-    LuUserMinus,
-} from "react-icons/lu";
+import ViewHeader from "@/components/ui/layout/ViewHeader.tsx";
+import {getStatusKey, Status} from "@/entity/enums/status.ts";
+import {Gender} from "@/entity/enums/gender.tsx";
 import {
     TeacherActionLinks,
     TeacherAgenda,
@@ -25,25 +19,26 @@ import {
     TeacherEditDrawer,
     TeacherInfo,
     TeacherProgram, TeacherReprimand
-} from "../../components/ui-kit-teacher";
-import {useToggle} from "../../hooks/useToggle.ts";
-import {ViewRoot} from "../../components/custom/ViewRoot.tsx";
-import {useTeacherRepo} from "../../hooks/actions/useTeacherRepo.ts";
-import {useStudentRepo} from "../../hooks/actions/useStudentRepo.ts"
-import {useAccount} from "../../hooks/useAccount.ts";
-
-type ActionsButtons = {
-    createUser?: boolean
-}
+} from "@/components/ui-kit-teacher";
+import {useToggle} from "@/hooks/useToggle.ts";
+import {ViewRoot} from "@/components/custom/ViewRoot.tsx";
+import {useTeacherRepo} from "@/hooks/actions/useTeacherRepo.ts";
+import {useStudentRepo} from "@/hooks/actions/useStudentRepo.ts"
+import {useAccount} from "@/hooks/useAccount.ts";
+import {ItemType} from "antd/es/menu/interface";
+import queryString from "query-string";
 
 const TeacherViewPage = () => {
 
     const { id } = useParams()
+    const {search} = useLocation()
 
+    const queryParam = queryString.parse(search);
+    const activeTab = String(queryParam.show);
     const [teacher, setTeacher] = useState<Teacher | null>(null)
     const [studentTaughtCount, setStudentTaughtCount] = useState<number>(0)
-    const [openActions, setOpenActions] = useState<ActionsButtons>({})
-    const [showAction, setShowAction] = useState<ActionsButtons>({})
+    const [linkButtons, setLinkButtons] = useState<ItemType[]>([])
+    const [shouldRefresh, setShouldRefresh] = useState<boolean>(false)
     const [openDrawer, setOpenDrawer] = useToggle(false)
     const {useCountStudent} = useStudentRepo()
     const {useGetTeacher} = useTeacherRepo()
@@ -52,8 +47,6 @@ const TeacherViewPage = () => {
     const {data, isLoading, isSuccess, refetch} = useGetTeacher(id as string)
     const studentCount = useCountStudent()
     const accountExists = useAccountExists(teacher?.personalInfo?.id as number)
-
-    console.log("DATA FETCHED: ", data)
 
     const teacherName = setName(teacher?.personalInfo)
     const color: string = teacher?.personalInfo?.firstName ? chooseColor(teacher.personalInfo?.firstName) as string  : MAIN_COLOR
@@ -74,8 +67,13 @@ const TeacherViewPage = () => {
         if (isSuccess && data) {
             setTeacher(data as Teacher)
         }
-        setShowAction({createUser: accountExists})
     }, [isSuccess, data, accountExists])
+
+    useEffect(() => {
+        if (shouldRefresh)
+            refetch()
+                .then()
+    }, [refetch, shouldRefresh]);
 
     useLayoutEffect(() => {
         if (teacher?.id) {
@@ -141,14 +139,7 @@ const TeacherViewPage = () => {
                     },
                     {title: 'Télephone', mention: teacher?.personalInfo?.telephone},
                 ]}
-                items={[
-                    {key: 2, label: 'Créer compte Professeur', icon: <LuUserCheck/>, onClick: () => setOpenActions({createUser: true})},
-                    {key: 2, label: 'Ajouter programme', icon: <LuListChecks/>},
-                    {key: 3, label: 'Créer examen', icon: <LuClipboardPenLine/>},
-                    {key: 4, label: 'Réprimander', icon: <LuUserMinus/>},
-                    {key: 5, label: 'Compte rendu', icon: <LuListTodo/>},
-                    {key: 6, label: 'Retirer l\'enseignant', danger: true, icon: <LuTrash2/>}
-                ]}
+                items={linkButtons}
             />
             <Widgets items={widgetItems}/>
             <ViewRoot
@@ -158,28 +149,29 @@ const TeacherViewPage = () => {
                     {label: "Programme", children: <TeacherProgram infoData={teacher as Teacher} color={color} dataKey='program' />},
                     {label: "Devoirs", children: <TeacherAssignments infoData={teacher as Teacher} dataKey='assignment' />},
                     {label: "Réprimande", children: <TeacherReprimand infoData={teacher as Teacher} dataKey='reprimand' />},
+                    {label: "Rapport Journalier", children: <h1>Teacher report</h1>},
                 ]}
                 exists={teacher !== null}
                 addMargin={{
                     position: "top",
                     size: 30
                 }}
+                activeTab={activeTab}
                 memorizedTabKey={'teacherTabKey'}
             />
-            <section>
+            {teacher && openDrawer && <section>
                 <TeacherEditDrawer
                     open={openDrawer}
                     close={handleCloseDrawer}
                     isLoading={isLoading}
                     data={teacher ? teacher : {} as Teacher}
                 />
-            </section>
-            <TeacherActionLinks 
-                open={openActions} 
-                setActions={setOpenActions} 
-                show={showAction} 
-                personalInfo={teacher?.personalInfo}
-            />
+            </section>}
+            {teacher && <TeacherActionLinks
+                data={teacher as Teacher}
+                getItems={setLinkButtons}
+                setRefresh={setShouldRefresh}
+            />}
         </>
     )
 }

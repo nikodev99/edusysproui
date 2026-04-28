@@ -1,8 +1,8 @@
-import {getShortSortOrder, setSortFieldName} from "../../core/utils/utils.ts";
+import {getShortSortOrder, setSortFieldName} from "@/core/utils/utils.ts";
 import {getAllTeachers, getNumberOfStudentTaughtByTeacher, getTeacherById} from "../repository/teacherRepository.ts";
 import {ErrorCatch} from "./error_catch.ts";
-import {Counted} from "../../core/utils/interfaces.ts";
-import {loggedUser} from "../../auth/jwt/LoggedUser.ts";
+import {Counted} from "@/core/utils/interfaces.ts";
+import {loggedUser} from "@/auth/jwt/LoggedUser.ts";
 
 const schoolId: string = loggedUser.getSchool()?.id as string;
 

@@ -50,9 +50,12 @@ export const useRedirect = () => {
 
     const toAddTeacher = () => redirectTo(text.teacher.group.add.href)
 
-    const toViewTeacher = (teacherId: string, teacherSlug?: string) => {
+    const toViewTeacher = (teacherId: string, active?: string, teacherSlug?: string) => {
         if (!teacherSlug) {
-            return redirectTo(text.teacher.group.view.href + teacherId)
+            const url = active
+                ? text.teacher.group.view.href + teacherId + `?show=${active}`
+                : text.teacher.group.view.href + teacherId
+            return redirectTo(url)
         }
         return redirectTo(text.teacher.group.view.href + teacherSlug, {state: teacherId})
     }

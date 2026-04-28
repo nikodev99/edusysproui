@@ -1,20 +1,61 @@
-import {Counted, CountType, GenderCounted, Pageable} from "../../core/utils/interfaces.ts";
+import {Counted, CountType, GenderCounted, Pageable} from "@/core/utils/interfaces.ts";
 import {useFetch, useRawFetch} from "../useFetch.ts";
-import {fetchTeachers} from "../../data";
+import {fetchTeachers} from "@/data";
 import {
-    countAllTeachers,
+    countAllTeachers, getAllSelfTeachers, getAllTeachers,
     getNumberOfStudentTaughtByClasse,
     getNumberOfStudentTaughtByTeacher,
-    getSearchedTeachers, getTeachersBasicValues,
-    getTeacherById, getTeacherSchedule, getTeacherScheduleByDay, getTeacherBasicValues
-} from "../../data/repository/teacherRepository.ts";
+    getSearchedTeachers,
+    getTeacherBasicValues,
+    getTeacherById,
+    getTeachersBasicValues,
+    getTeacherSchedule,
+    getTeacherScheduleByDay
+} from "@/data/repository/teacherRepository.ts";
 import {useEffect, useState} from "react";
-import {SectionType} from "../../entity/enums/section.ts";
-import {Teacher} from "../../entity";
-import {useGlobalStore} from "../../core/global/store.ts";
+import {SectionType} from "@/entity/enums/section.ts";
+import {Teacher} from "@/entity";
+import {useGlobalStore} from "@/core/global/store.ts";
+import {UserPermission} from "@/core/shared/sharedEnums.ts";
+import {useAuth} from "@/hooks/useAuth.ts";
+import {getShortSortOrder, setSortFieldName} from "@/core/utils/utils.ts";
 
-export const useTeacherRepo = () => {
+export const useTeacherRepo = (context: UserPermission = UserPermission.ALL) => {
     const schoolId = useGlobalStore(state => state.schoolId)
+
+    const useGetPaginated = () => {
+        const {user} = useAuth()
+
+        return {
+            getPaginatedTeachers: async (page: number, size: number, sortField?: string, sortOrder?: string) => {
+                if (sortField && sortOrder) {
+                    sortOrder = getShortSortOrder(sortOrder);
+                    sortField = sortedField(sortField);
+                    switch (context) {
+                        case UserPermission.TEACHER:
+                            return await getAllSelfTeachers(schoolId, user?.userId as string, page, size, `${sortField}:${sortOrder}`);
+                        case UserPermission.ALL:
+                            return await getAllTeachers(schoolId, page, size, `${sortField}:${sortOrder}`);
+                    }
+                }
+                switch (context) {
+                    case UserPermission.TEACHER:
+                        return await getAllSelfTeachers(schoolId, user?.userId as string, page, size)
+                    case UserPermission.ALL:
+                        return await getAllTeachers(schoolId, page, size)
+                }
+
+            },
+            getSearchedTeachers: async (searchInput: string) => {
+                switch (context) {
+                    case UserPermission.ALL:
+                        return await getSearchedTeachers(schoolId, searchInput)
+                    default:
+                        return undefined
+                }
+            }
+        }
+    }
 
     const useGetAllTeachers = (pageable: Pageable, sortField: string, sortOrder: string) => useFetch(
         ['teacher-list'],
@@ -119,6 +160,7 @@ export const useTeacherRepo = () => {
     }
 
     return {
+        useGetPaginated,
         useGetAllTeachers,
         useGetSearchedTeachers,
         useGetTeacher,
@@ -128,5 +170,25 @@ export const useTeacherRepo = () => {
         useGetTeacherClasseStudentNumber,
         useCountAllTeachers,
         useGetTeacherBasicValues
+    }
+}
+
+const sortedField = (sortField: string[] | string) => {
+    return getSorted(setSortFieldName(sortField))
+}
+
+
+const getSorted = (sortField: string) => {
+    switch (sortField) {
+        case 'lastName':
+            return 't.personalInfo.lastName'
+        case 'gender':
+            return 't.personalInfo.gender'
+        case 'birthDate':
+            return 't.personalInfo.birthDate'
+        case 'status':
+            return 't.personalInfo.status'
+        default:
+            return undefined;
     }
 }

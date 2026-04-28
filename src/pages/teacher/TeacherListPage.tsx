@@ -1,27 +1,35 @@
-import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
-import {text} from "../../core/utils/text_display.ts";
-import {BreadcrumbType, useBreadcrumbItem} from "../../hooks/useBreadCrumb.tsx";
-import {redirectTo} from "../../context/RedirectContext.ts";
+import {useDocumentTitle} from "@/hooks/useDocumentTitle.ts";
+import {text} from "@/core/utils/text_display.ts";
+import {BreadcrumbType, useBreadcrumbItem} from "@/hooks/useBreadCrumb.tsx";
 import {LuEllipsisVertical, LuEye} from "react-icons/lu";
-import {BiSolidUserAccount} from "react-icons/bi";
-import {AiOutlineUserDelete, AiOutlineUsergroupAdd} from "react-icons/ai";
+import {AiOutlineUsergroupAdd} from "react-icons/ai";
 import {Divider, Flex, TableColumnsType, Tag} from "antd";
-import {Classe, Course, Teacher} from "../../entity";
-import {Avatar} from "../../components/ui/layout/Avatar.tsx";
-import {enumToObjectArrayForFiltering, getAge, setFirstName} from "../../core/utils/utils.ts";
-import {Gender} from "../../entity/enums/gender.tsx";
-import {StatusTags} from "../../core/utils/tsxUtils.tsx";
-import {ActionButton} from "../../components/ui/layout/ActionButton.tsx";
-import {ListPageHierarchy} from "../../components/custom/ListPageHierarchy.tsx";
-import ListViewer from "../../components/custom/ListViewer.tsx";
-import {fetchTeachers} from "../../data";
+import {Classe, Course, Teacher} from "@/entity";
+import {Avatar} from "@/components/ui/layout/Avatar.tsx";
+import {enumToObjectArrayForFiltering, getAge, setFirstName, setPlural} from "@/core/utils/utils.ts";
+import {Gender} from "@/entity/enums/gender.tsx";
+import {StatusTags} from "@/core/utils/tsxUtils.tsx";
+import {ActionButton} from "@/components/ui/layout/ActionButton.tsx";
+import {ListPageHierarchy} from "@/components/custom/ListPageHierarchy.tsx";
+import ListViewer from "@/components/custom/ListViewer.tsx";
 import {AxiosResponse} from "axios";
-import {useRef} from "react";
-import {Status} from "../../entity/enums/status.ts";
-import {DataProps} from "../../core/utils/interfaces.ts";
-import {getSearchedTeachers} from "../../data/repository/teacherRepository.ts";
+import {Status} from "@/entity/enums/status.ts";
+import {DataProps} from "@/core/utils/interfaces.ts";
+import {useRedirect} from "@/hooks/useRedirect.ts";
+import {useTeacherRepo} from "@/hooks/actions/useTeacherRepo.ts";
+import {useState} from "react";
+import {ItemType} from "antd/es/menu/interface";
+import {TeacherActionLinks} from "@/components/ui-kit-teacher";
+import {isTeacher} from "@/auth/dto/role.ts";
+import {UserPermission} from "@/core/shared/sharedEnums.ts";
 
 const TeacherListPage = () => {
+    const [selectedTeacher, setSelectedTeacher] = useState<Teacher | undefined>(undefined)
+    const [linkButtons, setLinkButtons] = useState<ItemType[]>([])
+    const [refresh, setRefresh] = useState<boolean>(false)
+    const {toViewTeacher, toAddTeacher} = useRedirect()
+    const {useGetPaginated} = useTeacherRepo(isTeacher() ? UserPermission.TEACHER: UserPermission.ALL)
+    const {getPaginatedTeachers, getSearchedTeachers} = useGetPaginated()
 
     useDocumentTitle({
         title: text.teacher.label,
@@ -30,26 +38,24 @@ const TeacherListPage = () => {
 
     const pageHierarchy = useBreadcrumbItem([
         {
-            title: text.teacher.label + 's'
+            title: setPlural(text.teacher.label)
         }
     ])
 
-    const addUrl = useRef(text.teacher.group.add.href)
-    const viewUrl = useRef(text.teacher.group.view.href)
-
     const throughDetails = (link: string): void => {
-        redirectTo(`${viewUrl.current}${link}`)
+        toViewTeacher(link)
     }
 
     const getItems = (url: string) => {
         return [
             {
                 key: `details-${url}`,
-                icon: <LuEye size={20}/>,
+                icon: <LuEye />,
                 label: 'Voir l\'enseignant',
                 onClick: () => throughDetails(url)
             },
-            {
+            ...linkButtons
+            /*{
                 key: `account-${url}`,
                 icon: <BiSolidUserAccount size={20}/>,
                 label: 'Compte enseignant',
@@ -60,7 +66,7 @@ const TeacherListPage = () => {
                 icon: <AiOutlineUserDelete size={20}/>,
                 label: 'Retirer l\'enseignant',
                 danger: true
-            }
+            }*/
         ]
     }
 
@@ -189,14 +195,14 @@ const TeacherListPage = () => {
         <>
             <ListPageHierarchy
                 items={pageHierarchy as [BreadcrumbType]}
-                onClick={() => redirectTo(addUrl.current)}
+                onClick={toAddTeacher}
                 hasButton
                 type='primary'
                 icon={<AiOutlineUsergroupAdd />}
                 label='Ajouter enseignant'
             />
             <ListViewer
-                callback={fetchTeachers as () => Promise<AxiosResponse<Teacher[]>>}
+                callback={getPaginatedTeachers as () => Promise<AxiosResponse<Teacher[]>>}
                 searchCallback={getSearchedTeachers as ((...input: unknown[]) => Promise<AxiosResponse<Teacher[]>>)}
                 tableColumns={columns as TableColumnsType<Teacher>}
                 dropdownItems={getItems as never}
@@ -210,7 +216,16 @@ const TeacherListPage = () => {
                     pageCount: 'teacherPageCount'
                 }}
                 fetchId='teacher-list'
+                refetchCondition={refresh}
+                onSelectData={setSelectedTeacher}
             />
+            {selectedTeacher && (
+                <TeacherActionLinks
+                    getItems={setLinkButtons}
+                    data={selectedTeacher}
+                    setRefresh={setRefresh}
+                />
+            )}
         </>
     )
 }

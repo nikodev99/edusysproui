@@ -12,9 +12,8 @@ export const useAccount = () => {
         },
 
         useAccountExistsInSchool: (personalInfoId?: number) => {
-            const {data} = useFetch(["account-exists-in-school",schoolId], userExistsInSchool, [schoolId, personalInfoId], !!schoolId && !!personalInfoId)
-            console.log('IS PRESENT: ', data)
+            const {data} = useFetch(["account-exists-in-school",schoolId,personalInfoId], userExistsInSchool, [schoolId, personalInfoId], !!schoolId && !!personalInfoId)
             return data
-        }
+        },
     }
 }

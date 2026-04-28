@@ -93,6 +93,7 @@ export const useUserRepo = () => {
     }
 
     const isSameUser = (currentUser?: User): boolean => currentUser ? currentUser?.username === logged?.username : false
+    const isSelfUser = (): boolean => user ? user?.username === logged?.username : false
 
     const useSearchUserPersonalInfo = (searchKey: string) => useFetch(
         ['user-search-personal-info', searchKey],
@@ -132,6 +133,7 @@ export const useUserRepo = () => {
         useGetUserActivities,
         getPaginatedUserActivities,
         isSameUser,
+        isSelfUser,
         useSearchUserPersonalInfo,
         findSearchedUserPersonalInfo,
         useGetUserAddress,

@@ -1,9 +1,9 @@
 import {apiClient, request} from "../axiosConfig.ts";
-import {Schedule, Teacher} from "../../entity";
-import {Counted, CountType} from "../../core/utils/interfaces.ts";
+import {Schedule, Teacher} from "@/entity";
+import {Counted, CountType} from "@/core/utils/interfaces.ts";
 import {AxiosResponse} from "axios";
-import {TeacherSchema} from "../../schema";
-import {SectionType} from "../../entity/enums/section.ts";
+import {TeacherSchema} from "@/schema";
+import {SectionType} from "@/entity/enums/section.ts";
 
 export const insertTeacher = async (teacher: TeacherSchema): Promise<AxiosResponse<Teacher>> => {
     return await apiClient.post<Teacher>('/teachers', teacher)
@@ -13,6 +13,18 @@ export const getAllTeachers = (schoolId: string, page: number, size: number, sor
     return request({
         method: 'GET',
         url: '/teachers/' + schoolId,
+        params: {
+            page: page,
+            size: size,
+            sortCriteria: sortCriteria ? sortCriteria : null,
+        }
+    })
+}
+
+export const getAllSelfTeachers = (schoolId: string, teacherId: string, page: number, size: number, sortCriteria?: string) => {
+    return request({
+        method: 'GET',
+        url: `/teachers/self/${schoolId}/${teacherId}`,
         params: {
             page: page,
             size: size,

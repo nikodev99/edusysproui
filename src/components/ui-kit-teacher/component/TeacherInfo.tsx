@@ -142,8 +142,6 @@ const DepartmentInfo = ({infoData, color}: TeacherInfo) => {
         return getDistinctArray(settingDepartments, d => d?.id)
     }, [fetchedDepartment, infoData.courses])
 
-    console.log("Départment: ", departments)
-
     return(
         <>
             {departments?.map((department: Department) => (

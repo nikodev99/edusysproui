@@ -14,6 +14,8 @@ const Dashboard = () => {
     const school = useMemo(() => loggedUser.getSchool(), [])
     const schoolGlobal = useGlobalStore(state => state.schoolId)
 
+    console.log(loggedUser.getToken())
+
     return (
         <main>
             Dashboard

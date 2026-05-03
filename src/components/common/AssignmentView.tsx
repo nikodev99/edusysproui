@@ -1,11 +1,11 @@
 import {cloneElement, isValidElement, ReactNode, useEffect, useMemo, useState} from "react";
-import {Assignment, Classe, Course, Score} from "../../entity";
+import {Assignment, Classe, Course, Score} from "@/entity";
 import TabItem from "../view/TabItem.tsx";
 import {SuperWord} from "../../core/utils/tsxUtils.tsx";
 import {Select} from "antd";
 import {AssignmentDesc} from "./AssignmentDesc.tsx";
 import {UseQueryResult} from "@tanstack/react-query";
-import {isString} from "../../core/utils/utils.ts";
+import {isString} from "@/core/utils/utils.ts";
 
 interface AssignmentViewProps {
     assignExams: UseQueryResult<Assignment[], unknown>

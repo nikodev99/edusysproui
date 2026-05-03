@@ -39,7 +39,7 @@ export {departmentSchemaMerge,departmentSchema} from './models/departmentSchema.
 export {schoolMergeSchema, schoolSchema} from './models/schoolSchema'
 export {guardianSchema} from './models/guardianSchema'
 export {studentSchema, studentSchemaMerge} from './models/studentSchema'
-export {teacherSchema} from './models/teacherSchema'
+export {teacherSchema, teacherSchemaMerge} from './models/teacherSchema'
 export {addressSchema} from './models/addressSchema'
 export {healthSchema} from './models/healthSchema'
 export {individualSchema, individualSchemaMerge} from './models/individualSchema.ts'

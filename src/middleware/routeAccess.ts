@@ -251,6 +251,9 @@ class RouteAccess {
                     ],
                     'onlyTeacher': [
                         () => isTopAdmin() || isTeacher()
+                    ],
+                    'teacherAction': [
+                        () => isTeacher()
                     ]
                 }
             }

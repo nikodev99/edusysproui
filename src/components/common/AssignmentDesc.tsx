@@ -3,10 +3,9 @@ import Grid from "../ui/layout/Grid.tsx";
 import {Card} from "antd";
 import VoidData from "../view/VoidData.tsx";
 import {ShapePieChart} from "../graph/ShapePieChart.tsx";
-import {Assignment} from "../../entity";
-import {dateCompare, getAssignmentBarData, getDiffFromNow} from "../../core/utils/utils.ts";
+import {Assignment, Score} from "@/entity";
+import {dateCompare, getAssignmentBarData, getDiffFromNow} from "@/core/utils/utils.ts";
 import {ReactNode, useLayoutEffect, useRef, useState} from "react";
-import {Score} from "../../entity";
 import {CardSkeleton} from "../../core/utils/tsxUtils.tsx";
 import dayjs from "dayjs";
 import {ScoreItem} from "../ui/layout/ScoreItem.tsx";
@@ -135,7 +134,7 @@ export const AssignmentDesc = (
                             <CardSkeleton title='Status des matières' />
                         </Grid>)
                     }
-                    {studentAllScore && <Grid xs={24} md={24} lg={24}>
+                    {studentAllScore && studentAllScore?.length > 0 && <Grid xs={24} md={24} lg={24}>
                         <Card size='small' title={listTitle}>
                             {<ScoreItem
                                 scores={studentAllScore as Score[]}

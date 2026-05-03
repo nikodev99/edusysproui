@@ -27,6 +27,7 @@ import {useStudentRepo} from "@/hooks/actions/useStudentRepo.ts"
 import {useAccount} from "@/hooks/useAccount.ts";
 import {ItemType} from "antd/es/menu/interface";
 import queryString from "query-string";
+import {usePermission} from "@/hooks/usePermission.ts";
 
 const TeacherViewPage = () => {
 
@@ -34,16 +35,18 @@ const TeacherViewPage = () => {
     const {search} = useLocation()
 
     const queryParam = queryString.parse(search);
-    const activeTab = String(queryParam.show);
+    const activeTab = queryParam.show ? String(queryParam.show) : undefined;
     const [teacher, setTeacher] = useState<Teacher | null>(null)
     const [studentTaughtCount, setStudentTaughtCount] = useState<number>(0)
     const [linkButtons, setLinkButtons] = useState<ItemType[]>([])
     const [shouldRefresh, setShouldRefresh] = useState<boolean>(false)
     const [openDrawer, setOpenDrawer] = useToggle(false)
+    const {can} = usePermission()
     const {useCountStudent} = useStudentRepo()
     const {useGetTeacher} = useTeacherRepo()
     const {useAccountExists} = useAccount()
 
+    const hasPermission = can('teacherAction', true)
     const {data, isLoading, isSuccess, refetch} = useGetTeacher(id as string)
     const studentCount = useCountStudent()
     const accountExists = useAccountExists(teacher?.personalInfo?.id as number)
@@ -115,6 +118,8 @@ const TeacherViewPage = () => {
         refetch().then(r => r.data)
     }
 
+    console.log("ACTIVE TAB: ", activeTab)
+
     return(
         <>
             {context}
@@ -146,7 +151,7 @@ const TeacherViewPage = () => {
                 items={[
                     {label: "Info", children: <TeacherInfo infoData={teacher as Teacher} color={color} dataKey='info' />},
                     {label: "Agenda", children: <TeacherAgenda infoData={teacher as Teacher} dataKey='agenda' />},
-                    {label: "Programme", children: <TeacherProgram infoData={teacher as Teacher} color={color} dataKey='program' />},
+                    {label: "Programme", children: <TeacherProgram infoData={teacher as Teacher} hasPermission={hasPermission} color={color} dataKey='program' />},
                     {label: "Devoirs", children: <TeacherAssignments infoData={teacher as Teacher} dataKey='assignment' />},
                     {label: "Réprimande", children: <TeacherReprimand infoData={teacher as Teacher} dataKey='reprimand' />},
                     {label: "Rapport Journalier", children: <h1>Teacher report</h1>},

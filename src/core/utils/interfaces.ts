@@ -412,6 +412,7 @@ export interface InfoPageProps<T extends object> {
     color?: string
     viewLink?: string
     academicYear?: string
+    hasPermission?: boolean
 }
 
 export interface EditProps<TData extends object> {

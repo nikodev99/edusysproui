@@ -25,6 +25,7 @@ import {text} from "./text_display.ts";
 import {AssignmentType, getAssignmentType} from "@/entity/enums/assignmentType.ts";
 import {InvoiceStatus, StatusInput} from "@/finance/models/invoice.ts";
 import {GATEWAY_META, PaymentGateway, PaymentMethod, PaymentStatus, STATUS_META} from "@/finance/models/payment.ts";
+import {ProgramStatus, statusConfig} from "@/entity/domain/courseProgram.ts";
 
 export const StatusTags = ({status, female}: {status: Status, female?: boolean}): ReactNode => {
     const label = getStatusKey(status, female)
@@ -81,7 +82,7 @@ export const SuperWord = ({ input, isUpper, textSize = .6, isSpan = false, style
 
     const parts: (string | ReactNode)[] = [];
     let lastIndex = 0;
-    let match;
+    let match: RegExpExecArray | [never, never, never] | null;
 
     while ((match = regex?.exec(input)) !== null) {
         const [fullMatch, digit, letters] = match;
@@ -123,6 +124,45 @@ export const SuperWord = ({ input, isUpper, textSize = .6, isSpan = false, style
                 </p>
             )}
         </>
+    );
+}
+
+export function ProgramStatusBadge({ status, small = false, color }: {status: keyof typeof ProgramStatus, small?: boolean, color?: Color}) {
+    const cfg = statusConfig(status, color);
+    return (
+        <span style={{
+            display: "inline-flex", alignItems: "center", gap: 5,
+            padding: small ? "2px 8px" : "3px 10px",
+            borderRadius: 20,
+            background: cfg.bg,
+            color: cfg.color,
+            fontSize: small ? 10 : 11,
+            fontWeight: 600,
+            letterSpacing: "0.03em",
+            whiteSpace: "nowrap",
+        }}>
+      <span style={{ width: 6, height: 6, borderRadius: "50%", background: cfg.dot, flexShrink: 0 }} />
+            {cfg.label}
+    </span>
+    );
+}
+
+export function StatPill({ icon, label, value, alert }: {icon?: ReactNode, label?: ReactNode, value?: ReactNode, alert?: boolean}) {
+    return (
+        <div style={{
+            display: "flex", alignItems: "center", gap: 8,
+            padding: "8px 14px", borderRadius: 10,
+            background: alert ? "#FEF2F2" : "#F8FAFC",
+            border: `1px solid ${alert ? "#FECACA" : "#E2E8F0"}`,
+        }}>
+            {icon && <span style={{ fontSize: 16 }}>{icon}</span>}
+            <div>
+                {label && <div style={{ fontSize: 10, color: "#94A3B8", fontWeight: 600, letterSpacing: "0.04em" }}>{label}</div>}
+                {value && <div style={{ fontSize: 18, fontWeight: 800, color: alert ? "#DC2626" : "#1E293B", lineHeight: 1.2 }}>
+                    {value}
+                </div>}
+            </div>
+        </div>
     );
 }
 

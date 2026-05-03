@@ -1,9 +1,9 @@
-import {InfoPageProps} from "../../../core/utils/interfaces.ts";
-import {Score, Teacher} from "../../../entity";
+import {InfoPageProps} from "@/core/utils/interfaces.ts";
+import {Score, Teacher} from "@/entity";
 import {useEffect, useState} from "react";
-import {useAssignmentRepo} from "../../../hooks/actions/useAssignmentRepo.ts";
-import {useScoreRepo} from "../../../hooks/actions/useScoreRepo.ts";
-import {AssignmentView} from "../../common/AssignmentView.tsx";
+import {useAssignmentRepo} from "@/hooks/actions/useAssignmentRepo.ts";
+import {useScoreRepo} from "@/hooks/actions/useScoreRepo.ts";
+import {AssignmentView} from "@/components/common/AssignmentView.tsx";
 
 export const TeacherAssignments = ({infoData}: InfoPageProps<Teacher>) => {
     const {personalInfo, courses, classes} = infoData

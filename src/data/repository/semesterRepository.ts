@@ -1,5 +1,5 @@
 import {apiClient} from "../axiosConfig.ts";
-import {Semester} from "../../entity";
+import {Semester} from "@/entity";
 import {AllSemesterTemplateSchema, SemesterTemplateSchema} from "../../schema";
 
 export const saveAllSemesters = (semesters: AllSemesterTemplateSchema) => {

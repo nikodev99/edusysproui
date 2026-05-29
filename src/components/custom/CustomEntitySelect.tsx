@@ -5,7 +5,7 @@ import {useToggle} from "@/hooks/useToggle.ts";
 
 export const CustomEntitySelect = <TEntity extends object, TEntityID extends string | number | number[]>(
     {
-        data, getEntity, uniqueValue, options: {id, label}, width = '200px', getResource,
+        data, getEntity, uniqueValue, options: {id, label}, width = '200px', getResource, onChange,
         entities, onlyCurrent, variant = 'borderless', placeholder, isLoading, multiple, style
     }: SelectEntity<TEntity, TEntityID>
 ) => {
@@ -103,8 +103,9 @@ export const CustomEntitySelect = <TEntity extends object, TEntityID extends str
                     getResource(allEntities.find(a => a[id] === val) as TEntity)
                 }
             }
+            onChange?.(val)
         },
-        [allEntities, getEntity, getResource, id, setHasUserInteracted, setActiveEntity]
+        [allEntities, getEntity, getResource, id, setHasUserInteracted, setActiveEntity, onChange]
     );
 
     return (

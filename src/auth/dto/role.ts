@@ -1,4 +1,5 @@
 import {loggedUser} from "@/auth/jwt/LoggedUser.ts";
+import {enumHelper} from "@/core/helpers/enumHelpers.ts";
 
 export enum RoleEnum {
     TOP_ADMIN = 'Top Administrateur',
@@ -14,15 +15,8 @@ export enum RoleEnum {
 
 export type Role = keyof typeof RoleEnum;
 
-const hasRole = (roles: Role[]) => {
-    const userRoles = loggedUser.getRole()
-    if (!userRoles || userRoles?.length === 0)
-        return false
-    return userRoles.some(userRole => roles.includes(userRole))
-}
-
 export const createRoleChecker = (...roles: Role[]) => {
-    return () => hasRole(roles)
+    return () => enumHelper.createMultipleChecker(loggedUser.getRole(), ...roles)
 }
 
 export const isTopAdmin = createRoleChecker("TOP_ADMIN", "DIRECTOR")

@@ -568,8 +568,8 @@ export interface SchemaProps<TData extends FieldValues> {
     toReset?: boolean
 }
 
-export interface PostSchemaProps<TData extends FieldValues> {
-    postFunc: (data: TData) => Promise<AxiosResponse<TData>>
+export interface PostSchemaProps<TData extends FieldValues, TReturn extends TData = TData> {
+    postFunc: (data: TData) => Promise<AxiosResponse<TReturn>>
 }
 
 export interface PutSchemaProps<TData extends FieldValues, TReturn> {
@@ -623,6 +623,7 @@ export interface SelectEntityProps<
     defaultValue?: EntityID | EntityID[]
     getResource?: (resource: Entity | Entity[]) => void
     style?: CSSProperties
+    onChange?: (value?: EntityID | EntityID[] | null) => void
 }
 
 export type SelectEntity<
@@ -635,6 +636,7 @@ export type SelectEntity<
     uniqueValue: { key?: keyof Entity, value: unknown }
     entities?: Entity[]
     width?: number | string
+    onChange?:  (value?: EntityID | EntityID[] | null) => void
 } & SelectEntityProps<Entity, EntityID>
 
 export interface RepoOptions {

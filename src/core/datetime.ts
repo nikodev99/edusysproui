@@ -125,8 +125,7 @@ class Datetime {
     }
 
     static of(date: DateInput | Params, timezone?: string, locale?: string): Datetime {
-        const datetime = new Datetime(date, timezone, locale);
-        return datetime;
+        return new Datetime(date, timezone, locale);
     }
 
     static now(date?: DateInput | Params, timezone?: string, locale?: string): Datetime {

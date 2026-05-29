@@ -1,10 +1,10 @@
 import FormContent from "../ui/form/FormContent.tsx";
 import {FieldValues, Path, PathValue} from "react-hook-form";
-import {FormContentProps} from "../../core/utils/interfaces.ts";
-import {AcademicYear} from "../../entity";
-import {FormUtils} from "../../core/utils/formUtils.ts";
-import {FormConfig} from "../../config/FormConfig.ts";
-import {InputTypeEnum} from "../../core/shared/sharedEnums.ts";
+import {FormContentProps} from "@/core/utils/interfaces.ts";
+import {AcademicYear} from "@/entity";
+import {FormUtils} from "@/core/utils/formUtils.ts";
+import {FormConfig} from "@/config/FormConfig.ts";
+import {InputTypeEnum} from "@/core/shared/sharedEnums.ts";
 
 type AcademicYearFormProps<T extends FieldValues> = FormContentProps<T, AcademicYear> & {
     handleUpdate?: (field: keyof AcademicYear, value: unknown) => void

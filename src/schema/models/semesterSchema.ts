@@ -1,7 +1,7 @@
 import {z} from "zod";
-import {academicYearSchemaMerge} from "./academicYearSchema.ts";
+import {academicYearSchemaMerge} from "@/schema";
 import {dateProcess} from "../commonSchema.ts";
-import {schoolMergeSchema} from "./schoolSchema.ts";
+import {schoolMergeSchema} from "@/schema";
 import Datetime from "../../core/datetime.ts";
 
 export const semesterTemplateSchema = z.object({
@@ -40,6 +40,10 @@ export const allSemesterTemplateSchema = z.object({
 
 export const allSemesterSchema = z.object({
     semesters: z.array(semesterSchema)
+})
+
+export const semesterIdSchemaMerge = z.object({
+    semesterId: z.number({required_error: 'Le semestre est requis'}),
 })
 
 export const semesterSchemaMerge = z.object({

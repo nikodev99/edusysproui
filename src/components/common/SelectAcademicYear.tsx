@@ -11,7 +11,7 @@ type SelectAcademicYearProps = {
 } & SelectEntityProps<AcademicYear, string>
 
 export const SelectAcademicYear = (
-    {getAcademicYear, academicYears, variant, onlyCurrent, placeholder, getResource, style}: SelectAcademicYearProps
+    {getAcademicYear, academicYears, variant, onlyCurrent, placeholder, getResource, style, onChange}: SelectAcademicYearProps
 ) => {
 
     const {useGetAllAcademicYear} = useAcademicYearRepo()
@@ -33,6 +33,7 @@ export const SelectAcademicYear = (
             placeholder={placeholder}
             onlyCurrent={onlyCurrent}
             getResource={getResource}
+            onChange={onChange}
         />
     )
 }

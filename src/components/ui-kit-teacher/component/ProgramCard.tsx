@@ -1,25 +1,35 @@
 import {CourseProgram} from "@/entity";
-import {ProgramTopic, statusConfig} from "@/entity/domain/courseProgram.ts";
+import {
+    hasDebuted, isDebut,
+    isDrafted,
+    isFinished, isInProgress,
+    ProgramStatus, ProgramTiming,
+    ProgramTopic,
+    statusConfig
+} from "@/entity/domain/courseProgram.ts";
 import {useMemo, useState} from "react";
-import {Button, Collapse, Flex, Space} from "antd";
+import {Button, Collapse, Flex, Space, Tooltip} from "antd";
 import {ProgramStatusBadge} from "@/core/utils/tsxUtils.tsx";
 import Datetime from "@/core/datetime.ts";
 import {semesterHelper} from "@/core/helpers/semesterHelpers.ts";
-import {LuClipboardPen} from "react-icons/lu";
+import {LuCheck, LuClipboardPen, LuHourglass, LuPlay, LuTrash2} from "react-icons/lu";
 import {useToggle} from "@/hooks/useToggle.ts";
-import {InsertModal} from "@/components/custom/InsertSchema.tsx";
+import {InsertNewProgramTopic} from "@/components/ui-kit-teacher/component/TeacherProgramManagement.tsx";
+import {ConfirmationModal, Messages} from "@/components/ui/layout/ConfirmationModal.tsx";
+import {useCourseProgramRepo} from "@/hooks/actions/useCourseProgramRepo.ts";
 
 export interface ProgramCardProps {
     program: CourseProgram,
+    academicYearId?: string,
     index?: number,
-    onToggle?: () => void,
     onReport?: () => void,
-    onAddSub?: () => void
+    onRefetch?: () => void
     hasPermission?: boolean
 }
 
-export const ProgramCard = ({program, index, hasPermission = false, onToggle, onReport, onAddSub}: ProgramCardProps) => {
+export const ProgramCard = ({program, index, hasPermission = false, academicYearId, onRefetch}: ProgramCardProps) => {
     const [expanded, setExpanded] = useToggle(false)
+    const [addTopic, setAddTopic] = useToggle(false)
     const cfg = statusConfig(program?.timing?.status)
 
     const {totalCompletedTopics, totalTopics} = useMemo(() => {
@@ -32,7 +42,7 @@ export const ProgramCard = ({program, index, hasPermission = false, onToggle, on
         }
     }, [program?.topic])
 
-    return(
+    return(<>
         <div style={{
             border: '1px solid #e8edf3',
             borderRadius: 12,
@@ -59,38 +69,65 @@ export const ProgramCard = ({program, index, hasPermission = false, onToggle, on
                            <div>
                                <div style={{ fontSize: 14, fontWeight: 600, color: "#1E293B" }}>{program?.name}</div>
                                <div style={{ fontSize: 11, color: "#94A3B8", marginTop: 1 }}>
-                                   {totalCompletedTopics}/{totalTopics} sous-thèmes · {Datetime.of(program?.timing?.startDate).fDate()} → {Datetime.of(program?.timing?.endDate).fDate()}
+                                   {totalCompletedTopics}/{totalTopics} sous-thèmes · {
+                                       isFinished(program?.timing?.status)
+                                       ? `fini le ${Datetime.of(program?.timing?.completedAt).fDate()}`
+                                       : `${Datetime.of(program?.timing?.startDate).fDate()} → ${Datetime.of(program?.timing?.endDate).fDate()}`
+                                   }
                                </div>
                            </div>
                        </div>,
                        children: <div>
                            {(program?.topic && program?.topic?.length > 0) ? program?.topic?.map(t =>
-                                <SubTopicRow topic={t} cfg={cfg} onReport={() => alert('reporter')} hasPermission={hasPermission} />
+                                <SubTopicRow
+                                    key={t.id}
+                                    topic={t}
+                                    cfg={cfg}
+                                    onReport={() => alert('reporter')}
+                                    hasPermission={hasPermission}
+                                    hasProgramDebuted={hasDebuted(program?.timing?.status)}
+                                    onRefetch={onRefetch}
+                                />
                            ): (
                                <p style={{ fontSize: 12, color: "#94A3B8", margin: "8px 0" }}>Aucun sous-thème ajouté.</p>
                            )}
-                           {hasPermission && <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
-                               <button onClick={() => () => alert("Ajouter un sous thème")} style={{
-                                   padding: "6px 12px", borderRadius: 8,
-                                   border: "1.5px dashed #C7D2FE",
-                                   background: "#FAFBFF",
-                                   fontSize: 12, color: "#6366F1",
-                                   cursor: "pointer", fontWeight: 600,
-                                   display: "flex", alignItems: "center", gap: 5,
-                               }}>
-                                   <span style={{ fontSize: 16, lineHeight: 1 }}>+</span> Ajouter un sous-thème
-                               </button>
-                               {program?.timing?.status !== "COMPLETED" && (
-                                   <button onClick={() => () => alert('Ajouter un raport')} style={{
+                           {hasPermission && <div style={{ display: "flex", justifyContent: 'space-between', marginTop: 10 }}>
+                               <div style={{ display: "flex", gap: 8 }}>
+                                   <button onClick={setAddTopic} disabled={isFinished(program?.timing?.status)} style={{
                                        padding: "6px 12px", borderRadius: 8,
-                                       border: "1px solid #E2E8F0", background: "white",
-                                       fontSize: 12, color: "#334155",
+                                       border: "1.5px dashed #C7D2FE",
+                                       background: "#FAFBFF",
+                                       fontSize: 12, color: isFinished(program?.timing?.status) ? 'grey' : "#6366F1",
                                        cursor: "pointer", fontWeight: 600,
+                                       display: "flex", alignItems: "center", gap: 5,
                                    }}>
-                                       <LuClipboardPen /> Soumettre un rapport
+                                       <span style={{ fontSize: 16, lineHeight: 1 }}>+</span> Ajouter un sous-thème
                                    </button>
-                               )}
+                                   {!isFinished(program?.timing?.status) && (
+                                       <button onClick={() => alert('Ajouter un raport')} style={{
+                                           padding: "6px 12px", borderRadius: 8,
+                                           border: "1px solid #E2E8F0", background: "white",
+                                           fontSize: 12, color: "#334155",
+                                           cursor: "pointer", fontWeight: 600,
+                                       }}>
+                                           <LuClipboardPen /> Soumettre un rapport
+                                       </button>
+                                   )}
+                               </div>
+                               <ActionButtonList
+                                   data={program?.timing}
+                                   status={program?.timing?.status}
+                                   onRefetch={onRefetch}
+                               />
                            </div>}
+                           {hasPermission && addTopic &&
+                               <InsertNewProgramTopic
+                                   open={addTopic}
+                                   onClose={setAddTopic}
+                                   programValue={program?.id}
+                                   academicYear={academicYearId}
+                                   onRefetch={onRefetch as never}
+                           />}
                        </div>,
                        extra: <Space>
                            <ProgramStatusBadge status={program?.timing?.status} />
@@ -103,16 +140,18 @@ export const ProgramCard = ({program, index, hasPermission = false, onToggle, on
                expandIconPosition='end'
            />
         </div>
-    )
+
+    </>)
 }
 
-function SubTopicRow({ topic, cfg, onReport, hasPermission = false }: {
+function SubTopicRow({ topic, cfg, hasPermission = false, onReport, hasProgramDebuted = false, onRefetch }: {
     topic: ProgramTopic,
     cfg: {label: string, bg: string, color: string, dot: string},
     onReport: () => void,
+    onRefetch?: () => void,
     hasPermission: boolean
+    hasProgramDebuted: boolean
 }) {
-
 
     return (
         <div style={{
@@ -124,6 +163,7 @@ function SubTopicRow({ topic, cfg, onReport, hasPermission = false }: {
             borderRadius: "0 6px 6px 0",
             background: "transparent",
             transition: "background 0.15s",
+            overflowY: 'auto'
         }}
              onMouseEnter={e => e.currentTarget.style.background = "#F8FAFC"}
              onMouseLeave={e => e.currentTarget.style.background = "transparent"}
@@ -145,7 +185,10 @@ function SubTopicRow({ topic, cfg, onReport, hasPermission = false }: {
                 <Flex vertical>
                     <span style={{ fontSize: 13, color: "#334155" }}>{topic?.title}</span>
                     <span style={{ fontSize: 11, color: "#94A3B8", marginTop: 1 }}>
-                        {Datetime.of(topic?.timing?.startDate).fDate()} → {Datetime.of(topic?.timing?.endDate).fDate()}
+                        {isFinished(topic?.timing?.status)
+                            ? `fini le ${Datetime.of(topic?.timing?.completedAt).fDate()}`
+                            : `${Datetime.of(topic?.timing?.startDate).fDate()} → ${Datetime.of(topic?.timing?.endDate).fDate()}`
+                        }
                     </span>
                 </Flex>
             </div>
@@ -154,8 +197,15 @@ function SubTopicRow({ topic, cfg, onReport, hasPermission = false }: {
                     <ProgramStatusBadge status={topic?.timing.status} small />
                     {semesterHelper.checkLateStatus(topic?.timing) && <ProgramStatusBadge status={'LATE'} small />}
                 </Space>
-                {(hasPermission && topic?.timing.status !== "COMPLETED") && (
-                    <Button onClick={() => onReport(topic)} size={'small'} style={{
+                <ActionButtonList
+                    data={topic?.timing}
+                    status={topic?.timing?.status}
+                    isSmall isTopicTitle
+                    enableTopic={hasPermission && hasProgramDebuted}
+                    onRefetch={onRefetch}
+                />
+                {(hasPermission && hasProgramDebuted && hasDebuted(topic?.timing?.status)) && (
+                    <Button onClick={() => onReport()} size={'small'} style={{
                         padding: "3px 8px", borderRadius: 6,
                         border: "1px solid #E2E8F0", background: "white",
                         fontSize: 11, color: "#6366F1", cursor: "pointer", fontWeight: 600,
@@ -168,18 +218,170 @@ function SubTopicRow({ topic, cfg, onReport, hasPermission = false }: {
     );
 }
 
-export const InsertNewProgram = ({onAdd}: {onAdd: () => void}) => {
-    const [open, setOpen] = useState<boolean>()
+type Flags = {
+    shouldStart: boolean;
+    enableProgress: boolean;
+    shouldRemove: boolean;
+    isCompleted: boolean;
+};
 
+const ActionButtonList = ({data, status, isSmall = false, isTopicTitle = false, enableTopic, onRefetch}: {
+    status: keyof typeof ProgramStatus,
+    isSmall?: boolean,
+    isTopicTitle?: boolean,
+    enableTopic?: boolean
+    data: ProgramTiming
+    onRefetch?: () => void
+}) => {
 
+    const [open, setOpen] = useState<Flags>({
+        shouldStart: false,
+        enableProgress: false,
+        shouldRemove: false,
+        isCompleted: false,
+    })
 
-    return(
-        <InsertModal
-            open={open}
-            data={}
-            customForm={}
-            handleForm={}
-            postFunc={}
-        />
-    )
+    const [isComplete, setIsComplete] = useState<boolean>(false)
+    const [msg, setMsg] = useState<Messages>({})
+
+    const {useChangeStatus} = useCourseProgramRepo()
+    const manageStatus = useChangeStatus(isComplete, setMsg)
+
+    const enable = isTopicTitle ? enableTopic : true
+    const subTitle = isTopicTitle ? 'sous-thème' : 'theme'
+
+    const {title, btnText, message, statusValue, isDisabled} = useMemo(() => {
+        if (open.shouldStart) {
+            return {
+                title : `Démarrer le ${subTitle}`,
+                btnText: 'Démarrer',
+                message: <i>Voulez-vous démarrer ce nouveau thème ?</i>,
+                statusValue: 'DEBUTED' as keyof typeof ProgramStatus,
+                isDisabled: isDebut(status)
+            }
+        }else if (open.enableProgress) {
+            return {
+                title: `Sélectionner comme en cours`,
+                btnText: 'En cours',
+                message: <i>Ce {subTitle} sera marqué comme "En cours". Vous pourrez le compléter ou le supprimer à tout moment. </i>,
+                statusValue: 'IN_PROGRESS' as keyof typeof ProgramStatus,
+                isDisabled: isInProgress(status)
+            }
+        }else if (open.isCompleted) {
+            return {
+                title: `Terminer le ${subTitle}`,
+                btnText: 'Terminé',
+                message: <i>Félicitations ! Ce {subTitle} sera marqué comme "Terminé".</i>,
+                statusValue: 'CANCELLED' as keyof typeof ProgramStatus,
+                isDisabled: isFinished(status)
+            }
+        }else if (open.shouldRemove) {
+            return {
+                title: `Supprimer le ${subTitle}`,
+                btnText: 'Supprimer',
+                message: <i>Voulez-vous vraiment supprimer ce {subTitle} ? Cette action est irréversible{isTopicTitle ? '' : ' et supprime tous les sous thèmes'}.</i>,
+                statusValue: 'CANCELLED' as keyof typeof ProgramStatus,
+                isDisabled: false
+            }
+        }
+        return  {}
+    }, [open.shouldStart, open.enableProgress, open.isCompleted, open.shouldRemove, subTitle, status, isTopicTitle])
+
+    const hasAnyTrue = (): boolean => {
+        return open.shouldStart || open.enableProgress || open.shouldRemove || open.isCompleted;
+    };
+
+    function changeValue(flag: keyof Flags, setAsCompeted: boolean = false) {
+        setOpen(prev => ({
+            ...prev,
+            [flag]: true,
+        }));
+        setIsComplete(setAsCompeted)
+    }
+
+    function resetIfAnyTrue() {
+        setOpen((prev) => {
+            if (hasAnyTrue()) {
+                return {
+                    shouldStart: false,
+                    enableProgress: false,
+                    shouldRemove: false,
+                    isCompleted: false,
+                };
+            }
+            return prev;
+        });
+    }
+
+    const shouldOpen = hasAnyTrue()
+
+    const handleSubmit = () => {
+        manageStatus.mutate({ timingId: data?.id as number, status: statusValue })
+    }
+    
+    console.log({statusValue})
+
+    return (<>
+        {(enable && (isDrafted(status) || hasDebuted(status))) && <div style={{ display: "flex", gap: 8 }}>
+            {isDrafted(status) && <Tooltip title={`Démarrer le ${subTitle}`}>
+                <Button
+                    icon={<LuPlay />}
+                    type='primary'
+                    size={isSmall ? 'small' : undefined}
+                    onClick={() => changeValue('shouldStart')}
+                />
+            </Tooltip>}
+            {isDebut(status) && <Tooltip title={`Sélectionner comme en cours`}>
+                <Button
+                icon={<LuHourglass />}
+                type='primary'
+                size={isSmall ? 'small' : undefined}
+                onClick={() => changeValue('enableProgress')}
+            />
+            </Tooltip>}
+            {isInProgress(status) && <Tooltip title={`Terminer le ${subTitle}`}>
+                <Button
+                    icon={<LuCheck />}
+                    color={'green'}
+                    variant='solid'
+                    size={isSmall ? 'small' : undefined}
+                    onClick={() => changeValue('isCompleted', true)}
+                />
+            </Tooltip>}
+            <Tooltip title={`Supprimer le ${subTitle}`}>
+                <Button
+                    icon={<LuTrash2 />}
+                    color={'danger'}
+                    variant='solid'
+                    size={isSmall ? 'small' : undefined}
+                    onClick={() => changeValue('shouldRemove')}
+                />
+            </Tooltip>
+            <ConfirmationModal
+                data={data}
+                open={shouldOpen}
+                close={resetIfAnyTrue}
+                handleFunc={handleSubmit}
+                title={title}
+                modalTitle={title}
+                alertDesc={{
+                    alert: false,
+                    msg: ''
+                }}
+                messages={{
+                    success: msg.success,
+                    error: msg.error,
+                }}
+                btnTxt={btnText}
+                customComponent={<p>{message}</p>}
+                btnProps={{
+                    danger: open.shouldRemove,
+                    type: 'primary',
+                    disabled: isDisabled
+                }}
+                setRefetch={onRefetch}
+                isConfirm={false}
+            />
+        </div>}
+    </>)
 }

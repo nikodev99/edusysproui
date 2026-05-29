@@ -1,6 +1,5 @@
 import {apiClient, handleError} from "@/data/axiosConfig.ts";
 import {LoginRequest, ResetPasswordRequest, User, UserProfileToken} from "../dto/user.ts";
-import {loggedUser} from "../jwt/LoggedUser.ts";
 import {AssignUserToSchoolSchema, SchoolSelectionSchema, SignupSchema} from "@/schema";
 import {MessageResponse} from "@/core/utils/interfaces.ts";
 
@@ -15,22 +14,22 @@ export const loginToSchool = async (schoolData: SchoolSelectionSchema) => {
     return await apiClient.post<UserProfileToken>('/auth/select_school/', schoolData)
 }
 
-export const tokenRefresh = async () => {
-    const refreshToken = loggedUser.getRefreshToken()
-    const school = loggedUser.getSchool()
+export const tokenRefresh = async (refreshToken: string, school: string) => {
     if (!refreshToken)
         throw new Error('No refresh token found')
 
+    if (!school)
+        throw new Error('No school token found')
+
     try {
-        return await apiClient.post<UserProfileToken>('/auth/refresh', {refreshToken: refreshToken, schoolId: school?.id})
+        return await apiClient.post<UserProfileToken>('/auth/refresh', {refreshToken: refreshToken, schoolId: school})
     }catch (error) {
         console.error('Token refresh API call failed:', error)
         throw error
     }
 }
 
-export const tokenChange = async () => {
-    const refreshToken = loggedUser.getRefreshToken()
+export const tokenChange = async (refreshToken: string) => {
     if (!refreshToken)
         throw new Error('No refresh token found')
 
@@ -79,8 +78,7 @@ export const userExistsInSchool = async (schoolId: string, personalInfoId: numbe
     }
 }
 
-export const logoutApi = async () => {
-    const refreshToken = loggedUser.getRefreshToken()
+export const logoutApi = async (refreshToken: string) => {
     await apiClient.post('/auth/logout', {refreshToken: refreshToken})
 }
 

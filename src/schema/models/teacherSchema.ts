@@ -1,10 +1,8 @@
 import {z} from "zod";
 import dayjs from "dayjs";
-import {schoolMergeSchema} from "./schoolSchema.ts";
-import {classeSchemaMerge} from "./classeSchema.ts";
+import {schoolMergeSchema, classeSchemaMerge, courseSchemaMerge} from "@/schema";
 import {teacherIndividualExtend} from "./individualSchema.ts";
-import {courseSchemaMerge} from "./courseSchema.ts";
-import {IndividualType} from "../../core/shared/sharedEnums.ts";
+import {IndividualType} from "@/core/shared/sharedEnums.ts";
 
 export const teacherSchema = z.lazy(() => z.object({
     personalInfo: teacherIndividualExtend.extend({
@@ -27,3 +25,7 @@ export const teacherSchema = z.lazy(() => z.object({
     salaryByHour: z.number(),
     school: schoolMergeSchema.optional(),
 }))
+
+export const teacherSchemaMerge = z.object({
+    id: z.string({required_error: 'L\'enseignant est requis'}),
+})

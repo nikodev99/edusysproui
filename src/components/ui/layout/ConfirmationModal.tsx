@@ -21,7 +21,7 @@ export interface ConfirmationProps<T extends object> {
     data: T,
     open: boolean,
     close: () => void
-    setRefetch?: (refetch: boolean) => void,
+    setRefetch?: (refetch?: boolean) => void,
     modalTitle?: ReactNode | ((data: T) => ReactNode),
     alertDesc?: AlertDesc
     customComponent?: ReactNode

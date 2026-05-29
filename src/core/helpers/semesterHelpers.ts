@@ -1,4 +1,4 @@
-import {CourseProgram, Semester} from "@/entity";
+import {Semester} from "@/entity";
 import Datetime from "@/core/datetime.ts";
 import {ProgramTiming} from "@/entity/domain/courseProgram.ts";
 

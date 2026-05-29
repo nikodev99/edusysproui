@@ -1,5 +1,6 @@
 import {Teacher, Course, Semester, Classe, AcademicYear} from "@/entity";
 import {Color, ID, Moment} from "@/core/utils/interfaces.ts";
+import {enumHelper} from "@/core/helpers/enumHelpers.ts";
 
 export interface CourseProgram {
     id: number
@@ -25,7 +26,7 @@ export interface SemesterProgram {
 
 export interface ProgramTiming {
     id: ID
-    status: keyof typeof ProgramStatus,
+    status: Status,
     startDate: Moment,
     endDate: Moment,
     completedAt: Moment
@@ -49,7 +50,15 @@ export enum ProgramStatus {
     PROGRAMMED = "Programmé"
 }
 
-export const statusConfig = (status: keyof typeof ProgramStatus, color?: Color): {label: string, bg: string, color: string, dot: string} => {
+type Status = keyof typeof ProgramStatus
+
+export const hasDebuted = (status: Status) => enumHelper.createChecker<Status>(status, 'DEBUTED', 'IN_PROGRESS')
+export const isDebut = (status: Status) => enumHelper.createChecker<Status>(status, 'DEBUTED')
+export const isInProgress = (status: Status) => enumHelper.createChecker<Status>(status, 'IN_PROGRESS')
+export const isFinished = (status: Status) => enumHelper.createChecker<Status>(status, 'COMPLETED', 'CANCELLED')
+export const isDrafted = (status: Status) => enumHelper.createChecker<Status>(status, 'PROGRAMMED')
+
+export const statusConfig = (status:Status, color?: Color): {label: string, bg: string, color: string, dot: string} => {
     switch (status) {
         case "DEBUTED": {
             return { label: ProgramStatus[status], bg: "#EEF2FF", color: color ?? "#4338CA", dot: "#818CF8" }

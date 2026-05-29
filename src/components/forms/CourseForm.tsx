@@ -1,11 +1,11 @@
 import {FieldValues, Path, PathValue} from "react-hook-form";
-import {FormContentProps} from "../../core/utils/interfaces.ts";
-import {Course} from "../../entity";
+import {FormContentProps} from "@/core/utils/interfaces.ts";
+import {Course} from "@/entity";
 import FormContent from "../ui/form/FormContent.tsx";
-import {InputTypeEnum} from "../../core/shared/sharedEnums.ts";
-import {FormConfig} from "../../config/FormConfig.ts";
+import {InputTypeEnum} from "@/core/shared/sharedEnums.ts";
+import {FormConfig} from "@/config/FormConfig.ts";
 import {useMemo} from "react";
-import {useDepartmentRepo} from "../../hooks/actions/useDepartmentRepo.ts";
+import {useDepartmentRepo} from "@/hooks/actions/useDepartmentRepo.ts";
 
 export const CourseForm = <T extends FieldValues>(
     {control, errors, data, showField}: FormContentProps<T, Course>

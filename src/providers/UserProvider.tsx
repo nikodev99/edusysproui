@@ -160,7 +160,7 @@ export const UserProvider = ({children}: UserContextProps) => {
         setErrorMessage(null)
         setErrorType(null)
         try {
-            const response = await tokenRefresh()
+            const response = await tokenRefresh(refreshToken as string, userSchool?.id as string)
             if ('status' in response && response?.status >= 200  && response?.status < 300 && 'data' in response) {
                 const success = cashedLoggedUser(response.data, undefined)
 
@@ -186,7 +186,7 @@ export const UserProvider = ({children}: UserContextProps) => {
         setErrorMessage(null)
         setErrorType(null)
         try {
-            const response = await tokenChange()
+            const response = await tokenChange(refreshToken as string)
             if ('status' in response && response?.status >= 200  && response?.status < 300 && 'data' in response) {
                 const success = cashedLoggedUser(response.data, undefined)
 
@@ -227,7 +227,7 @@ export const UserProvider = ({children}: UserContextProps) => {
     const performLogout = async (callLogoutApi: boolean = true) => {
         try {
             if(callLogoutApi) {
-                await logoutApi()
+                await logoutApi(refreshToken as string)
             }
         }catch (error) {
             console.error("Error calling logout API:", error)

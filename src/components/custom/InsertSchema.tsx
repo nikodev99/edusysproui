@@ -17,6 +17,7 @@ type InsertSchemaType<TData extends FieldValues> = SchemaProps<TData>
         onSuccess?: (response: unknown) => void,
         onError?: (error: string) => void,
         isNotif?: boolean
+        width?: number | string,
     }
 
 const InsertModal = <TData extends FieldValues>(
@@ -36,7 +37,8 @@ const InsertModal = <TData extends FieldValues>(
         onSuccess,
         marquee = false,
         onError,
-        isNotif
+        isNotif,
+        width
     }: InsertSchemaType<TData>
 ) => {
     const breakpoints = useGlobalStore.use.modalBreakpoints();
@@ -66,7 +68,7 @@ const InsertModal = <TData extends FieldValues>(
             title={title}
             open={open}
             onCancel={handleModalClose}
-            width={breakpoints}
+            width={width || breakpoints}
             footer={null}
             destroyOnHidden
         >

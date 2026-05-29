@@ -4,13 +4,13 @@ import {
     getAllSemesters,
     saveAllSemesters,
     saveSemester
-} from "../../data/repository/semesterRepository.ts";
-import {RepoOptions} from "../../core/utils/interfaces.ts";
+} from "@/data/repository/semesterRepository.ts";
+import {Options, RepoOptions} from "@/core/utils/interfaces.ts";
 import {useInsert} from "../usePost.ts";
-import {allSemesterSchema, semesterSchema} from "../../schema";
-import {useGlobalStore} from "../../core/global/store.ts";
+import {allSemesterSchema, semesterSchema} from "@/schema";
+import {useGlobalStore} from "@/core/global/store.ts";
 
-export const useSemesterRepo = () => {
+export const useSemesterRepo = (enabled: boolean = false) => {
     const schoolId = useGlobalStore(state => state.schoolId)
 
     const useSaveSemester = () => useInsert(semesterSchema, saveSemester)
@@ -23,6 +23,13 @@ export const useSemesterRepo = () => {
 
         return data
     }
+
+    const semesters = useGetAllSemesters({shouldRefetch: enabled})
+
+    const semesterOptions: Options = semesters?.map(s => ({
+        value: s.semesterId,
+        label: s.template?.semesterName
+    })) || []
 
     const useGetCurrentSemesters = (academicYearId: string, options?: RepoOptions) => {
         const {data, refetch} = useFetch(
@@ -43,5 +50,7 @@ export const useSemesterRepo = () => {
         useSaveSemester,
         useGetAllSemesters,
         useGetCurrentSemesters,
+        semesters,
+        semesterOptions,
     }
 }

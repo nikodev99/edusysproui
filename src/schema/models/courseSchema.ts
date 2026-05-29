@@ -1,5 +1,5 @@
 import {z} from "zod";
-import {departmentSchemaMerge} from "./departmentSchema.ts";
+import {departmentSchemaMerge} from "@/schema";
 
 export const courseSchema = z.object({
     course: z.string({required_error: 'Le nom de la matière est requis'}).min(3, {

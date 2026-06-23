@@ -1,5 +1,5 @@
 import {Card} from "antd";
-import {ReactNode} from "react";
+import {CSSProperties, ReactNode} from "react";
 import VoidData from "../../view/VoidData.tsx";
 
 export interface SectionProps {
@@ -7,9 +7,10 @@ export interface SectionProps {
     children: ReactNode;
     more?: boolean;
     seeMore?: () => void;
+    style?: CSSProperties
 }
 
-const Section = ({title, children, more = false, seeMore}: SectionProps) => {
+const Section = ({title, children, more = false, seeMore, style}: SectionProps) => {
 
     const extra = more ? (
         <p onClick={seeMore} className="btn-toggle">
@@ -18,7 +19,7 @@ const Section = ({title, children, more = false, seeMore}: SectionProps) => {
     ) : undefined;
 
     return(
-        <Card className='profile-card' title={title} size='small' {...(extra && {extra})}>
+        <Card style={style} className='profile-card' title={title} size='small' {...(extra && {extra})}>
             {children ?? <VoidData />}
         </Card>
     )

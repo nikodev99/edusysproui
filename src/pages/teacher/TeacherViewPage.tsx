@@ -120,8 +120,6 @@ const TeacherViewPage = () => {
         refetch().then(r => r.data)
     }
 
-    console.log("ACTIVE TAB: ", activeTab)
-
     return(
         <>
             {context}
@@ -149,6 +147,7 @@ const TeacherViewPage = () => {
                 items={linkButtons}
             />
             <Widgets items={widgetItems} />
+            {/*TODO Ne pas oublié de créer la page setting de l'anseignant où il pourra ajouter les programmes, les modifiés et surtout, changé le timing avec un nouveau academic year.*/}
             <ViewRoot
                 items={[
                     {label: "Info", children: <TeacherInfo infoData={teacher as Teacher} color={color} dataKey='info' />},

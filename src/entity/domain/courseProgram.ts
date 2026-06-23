@@ -9,6 +9,7 @@ export interface CourseProgram {
     description: string
     timing: ProgramTiming
     topic: ProgramTopic[]
+    classeName: string
 }
 
 export interface CourseProgramResponse {
@@ -72,6 +73,7 @@ export const statusConfig = (status:Status, color?: Color): {label: string, bg: 
         case "LATE": {
             return { label: ProgramStatus[status], bg: "#FEF2F2", color: color ?? "#991B1B", dot: "#F87171" }
         }
+        case 'PROGRAMMED': return { label: ProgramStatus[status], bg: "#FDF2F8", color: color ?? "#7C3AED", dot: "#EC4899" }
         default: {
             return { label: ProgramStatus[status], bg: "#f2f4fe", color: color ?? "#03104c", dot: "#8a87f3" }
         }

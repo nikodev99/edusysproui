@@ -11,11 +11,10 @@ import {
     setTime
 } from "@/core/utils/utils.ts";
 import {useEffect, useMemo, useState} from "react";
-import {Flex, TableColumnsType, Tag, TimelineProps} from "antd";
+import {Flex, TableColumnsType, Tag} from "antd";
 import {useRawFetch} from "@/hooks/useFetch.ts";
 import {getNumberOfStudentTaughtByClasse} from "@/data/repository/teacherRepository.ts";
 import {Timeline} from "@/components/graph/Timeline.tsx";
-import {AiFillClockCircle} from "react-icons/ai";
 import {getSomeStudentReprimandedByTeacher} from "@/data/repository/reprimandRepository.ts";
 import {Reprimand, Assignment} from "@/entity";
 import {Table as CustomTable} from "@/components/ui/layout/Table.tsx";
@@ -33,6 +32,8 @@ import {TeacherIndividual} from "@/components/common/TeacherIndividual.tsx";
 import {useTeacherRepo} from "@/hooks/actions/useTeacherRepo.ts";
 import {ScheduleCalendar} from "@/components/common/ScheduleCalendar.tsx";
 import {useDepartmentRepo} from "@/hooks/actions/useDepartmentRepo.ts";
+import {statusConfig} from "@/entity/domain/courseProgram.ts";
+import {LuCircleCheck, LuClock} from "react-icons/lu";
 
 type TeacherInfo = InfoPageProps<Teacher>
 
@@ -157,13 +158,32 @@ const LessonPlan = ({infoData, color, seeMore}: TeacherInfo) => {
 
     const {courseProgram} = infoData
 
-    const items: TimelineProps['items'] = courseProgram
-        ? [...courseProgram].reverse().map(t => ({
-            color: t.active ? 'green' : undefined,
-            dot: t.active ? <AiFillClockCircle /> : undefined,
-            children: `${t.classe.name} - ${t.topic}`
-        }))
-        : [];
+    const items = courseProgram?.flat().map((unit) => {
+        const cfg = statusConfig(unit?.timing?.status);
+        const dots = unit?.timing.status === 'COMPLETED' ? <LuCircleCheck style={{ color: '#52c41a' }} /> : <LuClock style={{ color: color }} />;
+        return {
+            color: unit?.timing.status === 'COMPLETED' ? 'green' : 'blue',
+            dot: dots,
+            children: (
+                <div>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column', gap: 5}}>
+                        <strong>{unit.name}</strong>
+                        <div>
+                            <Tag color={color}>{unit?.classeName}</Tag>
+                            <Tag color={cfg.color}>{cfg.label}</Tag>
+                        </div>
+                    </div>
+                    <ul style={{ marginTop: 5, paddingLeft: 10 }}>
+                        {unit.topic.map((t, i) => (
+                            <li key={i} style={{ color: '#8c8c8c', fontSize: 13 }}>
+                                {t.title}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            ),
+        };
+    });
 
     const handleClick = () => {
         seeMore && seeMore('2')
@@ -171,8 +191,8 @@ const LessonPlan = ({infoData, color, seeMore}: TeacherInfo) => {
 
     return(
         <PanelSection title='Plans de cours' more={true} seeMore={handleClick}>
-            <PanelTable title='Année 2024-2025' data={items.length > 0 ? [
-                {response: <Timeline mode='alternate' items={items} rootClassName='timeline' />, tableRow: true}
+            <PanelTable ps={true} title='Année 2024-2025' data={items.length > 0 ? [
+                {response: <Timeline items={items} rootClassName='timeline' />, tableRow: true}
             ]: []} panelColor={color} />
         </PanelSection>
     )

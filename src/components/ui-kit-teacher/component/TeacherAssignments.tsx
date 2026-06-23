@@ -17,6 +17,8 @@ export const TeacherAssignments = ({infoData}: InfoPageProps<Teacher>) => {
     const assignments = useGetAllTeacherAssignments(personalInfo?.id as bigint, {classId: classeValue, courseId: subjectValue})
     const {data, isSuccess} =  useGetBestTeacherStudents(personalInfo?.id as bigint, subjectValue)
 
+    console.log('ASSIGNMENTS: ', assignments.data)
+
     useEffect(() => {
         if (isSuccess)
             setScores(data as Score[])

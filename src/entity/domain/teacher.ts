@@ -1,8 +1,4 @@
-import {School} from "./school.ts";
-import {Classe} from "./classe.ts";
-import {Course} from "./course.ts";
-import {Individual} from "./individual.ts";
-import {CourseProgram} from "./courseProgram.ts";
+import { CourseProgram, Individual, Course, Classe, School } from "@/entity";
 
 export interface Teacher {
     id?: string
@@ -11,7 +7,7 @@ export interface Teacher {
     classes?: Classe[]
     courses?: Course[]
     salaryByHour?: number
-    courseProgram: CourseProgram[]
+    courseProgram: CourseProgram[][]
     schools?: School
     createdAt?: Date
     modifyAt?: Date

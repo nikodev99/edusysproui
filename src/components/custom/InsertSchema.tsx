@@ -3,21 +3,24 @@ import {FieldValues} from "react-hook-form";
 import {useQueryPost} from "@/hooks/usePost.ts";
 import {useGlobalStore} from "@/core/global/store.ts";
 import {catchError} from "@/data/action/error_catch.ts";
-import {Alert, Button, Flex, Form, Modal, ModalProps} from "antd";
+import {Alert, Button, ButtonProps, Flex, Form, Modal, ModalProps} from "antd";
 import {PopConfirm} from "../ui/layout/PopConfirm.tsx";
 import {PostSchemaProps, SchemaProps} from "@/core/utils/interfaces.ts";
 import Marquee from "react-fast-marquee";
 import FormSuccess from "../ui/form/FormSuccess.tsx";
 import FormError from "../ui/form/FormError.tsx";
+import {ModalConfirmButton} from "@/components/ui/layout/ModalConfirmButton.tsx";
 
 type InsertSchemaType<TData extends FieldValues> = SchemaProps<TData>
     & ModalProps
     & PostSchemaProps<TData>
     & {
         onSuccess?: (response: unknown) => void,
-        onError?: (error: string) => void,
+        onError?: (error: string) => void
         isNotif?: boolean
-        width?: number | string,
+        width?: number | string
+        popup?: boolean
+        btnProps?: ButtonProps
     }
 
 const InsertModal = <TData extends FieldValues>(
@@ -38,7 +41,9 @@ const InsertModal = <TData extends FieldValues>(
         marquee = false,
         onError,
         isNotif,
-        width
+        width,
+        popup = false,
+        btnProps
     }: InsertSchemaType<TData>
 ) => {
     const breakpoints = useGlobalStore.use.modalBreakpoints();
@@ -88,6 +93,8 @@ const InsertModal = <TData extends FieldValues>(
                 marquee={marquee}
                 toReset={true}
                 isNotif={isNotif}
+                popup={popup}
+                btnProps={btnProps}
             />
         </Modal>
     );
@@ -109,7 +116,9 @@ const InsertSchema = <TData extends FieldValues>(
         onError,
         marquee = false,
         isNotif = false,
-        toReset = true
+        toReset = true,
+        popup = true,
+        btnProps
     }: InsertSchemaType<TData> & {
         onSuccess?: (response: unknown) => void,
         onError?: (error: string) => void
@@ -130,6 +139,7 @@ const InsertSchema = <TData extends FieldValues>(
     const onSubmit = (formData: TData) => {
         clearMessages();
 
+        console.log("THIS IS NOT RUNNING")
         console.log({addedData: formData})
 
         mutate(
@@ -175,7 +185,7 @@ const InsertSchema = <TData extends FieldValues>(
             )}
             {errorMessage && (
                 <>
-                    <FormError message={successMessage} isNotif={isNotif} onClose={clearMessages} />
+                    <FormError message={errorMessage} isNotif={isNotif} onClose={clearMessages} />
                     {isNotif && <Alert message={errorMessage} type="error" showIcon closable onClose={clearMessages}/>}
                 </>
             )}
@@ -195,22 +205,37 @@ const InsertSchema = <TData extends FieldValues>(
                         {cancelText}
                     </Button>}
 
-                    <PopConfirm
-                        title="Confirmation"
-                        open={openConfirm}
-                        onCancel={handleConfirmCancel}
-                        description={description}
-                        okText="Confirmer"
-                        onConfirm={handleForm.handleSubmit(onSubmit)}
-                    >
-                        <Button
-                            disabled={isPending}
-                            type="primary"
-                            onClick={handleConfirmOpen}
+                    {popup ? (
+                        <PopConfirm
+                            title="Confirmation"
+                            open={openConfirm}
+                            onCancel={handleConfirmCancel}
+                            description={description}
+                            okText="Confirmer"
+                            onConfirm={handleForm.handleSubmit(onSubmit)}
                         >
-                            {okText}
-                        </Button>
-                    </PopConfirm>
+                            <Button
+                                disabled={isPending}
+                                type="primary"
+                                onClick={handleConfirmOpen}
+                                {...btnProps}
+                            >
+                                {okText}
+                            </Button>
+                        </PopConfirm>
+                    ) : (
+                        <ModalConfirmButton
+                            handleFunc={handleForm.handleSubmit(onSubmit)}
+                            title="Confirmation"
+                            content={description}
+                            btnTxt={okText}
+                            btnProps={{type:"primary", ...btnProps}}
+                            okTxt={'Confirmer'}
+                            cancelTxt={cancelText}
+                            onCancel={handleConfirmCancel}
+                        />
+                    )
+                    }
                 </Flex>
             </Form>
         </>

@@ -3,12 +3,17 @@ import dayjs from 'dayjs'
 import {Skeleton} from "antd";
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import 'dayjs/locale/fr'
-import {calendarMessages} from "../../core/utils/text_display.ts";
+import {calendarMessages} from "@/core/utils/text_display.ts";
 import {useState, useCallback} from "react";
-import {BigCalendarProps} from "../../core/utils/interfaces.ts";
+import {BigCalendarProps} from "@/core/utils/interfaces.ts";
 import Datetime from "../../core/datetime.ts";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
 
+dayjs.extend(utc)
+dayjs.extend(timezone)
 dayjs.locale('fr')
+
 const localized = dayjsLocalizer(dayjs)
 
 export const BigCalendar = <T extends object = Event>(
@@ -68,6 +73,14 @@ export const BigCalendar = <T extends object = Event>(
         return {}
     }
 
+    const minDateTime = startDate
+        ? Datetime.of(startDate).toDate()
+        : Datetime.timeToCurrentDate(startDayTime || [7,0]).toDate();
+
+    const maxDateTime = endDate
+        ? Datetime.of(endDate).toDate()
+        : Datetime.timeToCurrentDate(endDayTime || [19,0]).toDate();
+
     return (
         <>
         {
@@ -81,8 +94,8 @@ export const BigCalendar = <T extends object = Event>(
                 view={view}
                 date={Datetime.of(currentDate as Date).toDate()}
                 style={{height: height ? `${height}px` : 'auto', ...styles}}
-                min={startDate ? Datetime.of(startDate).toDate() : Datetime.timeToCurrentDate(startDayTime ?? [7, 0]).toDate()}
-                max={endDate ? Datetime.of(endDate).toDate() : Datetime.timeToCurrentDate(endDayTime ?? [19, 0]).toDate()}
+                min={minDateTime}
+                max={maxDateTime}
                 messages={calendarMessages}
                 onView={handleOnChangeView}
                 className={!showNavButton ? `big-calendar ${className}` : className}

@@ -412,6 +412,7 @@ export interface InfoPageProps<T extends object> {
     color?: string
     viewLink?: string
     academicYear?: string
+    resourceYear?: AcademicYear
     hasPermission?: boolean
 }
 
@@ -424,7 +425,7 @@ export interface EditProps<TData extends object> {
 }
 
 export type RedirectFunction = (link: string, option?:NavigateOptions) => void;
-export type Moment = Date | number[] | string
+export type Moment = Date | number[] | string | number
 export type Color = string
 export type Counted = Record<string, number>
 export type GenderCounted = {

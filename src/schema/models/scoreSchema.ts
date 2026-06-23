@@ -1,6 +1,5 @@
 import {z} from "zod";
-import {studentSchemaMerge} from "./studentSchema.ts";
-import {assignmentMerge} from "./assignmentSchema.ts";
+import {studentSchemaMerge, assignmentMerge} from "@/schema";
 
 export const singleScoreSchema = z.object({
     id: z.number().optional(),

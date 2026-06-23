@@ -70,7 +70,6 @@ export const TeacherProgram = ({infoData, color, hasPermission}: InfoPageProps<T
             classe: courseProgram?.classe,
             inProgressSemesterPrograms: inProgressBySemester,
             programInProgress: inProgressPrograms,
-            programs: allPrograms,
             totalPrograms: tPrograms,
             completedPrograms: tCompleted,
             totalLate: tLate,
@@ -78,6 +77,7 @@ export const TeacherProgram = ({infoData, color, hasPermission}: InfoPageProps<T
         }
 
     }, [courseProgram?.classe, courseProgram?.course, courseProgram?.semesters, semesterValue])
+
 
     const pending: boolean = isLoading || isRefetching || isLoadingError
 
@@ -273,6 +273,7 @@ export const TeacherProgram = ({infoData, color, hasPermission}: InfoPageProps<T
                                                     hasPermission={hasPermission}
                                                     academicYearId={academicYear}
                                                     onRefetch={refetch}
+                                                    teacherId={teacherId}
                                                 />
                                             ))}
                                         </div>

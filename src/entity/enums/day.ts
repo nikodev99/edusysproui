@@ -9,15 +9,17 @@ export enum Day {
     ALL_DAYS = 7,
 }
 
-export const frenchDay = (day: Day) => {
+export type WeekDay = keyof typeof Day
+
+export const frenchDay = (day: Day | WeekDay, isShort: boolean = false) => {
     switch (day) {
-        case Day.MONDAY: return 'Lundi'
-        case Day.TUESDAY: return 'Mardi'
-        case Day.WEDNESDAY: return 'Mercredi'
-        case Day.THURSDAY: return 'Jeudi'
-        case Day.FRIDAY: return 'Vendredi'
-        case Day.SATURDAY: return 'Samedi'
-        case Day.SUNDAY: return 'Dimanche'
+        case Day.MONDAY : case "MONDAY": return isShort ? 'Lun.' : 'Lundi'
+        case Day.TUESDAY : case "TUESDAY": return isShort ? 'Mar.' : 'Mardi'
+        case Day.WEDNESDAY : case "WEDNESDAY": return isShort ? 'Mer.' : 'Mercredi'
+        case Day.THURSDAY : case "THURSDAY": return isShort ? 'Jeu.' : 'Jeudi'
+        case Day.FRIDAY : case "FRIDAY": return isShort ? 'Ven.' : 'Vendredi'
+        case Day.SATURDAY : case "SATURDAY": return isShort ? 'Sam.' : 'Samedi'
+        case Day.SUNDAY : case "SUNDAY": return isShort ? 'Dim.' : 'Dimanche'
         default: return null
     }
 }

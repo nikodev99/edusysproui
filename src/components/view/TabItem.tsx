@@ -2,6 +2,7 @@ import {Tabs, TabsProps} from "antd";
 import PageWrapper from "./PageWrapper.tsx";
 import {ReactNode} from "react";
 import {StickyTabs} from "../ui/layout/StickyTabs.tsx";
+import {Color} from "@/core/utils/interfaces.ts";
 
 
 interface TabItemProps {
@@ -12,12 +13,13 @@ interface TabItemProps {
     tabClassName?: string,
     stickTab?: boolean
     tabsProps?: TabsProps
+    backgroundColor?: Color
 }
 
-const TabItem = ({title, selects, items, onTabChange, tabClassName, stickTab = false, tabsProps}: TabItemProps) => {
+const TabItem = ({title, selects, items, onTabChange, tabClassName, stickTab = false, tabsProps, backgroundColor}: TabItemProps) => {
 
     return (
-        <PageWrapper classNameList='item'>
+        <PageWrapper classNameList='item' background={backgroundColor}>
             <div className='item-section-container'>
                 <div className='full__name'>
                     <h1>{title}</h1>

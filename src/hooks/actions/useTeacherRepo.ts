@@ -1,4 +1,4 @@
-import {Counted, CountType, GenderCounted, Pageable} from "@/core/utils/interfaces.ts";
+import {Counted, CountType, GenderCounted, Moment, Pageable} from "@/core/utils/interfaces.ts";
 import {useFetch, useRawFetch} from "../useFetch.ts";
 import {fetchTeachers} from "@/data";
 import {
@@ -19,6 +19,8 @@ import {useGlobalStore} from "@/core/global/store.ts";
 import {UserPermission} from "@/core/shared/sharedEnums.ts";
 import {useAuth} from "@/hooks/useAuth.ts";
 import {getShortSortOrder, setSortFieldName} from "@/core/utils/utils.ts";
+import {reportRepository} from "@/data/repository/reportRepository.ts";
+import {ReportSchema} from "@/schema";
 
 export const useTeacherRepo = (context: UserPermission = UserPermission.ALL) => {
     const schoolId = useGlobalStore(state => state.schoolId)
@@ -102,12 +104,14 @@ export const useTeacherRepo = (context: UserPermission = UserPermission.ALL) => 
         !!teacherId && !!schoolId
     )
 
-    const useGetTeacherSchedules = (teacherId: string,  allDay: boolean = false) => useFetch(
-        ['teacher-schedules', teacherId],
-        allDay ? getTeacherScheduleByDay : getTeacherSchedule,
-        allDay ? [teacherId, allDay] : [teacherId],
-        !!teacherId
-    )
+    const useGetTeacherSchedules = (teacherId: string,  allDay: boolean = false,  enable: boolean = true) => {
+        return useFetch(
+            ['teacher-schedules', teacherId, allDay, enable],
+            allDay ? getTeacherScheduleByDay : getTeacherSchedule,
+            allDay ? [teacherId, allDay] : [teacherId],
+            (!!teacherId && enable)
+        )
+    }
     
     const useGetTeacherStudentNumber = (teacherId: string): Counted | undefined => {
         const [count, setCount] = useState<Counted>()
@@ -159,6 +163,23 @@ export const useTeacherRepo = (context: UserPermission = UserPermission.ALL) => 
         return count
     }
 
+    const useSaveReport= () => {
+        return {
+            saveReport: (report: ReportSchema) => reportRepository.saveReport(report)
+        }
+    }
+
+    const useGetAllWeekReport = (teacherId: string, startDate: Moment, endDate: Moment) => useFetch(
+        ["reports", teacherId, startDate, endDate],
+        reportRepository.getAllWeekReport,
+        [teacherId, startDate, endDate],
+        !!teacherId
+    )
+
+    const useViewReport = (reportId: number) => useFetch(
+        ["reports", reportId], reportRepository.viewReport, [reportId], (!!reportId)
+    )
+
     return {
         useGetPaginated,
         useGetAllTeachers,
@@ -169,7 +190,10 @@ export const useTeacherRepo = (context: UserPermission = UserPermission.ALL) => 
         useGetTeacherStudentNumber,
         useGetTeacherClasseStudentNumber,
         useCountAllTeachers,
-        useGetTeacherBasicValues
+        useGetTeacherBasicValues,
+        useSaveReport,
+        useGetAllWeekReport,
+        useViewReport
     }
 }
 

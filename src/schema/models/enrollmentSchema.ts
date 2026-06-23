@@ -14,5 +14,5 @@ export const enrollmentSchema = (isRerun?: boolean) => z.object({
 })
 
 export const enrollmentMergeSchema = z.object({
-    id: z.number({required_error: "Etudiant inscrit est réquis"})
+    id: z.number({required_error: "Étudiant inscrit est réquis"})
 })

@@ -126,8 +126,8 @@ export const ScheduleCalendar = (
                             className='agenda'
                             onSelectEvent={onEventSelected}
                             height={height}
-                            startDayTime={minStartTime}
-                            endDayTime={[maxEndTime[0], maxEndTime[1] + 30]}
+                            startDayTime={[minStartTime[0] + 1, minStartTime[1]]}
+                            endDayTime={[maxEndTime[0] + 1, maxEndTime[1] + 30]}
                             isLoading={isLoading}
                         />
                     ) :
@@ -136,7 +136,7 @@ export const ScheduleCalendar = (
                     )
             }
 
-            <Modal title={selectedSchedule?.designation} open={isModalOpen} footer={null} onCancel={onModalCancel} destroyOnHidden>
+            {isModalOpen && <Modal title={selectedSchedule?.designation} open={isModalOpen} footer={null} onCancel={onModalCancel} destroyOnHidden>
                 <Card>
                     <Descriptions items={assignmentDesc(
                         selectedSchedule as Schedule,
@@ -144,7 +144,7 @@ export const ScheduleCalendar = (
                         true)}
                     />
                 </Card>
-            </Modal>
+            </Modal>}
         </>
     )
 }

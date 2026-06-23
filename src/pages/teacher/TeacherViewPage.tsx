@@ -17,7 +17,7 @@ import {
     TeacherAgenda,
     TeacherAssignments,
     TeacherEditDrawer,
-    TeacherInfo,
+    TeacherInfo, TeacherReports,
     TeacherProgram, TeacherReprimand
 } from "@/components/ui-kit-teacher";
 import {useToggle} from "@/hooks/useToggle.ts";
@@ -28,6 +28,7 @@ import {useAccount} from "@/hooks/useAccount.ts";
 import {ItemType} from "antd/es/menu/interface";
 import queryString from "query-string";
 import {usePermission} from "@/hooks/usePermission.ts";
+import {useAcademicYearRepo} from "@/hooks/actions/useAcademicYearRepo.ts";
 
 const TeacherViewPage = () => {
 
@@ -45,6 +46,7 @@ const TeacherViewPage = () => {
     const {useCountStudent} = useStudentRepo()
     const {useGetTeacher} = useTeacherRepo()
     const {useAccountExists} = useAccount()
+    const {currentAcademicYear} = useAcademicYearRepo()
 
     const hasPermission = can('teacherAction', true)
     const {data, isLoading, isSuccess, refetch} = useGetTeacher(id as string)
@@ -146,7 +148,7 @@ const TeacherViewPage = () => {
                 ]}
                 items={linkButtons}
             />
-            <Widgets items={widgetItems}/>
+            <Widgets items={widgetItems} />
             <ViewRoot
                 items={[
                     {label: "Info", children: <TeacherInfo infoData={teacher as Teacher} color={color} dataKey='info' />},
@@ -154,7 +156,7 @@ const TeacherViewPage = () => {
                     {label: "Programme", children: <TeacherProgram infoData={teacher as Teacher} hasPermission={hasPermission} color={color} dataKey='program' />},
                     {label: "Devoirs", children: <TeacherAssignments infoData={teacher as Teacher} dataKey='assignment' />},
                     {label: "Réprimande", children: <TeacherReprimand infoData={teacher as Teacher} dataKey='reprimand' />},
-                    {label: "Rapport Journalier", children: <h1>Teacher report</h1>},
+                    {label: "Rapport Journalier", children: <TeacherReports infoData={teacher as Teacher} resourceYear={currentAcademicYear} dataKey={"reports"} />},
                 ]}
                 exists={teacher !== null}
                 addMargin={{

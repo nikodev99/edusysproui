@@ -11,6 +11,7 @@ export const TeacherAgenda = ({infoData}: InfoPageProps<Teacher>) => {
             eventTitle={s => `${s?.classe?.name} - ${s.designation}`}
             showClass={true}
             showTeacher={false}
+            hasTeacher={true}
         />
     )
 }

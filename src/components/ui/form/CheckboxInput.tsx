@@ -8,7 +8,7 @@ export const CheckboxForm = <T extends FieldValues>(
     checkboxProps: TypedInputType<T> & {isCompact?: boolean}
 ) => {
 
-    const {defaultValue, isCompact, options, checkLabel} = checkboxProps
+    const {defaultValue, isCompact, options, checkLabel, disabled} = checkboxProps
 
     return(
         <FormItem {...checkboxProps} defaultValue={defaultValue} render={({field}) => {
@@ -43,11 +43,13 @@ export const CheckboxForm = <T extends FieldValues>(
                                 defaultValue={[defaultValue]}
                                 value={field.value}
                                 onChange={field.onChange}
+                                disabled={disabled}
                             />
                         ) : (
                             <Checkbox
                                 {...field}
                                 checked={field.value}
+                                disabled={disabled}
                                 onChange={(e) => field.onChange(e.target.checked)}
                             >
                                 {checkLabel}

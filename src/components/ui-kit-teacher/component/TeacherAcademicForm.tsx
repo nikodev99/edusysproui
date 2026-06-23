@@ -1,10 +1,10 @@
 import {useEffect, useMemo, useState} from "react";
-import {Course} from "../../../entity";
-import Responsive from "../../ui/layout/Responsive.tsx";
-import {fetchAllCourses} from "../../../data";
+import {Course} from "@/entity";
+import Responsive from "@/components/ui/layout/Responsive.tsx";
+import {fetchAllCourses} from "@/data";
 import {Form, Select} from "antd";
-import Grid from "../../ui/layout/Grid.tsx";
-import {SelectClasse} from "../../common/SelectClasse.tsx";
+import Grid from "@/components/ui/layout/Grid.tsx";
+import {SelectClasse} from "@/components/common/SelectClasse.tsx";
 
 const TeacherAcademicForm = ({onClose, defaultClasses, defaultCourses}: {
     onClose: ({courses, classes}: {courses?: {id: number}[], classes?: {id: number}[]}) => void,

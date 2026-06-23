@@ -3,6 +3,7 @@ import {ReactNode} from "react";
 
 export interface ConfirmButtonProps<TDataType> {
     btnProps?: ButtonProps
+    simpleRun?: boolean
     handleFunc: (dataType?: TDataType) => void
     funcParam?: TDataType
     title?: ReactNode
@@ -13,10 +14,11 @@ export interface ConfirmButtonProps<TDataType> {
     onOk?: ((...args: unknown[]) => unknown) | undefined
     onCancel?: ((...args: unknown[]) => unknown) | undefined,
     tooltipTxt?: ReactNode
+
 }
 
 export const ModalConfirmButton = <TDataType extends object | string | number | bigint>(
-    {handleFunc, funcParam, btnProps, title, content, okTxt = 'Oui', cancelTxt = 'Non', onOk, onCancel, btnTxt, tooltipTxt}: ConfirmButtonProps<TDataType>
+    {handleFunc, funcParam, btnProps, title, simpleRun = false, content, okTxt = 'Oui', cancelTxt = 'Non', onOk, onCancel, btnTxt, tooltipTxt}: ConfirmButtonProps<TDataType>
 ) => {
 
     const showPromiseConfirm = () => {
@@ -25,7 +27,7 @@ export const ModalConfirmButton = <TDataType extends object | string | number | 
             content: content ?? 'Veuillez cliquer sur OUI, pour confirmer',
             okText: okTxt,
             cancelText: cancelTxt,
-            onOk: onOk ? onOk : async () => {
+            onOk: onOk ? onOk : simpleRun ? handleFunc : async () => {
                 return new Promise((resolve, reject) => {
                     setTimeout(() => {
                         try {

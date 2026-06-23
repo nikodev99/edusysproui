@@ -3,7 +3,6 @@ import {FieldValues, Path, PathValue} from "react-hook-form";
 import {TimeInputType, TypedInputType} from "@/core/utils/interfaces.ts";
 import FormItem from "./FormItem.tsx";
 import {Button, Form, Space, TimePicker} from "antd";
-import dayjs from "dayjs";
 import {LuSave} from "react-icons/lu";
 import Datetime from "@/core/datetime.ts";
 
@@ -22,7 +21,7 @@ export const FormTimeInput = <T extends FieldValues>(timePickerProps: TimeInputT
                                 placeholder={placeholder as string}
                                 onChange={(time) => field.onChange(time ? time.toDate() : null)}
                                 onFocus={() => clearErrors ? clearErrors(field.name) : null}
-                                value={field.value ? Datetime.timeToCurrentDate(field.value).toDayjs() : null}
+                                value={field.value ? Datetime.timeToCurrentDate(field.value).toDayjs() : defaultValue ? Datetime.timeToCurrentDate(defaultValue as number[]).toDayjs() : null}
                                 defaultValue={Datetime.timeToCurrentDate(defaultValue as number[]).toDate() as PathValue<T, Path<T>>}
                                 format="HH:mm"
                                 allowClear
@@ -38,10 +37,12 @@ export const FormTimeInput = <T extends FieldValues>(timePickerProps: TimeInputT
                             placeholder={placeholder as string}
                             onChange={(time) => field.onChange(time ? time.toDate() : null)}
                             onFocus={() => clearErrors ? clearErrors(field.name) : null}
-                            value={field.value ? dayjs(field.value) : null}
+                            value={field.value ? Datetime.timeToCurrentDate(field.value).toDayjs() : defaultValue ? Datetime.timeToCurrentDate(defaultValue as number[]).toDayjs() : null}
+                            defaultValue={Datetime.timeToCurrentDate(defaultValue as number[]).toDate() as PathValue<T, Path<T>>}
                             format="HH:mm"
                             style={{width: '100%'}}
                             allowClear
+                            disabled={disabled}
                         />
                     )
                 }

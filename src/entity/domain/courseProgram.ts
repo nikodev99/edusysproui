@@ -35,8 +35,8 @@ export interface ProgramTiming {
 
 export interface ProgramTopic {
     id: ID
-    title: string,
-    description: string,
+    title: string
+    description: string
     order: number
     timing: ProgramTiming
 }

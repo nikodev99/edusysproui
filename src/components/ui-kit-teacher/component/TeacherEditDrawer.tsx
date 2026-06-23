@@ -1,20 +1,20 @@
-import {EditProps} from "../../../core/utils/interfaces.ts";
-import RightSidePane from "../../ui/layout/RightSidePane.tsx";
-import {TeacherForm} from "../../forms/TeacherForm.tsx";
+import {EditProps} from "@/core/utils/interfaces.ts";
+import RightSidePane from "@/components/ui/layout/RightSidePane.tsx";
+import {TeacherForm} from "@/components/forms/TeacherForm.tsx";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {TeacherSchema, teacherSchema} from "../../../schema";
-import {Teacher, Individual} from "../../../entity";
+import {TeacherSchema, teacherSchema} from "@/schema";
+import {Teacher, Individual} from "@/entity";
 import {useEffect, useState} from "react";
-import {useToggle} from "../../../hooks/useToggle.ts";
-import FormSuccess from "../../ui/form/FormSuccess.tsx";
-import FormError from "../../ui/form/FormError.tsx";
+import {useToggle} from "@/hooks/useToggle.ts";
+import FormSuccess from "@/components/ui/form/FormSuccess.tsx";
+import FormError from "@/components/ui/form/FormError.tsx";
 import {Button} from "antd";
-import {AddressOwner, IndividualType, UpdateType} from "../../../core/shared/sharedEnums.ts";
-import {hasField} from "../../../core/utils/utils.ts";
-import {PatchUpdate} from "../../../core/PatchUpdate.ts";
-import {UpdateAddress} from "../../custom/UpdateAddress.tsx";
-import {UpdatePersonalData} from "../../custom/UpdatePersonalData.tsx";
+import {AddressOwner, IndividualType, UpdateType} from "@/core/shared/sharedEnums.ts";
+import {hasField} from "@/core/utils/utils.ts";
+import {PatchUpdate} from "@/core/PatchUpdate.ts";
+import {UpdateAddress} from "@/components/custom/UpdateAddress.tsx";
+import {UpdatePersonalData} from "@/components/custom/UpdatePersonalData.tsx";
 
 const TeacherEditDrawer = ({open, close, isLoading, data}: EditProps<Teacher>) => {
 

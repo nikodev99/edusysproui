@@ -18,14 +18,15 @@ export const useCourseProgramRepo = () => {
     const useGetTeacherPrograms = (
         teacherId: string,
         ids: IDS,
-        academicYear?: string
+        academicYear?: string,
+        enable: boolean = true
     ) => {
         const hasCourse = isValidId(ids.courseId)
-        const baseEnabled = !!teacherId && isValidId(ids.classId)
+        const baseEnabled = !!teacherId && isValidId(ids.classId) && enable
 
         const queryKey = hasCourse
-            ? ['teacher-course-all-program', teacherId, ids.classId, ids.courseId, academicYear]
-            : ['teacher-course-program',     teacherId, ids.classId, academicYear]
+            ? ['teacher-course-all-program', teacherId, ids.classId, ids.courseId, academicYear, enable]
+            : ['teacher-course-program',     teacherId, ids.classId, academicYear, enable]
 
         const fetcher = hasCourse ? getAllTeacherCourseProgram : getAllTeacherProgram
 

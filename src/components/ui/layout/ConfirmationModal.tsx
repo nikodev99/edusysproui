@@ -90,7 +90,8 @@ export const ConfirmationModal = <TData extends object, IData extends object>(
                 {alerting?.alert ? <Alert style={{marginBottom: '15px'}} type={alerting.type} message={descMessage} showIcon /> : alerting?.msg}
                 {component && component}
                 <Flex style={{marginTop: '20px'}} justify={justify} gap={10}>
-                    {isConfirm ? (
+                    {isConfirm ?
+                        (
                             <ModalConfirmButton
                                 handleFunc={handleFunc}
                                 title={title}

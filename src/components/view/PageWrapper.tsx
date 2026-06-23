@@ -1,5 +1,5 @@
 import {ReactNode} from "react";
-import {Color} from "../../core/utils/interfaces.ts";
+import {Color} from "@/core/utils/interfaces.ts";
 
 const PageWrapper = ({children, classNameList, background}: {children: ReactNode, classNameList?: string, background?: Color}) => {
     return (

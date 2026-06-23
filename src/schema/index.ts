@@ -31,6 +31,8 @@ import {departmentBossSchema, departmentSchema} from "./models/departmentSchema.
 import {reprimandSchema} from "@/schema/models/reprimandSchema.ts";
 import {punishmentSchema} from "@/schema/models/punishmentSchema.ts";
 import {courseProgramSchema, programTiming, topicSchema} from "@/schema/models/courseProgramSchema.ts";
+import {scheduleSchema} from "@/schema/models/scheduleSchema.ts";
+import {reportSchema} from "@/schema/models/reportSchema.ts";
 
 export {enrollmentSchema, enrollmentMergeSchema} from './models/enrollmentSchema'
 export {classeSchemaMerge, classeSchema} from './models/classeSchema'
@@ -51,7 +53,9 @@ export {scoreSchema, singleScoreSchema} from './models/scoreSchema.ts'
 export {loginSchema, logoutSchema, signupSchema, assignUserToSchoolSchema} from './models/authSchema.ts'
 export {academicYearSchema, academicYearSchemaMerge} from './models/academicYearSchema.ts'
 export {semesterSchema, semesterTemplateSchema, allSemesterSchema, allSemesterTemplateSchema} from './models/semesterSchema.ts'
-export {courseProgramSchema, topicSchema, programTiming} from './models/courseProgramSchema.ts'
+export {courseProgramSchema, courseProgramSchemaMerge, topicSchema, programTiming, topicSchemaMerge} from './models/courseProgramSchema.ts'
+export {scheduleSchema, scheduleSchemaMerge} from './models/scheduleSchema.ts'
+export {reportSchema} from './models/reportSchema.ts'
 
 export type CourseSchema = z.infer<typeof courseSchema>
 export type CourseSchemaMerge = z.infer<typeof courseSchemaMerge>
@@ -93,3 +97,5 @@ export type PunishmentSchema = z.infer<typeof punishmentSchema>
 export type TeacherCourseProgram = z.infer<typeof courseProgramSchema>
 export type TeacherProgramTopic = z.infer<typeof topicSchema>
 export type ProgramTiming = z.infer<typeof programTiming>
+export type ScheduleSchema = z.infer<typeof scheduleSchema>
+export type ReportSchema = z.infer<typeof reportSchema>

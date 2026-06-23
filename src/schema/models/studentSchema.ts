@@ -18,5 +18,5 @@ export const studentSchema = z.object({
 })
 
 export const studentSchemaMerge = z.object({
-    id: z.string({required_error: 'Etudiant est requis'}).min(3, {message: "Etudiant est requis"}),
+    id: z.string({required_error: 'Étudiant est requis'}).min(3, {message: "Etudiant est requis"}),
 })

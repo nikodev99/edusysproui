@@ -22,7 +22,7 @@ export const programTiming = z.object({
 })
 
 export const courseProgramSchemaMerge = z.object({
-    id: z.number().optional(),
+    id: z.number({ required_error: 'Le Theme abordé est requis'}),
 })
 
 export const topicSchema = z.object({
@@ -33,6 +33,10 @@ export const topicSchema = z.object({
         .min(10, {message: "La description du sous thème doit contenir au moins 10 caractères"})
         .max(2000, {message: 'La description du sous thème doit contenir au plus 2000 caractères'}),
     order: z.number().optional(),
+})
+
+export const topicSchemaMerge = z.object({
+    id: z.number().optional(),
 })
 
 export const courseProgramSchema = z.object({

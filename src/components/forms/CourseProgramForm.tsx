@@ -1,10 +1,11 @@
 import {FormContentProps, Options} from "@/core/utils/interfaces.ts";
-import {CourseProgram} from "@/entity";
+import {CourseProgram, Report, Schedule} from "@/entity";
 import FormContent from "@/components/ui/form/FormContent.tsx";
 import {FormConfig} from "@/config/FormConfig.ts";
 import {InputTypeEnum} from "@/core/shared/sharedEnums.ts";
-import {TeacherCourseProgram, TeacherProgramTopic} from "@/schema";
+import {ReportSchema, TeacherCourseProgram, TeacherProgramTopic} from "@/schema";
 import {ProgramTopic} from "@/entity/domain/courseProgram.ts";
+import Datetime from "@/core/datetime.ts";
 
 export const CourseProgramForm = (
     {control, errors, data, semesters, showField, classes, courses, semesterValue, classeValue, courseValue}: FormContentProps<TeacherCourseProgram, CourseProgram> & {
@@ -200,5 +201,180 @@ export const CourseProgramTopicForm = (
                 defaultValue: (data ? data.order : undefined)
             }
         },
+    ]} />
+}
+
+export const ReportForm = (
+    {
+        control,
+        errors,
+        program,
+        programOptions,
+        programTopicOptions,
+        programTopic,
+        schedule,
+        getSelectedSchedule,
+        scheduleOptions,
+        showField,
+        data, hasTopic = false, hasProgram = false, isRegularized = false, getSelectedProgram, sessionDate
+    }: FormContentProps<ReportSchema, Report> & {
+    program?: number
+    programTopic?: number
+    programOptions?: Options
+    programTopicOptions?: Options
+    teacherId?: string
+    hasProgram?: boolean
+    hasTopic?: boolean
+    schedule?: Schedule,
+    scheduleOptions?: Options,
+    getSelectedSchedule?: (scheduleId: number | null) => void,
+    getSelectedProgram?: (scheduleId: number | null) => void,
+    isRegularized?: boolean,
+    sessionDate?: Date
+}) => {
+    const form = new FormConfig(errors)
+
+    const handleScheduleChange = (value: number | null) => {
+        getSelectedSchedule?.(value)
+    }
+
+    const handleProgramChange = (value: number | null) => {
+        getSelectedProgram?.(value)
+    }
+
+    console.log({schedule})
+
+    return <FormContent formItems={[
+        {
+            type: InputTypeEnum.SELECT,
+            inputProps: {
+                lg: 24,
+                md: 24,
+                label: 'Thème étudier',
+                control: control,
+                name: form.name('id', 'courseProgram'),
+                required: true,
+                options: programOptions,
+                onChange: handleProgramChange as never,
+                placeholder: 'Thème',
+                validateStatus: form.validate('id', 'courseProgram'),
+                help: form.error('id', 'courseProgram'),
+                defaultValue: (data ? data?.courseProgram?.id : program ? program : undefined),
+                disabled: hasProgram
+            }
+        },
+        {
+            type: InputTypeEnum.SELECT,
+            inputProps: {
+                lg: 24,
+                md: 24,
+                label: 'Sous-Thème étudier',
+                control: control,
+                name: form.name('id', 'courseProgramTopic'),
+                options: programTopicOptions,
+                selectedValue: programTopic,
+                placeholder: 'Sous-Thème',
+                validateStatus: form.validate('id', 'courseProgramTopic'),
+                help: form.error('id', 'courseProgramTopic'),
+                defaultValue: programTopic,
+                disabled: hasTopic
+            }
+        },
+        ...(showField ? [{
+            type: InputTypeEnum.SELECT,
+            inputProps: {
+                lg: 24,
+                md: 24,
+                label: 'Emploi du temps',
+                control: control,
+                name: form.name('id', 'schedule'),
+                required: true,
+                options: scheduleOptions,
+                onChange: handleScheduleChange,
+                selectedValue: schedule?.id,
+                placeholder: 'Session du...',
+                validateStatus: form.validate('id', 'schedule'),
+                help: form.error('id', 'schedule'),
+                defaultValue: (data ? data?.schedule?.id : schedule?.id)
+            }
+        }] : []) as never,
+        {
+            type: InputTypeEnum.DATE,
+            inputProps: {
+                lg: 24,
+                md: 24,
+                label: 'Date de la session',
+                control: control,
+                name: form.name("sessionDate"),
+                required: true,
+                placeholder: "Date de la session",
+                validateStatus: form.validate("sessionDate"),
+                help: form.error("sessionDate"),
+                defaultValue: (data ? data?.sessionDate : sessionDate ? sessionDate : Datetime.now().toDate()),
+                disabled: !showField
+            }
+        },
+        {
+            type: InputTypeEnum.TIME,
+            inputProps: {
+                lg: 12,
+                md: 12,
+                label: 'Debut de session',
+                control: control,
+                name: form.name("sessionStartingTime"),
+                required: true,
+                placeholder: "10:30",
+                validateStatus: form.validate("sessionStartingTime"),
+                help: form.error("sessionStartingTime"),
+                defaultValue: (data ? data?.sessionStartingTime : schedule?.startTime),
+                disabled: !!schedule
+            }
+        },
+        {
+            type: InputTypeEnum.TIME,
+            inputProps: {
+                lg: 12,
+                md: 12,
+                label: 'Fin de session',
+                control: control,
+                name: form.name("sessionEndingTime"),
+                required: true,
+                placeholder: "13:30",
+                validateStatus: form.validate("sessionEndingTime"),
+                help: form.error("sessionEndingTime"),
+                defaultValue: (data ? data?.sessionEndingTime : schedule?.endTime),
+                disabled: !!schedule
+            }
+        },
+        {
+            type: InputTypeEnum.TEXTAREA,
+            inputProps: {
+                lg: 24,
+                md: 24,
+                label: 'Commentaire',
+                control: control,
+                name: form.name("notes"),
+                required: true,
+                placeholder: "Commentaire sur la session...",
+                validateStatus: form.validate("notes"),
+                help: form.error("notes"),
+                defaultValue: (data ? data?.notes : undefined)
+            }
+        },
+        {
+            type: InputTypeEnum.CHECKBOX,
+            inputProps: {
+                lg: 24,
+                md: 24,
+                label: 'Régularisation ?',
+                control: control,
+                name: form.name("isLateSubmission"),
+                required: false,
+                validateStatus: form.validate("isLateSubmission"),
+                help: form.error("isLateSubmission"),
+                defaultValue: (data ? data?.isLateSubmission : isRegularized ? isRegularized : undefined),
+                disabled: isRegularized
+            }
+        }
     ]} />
 }

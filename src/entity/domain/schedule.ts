@@ -1,8 +1,5 @@
-import {Classe} from "./classe.ts";
-import {Teacher} from "./teacher.ts";
+import {Teacher, Classe, Course, AcademicYear} from "@/entity";
 import {Day} from "../enums/day.ts";
-import {Course} from "./course.ts";
-import {AcademicYear} from "./academicYear.ts";
 
 export interface Schedule {
     id: number

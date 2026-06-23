@@ -43,7 +43,7 @@ export const timeProcess = (title: string) =>
         }
 
         if (dayjs.isDayjs(arg) || (arg instanceof Date && !isNaN(arg.getTime()))) {
-            return Datetime.of(arg).format("HH:mm");
+            return Datetime.of(arg).plusHour(1).format("HH:mm");
         }
         return arg;
     }, z.string({ required_error: title }));

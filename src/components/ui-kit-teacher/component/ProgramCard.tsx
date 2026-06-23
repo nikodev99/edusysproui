@@ -14,11 +14,15 @@ import Datetime from "@/core/datetime.ts";
 import {semesterHelper} from "@/core/helpers/semesterHelpers.ts";
 import {LuCheck, LuClipboardPen, LuHourglass, LuPlay, LuTrash2} from "react-icons/lu";
 import {useToggle} from "@/hooks/useToggle.ts";
-import {InsertNewProgramTopic} from "@/components/ui-kit-teacher/component/TeacherProgramManagement.tsx";
+import {
+    InsertNewProgramTopic,
+    InsertNewReport
+} from "@/components/ui-kit-teacher/component/TeacherProgramManagement.tsx";
 import {ConfirmationModal, Messages} from "@/components/ui/layout/ConfirmationModal.tsx";
 import {useCourseProgramRepo} from "@/hooks/actions/useCourseProgramRepo.ts";
 
 export interface ProgramCardProps {
+    teacherId?: string,
     program: CourseProgram,
     academicYearId?: string,
     index?: number,
@@ -27,9 +31,12 @@ export interface ProgramCardProps {
     hasPermission?: boolean
 }
 
-export const ProgramCard = ({program, index, hasPermission = false, academicYearId, onRefetch}: ProgramCardProps) => {
+export const ProgramCard = ({program, index, hasPermission = false, academicYearId, onRefetch, teacherId}: ProgramCardProps) => {
     const [expanded, setExpanded] = useToggle(false)
     const [addTopic, setAddTopic] = useToggle(false)
+    const [openReport, setOpenReport] = useToggle(false)
+    const [selectedTopic, setSelectedTopic] = useState<ProgramTopic | undefined>(undefined)
+
     const cfg = statusConfig(program?.timing?.status)
 
     const {totalCompletedTopics, totalTopics} = useMemo(() => {
@@ -41,6 +48,21 @@ export const ProgramCard = ({program, index, hasPermission = false, academicYear
             totalTopics: topics?.length,
         }
     }, [program?.topic])
+
+    const topicOptions = useMemo(() => selectedTopic 
+        ? [{ label: selectedTopic?.title, value: selectedTopic?.id as number }]
+        : program?.topic?.map(t => ({ label: t?.title, value: t?.id as number })) || [],
+    [program?.topic, selectedTopic])
+
+    const handleTopicReport = (topic?: ProgramTopic) => {
+        setSelectedTopic(topic)
+        setOpenReport()
+    }
+
+    const handleClose = () => {
+        setSelectedTopic(undefined)
+        setOpenReport()
+    }
 
     return(<>
         <div style={{
@@ -83,7 +105,7 @@ export const ProgramCard = ({program, index, hasPermission = false, academicYear
                                     key={t.id}
                                     topic={t}
                                     cfg={cfg}
-                                    onReport={() => alert('reporter')}
+                                    onReport={handleTopicReport}
                                     hasPermission={hasPermission}
                                     hasProgramDebuted={hasDebuted(program?.timing?.status)}
                                     onRefetch={onRefetch}
@@ -104,7 +126,7 @@ export const ProgramCard = ({program, index, hasPermission = false, academicYear
                                        <span style={{ fontSize: 16, lineHeight: 1 }}>+</span> Ajouter un sous-thème
                                    </button>
                                    {!isFinished(program?.timing?.status) && (
-                                       <button onClick={() => alert('Ajouter un raport')} style={{
+                                       <button onClick={setOpenReport} style={{
                                            padding: "6px 12px", borderRadius: 8,
                                            border: "1px solid #E2E8F0", background: "white",
                                            fontSize: 12, color: "#334155",
@@ -140,18 +162,33 @@ export const ProgramCard = ({program, index, hasPermission = false, academicYear
                expandIconPosition='end'
            />
         </div>
-
+        {openReport && <InsertNewReport
+            open={openReport}
+            onClose={handleClose}
+            hasTopic={selectedTopic !== undefined}
+            hasProgram={!!program}
+            program={program?.id}
+            teacherId={teacherId}
+            programTopic={selectedTopic?.id as number}
+            programOptions={[{ label: program?.name, value: program?.id}]}
+            programTopicOptions={topicOptions}
+            showSchedule
+        />}
     </>)
 }
 
 function SubTopicRow({ topic, cfg, hasPermission = false, onReport, hasProgramDebuted = false, onRefetch }: {
     topic: ProgramTopic,
     cfg: {label: string, bg: string, color: string, dot: string},
-    onReport: () => void,
+    onReport: (topic?: ProgramTopic) => void,
     onRefetch?: () => void,
     hasPermission: boolean
     hasProgramDebuted: boolean
 }) {
+
+    const handleReport = () => {
+        onReport?.(topic)
+    }
 
     return (
         <div style={{
@@ -205,7 +242,7 @@ function SubTopicRow({ topic, cfg, hasPermission = false, onReport, hasProgramDe
                     onRefetch={onRefetch}
                 />
                 {(hasPermission && hasProgramDebuted && hasDebuted(topic?.timing?.status)) && (
-                    <Button onClick={() => onReport()} size={'small'} style={{
+                    <Button onClick={handleReport} size={'small'} style={{
                         padding: "3px 8px", borderRadius: 6,
                         border: "1px solid #E2E8F0", background: "white",
                         fontSize: 11, color: "#6366F1", cursor: "pointer", fontWeight: 600,
@@ -300,6 +337,7 @@ const ActionButtonList = ({data, status, isSmall = false, isTopicTitle = false, 
     }
 
     function resetIfAnyTrue() {
+        setMsg({})
         setOpen((prev) => {
             if (hasAnyTrue()) {
                 return {
@@ -348,7 +386,7 @@ const ActionButtonList = ({data, status, isSmall = false, isTopicTitle = false, 
                     onClick={() => changeValue('isCompleted', true)}
                 />
             </Tooltip>}
-            <Tooltip title={`Supprimer le ${subTitle}`}>
+            {!isInProgress(status) && <Tooltip title={`Supprimer le ${subTitle}`}>
                 <Button
                     icon={<LuTrash2 />}
                     color={'danger'}
@@ -356,7 +394,7 @@ const ActionButtonList = ({data, status, isSmall = false, isTopicTitle = false, 
                     size={isSmall ? 'small' : undefined}
                     onClick={() => changeValue('shouldRemove')}
                 />
-            </Tooltip>
+            </Tooltip>}
             <ConfirmationModal
                 data={data}
                 open={shouldOpen}

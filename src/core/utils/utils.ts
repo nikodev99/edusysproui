@@ -1,4 +1,13 @@
-import {ApiEvent, Color, DateExplose, EnumType, ID, Options, RepoOptions, StudentListDataType} from "./interfaces.ts"
+import {
+    ApiEvent,
+    Color,
+    DateExplose,
+    EnumType,
+    ID,
+    Options,
+    RepoOptions,
+    StudentListDataType
+} from "./interfaces.ts"
 import countries from 'world-countries'
 import dayjs from "dayjs";
 import 'dayjs/locale/fr.js'
@@ -250,6 +259,9 @@ export const arrayToDate = (dateArray: Date | number[], time?: number[]): Date =
 }
 
 export const getMinMaxTimes = (data: Schedule[]) => {
+    let minMinutes = Infinity;
+    let maxMinutes = -Infinity;
+
     let minStartTime: [number, number] = [24, 0]
     let maxEndTime: [number, number] = [0, 0]
 
@@ -257,18 +269,20 @@ export const getMinMaxTimes = (data: Schedule[]) => {
         const start: [number, number] = parseTimeString(entry.startTime as number[])
         const end: [number, number] = parseTimeString(entry.endTime as [number, number])
 
-        const startDate = start ? new Date(0, 0, 0, start[0], start[1] as number, 0) : new Date
-        const endDate = end ? new Date(0, 0, 0, end[0], end[1], 0) : new Date()
+        const startMinutes = start[0] * 60 + start[1];
+        const endMinutes = end[0] * 60 + end[1];
 
-        if (startDate < new Date(0, 0, 0, minStartTime[0], minStartTime[1], 0)) {
-            minStartTime = start
+        if (startMinutes < minMinutes) {
+            minMinutes = startMinutes;
+            minStartTime = start;
         }
 
-        if (endDate > new Date(0, 0, 0, maxEndTime[0], maxEndTime[1], 0)) {
-            maxEndTime = end
+        if (endMinutes > maxMinutes) {
+            maxMinutes = endMinutes;
+            maxEndTime = end;
         }
     }
-    return {minStartTime, maxEndTime}
+    return {minStartTime, maxEndTime, minMinutes, maxMinutes}
 }
 
 export const getDistinctArray = <T>(arr: T[], keySelector: (item: T) => unknown): T[] => {

@@ -74,6 +74,7 @@ export const FormDateInput = <T extends FieldValues>(datePickerProps: DatePicker
                         showTime={showTime}
                         showHour={showTime}
                         showMinute={showTime}
+                        disabled={disabled}
                         minDate={min ? Datetime.of(min).toDayjs() : undefined}
                         maxDate={max ? Datetime.of(max).toDayjs() : undefined}
                     />}

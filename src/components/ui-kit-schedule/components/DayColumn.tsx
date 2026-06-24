@@ -18,6 +18,7 @@ export type DayColumnProps = {
     onView?: (id: number) => void,
     onRefetch?: () => Promise<void>,
     academicYear?: string,
+    hasPermission?: boolean,
 }
 
 function sessionStatus(scheduleId: number, date: Datetime, submittedIds?: Set<number>, reports?: Report[]): {status: ReportStatus, report?: Report} {
@@ -38,7 +39,7 @@ function sessionStatus(scheduleId: number, date: Datetime, submittedIds?: Set<nu
     return {status: "UPCOMING", report: undefined};
 }
 
-export const DayColumn = ({date, schedules, dayIndex, submittedIds, reports, academicYear, onRefetch}: DayColumnProps) => {
+export const DayColumn = ({date, schedules, dayIndex, submittedIds, reports, academicYear, onRefetch, hasPermission}: DayColumnProps) => {
     const [selectedSchedule, setSelectedSchedule] = useState<Schedule | null>(null)
     const [selectedProgram, setSelectedProgram] = useState<CourseProgram | null>(null)
     const [isRegularized, setIsRegularized] = useState<boolean>(false)
@@ -101,6 +102,7 @@ export const DayColumn = ({date, schedules, dayIndex, submittedIds, reports, aca
                     report={report}
                     status={status}
                     onSubmitReport={handleReportSubmitParams}
+                    hasPermission={hasPermission}
                 />
             })
         ) : (
@@ -114,9 +116,7 @@ export const DayColumn = ({date, schedules, dayIndex, submittedIds, reports, aca
                 </div>
             </div>
         )
-    }, [date, daySched, handleReportSubmitParams, reports, submittedIds])
-
-    console.log({submittedIds})
+    }, [date, daySched, handleReportSubmitParams, hasPermission, reports, submittedIds])
 
     return (<>
         <div style={{
@@ -165,7 +165,7 @@ export const DayColumn = ({date, schedules, dayIndex, submittedIds, reports, aca
             {/* Sessions */}
             <CardSession />
         </div>
-        {openReport && <InsertNewReport
+        {hasPermission && openReport && <InsertNewReport
             open={openReport}
             onClose={handleClose}
             programOptions={programOptions}

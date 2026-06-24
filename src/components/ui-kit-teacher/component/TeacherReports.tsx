@@ -13,7 +13,7 @@ import {Alert} from "antd";
 import {LuServerCrash, LuTriangleAlert} from "react-icons/lu";
 import {reportStatusColors} from "@/entity/domain/report.ts";
 
-export const TeacherReports = ({infoData, resourceYear}: InfoPageProps<Teacher>) => {
+export const TeacherReports = ({infoData, resourceYear, hasPermission}: InfoPageProps<Teacher>) => {
     const [weekOffset,   setWeekOffset]   = useState<number>(0);
     const {useGetTeacherSchedules, useGetAllWeekReport} = useTeacherRepo()
 
@@ -112,6 +112,7 @@ export const TeacherReports = ({infoData, resourceYear}: InfoPageProps<Teacher>)
                                 reports={reports as []}
                                 academicYear={resourceYear?.id}
                                 onRefetch={refetch as never}
+                                hasPermission={hasPermission}
                             />
                         </Grid>
                     ))}

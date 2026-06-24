@@ -4,8 +4,10 @@ import {useEffect, useState} from "react";
 import {useAssignmentRepo} from "@/hooks/actions/useAssignmentRepo.ts";
 import {useScoreRepo} from "@/hooks/actions/useScoreRepo.ts";
 import {AssignmentView} from "@/components/common/AssignmentView.tsx";
+import {Button} from "antd";
+import {useRedirect} from "@/hooks/useRedirect.ts";
 
-export const TeacherAssignments = ({infoData}: InfoPageProps<Teacher>) => {
+export const TeacherAssignments = ({infoData, hasPermission}: InfoPageProps<Teacher>) => {
     const {personalInfo, courses, classes} = infoData
     
     const [subjectValue, setSubjectValue] = useState<number | undefined>(courses && courses?.length > 0 ? courses[0].id as number : 0)
@@ -13,6 +15,7 @@ export const TeacherAssignments = ({infoData}: InfoPageProps<Teacher>) => {
     const [scores, setScores] = useState<Score[]>([])
     const {useGetAllTeacherAssignments} = useAssignmentRepo()
     const {useGetBestTeacherStudents} = useScoreRepo()
+    const {toExam} = useRedirect()
     
     const assignments = useGetAllTeacherAssignments(personalInfo?.id as bigint, {classId: classeValue, courseId: subjectValue})
     const {data, isSuccess} =  useGetBestTeacherStudents(personalInfo?.id as bigint, subjectValue)
@@ -28,7 +31,7 @@ export const TeacherAssignments = ({infoData}: InfoPageProps<Teacher>) => {
         if (value !== classeValue) {
             setClasseValue(value)
             setTimeout(() => {
-                assignments.refetch()
+                assignments.refetch().then(r => r)
             }, 50)
         }
     }
@@ -41,6 +44,16 @@ export const TeacherAssignments = ({infoData}: InfoPageProps<Teacher>) => {
             getClasse={handleClasseValue}
             classes={classes}
             courses={courses}
+            {...(hasPermission
+                ? {
+                    selects: [
+                        <Button key="add-exam" type="primary" onClick={toExam}>
+                            Ajouter un dévoir
+                        </Button>,
+                    ],
+                }
+                : {})
+            }
         />
     )
 }

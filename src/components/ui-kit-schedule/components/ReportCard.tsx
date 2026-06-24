@@ -10,10 +10,11 @@ import {useTeacherRepo} from "@/hooks/actions/useTeacherRepo.ts";
 import {Moment} from "@/core/utils/interfaces.ts";
 import {LuPenLine} from "react-icons/lu";
 
-export const ReportCard = ({schedule, status, report, onSubmitReport}: {
+export const ReportCard = ({schedule, status, report, onSubmitReport, hasPermission}: {
     schedule?: Schedule
     status?: ReportStatus
     report?: Report,
+    hasPermission?: boolean,
     onSubmitReport?: (schedule: Schedule, value: boolean, isRegularized?: boolean) => void
 }) => {
     const [openView, setOpenView] = useToggle(false)
@@ -74,14 +75,14 @@ export const ReportCard = ({schedule, status, report, onSubmitReport}: {
                             fontSize:11, fontWeight:700, color:"#166534", cursor:"pointer",
                         }}>Voir ↗</button>
                     )}
-                    {status === "SUBMITTED" && (
+                    {status === "SUBMITTED" && hasPermission && (
                         <button onClick={() => alert("Implémenter la modification des rapport")} style={{
                             padding:"4px 10px", borderRadius:6,
                             border:"1.5px solid #277fd5", background:"#163e65",
                             fontSize:11, fontWeight:700, color:"#F0FDF4", cursor:"pointer",
                         }}><LuPenLine size={14} /></button>
                     )}
-                    {status === "MISSING" && (
+                    {status === "MISSING" && hasPermission && (
                         <button onClick={() => onSubmitReport?.(schedule!, true, true)} style={{
                             padding:"4px 10px", borderRadius:6,
                             border:"none",
@@ -90,7 +91,7 @@ export const ReportCard = ({schedule, status, report, onSubmitReport}: {
                             boxShadow:"0 2px 6px rgba(239,68,68,.35)",
                         }}>Régulariser</button>
                     )}
-                    {status === "PENDING" && (
+                    {status === "PENDING" && hasPermission && (
                         <button onClick={() => onSubmitReport?.(schedule!, true)} style={{
                             padding:"4px 10px", borderRadius:6,
                             border:"none",

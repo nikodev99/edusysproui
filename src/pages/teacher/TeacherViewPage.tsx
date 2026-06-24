@@ -153,9 +153,9 @@ const TeacherViewPage = () => {
                     {label: "Info", children: <TeacherInfo infoData={teacher as Teacher} color={color} dataKey='info' />},
                     {label: "Agenda", children: <TeacherAgenda infoData={teacher as Teacher} dataKey='agenda' />},
                     {label: "Programme", children: <TeacherProgram infoData={teacher as Teacher} hasPermission={hasPermission} color={color} dataKey='program' />},
-                    {label: "Devoirs", children: <TeacherAssignments infoData={teacher as Teacher} dataKey='assignment' />},
+                    {label: "Devoirs", children: <TeacherAssignments infoData={teacher as Teacher} hasPermission={hasPermission} dataKey='assignment' />},
                     {label: "Réprimande", children: <TeacherReprimand infoData={teacher as Teacher} dataKey='reprimand' />},
-                    {label: "Rapport Journalier", children: <TeacherReports infoData={teacher as Teacher} resourceYear={currentAcademicYear} dataKey={"reports"} />},
+                    {label: "Rapport Journalier", children: <TeacherReports infoData={teacher as Teacher} resourceYear={currentAcademicYear} hasPermission={hasPermission} dataKey={"reports"} />},
                 ]}
                 exists={teacher !== null}
                 addMargin={{

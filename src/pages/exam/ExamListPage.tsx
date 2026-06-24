@@ -1,24 +1,24 @@
-import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
-import {text} from "../../core/utils/text_display.ts";
+import {useDocumentTitle} from "@/hooks/useDocumentTitle.ts";
+import {text} from "@/core/utils/text_display.ts";
 import {BreadcrumbType, useBreadcrumbItem} from "../../hooks/useBreadCrumb.tsx";
 import {ListPageHierarchy} from "../../components/custom/ListPageHierarchy.tsx";
-import {redirectTo} from "../../context/RedirectContext.ts";
+import {redirectTo} from "@/context/RedirectContext.ts";
 import {LuCalendarPlus, LuEllipsis, LuEllipsisVertical, LuEye} from "react-icons/lu";
-import {AssignmentFilterProps, getAllAssignments} from "../../data/repository/assignmentRepository.ts";
+import {AssignmentFilterProps, getAllAssignments} from "@/data/repository/assignmentRepository.ts";
 import {AxiosResponse} from "axios";
-import {Assignment, Classe, Course, Individual} from "../../entity";
-import ListViewer from "../../components/custom/ListViewer.tsx";
+import {Assignment, Classe, Course, Individual} from "@/entity";
+import ListViewer from "@/components/custom/ListViewer.tsx";
 import {useEffect, useMemo, useState} from "react";
 import {Space, TableColumnsType, Tag as AntTag, Typography} from "antd";
 import {AssignmentDescription, SuperWord} from "../../core/utils/tsxUtils.tsx";
-import {AvatarTitle} from "../../components/ui/layout/AvatarTitle.tsx";
-import Datetime from "../../core/datetime.ts";
-import Tag from "../../components/ui/layout/Tag.tsx";
-import {ActionButton} from "../../components/ui/layout/ActionButton.tsx";
-import {setFirstName} from "../../core/utils/utils.ts";
-import {AssignmentFilter, ExamActionLinks} from "../../components/ui-kit-exam";
-import {useAcademicYearRepo} from "../../hooks/actions/useAcademicYearRepo.ts";
-import {AssignmentTypeLiteral, typeColors} from "../../entity/enums/assignmentType.ts";
+import {AvatarTitle} from "@/components/ui/layout/AvatarTitle.tsx";
+import Datetime from "@/core/datetime.ts";
+import Tag from "@/components/ui/layout/Tag.tsx";
+import {ActionButton} from "@/components/ui/layout/ActionButton.tsx";
+import {setFirstName} from "@/core/utils/utils.ts";
+import {AssignmentFilter, ExamActionLinks} from "@/components/ui-kit-exam";
+import {useAcademicYearRepo} from "@/hooks/actions/useAcademicYearRepo.ts";
+import {AssignmentTypeLiteral, typeColors} from "@/entity/enums/assignmentType.ts";
 import {ItemType} from "antd/es/menu/interface";
 
 const ExamListPage = () => {

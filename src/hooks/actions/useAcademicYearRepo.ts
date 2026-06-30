@@ -8,7 +8,7 @@ import {
 } from "@/data/repository/academicYearRepository.ts";
 import {useInsert} from "../usePost.ts";
 import {academicYearSchema} from "@/schema";
-import {Option, RepoOptions} from "@/core/utils/interfaces.ts";
+import {Options, RepoOptions} from "@/core/utils/interfaces.ts";
 import {AcademicYear} from "@/entity";
 import {useGlobalStore} from "@/core/global/store.ts";
 
@@ -65,7 +65,7 @@ export const useAcademicYearRepo = () => {
     const allAcademicYears = useGetAllAcademicYear()
     const currentAcademicYear = useGetCurrentAcademicYear()
 
-    const academicYearOptions = useCallback((current: boolean = false): Option[] => {
+    const academicYearOptions = useCallback((current: boolean = false): Options => {
         const academicYears = current ? [currentAcademicYear] : allAcademicYears
         return academicYears?.map(a => ({
             value: a?.id,

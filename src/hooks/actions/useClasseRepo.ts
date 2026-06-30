@@ -1,15 +1,15 @@
-import {Pageable} from "../../core/utils/interfaces.ts";
+import {Pageable} from "@/core/utils/interfaces.ts";
 import {useFetch, useRawFetch} from "../useFetch.ts";
 import {
     getAllClasses,
     getAllSearchClasses,
     getClasse,
     getClassesBasicValues
-} from "../../data/repository/classeRepository.ts";
+} from "@/data/repository/classeRepository.ts";
 import {useEffect, useState} from "react";
-import {Classe} from "../../entity";
-import {getShortSortOrder, setSortFieldName} from "../../core/utils/utils.ts";
-import {useGlobalStore} from "../../core/global/store.ts";
+import {Classe} from "@/entity";
+import {getShortSortOrder, setSortFieldName} from "@/core/utils/utils.ts";
+import {useGlobalStore} from "@/core/global/store.ts";
 
 export const useClasseRepo = () => {
     const schoolId = useGlobalStore(state => state.schoolId)
@@ -59,19 +59,20 @@ export const useClasseRepo = () => {
         !!classeId && !!academicYear
     )
 
-    const useGetClasseBasicValues = () => {
+    const useGetClasseBasicValues = (enabled: boolean = true) => {
         const [classes, setClasses] = useState<Classe[]>([])
         const fetch = useRawFetch()
 
         useEffect(() => {
-            fetch(getClassesBasicValues, [schoolId])
+            if (enabled)
+                fetch(getClassesBasicValues, [schoolId])
                 .then(resp => {
                         if (resp.isSuccess) {
                             setClasses(resp.data as Classe[])
                         }
                     }
                 )
-        }, [fetch]);
+        }, [enabled, fetch]);
 
         return classes
     }

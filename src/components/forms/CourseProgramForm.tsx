@@ -327,7 +327,6 @@ export const ReportForm = (
                 validateStatus: form.validate("sessionStartingTime"),
                 help: form.error("sessionStartingTime"),
                 defaultValue: (data ? data?.sessionStartingTime : schedule?.startTime),
-                disabled: !!schedule
             }
         },
         {
@@ -343,7 +342,6 @@ export const ReportForm = (
                 validateStatus: form.validate("sessionEndingTime"),
                 help: form.error("sessionEndingTime"),
                 defaultValue: (data ? data?.sessionEndingTime : schedule?.endTime),
-                disabled: !!schedule
             }
         },
         {

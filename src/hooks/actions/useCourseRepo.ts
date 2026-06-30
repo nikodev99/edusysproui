@@ -26,18 +26,19 @@ export const useCourseRepo = () => {
         return useFetch(['course', courseId], getCourseById, [courseId], !!courseId)
     }
 
-    const useGetBasicCourses = (): Course[] => {
+    const useGetBasicCourses = (enabled: boolean = true): Course[] => {
         const [courses, setCourses] = useState<Course[]>([])
         const fetch = useRawFetch()
 
         useEffect(() => {
-            fetch(getAllBasicCourses, [schoolId])
-                .then(resp => {
-                    if (resp) {
-                        setCourses(resp.data as Course[])
-                    }
-                })
-        }, [fetch]);
+            if (enabled)
+                fetch(getAllBasicCourses, [schoolId])
+                    .then(resp => {
+                        if (resp) {
+                            setCourses(resp.data as Course[])
+                        }
+                    })
+        }, [enabled, fetch]);
 
         return courses
     }

@@ -36,17 +36,68 @@ export const dateProcess = (requiredError: string, when?: {before?: boolean, aft
         })
 )
 
-export const timeProcess = (title: string) =>
-    z.preprocess((arg) => {
-        if (arg === null || arg === undefined || arg === "") {
-            return arg;
-        }
+export const timeProcess = (
+    title: string,
+    options?: {
+        before?: boolean;
+        after?: boolean;
+        includeSeconds?: boolean;
+    }
+) => {
+    const format = options?.includeSeconds ? 'HH:mm:ss' : 'HH:mm'
 
-        if (dayjs.isDayjs(arg) || (arg instanceof Date && !isNaN(arg.getTime()))) {
-            return Datetime.of(arg).plusHour(1).format("HH:mm");
+    /**
+     * Single entry point: every accepted format → Datetime | undefined.
+     * No more manual +1 hour: Datetime handles Africa/Brazzaville (UTC+1) internally.
+     */
+    const parse = (val: unknown): Datetime | undefined => {
+        // number[] → [h, m] or [h, m, s]
+        // covers: DB default, Datetime.now().TIME, Datetime.now().TIME_WITH_SECONDS
+        if (Array.isArray(val) && val.length >= 2 && val.every(v => typeof v === 'number')) {
+            return Datetime.timeToCurrentDate(val as number[])
         }
-        return arg;
-    }, z.string({ required_error: title }));
+        // Dayjs → TimePicker value
+        if (dayjs.isDayjs(val)) {
+            return Datetime.of(val)  // tz conversion handled in _parse
+        }
+        // Native Date
+        if (val instanceof Date && !isNaN(val.getTime())) {
+            return Datetime.of(val)
+        }
+        // string "HH:mm" or "HH:mm:ss"
+        if (typeof val === 'string' && /^\d{1,2}:\d{2}(:\d{2})?$/.test(val)) {
+            return Datetime.timeToCurrentDate(val)
+        }
+        return undefined
+    }
+
+    return z.preprocess(
+        // Treat empty/null/undefined as missing to trigger the required error
+        (arg) => (arg === '' || arg === null || arg === undefined ? undefined : arg),
+
+        z.unknown({required_error: title})
+            // 1. Parse every accepted format into a Datetime
+            .transform(parse)
+
+            // 2. Required check
+            .refine((d): d is Datetime => d instanceof Datetime, {
+                message: title,
+            })
+
+            // 3. Before / after constraints — no arg = compare against now()
+            .refine(
+                (d) => (options?.before ? d.isBefore() : true),
+                { message: 'La date doit être antérieure à maintenant' }
+            )
+            .refine(
+                (d) => (options?.after ? d.isAfter() : true),
+                { message: 'La date doit être postérieure à maintenant' }
+            )
+
+            // 4. Output: "HH:mm" or "HH:mm:ss"
+            .transform((d) => d.format(format))
+    )
+}
 
 export const excludeSpecialCharacters= (errors: TypicalErrors) =>
     z.string({required_error: errors.requiredError})

@@ -7,6 +7,7 @@ import {useCallback, useMemo, useState} from "react";
 import {ReportStatus} from "@/entity/domain/report.ts";
 import {InsertNewReport} from "@/components/ui-kit-teacher/component/TeacherProgramManagement.tsx";
 import {useCourseProgramRepo} from "@/hooks/actions/useCourseProgramRepo.ts";
+import {scheduleHelper} from "@/core/helpers/ScheduleHelpers.ts";
 
 export type DayColumnProps = {
     dayIndex: Day | number,
@@ -19,6 +20,7 @@ export type DayColumnProps = {
     onRefetch?: () => Promise<void>,
     academicYear?: string,
     hasPermission?: boolean,
+    allDay?: boolean,
 }
 
 function sessionStatus(scheduleId: number, date: Datetime, submittedIds?: Set<number>, reports?: Report[]): {status: ReportStatus, report?: Report} {
@@ -39,16 +41,17 @@ function sessionStatus(scheduleId: number, date: Datetime, submittedIds?: Set<nu
     return {status: "UPCOMING", report: undefined};
 }
 
-export const DayColumn = ({date, schedules, dayIndex, submittedIds, reports, academicYear, onRefetch, hasPermission}: DayColumnProps) => {
+export const DayColumn = ({date, schedules, dayIndex, submittedIds, reports, academicYear, onRefetch, hasPermission, allDay}: DayColumnProps) => {
     const [selectedSchedule, setSelectedSchedule] = useState<Schedule | null>(null)
     const [selectedProgram, setSelectedProgram] = useState<CourseProgram | null>(null)
     const [isRegularized, setIsRegularized] = useState<boolean>(false)
     const [openReport, setOpenReport] = useState<boolean>(false)
     const {useGetTeacherPrograms} = useCourseProgramRepo()
     
-    const today  = date.isToday();
-    const past   = date.isStrictBefore();
+    const today  = date?.isToday();
+    const past   = date?.isStrictBefore();
     const daySched = schedules?.filter(s => Day[s.dayOfWeek as unknown as keyof typeof Day] === dayIndex);
+    const {minStartTime, maxEndTime} = scheduleHelper.getMinMaxTimes(schedules)
     
     const {data: allPrograms} = useGetTeacherPrograms(
         selectedSchedule?.teacher?.id as string,
@@ -103,6 +106,9 @@ export const DayColumn = ({date, schedules, dayIndex, submittedIds, reports, aca
                     status={status}
                     onSubmitReport={handleReportSubmitParams}
                     hasPermission={hasPermission}
+                    times={{min: minStartTime, max: maxEndTime}}
+                    allDay={allDay}
+                    date={date}
                 />
             })
         ) : (
@@ -116,7 +122,7 @@ export const DayColumn = ({date, schedules, dayIndex, submittedIds, reports, aca
                 </div>
             </div>
         )
-    }, [date, daySched, handleReportSubmitParams, hasPermission, reports, submittedIds])
+    }, [allDay, date, daySched, handleReportSubmitParams, hasPermission, maxEndTime, minStartTime, reports, submittedIds])
 
     return (<>
         <div style={{

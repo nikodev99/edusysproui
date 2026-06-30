@@ -173,6 +173,7 @@ export const ProgramCard = ({program, index, hasPermission = false, academicYear
             programOptions={[{ label: program?.name, value: program?.id}]}
             programTopicOptions={topicOptions}
             showSchedule
+            academicYear={academicYearId}
         />}
     </>)
 }

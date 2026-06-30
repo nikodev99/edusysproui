@@ -20,8 +20,9 @@ export class DateHelpers {
         return `${startLabel} - ${endLabel}`
     }
 
-    getDateReference(startDate: Moment, endDate: Moment) {
+    getDateReference(startDate?: Moment, endDate?: Moment) {
         const today = Datetime.now()
+        if (!startDate || !endDate) return today
         if (today.isBetween(startDate, endDate)) return today
         if (today.isBefore(startDate)) return Datetime.of(startDate)
         if (today.isAfter(endDate)) return Datetime.of(endDate)
@@ -33,6 +34,12 @@ export class DateHelpers {
             const gdd = Datetime.of(gd)
             return gdd.DAY === reportDate.DAY
         })
+    }
+
+    toTimeArray(arg: unknown): number[] | string {
+        if (Array.isArray(arg) && arg.length >= 2 && arg.length < 4) return arg;
+        if (typeof arg === "string") return arg.split(":").map(Number);
+        return "";
     }
 }
 

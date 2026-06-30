@@ -10,6 +10,7 @@ import isoWeek from "dayjs/plugin/isoWeek";
 import "dayjs/locale/fr.js";
 import { setFirstName } from "./utils/utils.ts";
 import { Moment } from "@/core/utils/interfaces.ts";
+import {datehelper} from "@/core/helpers/DateHelpers.ts";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -49,12 +50,6 @@ export function isParams(arg: unknown): arg is Params {
         "endTime" in arg ||
         "unit" in arg
     );
-}
-
-export function toTimeArray(arg: unknown): number[] | string {
-    if (Array.isArray(arg)) return arg;
-    if (typeof arg === "string") return arg.split(":").map(Number);
-    return "";
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -140,11 +135,12 @@ class Datetime {
     }
 
     static timeToCurrentDate(time: number[] | string | Params): Datetime {
-        const t = isParams(time) ? (time.time as number[]) : toTimeArray(time);
+        const t = isParams(time) ? (time.time as number[]) : datehelper.toTimeArray(time)
         if (Array.isArray(t) && t.length >= 2) {
-            return Datetime.of(dayjs().hour(t[0]).minute(t[1] || 0).second(0).millisecond(0));
+            const [h, m, s = 0] = t
+            return Datetime.of(dayjs().hour(h).minute(m).second(s))
         }
-        return Datetime.of(t as DateInput);
+        return Datetime.now()
     }
 
     /**
@@ -175,6 +171,10 @@ class Datetime {
     get HOUR(): number        { return this.date.hour(); }
     get MINUTE(): number      { return this.date.minute(); }
     get SECOND(): number      { return this.date.second(); }
+    get TIME(): number[] {return [this.date.hour(), this.date.minute()]}
+    get TIME_WITH_SECONDS(): number[] {
+        return [this.date.hour(), this.date.minute(), this.date.second()]
+    }
     get MILLISECOND(): number { return this.date.millisecond(); }
     get TIMESTAMP(): number   { return this.date.valueOf(); }
     get UNIX(): number        { return this.date.unix(); }
@@ -182,7 +182,7 @@ class Datetime {
     // ── Conversion ────────────────────────────────────────────────────────────
 
     toDate(): Date  { return this.date.toDate(); }
-    toDayjs(): Dayjs { return this.date; } // FIX: removed unused format arg (dayjs(Dayjs, format) is not valid)
+    toDayjs(): Dayjs { return this.date; } // FIX: removed unused format arg (dayjs(Dayjs, format) is not valid
 
     // ── Immutable boundary snapping ───────────────────────────────────────────
     //

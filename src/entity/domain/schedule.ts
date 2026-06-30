@@ -1,5 +1,5 @@
 import {Teacher, Classe, Course, AcademicYear} from "@/entity";
-import {Day} from "../enums/day.ts";
+import {Day, WeekDay} from "../enums/day.ts";
 
 export interface Schedule {
     id: number
@@ -8,7 +8,7 @@ export interface Schedule {
     teacher?: Teacher
     course: Course
     designation?: string
-    dayOfWeek?: Day | number
+    dayOfWeek?: WeekDay | Day | number
     startTime?: Date | number[]
     endTime?: Date | number[]
 }

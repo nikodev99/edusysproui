@@ -10,6 +10,7 @@ export enum Day {
 }
 
 export type WeekDay = keyof typeof Day
+export const WeekDays: WeekDay[] = Object.keys(Day) as WeekDay[]
 
 export const frenchDay = (day: Day | WeekDay, isShort: boolean = false) => {
     switch (day) {

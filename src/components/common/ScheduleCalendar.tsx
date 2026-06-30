@@ -3,7 +3,7 @@ import {Schedule} from "@/entity";
 import {useRawFetch} from "@/hooks/useFetch.ts";
 import {ApiEvent, Color, EventProps} from "@/core/utils/interfaces.ts";
 import {Day} from "@/entity/enums/day.ts";
-import {fDate, getMinMaxTimes, setTime, transformEvents} from "@/core/utils/utils.ts";
+import {fDate, setTime, transformEvents} from "@/core/utils/utils.ts";
 import {DescriptionsItemType} from "antd/es/descriptions";
 import {text} from "@/core/utils/text_display.ts";
 import {IconText, SuperWord} from "@/core/utils/tsxUtils.tsx";
@@ -16,6 +16,7 @@ import {SectionType} from "@/entity/enums/section.ts";
 import {View} from "react-big-calendar";
 import Datetime from "@/core/datetime.ts";
 import VoidData from "@/components/view/VoidData.tsx";
+import {scheduleHelper} from "@/core/helpers/ScheduleHelpers.ts";
 
 type ScheduleCalendarProps = {
     fetchFunc?: (...args: unknown[]) =>  Promise<AxiosResponse<Schedule>>
@@ -112,7 +113,7 @@ export const ScheduleCalendar = (
         setIsModalOpen(false)
     }
 
-    const {minStartTime, maxEndTime} = getMinMaxTimes(schedules || [])
+    const {minStartTime, maxEndTime} = scheduleHelper.getMinMaxTimes(schedules || [])
 
     return(
         <>

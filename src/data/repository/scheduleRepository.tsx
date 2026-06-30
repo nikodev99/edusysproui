@@ -1,5 +1,5 @@
 import {apiClient} from "../axiosConfig.ts";
-import {ScheduleHoursBy} from "../../core/utils/interfaces.ts";
+import {ScheduleHoursBy} from "@/core/utils/interfaces.ts";
 
 export const getAllClasseSchedule = (classeId: number) => {
     return apiClient.get(`/schedule/classe/${classeId}`)

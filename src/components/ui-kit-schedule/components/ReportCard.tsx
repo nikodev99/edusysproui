@@ -10,12 +10,15 @@ import {useTeacherRepo} from "@/hooks/actions/useTeacherRepo.ts";
 import {Moment} from "@/core/utils/interfaces.ts";
 import {LuPenLine} from "react-icons/lu";
 
-export const ReportCard = ({schedule, status, report, onSubmitReport, hasPermission}: {
+export const ReportCard = ({schedule, status, report, onSubmitReport, hasPermission, allDay, date, times}: {
     schedule?: Schedule
     status?: ReportStatus
     report?: Report,
     hasPermission?: boolean,
     onSubmitReport?: (schedule: Schedule, value: boolean, isRegularized?: boolean) => void
+    allDay?: boolean
+    times?: {min: number[], max: number[]}
+    date?: Datetime
 }) => {
     const [openView, setOpenView] = useToggle(false)
     const cfg = reportStatusColors[status as ReportStatus]
@@ -42,10 +45,10 @@ export const ReportCard = ({schedule, status, report, onSubmitReport, hasPermiss
                 {/* Time + type */}
                 <Flex align='center' vertical>
                     <span style={{fontSize:12, fontWeight:700, letterSpacing:"0.06em", textTransform:"uppercase",}}>
-                        {schedule?.designation}
+                        {allDay ? `Cours du ${date?.fullDay()}` : schedule?.designation}
                     </span>
                     <span style={{fontSize:10, fontWeight:700, letterSpacing:"0.05em", padding:"2px 8px", borderRadius:99, color: "#94A3B8"}}>
-                        {Datetime.timeToCurrentDate(schedule?.startTime as [])?.time()} – {Datetime.timeToCurrentDate(schedule?.endTime as [])?.time()}
+                        {Datetime.timeToCurrentDate(allDay ? times?.min as [] : schedule?.startTime as [])?.time()} – {Datetime.timeToCurrentDate(allDay ? times?.max as [] : schedule?.endTime as [])?.time()}
                     </span>
                 </Flex>
 
@@ -128,7 +131,7 @@ export const ReportCardView = ({recordId, open, onClose}: {
                     padding:"4px 10px", borderRadius:99,
                     background:"#F0FDF4", border:"1px solid #86EFAC",
                     fontSize:10, fontWeight:800, color:"#166534",
-                }}>✓ data</span>
+                }}>✓ Soumis</span>
             </div>
         </div>
     }>

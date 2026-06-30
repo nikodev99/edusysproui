@@ -37,6 +37,9 @@ interface ModulePermissions {
     create: (() => boolean)[]
     edit: (() => boolean)[]
     delete: (() => boolean)[]
+    viewAll: (() => boolean)[]
+    viewSome?: (() => boolean)[]
+    viewSelf?: (() => boolean)[]
     special?: {
         [actionName: string]: (() => boolean)[]
     }
@@ -62,7 +65,8 @@ class RouteAccess {
             permissions: {
                 create: [],
                 edit: [],
-                delete: []
+                delete: [],
+                viewAll: []
             }
         },
 
@@ -71,7 +75,8 @@ class RouteAccess {
             permissions: {
                 create: [],
                 edit: [],
-                delete: []
+                delete: [],
+                viewAll: []
             }
         },
 
@@ -82,7 +87,8 @@ class RouteAccess {
             permissions: {
                 create: [],
                 edit: [],
-                delete: []
+                delete: [],
+                viewAll: []
             }
         },
 
@@ -124,6 +130,15 @@ class RouteAccess {
                 delete: [
                     () => isTopAdmin()
                 ],
+                viewAll: [
+                    () => isTopAdmin() || isEnroll() || isSecretary()
+                ],
+                viewSome: [
+                    () => isTeacher()
+                ],
+                viewSelf: [
+                    () => isGuardian()
+                ],
                 special: {
                     'export': [
                         () => isTopAdmin() || isEnroll() || isTeacher()
@@ -133,12 +148,6 @@ class RouteAccess {
                     ],
                     'showClassmates': [
                         () => isTopAdmin() || isTeacher() || isEnroll()
-                    ],
-                    'teacherData': [
-                        () => isTeacher()
-                    ],
-                    'guardianData': [
-                        () => isGuardian()
                     ],
                 }
             }
@@ -189,6 +198,15 @@ class RouteAccess {
                 delete: [
                     () => isTopAdmin()
                 ],
+                viewAll: [
+                    () => isTopAdmin() || isFinance() || isEnroll()
+                ],
+                viewSome: [
+                    () =>  isTeacher()
+                ],
+                viewSelf: [
+                    () =>  isGuardian()
+                ],
                 special: {
                     "pay": [
                         () => isGuardian()
@@ -196,12 +214,6 @@ class RouteAccess {
                     'updateContactPreferences': [
                         () => isGuardian()
                     ],
-                    'viewSome': [
-                        () =>  isTeacher()
-                    ],
-                    'viewSelf': [
-                        () =>  isGuardian()
-                    ]
                 }
             }
         },
@@ -240,6 +252,12 @@ class RouteAccess {
                 delete: [
                     () => isTopAdmin()
                 ],
+                viewAll: [
+                    () => isTopAdmin() || isFinance() || isHR()
+                ],
+                viewSelf: [
+                    () =>isTeacher()
+                ],
                 special: {
                     // Finance can view salary information
                     'viewSalary': [
@@ -254,7 +272,7 @@ class RouteAccess {
                     ],
                     'teacherAction': [
                         () => isTeacher()
-                    ]
+                    ],
                 }
             }
         },
@@ -284,6 +302,12 @@ class RouteAccess {
                 ],
                 delete: [
                     () => isTopAdmin() || isAdmin()
+                ],
+                viewAll: [
+                    () => isTopAdmin() || isAdmin() || isSecretary()
+                ],
+                viewSome: [
+                    () => isTeacher()
                 ],
                 special: {
                     // Teachers can assign homework even if they can't create classes
@@ -328,6 +352,12 @@ class RouteAccess {
                 delete: [
                     () => isTopAdmin() || isTeacher()
                 ],
+                viewAll: [
+                    () => isTopAdmin()
+                ],
+                viewSome: [
+                    () => isTeacher()
+                ],
                 special: {
                     // Only admins can publish final results school-wide
                     'publishResults': [
@@ -361,6 +391,9 @@ class RouteAccess {
                 ],
                 delete: [
                     () => isTopAdmin()
+                ],
+                viewAll: [
+                    () => isTopAdmin() || isSecretary()
                 ],
                 special: {
                     // Teachers can mark attendance for their classes
@@ -396,6 +429,9 @@ class RouteAccess {
                 ],
                 delete: [
                     () => isTopAdmin()
+                ],
+                viewAll: [
+                    () => isTopAdmin() || isSecretary()
                 ],
                 special: {
                     'issueBooks': [
@@ -433,6 +469,9 @@ class RouteAccess {
                 delete: [
                     () => isTopAdmin()
                 ],
+                viewAll: [
+                    () =>  isTopAdmin() || isFinance()
+                ],
                 special: {
                     'recordPayment': [
                         () => isTopAdmin() || isFinance()
@@ -456,7 +495,8 @@ class RouteAccess {
             permissions: {
                 create: [],
                 edit: [],
-                delete: []
+                delete: [],
+                viewAll: []
             }
         },
 
@@ -483,6 +523,9 @@ class RouteAccess {
                 ],
                 delete: [
                     () => isTopAdmin()
+                ],
+                viewAll: [
+                    () =>  isTopAdmin() || isHR()
                 ],
                 special: {
                     'manageLeave': [
@@ -521,7 +564,10 @@ class RouteAccess {
                 ],
                 delete: [
                     () => isTopAdmin()
-                ]
+                ],
+                viewAll: [
+                    () =>  isTopAdmin() || isAdmin()
+                ],
             }
         },
 
@@ -538,7 +584,10 @@ class RouteAccess {
                 ],
                 delete: [
                     () => isTopAdmin()
-                ]
+                ],
+                viewAll: [
+                    () =>  isTopAdmin() || isAdmin()
+                ],
             }
         },
         'organization/academic_year': {
@@ -554,7 +603,10 @@ class RouteAccess {
                 ],
                 delete: [
                     () => isTopAdmin()
-                ]
+                ],
+                viewAll: [
+                    () =>  isTopAdmin() || isAdmin()
+                ],
             }
         },
         'organization/grades': {
@@ -570,7 +622,10 @@ class RouteAccess {
                 ],
                 delete: [
                     () => isTopAdmin()
-                ]
+                ],
+                viewAll: [
+                    () =>  isTopAdmin() || isAdmin()
+                ],
             }
         },
         'organization/departments': {
@@ -586,7 +641,10 @@ class RouteAccess {
                 ],
                 delete: [
                     () => isTopAdmin()
-                ]
+                ],
+                viewAll: [
+                    () =>  isTopAdmin() || isAdmin()
+                ],
             }
         },
         'organization/users': {
@@ -610,7 +668,10 @@ class RouteAccess {
                 ],
                 delete: [
                     () => isTopAdmin()
-                ]
+                ],
+                viewAll: [
+                    () =>  isTopAdmin() || isAdmin()
+                ],
             }
         },
 
@@ -619,7 +680,8 @@ class RouteAccess {
             permissions: {
                 create: [],
                 edit: [],
-                delete: []
+                delete: [],
+                viewAll: []
             }
         },
         'settings/customize': {
@@ -635,7 +697,10 @@ class RouteAccess {
                 ],
                 delete: [
                     () => isTopAdmin()
-                ]
+                ],
+                viewAll: [
+                    () =>  isTopAdmin() || isAdmin()
+                ],
             }
         },
         'settings/legal_certificate': {
@@ -657,7 +722,10 @@ class RouteAccess {
                 ],
                 delete: [
                     () => isTopAdmin()
-                ]
+                ],
+                viewAll: [
+                    () =>  isTopAdmin() || isAdmin()
+                ],
             }
         },
     }
@@ -810,7 +878,7 @@ class RouteAccess {
         if (permission in permissions && permission !== 'special') {
             const checkers = permissions[permission as keyof Omit<ModulePermissions, 'special'>]
 
-            if (checkers.length === 0) {
+            if (!checkers || checkers.length === 0) {
                 return true
             }
 

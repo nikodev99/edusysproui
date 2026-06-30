@@ -93,15 +93,15 @@ export const getAllCourseAssignments = (courseId: number, academicYear: string) 
     })
 }
 
-export const getSomeTeacherAssignments = (personalInfoId: bigint) => {
+export const getSomeTeacherAssignments = (personalInfoId: number) => {
     return apiClient.get<Assignment[]>(`/assignment/teacher_some_${personalInfoId}`)
 }
 
-export const getTeacherAssignments = (personalInfoId: bigint) => {
+export const getTeacherAssignments = (personalInfoId: number) => {
     return apiClient.get<Assignment[]>(`/assignment/teacher_all/${personalInfoId}`)
 }
 
-export const getAllTeacherCourseAssignments = (personalInfoId: bigint, ids: IDS) => {
+export const getAllTeacherCourseAssignments = (personalInfoId: number, ids: IDS) => {
     return apiClient.get<Assignment[]>(`/assignment/teacher_all_course_${personalInfoId}`, {
         params: {
             classe: ids.classId,
@@ -110,7 +110,7 @@ export const getAllTeacherCourseAssignments = (personalInfoId: bigint, ids: IDS)
     })
 }
 
-export const getAllTeacherAssignments = (personalInfoId: bigint, ids: IDS) => {
+export const getAllTeacherAssignments = (personalInfoId: number, ids: IDS) => {
     return apiClient.get<Assignment[]>(`/assignment/teacher_all_${personalInfoId}`, {
         params: {
             classe: ids.classId
@@ -118,7 +118,7 @@ export const getAllTeacherAssignments = (personalInfoId: bigint, ids: IDS) => {
     })
 }
 
-export const getAssignmentById = (assignmentId: bigint) => {
+export const getAssignmentById = (assignmentId: number) => {
     return apiClient.get<Assignment>(`/assignment/${assignmentId}`)
 }
 
@@ -126,6 +126,6 @@ export const changeAssignmentDate = (assignment: AssignmentUpdateDate, assignmen
     return apiClient.put<{ updated: boolean }>(`/assignment/change/${assignmentId}`, assignment)
 }
 
-export const removeAssignment = (assignmentId: bigint) => {
+export const removeAssignment = (assignmentId: number) => {
     return apiClient.delete(`/assignment/${assignmentId}`)
 }

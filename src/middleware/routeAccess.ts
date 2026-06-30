@@ -211,9 +211,15 @@ class RouteAccess {
                     "pay": [
                         () => isGuardian()
                     ],
+                    "seeInvoices": [
+                        () => isTopAdmin() || isFinance()
+                    ],
                     'updateContactPreferences': [
                         () => isGuardian()
                     ],
+                    'viewStudent': [
+                        () => isTopAdmin() || isFinance() || isTeacher() || isEnroll() || isGuardian()
+                    ]
                 }
             }
         },
@@ -258,6 +264,7 @@ class RouteAccess {
                 viewSelf: [
                     () =>isTeacher()
                 ],
+                viewSome: [],
                 special: {
                     // Finance can view salary information
                     'viewSalary': [
@@ -358,6 +365,7 @@ class RouteAccess {
                 viewSome: [
                     () => isTeacher()
                 ],
+                viewSelf: [],
                 special: {
                     // Only admins can publish final results school-wide
                     'publishResults': [

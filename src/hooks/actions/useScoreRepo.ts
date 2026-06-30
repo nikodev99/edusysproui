@@ -20,7 +20,7 @@ import {AxiosResponse} from "axios";
 
 export const useScoreRepo = () => {
     const useGetAllAssignmentMarks = (assignmentId: number, size: number, enable: boolean = true) => useFetch(
-        ['assignment-marks', assignmentId], getAllAssignmentMarks, [assignmentId, size], enable && !!assignmentId && !!size
+        ['assignment-marks', assignmentId, size], getAllAssignmentMarks, [assignmentId, size], enable && !!assignmentId && !!size
     )
 
     const useGetAssignmentScores = (assignmentId: number): { scores: Score[], refetch: () => void } => {

@@ -1,6 +1,6 @@
 import {Collapse, Skeleton, TableColumnsType, TablePaginationConfig} from "antd";
 import {Assignment, Score} from "@/entity";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {ScoreItem} from "./ScoreItem.tsx";
 import {useScoreRepo} from "@/hooks/actions/useScoreRepo.ts";
 
@@ -24,13 +24,14 @@ const AssignmentScores = (
 
     const [scores, setScores] = useState<Score[] | null>(null)
     const [allScores, setAllScores] = useState<number>(0)
-    const [scoreSize, setScoreSize] = useState<number>(size ?? 5)
+    const [scoreSize, setScoreSize] = useState<number>(size ?? 10)
+    const prevScoreSizeRef = useRef<number>(scoreSize)
 
     const {useGetAllAssignmentMarks, useGetStudentScore} = useScoreRepo()
     const hasMarks = (marks?.length ?? 0) > 0
     const shouldFetchAll = !markId && !hasMarks
 
-    const {data, isLoading, isRefetching, isLoadingError, isSuccess} = useGetAllAssignmentMarks(assignmentId as number, scoreSize, shouldFetchAll)
+    const {data, isLoading, isRefetching, isLoadingError, isSuccess, refetch} = useGetAllAssignmentMarks(assignmentId as number, scoreSize, shouldFetchAll)
     const {data: studentScore} = useGetStudentScore(assignmentId as number, markId as string, !!markId)
     
     const scorePending: boolean = loading ?? (isLoading || isRefetching || isLoadingError)
@@ -47,13 +48,6 @@ const AssignmentScores = (
     }, [markId, hasMarks, marks])
 
     useEffect(() => {
-        if (shouldFetchAll && isSuccess && data && 'content' in data && 'totalElements' in data) {
-            setScores(data.content as Score[])
-            setAllScores(data.totalElements as number)
-        }
-    }, [shouldFetchAll, isSuccess, data])
-
-    useEffect(() => {
         if (addToScores) {
             setScores(prevState => prevState?.map(score => ({
                 ...score,
@@ -62,10 +56,32 @@ const AssignmentScores = (
         }
     }, [addToScores]);
 
+    useEffect(() => {
+        if (!shouldFetchAll) return
+
+        prevScoreSizeRef.current = scoreSize
+
+        if (prevScoreSizeRef.current !== scoreSize) {
+            refetch().then(result => {
+                if (result.data && 'content' in result.data && 'totalElements' in result.data) {
+                    setScores(result.data.content as Score[])
+                    setAllScores(result.data.totalElements as number)
+                }
+            })
+            return // don't fall through to stale `data` below
+        }
+
+        if (isSuccess && data && 'content' in data && 'totalElements' in data) {
+            setScores(data.content as Score[])
+            setAllScores(data.totalElements as number)
+        }
+    }, [shouldFetchAll, isSuccess, data, scoreSize, refetch])
+
+
     const onLoadMore = () => {
         if (scorePending) return
         setScoreSize(
-            prevState => prevState < allScores ? prevState + 3 : allScores
+            prevState => prevState < allScores ? prevState + 10 : allScores
         )
     }
 
@@ -78,7 +94,7 @@ const AssignmentScores = (
         height={markId ? 110 : height}
         isTable={isTable}
         customHeaders={tableColumns}
-        infinite={!marks}
+        infinite={shouldFetchAll}
         hasPagination={pagination}
     />
 

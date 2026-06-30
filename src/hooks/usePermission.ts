@@ -47,6 +47,7 @@ export const usePermission = () => {
 
         // Generic permission checker for special actions
         // Use this for module-specific actions like 'export', 'approve', etc.
+        //exclude 'true' means that the permission is not allowed to the toAdmin or school director
         can: (action: string, exclude: boolean = false) => routeAccess.can(module, action, exclude),
 
         // Get a full summary-useful for debugging

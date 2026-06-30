@@ -99,8 +99,8 @@ export const AssignmentDesc = (
                             onlyMark={onlyMark}
                             isLoading={isLoading}
                             showBest={showBest}
-                            startDate={Datetime.of(calendarLimit?.startDate as Moment).toDate()}
-                            endDate={Datetime.of(calendarLimit?.endDate as Moment).toDate()}
+                            startDate={calendarLimit?.startDate ? Datetime.of(calendarLimit?.startDate as Moment).toDate() : undefined}
+                            endDate={calendarLimit?.endDate ? Datetime.of(calendarLimit?.endDate as Moment).toDate() : undefined}
                         />
                     </Card>
                     : <VoidData />

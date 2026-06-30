@@ -7,7 +7,7 @@ import {AvatarTitle} from "./AvatarTitle.tsx";
 import {text} from "../../../core/utils/text_display.ts";
 import {AutoScrollTable} from "./AutoScrollTable.tsx";
 import {Table} from "./Table.tsx";
-import {useMemo} from "react";
+import {useCallback, useMemo} from "react";
 
 interface ScoreItemProps {
     scores: Score[];
@@ -29,6 +29,8 @@ const ScoreItem = (
     const sortedScores = useMemo(() => scores && scores?.length > 0 ?
             [...scores]?.sort((a, b) => b.obtainedMark - a.obtainedMark) : []
         , [scores])
+
+    const load = useCallback(() => onLoadMore?.(), [onLoadMore])
 
     const columns: TableColumnsType<Score> = customHeaders ?? [
         {
@@ -76,7 +78,7 @@ const ScoreItem = (
                 }}
                 height={height ?? 200}
                 size={scoreSize}
-                loadMoreSize={onLoadMore!}
+                loadMoreSize={load}
                 allItems={allScores}
                 isLoading={isLoading}
                 infinite={infinite}

@@ -108,7 +108,7 @@ const CalendarSection = ({infoData, seeMore, academicYear}: TeacherInfo) => {
 
 const MarkMean = ({infoData, color}: TeacherInfo) => {
     const {useGetAllTeacherMarks} = useScoreRepo()
-    const {data: fetchedMarks, isLoading} = useGetAllTeacherMarks(infoData?.personalInfo?.id as bigint)
+    const {data: fetchedMarks, isLoading} = useGetAllTeacherMarks(infoData?.personalInfo?.id as number)
 
     return(
         <Section title='Moyenne des notes'>

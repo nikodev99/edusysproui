@@ -64,7 +64,7 @@ const AssignmentView = (
 
     const classrooms = useMemo(() => {
         return classes?.map(c => ({
-            value: c.id, label: c.name
+            value: c.id, label: <SuperWord input={c.name} isSpan />
         }))
     }, [classes])
     
@@ -132,6 +132,11 @@ const AssignmentView = (
     }, [bestScores, classeValue, getClasse, getSubject, subjectValue]);
 
     useEffect(() => {
+        setSelectedSubject(subjectValue !== 0 ? (allSubjects ?? subjects)?.find(s => s.value === subjectValue)?.label ?? null : null)
+        setSelectedClasse(classeValue !== 0 ? classes?.find(c => c.id === classeValue)?.name ?? null : null)
+    }, [allSubjects, classeValue, classes, subjectValue, subjects]);
+
+    useEffect(() => {
         if (disableSelect && selectedTabKey === 'assignment-list') {
             setDisabledSelect(true)
         }else {
@@ -141,12 +146,10 @@ const AssignmentView = (
 
     const handleSubjectValue = (value: number) => {
         setSubjectValue(prev => prev === value ? prev : value)
-        setSelectedSubject(value !== 0 ? allSubjects?.find(s => s.value === value)?.label ?? null : null)
     }
     
     const handleClasseValue = (value: number) => {
         setClasseValue(prev => prev === value ? prev : value)
-        setSelectedClasse(value !== 0 ? classes?.find(c => c.id === value)?.name ?? null : null)
     }
 
     const handleConfirmation = (value: boolean) => {

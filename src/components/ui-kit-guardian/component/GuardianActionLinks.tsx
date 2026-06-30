@@ -27,6 +27,9 @@ export const GuardianActionLinks = ({data, getItems}: GuardianActionButtons) => 
     const {useAccountExists, useAccountExistsInSchool} = useAccount()
     const {toGuardianPay, toGuardianInv, toGuardianBilling} = useRedirect()
     const {canCreate, canDelete, can} = usePermission()
+    
+    const canPay = can('pay', true)
+    const canSeeInvoices = can('seeInvoices')
 
     const {personalInfo} = useMemo(() => ({
         personalInfo: data?.personalInfo
@@ -43,28 +46,28 @@ export const GuardianActionLinks = ({data, getItems}: GuardianActionButtons) => 
             onClick: () => setOpenCreateUser(),
             disabled: isPresent
         }] : []),
-        ...(can('pay', true) ? [
+        ...(canPay ? [
             {
                 key: `@invoice-${data?.id}`,
                 icon: <LuReceipt />,
                 label: 'Facture à payer',
                 onClick: () => toGuardianInv(data?.id as string)
             }
-        ] : [
+        ] : canSeeInvoices ? [
             {
                 key: `@invoice-${data?.id}`,
                 icon: <LuReceipt />,
                 label: 'Factures',
                 onClick: () => toGuardianInv(data?.id as string)
             }
-        ]),
-        {
+        ] : []),
+        ...(canPay || canSeeInvoices ? [{
             key: `@payments-${data?.id}`,
             icon: <LuBanknote />,
             label: 'Historique de Paiements',
             onClick: () => toGuardianPay(data?.id as string)
-        },
-        ...(can('pay', true) ? [{
+        }]: []),
+        ...(canPay ? [{
             key: `@billing-${data?.id}`,
             icon: <div><LuSettings2 /></div>,
             label: 'Paramètres de facturation',
@@ -84,7 +87,7 @@ export const GuardianActionLinks = ({data, getItems}: GuardianActionButtons) => 
             onClick: setRemoveGuardian,
             danger: true
         }] : [])
-    ] as ItemType[], [accountExists, can, canCreate, canDelete, data?.id, isPresent, setOpenCreateUser, setRemoveGuardian, toGuardianBilling, toGuardianInv, toGuardianPay])
+    ] as ItemType[], [accountExists, canCreate, canDelete, canPay, canSeeInvoices, data?.id, isPresent, setOpenCreateUser, setRemoveGuardian, toGuardianBilling, toGuardianInv, toGuardianPay])
 
     useMenuItemsEffect(items, getItems)
 

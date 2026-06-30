@@ -72,7 +72,7 @@ export const useAssignmentRepo = (context: UserPermission = UserPermission.ALL) 
         !!preparedById
     )
 
-    const useGetAllTeacherAssignments = (preparedById: bigint, ids: IDS): UseQueryResult<Assignment[], unknown> => useFetch(
+    const useGetAllTeacherAssignments = (preparedById: number, ids: IDS): UseQueryResult<Assignment[], unknown> => useFetch(
         ids.courseId ? ['teacher-course-assignments', preparedById, ids.courseId, ids.courseId] : ['teacher-assignments', preparedById, ids.classId],
         ids.courseId ? getAllTeacherCourseAssignments : getAllTeacherAssignments,
         [preparedById, ids],

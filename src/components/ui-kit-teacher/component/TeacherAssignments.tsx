@@ -7,7 +7,7 @@ import {AssignmentView} from "@/components/common/AssignmentView.tsx";
 import {Button} from "antd";
 import {useRedirect} from "@/hooks/useRedirect.ts";
 
-export const TeacherAssignments = ({infoData, hasPermission}: InfoPageProps<Teacher>) => {
+export const TeacherAssignments = ({infoData, hasPermission, resourceYear}: InfoPageProps<Teacher>) => {
     const {personalInfo, courses, classes} = infoData
     
     const [subjectValue, setSubjectValue] = useState<number | undefined>(courses && courses?.length > 0 ? courses[0].id as number : 0)
@@ -17,10 +17,8 @@ export const TeacherAssignments = ({infoData, hasPermission}: InfoPageProps<Teac
     const {useGetBestTeacherStudents} = useScoreRepo()
     const {toExam} = useRedirect()
     
-    const assignments = useGetAllTeacherAssignments(personalInfo?.id as bigint, {classId: classeValue, courseId: subjectValue})
-    const {data, isSuccess} =  useGetBestTeacherStudents(personalInfo?.id as bigint, subjectValue)
-
-    console.log('ASSIGNMENTS: ', assignments.data)
+    const assignments = useGetAllTeacherAssignments(personalInfo?.id as number, {classId: classeValue, courseId: subjectValue})
+    const {data, isSuccess} =  useGetBestTeacherStudents(personalInfo?.id as number, subjectValue)
 
     useEffect(() => {
         if (isSuccess)
@@ -44,6 +42,10 @@ export const TeacherAssignments = ({infoData, hasPermission}: InfoPageProps<Teac
             getClasse={handleClasseValue}
             classes={classes}
             courses={courses}
+            calendarLimit={{
+                startDate: resourceYear?.startDate,
+                endDate: resourceYear?.endDate
+            }}
             {...(hasPermission
                 ? {
                     selects: [

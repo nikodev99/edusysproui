@@ -16,12 +16,16 @@ import {usePermission} from "@/hooks/usePermission.ts";
 const count = 3;
 
 export const StudentClasse = ({enrolledStudent, setActiveKey}: {enrolledStudent: Enrollment, setActiveKey?: (key: string) => void }) => {
+    const {academicYear, student, personalInfo, classe} = {
+        academicYear: enrolledStudent?.academicYear,
+        student: enrolledStudent?.student,
+        classe: enrolledStudent?.classe,
+        personalInfo: enrolledStudent?.student?.personalInfo,
+    }
 
-    const {academicYear, student, student: {personalInfo}, classe} = enrolledStudent
-
-    const [academicYearId, setAcademicYearId] = useState<string>(academicYear.id)
+    const [academicYearId, setAcademicYearId] = useState<string>(academicYear?.id)
     const [size, setSize] = useState<number>(5)
-    const [classeId, setClasseId] = useState<number>(classe.id)
+    const [classeId, setClasseId] = useState<number>(classe?.id)
     const [allItems, setAllItems] = useState<number>(0)
     const [classmates, setClassmates] = useState<Enrollment[]>([]);
     const pageCount = useRef<number>(0)
@@ -29,18 +33,23 @@ export const StudentClasse = ({enrolledStudent, setActiveKey}: {enrolledStudent:
     const {can} = usePermission()
     
     const {data, error, isLoading, isFetching, isSuccess, refetch} = useFetch('student-classmates', getAllStudentClassmate, [
-        student.id, classeId, academicYearId, {page: pageCount.current, size: size}
+        student?.id, classeId, academicYearId, {page: pageCount.current, size: size}
     ])
 
     const academicYears = useMemo(() => {
-        return [
-            { value: academicYear.id, label: academicYear.academicYear },
-            ...student.enrollments.map(e => ({
-                value: e.academicYear.id,
-                label: e.academicYear.academicYear
-            }))
-        ];
-    }, [academicYear.id, academicYear.academicYear, student.enrollments]);
+        // Start with the current academicYear if it exists
+        const base = academicYear
+            ? [{ value: academicYear.id, label: academicYear.academicYear }]
+            : [];
+
+        // Safely get enrollments, default to empty array
+        const enrollments = student?.enrollments?.map(e => ({
+            value: e.academicYear.id,
+            label: e.academicYear.academicYear,
+        })) ?? [];
+
+        return [...base, ...enrollments];
+    }, [academicYear, student]);
 
     useEffect(() => {
         if (size && classeId || data || student.id) {
@@ -50,7 +59,7 @@ export const StudentClasse = ({enrolledStudent, setActiveKey}: {enrolledStudent:
             setClassmates(data.content)
             setAllItems(data.totalElements)
         }
-    }, [classeId, data, isLoading, isSuccess, refetch, size, student.id]);
+    }, [classeId, data, isLoading, isSuccess, refetch, size, student?.id]);
 
     if(error) {
         console.error(error)
@@ -82,7 +91,7 @@ export const StudentClasse = ({enrolledStudent, setActiveKey}: {enrolledStudent:
                     (
                         <Select
                             className='select-control'
-                            defaultValue={academicYear.id}
+                            defaultValue={academicYear?.id}
                             options={academicYears}
                             onChange={handleAcademicYearIdValue}
                             variant='borderless'
@@ -90,22 +99,23 @@ export const StudentClasse = ({enrolledStudent, setActiveKey}: {enrolledStudent:
                     )
                 ]}
                 items={[
-                    {key: '1', label: `Classe ${classe.name}`, children: (
+                    {key: '1', label: `Classe ${classe?.name}`, children: (
                         <LoadMoreList
                             listProps={{
                                 dataSource: classmates,
+                                loading: !enrolledStudent,
                                 renderItem: (item) => (
                                     <List.Item actions={can('showClassmates') ? [
                                         <Button
                                             disabled={isFetching}
                                             type='link'
                                             key="list-loadmore-more"
-                                            onClick={() => handleWatchClassmate(item.student.id)}
+                                            onClick={() => handleWatchClassmate(item?.student?.id)}
                                         >
                                             Voir plus
                                         </Button>
                                     ]: undefined}>
-                                        <Skeleton avatar loading={isLoading} active={isLoading}>
+                                        <Skeleton avatar loading={!enrolledStudent || isLoading} active={isLoading}>
                                             <List.Item.Meta
                                                 avatar={<Avatar
                                                     image={item?.student?.personalInfo?.image}
@@ -113,11 +123,11 @@ export const StudentClasse = ({enrolledStudent, setActiveKey}: {enrolledStudent:
                                                     lastText={item?.student?.personalInfo?.lastName}
                                                 />}
                                                 title={
-                                                    <span className='name' onClick={() => handleWatchClassmate(item?.student?.id)}>
+                                                    <span className='name' onClick={can('showClassmates') ? () => handleWatchClassmate(item?.student?.id) : undefined}>
                                                     {item?.student?.personalInfo?.lastName} {setFirstName(`${item?.student?.personalInfo?.firstName}`)}
                                                 </span>
                                                 }
-                                                description={item.student?.personalInfo?.reference}
+                                                description={item?.student?.personalInfo?.reference}
                                             />
                                         </Skeleton>
                                     </List.Item>

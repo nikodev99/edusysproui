@@ -12,21 +12,29 @@ import {Tabs, Tag} from "antd";
 import {useGuardianRepo} from "@/hooks/actions/useGuardianRepo.ts";
 import {useDocumentTitle} from "@/hooks/useDocumentTitle.ts";
 import {ItemType} from "antd/es/menu/interface";
+import {loggedUser} from "@/auth/jwt/LoggedUser.ts";
+import {useTeacherRepo} from "@/hooks/actions/useTeacherRepo.ts";
+import {isTeacher} from "@/auth/dto/role.ts";
 
 const GuardianViewPage: React.FC = () => {
 
     const { id: guardianId } = useParams();
-
+    const logged = loggedUser.getUser()
     const [guardian, setGuardian] = useState<Guardian | null>(null);
     const [openDrawer, setOpenDrawer] = useState<boolean>(false)
     const [color, setColor] = useState('')
     const [shouldRefresh, setShouldRefresh] = useState<boolean>(false)
     const [linkButtons, setLinkButtons] = useState<ItemType[]>([])
     const {useGetGuardianWithStudents} = useGuardianRepo()
+    const {useGetTeacherClasses} = useTeacherRepo()
 
     const {data, isLoading, isSuccess, refetch} = useGetGuardianWithStudents(guardianId as string)
+    const {data: teacher} = useGetTeacherClasses(logged?.userId as string, isTeacher())
     
     const guardianName = guardian ? setName(guardian?.personalInfo) : 'Tuteur'
+
+    console.log('User: ', guardian?.students)
+    console.log('Teacher: ', teacher?.classes)
 
     useDocumentTitle({
         title: guardianName,
@@ -104,6 +112,7 @@ const GuardianViewPage: React.FC = () => {
                             label: 'List des étudiants',
                             children: <GuardianStudentList
                                 students={guardian?.students}
+                                allowedClasses={teacher?.classes as []}
                             />
                         }
                     ]}

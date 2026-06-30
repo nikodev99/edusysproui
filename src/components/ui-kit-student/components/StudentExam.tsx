@@ -13,6 +13,7 @@ import {useScoreRepo} from "@/hooks/actions/useScoreRepo.ts";
 import {InitMarkType} from "@/core/utils/tsxUtils.tsx";
 import {ClasseExamView} from "@/components/ui-kit-cc";
 import {ExamData} from "@/entity/domain/exam.ts";
+import {useAcademicYearRepo} from "@/hooks/actions/useAcademicYearRepo.ts";
 
 interface StudentExamProps {
     enrolledStudent: Enrollment
@@ -22,7 +23,7 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
 
     const examCount = LocalStorageManager.get<number>('examCount') ?? 10;
 
-    const {academicYear, personalInfo, enrollments, classe} = useMemo(() => ({
+    const {personalInfo, enrollments, classe} = useMemo(() => ({
         academicYear: enrolledStudent?.academicYear,
         personalInfo: enrolledStudent?.student?.personalInfo,
         enrollments: enrolledStudent?.student?.enrollments,
@@ -33,8 +34,8 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
     const [subjectValue, setSubjectValue] = useState<number>(0)
     const [allData, setAllData] = useState<number>(0)
     const [size, setSize] = useState<number>(examCount)
+    const {currentAcademicYear: academicYear} = useAcademicYearRepo()
     const [academicYearId, setAcademicYearId] = useState<string>(academicYear?.id ?? '')
-
     console.log('Academic year: ', academicYear)
 
     const {useGetAllClasseAssignments} = useAssignmentRepo()

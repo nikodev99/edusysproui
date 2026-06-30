@@ -1,13 +1,20 @@
-import {Student} from "@/entity";
+import {Classe, Student} from "@/entity";
 import './student_card.scss'
 import {bloodLabel, fDate} from "@/core/utils/utils.ts";
 import {Avatar} from "@/components/ui/layout/Avatar.tsx";
-import {QRCode, Space} from "antd";
+import {QRCode, Space, Typography} from "antd";
 import {text} from "@/core/utils/text_display.ts";
-import {Link} from "react-router-dom";
 import {BloodType} from "@/entity/enums/bloodType.ts";
+import {useRedirect} from "@/hooks/useRedirect.ts";
 
-export const GuardianStudentList = ({students}: {students?: Student[]}) => {
+export const GuardianStudentList = ({students, allowedClasses = []}: {students?: Student[], allowedClasses?: Classe[]}) => {
+    const {toViewStudent} = useRedirect()
+
+    const {Link} = Typography
+
+    const canViewStudent = (classe?: Classe)=> {
+        return allowedClasses?.some(c => c?.id === classe?.id)
+    }
 
     return (
         <Space wrap align='center'>
@@ -25,10 +32,15 @@ export const GuardianStudentList = ({students}: {students?: Student[]}) => {
                         <div className="student-info">
                             <div className="left-section">
                                 <p className="label">NOM & PRENOM</p>
-                                <Link to={text.student.group.view.href + student.id} className="value link">
-                                    <p>{student?.personalInfo?.lastName} {student?.personalInfo?.firstName}</p>
-                                </Link>
-
+                                {
+                                    canViewStudent(student?.classe) ? (
+                                        <Link onClick={() => toViewStudent(student?.id, student?.personalInfo)} className="value link">
+                                            <span>{student?.personalInfo?.lastName} {student?.personalInfo?.firstName}</span>
+                                        </Link>
+                                    ) : (
+                                        <p>{student?.personalInfo?.lastName} {student?.personalInfo?.firstName}</p>
+                                    )
+                                }
                                 <p className="label">ID</p>
                                 <p className="value">{student?.personalInfo?.reference}</p>
 
@@ -39,14 +51,13 @@ export const GuardianStudentList = ({students}: {students?: Student[]}) => {
                                 <p className="value">{fDate(student?.personalInfo?.birthDate)}</p>
                             </div>
                             <div className="right-section">
-                                <Link to={text.student.group.view.href + student.id}>
-                                    <Avatar
-                                        image={student?.personalInfo?.image}
-                                        firstText={student?.personalInfo?.firstName}
-                                        lastText={student?.personalInfo?.lastName}
-                                        size={70}
-                                    />
-                                </Link>
+                                <Avatar
+                                    image={student?.personalInfo?.image}
+                                    firstText={student?.personalInfo?.firstName}
+                                    lastText={student?.personalInfo?.lastName}
+                                    size={70}
+                                    onClick={canViewStudent(student?.classe) ? () => toViewStudent(student?.id, student?.personalInfo) : undefined}
+                                />
                             </div>
                         </div>
                         {student.healthCondition &&
@@ -65,7 +76,11 @@ export const GuardianStudentList = ({students}: {students?: Student[]}) => {
                                 style={{background: '#fff'}}
                                 icon={"/edusyspro.svg"}
                             />
-                            <Link style={{marginTop: '10px'}} className="qr-code-text" to={text.student.group.view.href + student.id}>{student.id}</Link>
+                            <Link style={{marginTop: '10px'}} className="qr-code-text" onClick={
+                                canViewStudent(student?.classe)
+                                    ? () => toViewStudent(student?.id, student?.personalInfo)
+                                    : undefined
+                            }>{student.id}</Link>
                         </div>
                     </div>
                 </main>

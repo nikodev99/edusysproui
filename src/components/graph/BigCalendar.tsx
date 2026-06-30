@@ -5,10 +5,11 @@ import 'react-big-calendar/lib/css/react-big-calendar.css'
 import 'dayjs/locale/fr'
 import {calendarMessages} from "@/core/utils/text_display.ts";
 import {useState, useCallback} from "react";
-import {BigCalendarProps} from "@/core/utils/interfaces.ts";
+import {BigCalendarProps, Moment} from "@/core/utils/interfaces.ts";
 import Datetime from "../../core/datetime.ts";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
+import {datehelper} from "@/core/helpers/DateHelpers.ts";
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -24,7 +25,7 @@ export const BigCalendar = <T extends object = Event>(
 ) => {
 
     const [view, setView] = useState<View>(defaultView)
-    const [currentDate, setCurrentDate] = useState<Date | number[] | string | undefined>(startDate);
+    const [currentDate, setCurrentDate] = useState<Datetime>(datehelper.getDateReference(startDate, endDate));
 
     const handleOnChangeView = (selectedView: View) => {
         setView(selectedView)
@@ -32,28 +33,31 @@ export const BigCalendar = <T extends object = Event>(
 
     const handleNavigate = useCallback(
         (newDate: Date) => {
+            const start = Datetime.of(startDate as Moment)
+            const end = Datetime.of(endDate as Moment)
+            const current = Datetime.of(newDate)
             if (startDate && !endDate) {
-                if (Datetime.of(newDate).isBefore(startDate)) {
-                    setCurrentDate(startDate);
+                if (current.isBefore(startDate)) {
+                    setCurrentDate(start);
                 } else {
-                    setCurrentDate(newDate);
+                    setCurrentDate(current);
                 }
             }else if (!startDate && endDate) {
-                if (Datetime.of(newDate).isAfter(endDate)) {
-                    setCurrentDate(endDate);
+                if (current.isAfter(endDate)) {
+                    setCurrentDate(end);
                 } else {
-                    setCurrentDate(newDate);
+                    setCurrentDate(current);
                 }
             }else if (startDate && endDate) {
-                if (Datetime.of(newDate).isBefore(startDate)) {
-                    setCurrentDate(startDate);
-                } else if (Datetime.of(newDate).isAfter(endDate)) {
-                    setCurrentDate(endDate);
+                if (current.isBefore(startDate)) {
+                    setCurrentDate(start);
+                } else if (current.isAfter(endDate)) {
+                    setCurrentDate(end);
                 } else {
-                    setCurrentDate(newDate);
+                    setCurrentDate(current);
                 }
             }else {
-                setCurrentDate(newDate);
+                setCurrentDate(current);
             }
         },
         [startDate, endDate]
@@ -92,7 +96,7 @@ export const BigCalendar = <T extends object = Event>(
                 endAccessor={end}
                 views={views}
                 view={view}
-                date={Datetime.of(currentDate as Date).toDate()}
+                date={currentDate.toDate()}
                 style={{height: height ? `${height}px` : 'auto', ...styles}}
                 min={minDateTime}
                 max={maxDateTime}

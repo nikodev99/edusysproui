@@ -104,11 +104,19 @@ export const AssignmentViewDesc = (
                         showBest={showBest}
                         link={showLink}
                     />
-                    {assignment?.passed && <AssignmentScores assignmentId={assignment?.id} markId={onlyMark} />}
+                    {assignment?.passed && <AssignmentScores
+                        assignmentId={assignment?.id}
+                        markId={onlyMark}
+                    />}
                 </Card>
             )
         }
-        <UpdateAssignmentDates assignment={assignment} open={openUpdater} onCancel={setUpdater} resp={handleUpdated} />
+            {openUpdater && <UpdateAssignmentDates
+                assignment={assignment}
+                open={openUpdater}
+                onCancel={setUpdater}
+                resp={handleUpdated}
+            />}
         </>
     )
 }

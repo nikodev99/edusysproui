@@ -1,18 +1,9 @@
 import {apiClient} from "../axiosConfig.ts";
-import {Assignment} from "../../entity";
-import {ID, IDS} from "../../core/utils/interfaces.ts";
-import {getShortSortOrder} from "../../core/utils/utils.ts";
+import {Assignment} from "@/entity";
+import {ID, IDS} from "@/core/utils/interfaces.ts";
 import {AxiosResponse} from "axios";
-import {AssignmentSchema, AssignmentUpdateDate} from "../../schema";
-
-export interface AssignmentFilterProps {
-    academicYearId: string
-    gradeId?: number
-    semesterId?: number
-    classeId?: number
-    courseId?: number
-    search?: string
-}
+import {AssignmentSchema, AssignmentUpdateDate} from "@/schema";
+import {AssignmentFilterProps} from "@/entity/domain/assignment.ts";
 
 export const insertAssignment = (assignment: AssignmentSchema) => {
     return apiClient.post<AssignmentSchema>('/assignment', assignment)
@@ -25,10 +16,6 @@ export const getAllAssignments = (
     sortField?: string,
     sortOrder?: string
 ) => {
-    if (sortField && sortOrder) {
-        sortOrder = getShortSortOrder(sortOrder)
-        sortField = sortedField(sortField)
-    }
     return apiClient.get<Assignment[]>(`/assignment/all`, {
         params: {
             academicYear: filter.academicYearId,
@@ -44,10 +31,34 @@ export const getAllAssignments = (
     })
 }
 
-export const getAllNotCompletedAssignment = (academicYear: string) => {
+export const getTeacherAssignmentsList = (
+    teacherId: number,
+    filter: AssignmentFilterProps,
+    page: number,
+    size: number,
+    sortField?: string,
+    sortOrder?: string
+) => {
+    return apiClient.get<Assignment[]>(`/assignment/teacher/${teacherId}`, {
+        params: {
+            academicYear: filter.academicYearId,
+            page: page,
+            size: size,
+            sortCriteria: sortField && sortOrder ? `${sortField}:${sortOrder}` : 'examDate:desc',
+            ...(filter.gradeId ? {grade: filter.gradeId} : {}),
+            ...(filter.semesterId ? {semester: filter.semesterId} : {}),
+            ...(filter.classeId ? {classe: filter.classeId} : {}),
+            ...(filter.courseId ? {course: filter.courseId} : {}),
+            ...(filter.search ? {search: filter.search} : {})
+        }
+    })
+}
+
+export const getAllNotCompletedAssignment = (academicYear: string, teacherId?: number) => {
     return apiClient.get<Assignment[]>(`/assignment/not_completed`, {
         params: {
-            academicYear: academicYear
+            academicYear: academicYear,
+            ...(teacherId ? {preparedBy: teacherId} : {})
         }
     })
 }
@@ -117,17 +128,4 @@ export const changeAssignmentDate = (assignment: AssignmentUpdateDate, assignmen
 
 export const removeAssignment = (assignmentId: bigint) => {
     return apiClient.delete(`/assignment/${assignmentId}`)
-}
-
-const sortedField = (sortField: string) => {
-    switch (sortField) {
-        case 'examName':
-            return 'examName'
-        case 'examDate':
-            return 'examDate'
-        case 'subject':
-            return 'subject.course'
-        case 'classe':
-            return 'classeEntity.name'
-    }
 }

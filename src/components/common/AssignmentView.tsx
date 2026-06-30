@@ -6,6 +6,7 @@ import {Select} from "antd";
 import {AssignmentDesc} from "./AssignmentDesc.tsx";
 import {UseQueryResult} from "@tanstack/react-query";
 import {isString} from "@/core/utils/utils.ts";
+import {Moment} from "@/core/utils/interfaces.ts";
 
 interface AssignmentViewProps {
     assignExams: UseQueryResult<Assignment[], unknown>
@@ -27,15 +28,15 @@ interface AssignmentViewProps {
     disableSelect?: boolean
     label?: string
     calendarLimit?: {
-        startDate?: Date | string | number[]
-        endDate?: Date | string | number[]
+        startDate?: Moment
+        endDate?: Moment
     }
 }
 
 const AssignmentView = (
     {
         assignExams, academicYear, bestScores, tabViews, title, name, showBarChart, hasLegend, showBest = true, getSubject,
-        classeId, getClasse, courses, classes, selects, studentId, disableSelect, label = 'Evaluation'
+        classeId, getClasse, courses, classes, selects, studentId, disableSelect, label = 'Evaluation', calendarLimit
     }: AssignmentViewProps
 ) => {
     const [assignments, setAssignments] = useState<Assignment[] | null>(null)
@@ -206,6 +207,7 @@ const AssignmentView = (
                             scoreLoading={loading}
                             showBest={showBest}
                             onlyMark={studentId}
+                            calendarLimit={calendarLimit}
                         />
                     },
                     ...(tabViews ? [...tabViews] : []),

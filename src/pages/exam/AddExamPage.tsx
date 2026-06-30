@@ -1,7 +1,7 @@
-import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
-import {text} from "../../core/utils/text_display.ts";
-import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
-import {InsertExam} from "../../components/ui-kit-exam";
+import {useDocumentTitle} from "@/hooks/useDocumentTitle.ts";
+import {text} from "@/core/utils/text_display.ts";
+import {useBreadCrumb} from "@/hooks/useBreadCrumb.tsx";
+import {InsertExam} from "@/components/ui-kit-exam";
 
 const AddExamPage = () => {
 

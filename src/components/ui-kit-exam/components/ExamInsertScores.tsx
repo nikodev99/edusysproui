@@ -1,24 +1,24 @@
-import {Assignment, Individual, Score, Student} from "../../../entity";
-import {useStudentRepo} from "../../../hooks/actions/useStudentRepo.ts";
+import {Assignment, Individual, Score, Student} from "@/entity";
+import {useStudentRepo} from "@/hooks/actions/useStudentRepo.ts";
 import {useForm} from "react-hook-form";
-import {scoreSchema, ScoreSchema} from "../../../schema";
+import {scoreSchema, ScoreSchema} from "@/schema";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Alert, Button, Flex, Form, TableColumnsType} from "antd";
-import {Table} from "../../ui/layout/Table.tsx";
-import PageWrapper from "../../view/PageWrapper.tsx";
-import {AvatarTitle} from "../../ui/layout/AvatarTitle.tsx";
-import RadioInput from "../../ui/form/RadioInput.tsx";
-import TextInput from "../../ui/form/TextInput.tsx";
+import {Table} from "@/components/ui/layout/Table.tsx";
+import PageWrapper from "@/components/view/PageWrapper.tsx";
+import {AvatarTitle} from "@/components/ui/layout/AvatarTitle.tsx";
+import RadioInput from "@/components/ui/form/RadioInput.tsx";
+import TextInput from "@/components/ui/form/TextInput.tsx";
 import {useEffect, useState} from "react";
-import {LoadingButton} from "../../ui/layout/LoadingButton.tsx";
-import {catchError} from "../../../data/action/error_catch.ts";
-import {useQueryPost} from "../../../hooks/usePost.ts";
-import {saveAllScores, updateAllScores} from "../../../data/repository/scoreRepository.ts";
-import {ValidationAlert} from "../../ui/form/ValidationAlert.tsx";
-import {PatchUpdate} from "../../../core/PatchUpdate.ts";
-import {UpdateType} from "../../../core/shared/sharedEnums.ts";
-import {useQueryUpdate} from "../../../hooks/useUpdate.ts";
-import {getUniqueness} from "../../../core/utils/utils.ts";
+import {LoadingButton} from "@/components/ui/layout/LoadingButton.tsx";
+import {catchError} from "@/data/action/error_catch.ts";
+import {useQueryPost} from "@/hooks/usePost.ts";
+import {saveAllScores, updateAllScores} from "@/data/repository/scoreRepository.ts";
+import {ValidationAlert} from "@/components/ui/form/ValidationAlert.tsx";
+import {PatchUpdate} from "@/core/PatchUpdate.ts";
+import {UpdateType} from "@/core/shared/sharedEnums.ts";
+import {useQueryUpdate} from "@/hooks/useUpdate.ts";
+import {getUniqueness} from "@/core/utils/utils.ts";
 
 export const ExamInsertScores = (
     {assignment, onClose, marks, load, loadMessage}: {
@@ -42,7 +42,7 @@ export const ExamInsertScores = (
 
     const {data, isSuccess, isLoading, isFetching} = useGetClasseStudents(
         assignment?.classe?.id as number,
-        assignment?.semester?.semester?.academicYear?.id as string
+        assignment?.semester?.academicYear?.id as string
     )
 
     useEffect(() => {

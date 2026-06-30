@@ -1,58 +1,57 @@
 import {FormConfig} from "@/config/FormConfig.ts";
 import {FormContentProps, Option} from "@/core/utils/interfaces.ts";
-import {Assignment} from "@/entity";
+import {Assignment, Classe, Course} from "@/entity";
 import {FieldValues, Path, PathValue} from "react-hook-form";
 import FormContent from "@/components/ui/form/FormContent.tsx";
 import {InputTypeEnum} from "@/core/shared/sharedEnums.ts";
 import {FormUtils} from "@/core/utils/formUtils.ts";
-import {useClasseRepo} from "@/hooks/actions/useClasseRepo.ts";
-import {useCourseRepo} from "@/hooks/actions/useCourseRepo.ts";
 import {useEffect, useMemo, useState} from "react";
 import {SectionType} from "@/entity/enums/section.ts";
-import {usePlanningRepo} from "@/hooks/actions/usePlanningRepo.ts";
 import {useTeacherRepo} from "@/hooks/actions/useTeacherRepo.ts";
 import {enumToObjectArray, setFirstName} from "@/core/utils/utils.ts";
 import {AssignmentType, AssignmentTypeLiteral} from "@/entity/enums/assignmentType.ts";
 import {useExamRepo} from "@/hooks/actions/useExamRepo.ts";
-import {useAcademicYearRepo} from "@/hooks/actions/useAcademicYearRepo.ts";
+import {loggedUser} from "@/auth/jwt/LoggedUser.ts";
+import {useClasseRepo} from "@/hooks/actions/useClasseRepo.ts";
+import {useCourseRepo} from "@/hooks/actions/useCourseRepo.ts";
+import {useSemesterRepo} from "@/hooks/actions/useSemesterRepo.ts";
 
 export const AssignmentForm = <T extends FieldValues, Q>(
-    {control, data, errors, edit, selectedClasse, handleUpdate, disabled = false}: FormContentProps<T, Assignment> & {
+    {control, data, errors, edit, showField = true, handleUpdate, disabled = false, academicYear}: FormContentProps<T, Assignment> & {
     handleUpdate?: (field: string | keyof Q | keyof Assignment, value: unknown) => Promise<void>
     selectedClasse?: number
     disabled?: boolean
+    academicYear?: string
 }) => {
-    const [pickedSection, setPickedSection] = useState<SectionType>()
+    const [selectedClasse, setSelectedClasse] = useState<number | null>(null)
+    const [pickedSection, setPickedSection] = useState<SectionType | null>(null)
+    const [allClasses, setAllClasses] = useState<Classe[]>([])
+    const [allCourses, setAllCourses] = useState<Course[]>([])
+    const {semesterOptions} = useSemesterRepo()
+    const {useGetTeacherBasicValues, useGetTeacherCourses, useGetTeacherClasses} = useTeacherRepo()
     const {useGetClasseBasicValues} = useClasseRepo()
     const {useGetBasicCourses} = useCourseRepo()
-    const {useGetGradePlannings} = usePlanningRepo()
-    const {useGetTeacherBasicValues} = useTeacherRepo()
     const {useGetAllExams} = useExamRepo()
-    const {useGetCurrentAcademicYear} = useAcademicYearRepo()
+    const {data: teacherClasses} = useGetTeacherClasses(loggedUser.getUser()?.userId as string, !showField)
+    const {data: teacherCourses} = useGetTeacherCourses(loggedUser.getUser()?.userId as string, !showField)
+    const classes = useGetClasseBasicValues(showField)
+    const courses = useGetBasicCourses(showField)
 
     const onlyField = FormUtils.onlyField(edit as boolean, 24, undefined)
+    
     const form = new FormConfig(errors, true)
-    const classes = useGetClasseBasicValues()
-    const courses = useGetBasicCourses()
-    const plannings = useGetGradePlannings(pickedSection ?? data?.classe?.grade?.section as SectionType)
-    const {data: teachers} = useGetTeacherBasicValues(selectedClasse ?? data?.classe?.id, pickedSection ?? data?.classe?.grade?.section as SectionType)
-    const currentAcademicYear = useGetCurrentAcademicYear()
-    const exams = useGetAllExams(currentAcademicYear?.id)
+    const {data: teachers} = useGetTeacherBasicValues(selectedClasse ?? data?.classe?.id, pickedSection ?? data?.classe?.grade?.section as SectionType, showField)
+    const exams = useGetAllExams(academicYear)
 
-    const classeOptions: Option[] = useMemo(() => classes ? classes.map(c => ({
+    const classeOptions = useMemo(() => allClasses?.map(c => ({
         value: c.id,
         label: c.name
-    })) : [], [classes])
+    })), [allClasses])
 
-    const courseOptions = useMemo((): Option[] => courses && courses?.length > 0 ? courses.map(c => ({
-        value: c.id,
-        label: c.course
-    })): [], [courses])
-
-    const planningOptions = useMemo((): Option[] => plannings && plannings?.length > 0 ? plannings.map(p => ({
-        value: p.id,
-        label: p.designation
-    })): [], [plannings])
+    const courseOptions = useMemo(() => allCourses?.map(c => ({
+        value: c?.id,
+        label: c?.course
+    })), [allCourses])
 
     const teacherOptions = useMemo((): Option[] => teachers && teachers?.length > 0 ? teachers.map(t => ({
         value: t.personalInfo?.id as number,
@@ -67,14 +66,26 @@ export const AssignmentForm = <T extends FieldValues, Q>(
     })): [], [exams])
 
     useEffect(() => {
-        if(selectedClasse) {
-            const section = classes?.find(c => c.id === selectedClasse)?.grade?.section
-            setPickedSection(SectionType[section as keyof typeof SectionType])
-        }
+        setAllClasses(classes && classes?.length > 0
+            ? classes
+            : teacherClasses?.classes && teacherClasses?.classes?.length > 0
+                ? teacherClasses?.classes
+                : []
+        )
+        
+        setAllCourses(courses && courses?.length > 0
+            ? courses
+            : teacherCourses?.courses && teacherCourses?.courses?.length > 0
+                ? teacherCourses?.courses
+                : []
+        )
+    }, [classes, courses, teacherClasses, teacherCourses?.courses]);
 
-    }, [classes, selectedClasse]);
-
-    console.log("IsDisabled: ", disabled)
+    const handleChangeClasse = (value: number) => {
+        setSelectedClasse(value)
+        const section = allClasses.find(c => c.id === value)?.grade?.section ?? null
+        setPickedSection(SectionType[section as keyof typeof SectionType])
+    }
 
     return (
         <FormContent
@@ -160,6 +171,7 @@ export const AssignmentForm = <T extends FieldValues, Q>(
                         showSearch: true,
                         placeholder: 'Choisissez la classe',
                         options: classeOptions,
+                        onChange: handleChangeClasse as () => void,
                         validateStatus: form.validate('id', 'classe'),
                         help: form.error('id', 'classe'),
                         defaultValue: (data ? data.classe?.id : undefined) as PathValue<T, Path<T>>,
@@ -228,21 +240,21 @@ export const AssignmentForm = <T extends FieldValues, Q>(
                     inputProps: {
                         hasForm: edit,
                         control: control,
-                        name: 'semester.id' as Path<T>,
-                        label: 'Planning',
+                        name: 'semester.semesterId' as Path<T>,
+                        label: 'Semestre/Trimestre',
                         lg: onlyField,
                         md: onlyField,
                         required: true,
                         showSearch: true,
-                        placeholder: 'Choisissez le planning',
-                        options: planningOptions,
-                        validateStatus: form.validate('id', 'semester'),
-                        help: form.error('id', 'semester'),
-                        defaultValue: (data ? data.semester?.id : undefined) as PathValue<T, Path<T>>,
-                        onFinish: edit && handleUpdate ? (value: unknown) => handleUpdate('semester.id', value) : undefined,
+                        placeholder: 'Choisissez le semestre',
+                        options: semesterOptions,
+                        validateStatus: form.validate('semesterId', 'semester'),
+                        help: form.error('semesterId', 'semester'),
+                        defaultValue: (data ? data.semester?.semesterId : undefined) as PathValue<T, Path<T>>,
+                        onFinish: edit && handleUpdate ? (value: unknown) => handleUpdate('semester.semesterId', value) : undefined,
                     }
                 },
-                {
+                ...(showField ? [{
                     type: InputTypeEnum.SELECT,
                     inputProps: {
                         hasForm: edit,
@@ -260,7 +272,7 @@ export const AssignmentForm = <T extends FieldValues, Q>(
                         defaultValue: (data ? data.preparedBy?.id : undefined),
                         onFinish: edit && handleUpdate ? (value: unknown) => handleUpdate('preparedBy.id', value) : undefined,
                     }
-                },
+                }] : []),
                 {
                     type: InputTypeEnum.NUMBER,
                     inputProps: {

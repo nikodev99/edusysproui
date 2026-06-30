@@ -1,6 +1,6 @@
 import {z} from "zod";
 import {semesterSchemaMerge} from "./semesterSchema.ts";
-import {gradeSchemaMerge} from "./gradeSchema.ts";
+import {gradeSchemaMerge} from "@/schema";
 import {dateProcess} from "../commonSchema.ts";
 import Datetime from "../../core/datetime.ts";
 
@@ -25,5 +25,5 @@ export const planningSchema = z.lazy(() => z.object({
 })
 
 export const planningSchemaMerge = z.object({
-    id: z.number({required_error: 'Le planning est requis'}),
+    id: z.number({required_error: 'Le planning est requis'}).optional(),
 })

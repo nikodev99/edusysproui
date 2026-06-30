@@ -1,16 +1,16 @@
-import {Assignment} from "../../../entity";
+import {Assignment} from "@/entity";
 import {ItemType} from "antd/es/menu/interface";
-import FormSuccess from "../../ui/form/FormSuccess.tsx";
-import FormError from "../../ui/form/FormError.tsx";
+import FormSuccess from "@/components/ui/form/FormSuccess.tsx";
+import FormError from "@/components/ui/form/FormError.tsx";
 import {ExamFinished} from "./ExamFinished.tsx";
 import {UpdateAssignmentDates} from "./UpdateAssignment.tsx";
 import {ExamRemove} from "./ExamRemove.tsx";
 import {LuArchiveX, LuCalendarMinus2, LuListCheck} from "react-icons/lu";
-import {useToggle} from "../../../hooks/useToggle.ts";
+import {useToggle} from "@/hooks/useToggle.ts";
 import React, {useEffect, useState, useCallback, useMemo} from "react";
-import {redirectTo} from "../../../context/RedirectContext.ts";
-import {text} from "../../../core/utils/text_display.ts";
-import {useScoreRepo} from "../../../hooks/actions/useScoreRepo.ts";
+import {redirectTo} from "@/context/RedirectContext.ts";
+import {text} from "@/core/utils/text_display.ts";
+import {useScoreRepo} from "@/hooks/actions/useScoreRepo.ts";
 
 interface ExamActionLinksProps {
     assignment?: Assignment

@@ -1,10 +1,10 @@
-import FormSuccess from "../../ui/form/FormSuccess.tsx";
-import FormError from "../../ui/form/FormError.tsx";
+import FormSuccess from "@/components/ui/form/FormSuccess.tsx";
+import FormError from "@/components/ui/form/FormError.tsx";
 import {Modal} from "antd";
-import {ModalConfirmButton} from "../../ui/layout/ModalConfirmButton.tsx";
+import {ModalConfirmButton} from "@/components/ui/layout/ModalConfirmButton.tsx";
 import {useState} from "react";
-import {removeAssignment} from "../../../data/repository/assignmentRepository.ts";
-import {useRawFetch} from "../../../hooks/useFetch.ts";
+import {removeAssignment} from "@/data/repository/assignmentRepository.ts";
+import {useRawFetch} from "@/hooks/useFetch.ts";
 
 export const ExamRemove = (
     {assignmentId, open, close, setWasDeleted}: {
@@ -22,7 +22,7 @@ export const ExamRemove = (
         triggerDelete(removeAssignment, [assignmentId])
             .then(resp => {
                 if (resp?.isSuccess) {
-                    setSuccessMessage("Evaluation Supprimer avec succès")
+                    setSuccessMessage("Evaluation supprimer avec succès")
                     setWasDeleted && setWasDeleted(true)
                 }else {
                     setErrorMessage(resp?.error)
@@ -34,7 +34,7 @@ export const ExamRemove = (
         <>
             {successMessage && <FormSuccess message={successMessage} />}
             {errorMessage && <FormError message={errorMessage} />}
-            <Modal open={open} onCancel={close} destroyOnClose title={"Terminer avec le devoir"} footer={null}>
+            <Modal open={open} onCancel={close} title={"Terminer avec le devoir"} footer={null}>
                 <p style={{marginBottom: '15px'}}>
                     Cliquez le bouton ci-dessous pour supprimer ce devoir
                 </p>

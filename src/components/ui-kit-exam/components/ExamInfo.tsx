@@ -1,28 +1,28 @@
-import {InfoPageProps} from "../../../core/utils/interfaces.ts";
-import {Assignment, Score, Teacher} from "../../../entity";
-import Block from "../../view/Block.tsx";
-import {InitMarkType, SuperWord} from "../../../core/utils/tsxUtils.tsx";
-import {Widgets} from "../../ui/layout/Widgets.tsx";
-import {text} from "../../../core/utils/text_display.ts";
-import {useStudentRepo} from "../../../hooks/actions/useStudentRepo.ts";
-import {cutStatement, findPercent, sumInArray} from "../../../core/utils/utils.ts";
-import PanelSection from "../../ui/layout/PanelSection.tsx";
+import {InfoPageProps} from "@/core/utils/interfaces.ts";
+import {Assignment, Score, Teacher} from "@/entity";
+import Block from "@/components/view/Block.tsx";
+import {InitMarkType, SuperWord} from "@/core/utils/tsxUtils.tsx";
+import {Widgets} from "@/components/ui/layout/Widgets.tsx";
+import {text} from "@/core/utils/text_display.ts";
+import {useStudentRepo} from "@/hooks/actions/useStudentRepo.ts";
+import {cutStatement, findPercent, sumInArray} from "@/core/utils/utils.ts";
+import PanelSection from "@/components/ui/layout/PanelSection.tsx";
 import {Tag as AntTag, Tooltip} from "antd";
-import PanelTable from "../../ui/layout/PanelTable.tsx";
-import Datetime from "../../../core/datetime.ts";
-import Tag from "../../ui/layout/Tag.tsx";
+import PanelTable from "@/components/ui/layout/PanelTable.tsx";
+import Datetime from "@/core/datetime.ts";
+import Tag from "@/components/ui/layout/Tag.tsx";
 import {
     AssignmentType,
     AssignmentTypeLiteral,
     getAssignmentType,
     typeColors
-} from "../../../entity/enums/assignmentType.ts";
-import {useTeacherRepo} from "../../../hooks/actions/useTeacherRepo.ts";
-import {TeacherIndividual} from "../../common/TeacherIndividual.tsx";
-import Section from "../../ui/layout/Section.tsx";
-import {MarksHistogram} from "../../common/MarksHistogram.tsx";
-import VoidData from "../../view/VoidData.tsx";
-import {BestScoredTable} from "../../common/BestScoredTable.tsx";
+} from "@/entity/enums/assignmentType.ts";
+import {useTeacherRepo} from "@/hooks/actions/useTeacherRepo.ts";
+import {TeacherIndividual} from "@/components/common/TeacherIndividual.tsx";
+import Section from "@/components/ui/layout/Section.tsx";
+import {MarksHistogram} from "@/components/common/MarksHistogram.tsx";
+import VoidData from "@/components/view/VoidData.tsx";
+import {BestScoredTable} from "@/components/common/BestScoredTable.tsx";
 import {useMemo} from "react";
 
 type ExamInfoType = InfoPageProps<Assignment> & {
@@ -33,7 +33,7 @@ const ExamWidgets = ({infoData, color, marks}: ExamInfoType) => {
     const {useCountClasseStudents} = useStudentRepo()
     const {data: classeStudentCount} = useCountClasseStudents(
         infoData?.classe?.id as number,
-        infoData?.semester?.semester?.academicYear?.id as string
+        infoData?.semester?.academicYear?.id as string
     )
 
     const notes = marks?.filter(m => m.isPresent === true)?.map(m => m?.obtainedMark) ?? []
@@ -120,16 +120,15 @@ const ExamIndividual = ({infoData, color}: ExamInfoType) => {
 }
 
 const ExamSemester = ({infoData, color}: ExamInfoType) => {
-    const semester = useMemo(() => infoData?.semester?.semester, [infoData?.semester?.semester])
+    const semester = useMemo(() => infoData?.semester, [infoData?.semester])
 
     return(
         <PanelSection title='Semestre'>
             <PanelTable title='Semestre' panelColor={color} data={[
                 {statement: 'Semestre', response: semester?.template?.semesterName},
             ...(semester?.template?.description ? [{statement: 'Description', response: semester?.template?.description}] : []),
-                {statement: 'Planning', response: infoData?.semester?.designation},
-                {statement: 'Début', response: Datetime?.of(infoData?.semester?.termStartDate as number[]).fDate()},
-                {statement: 'Fin', response: Datetime?.of(infoData?.semester?.termEndDate as number[]).fDate()}
+                {statement: 'Début', response: Datetime?.of(infoData?.semester?.startDate as number[]).fDate()},
+                {statement: 'Fin', response: Datetime?.of(infoData?.semester?.endDate as number[]).fDate()}
             ]} />
             <PanelTable title='Année Scolaire' panelColor={color} data={[
                 {statement: 'Année Scolaire', response: semester?.academicYear?.academicYear},

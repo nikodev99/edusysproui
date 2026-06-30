@@ -10,20 +10,20 @@ import {
     getClasseBestStudentsByCourse,
     getClassePoorStudents,
     getCourseBestStudentsByCourse,
-    getCoursePoorStudents
-} from "../../data/repository/scoreRepository.ts";
+    getCoursePoorStudents, getStudentScoreOfAssignment
+} from "@/data/repository/scoreRepository.ts";
 import {useFetch, useRawFetch} from "../useFetch.ts";
-import {Pageable} from "../../core/utils/interfaces.ts";
-import {Score} from "../../entity";
+import {Pageable} from "@/core/utils/interfaces.ts";
+import {Score} from "@/entity";
 import {useCallback, useEffect, useState} from "react";
 import {AxiosResponse} from "axios";
 
 export const useScoreRepo = () => {
-    const useGetAllAssignmentMarks = (assignmentId: bigint, size: number) => useFetch(
-        ['assignment-marks', assignmentId], getAllAssignmentMarks, [assignmentId, size], !!assignmentId && !!size
+    const useGetAllAssignmentMarks = (assignmentId: number, size: number, enable: boolean = true) => useFetch(
+        ['assignment-marks', assignmentId], getAllAssignmentMarks, [assignmentId, size], enable && !!assignmentId && !!size
     )
 
-    const useGetAssignmentScores = (assignmentId: bigint): { scores: Score[], refetch: () => void } => {
+    const useGetAssignmentScores = (assignmentId: number): { scores: Score[], refetch: () => void } => {
         const [scores, setScores] = useState<Score[]>([])
         const fetch = useRawFetch()
 
@@ -126,21 +126,28 @@ export const useScoreRepo = () => {
         return scores
     }
 
-    const useGetAllTeacherMarks = (teacherId: bigint | number | bigint[] | number[]) => useFetch(
+    const useGetAllTeacherMarks = (teacherId: number | number[]) => useFetch(
         ['teacher-marks', teacherId],
         getAllTeacherMarks,
         [teacherId],
         !!teacherId
     )
 
-    const useGetBestTeacherStudents = (teacherPersonalInfoId: bigint, subjectId?: number) => useFetch(
+    const useGetBestTeacherStudents = (teacherPersonalInfoId: number, subjectId?: number) => useFetch(
         subjectId ? ['teacher-student-marks', teacherPersonalInfoId] : ['teacher-students', teacherPersonalInfoId],
         subjectId ? getBestTeacherStudentBySubject : getBestTeacherStudentByScore,
         [teacherPersonalInfoId, subjectId],
         subjectId ? !!teacherPersonalInfoId && !!subjectId : !!teacherPersonalInfoId
     )
+
+    const useGetStudentScore = (assignmentId: number, studentId: string, enabled: boolean = true) => useFetch(
+        ['student-one-score', assignmentId, studentId],
+        getStudentScoreOfAssignment,
+        [assignmentId, studentId],
+        enabled && !!assignmentId && !!studentId
+    )
     
-    const useCountAssignmentMarks = (assignmentId: bigint | number) => {
+    const useCountAssignmentMarks = (assignmentId: number) => {
         const [count, setCount] = useState<number>(0)
         const {data, isSuccess} = useFetch(['count-assignment-marks', assignmentId], countAssignmentMarks, [assignmentId], !!assignmentId)
         
@@ -163,6 +170,7 @@ export const useScoreRepo = () => {
         useGetCoursePoorStudents,
         useGetAllTeacherMarks,
         useGetBestTeacherStudents,
+        useGetStudentScore,
         useCountAssignmentMarks
     }
 }

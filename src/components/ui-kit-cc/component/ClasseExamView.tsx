@@ -30,12 +30,11 @@ const ExamDescription = (
 
     const {Link, Title} = Typography
 
-    const [loading, setLoading] = useState<boolean>(true)
     const {toViewStudent} = useRedirect()
     const {useGetExamAssignments, useGetStudentExamProgress} = useExamRepo()
 
     const {data, isSuccess, isPending, isFetching, isRefetching, isLoading, refetch} = useGetExamAssignments(
-        examId, classeId, academicYear, uniqueStudent ? uniqueStudent?.student?.id : undefined
+        examId, classeId, academicYear, uniqueStudent?.student?.id as string,
     )
 
     const progress = useGetStudentExamProgress(uniqueStudent?.student?.id as string, classeId, academicYear)
@@ -51,18 +50,13 @@ const ExamDescription = (
             examView: examViewData
         }
     }, [data?.assignments, data?.examView, data?.statistics, uniqueStudent])
+
+    const loading = useMemo(() => isPending || isFetching || isRefetching || isLoading, [isFetching, isPending, isRefetching, isLoading])
     
     useEffect(() => {
         if (examId || academicYear || classeId)
             refetch().then()
     }, [academicYear, classeId, data, examId, isSuccess, refetch])
-
-
-    useEffect(() => {
-        if (!isPending && !isFetching && !isRefetching && !isLoading) {
-            setLoading(false)
-        }
-    }, [isFetching, isLoading, isPending, isRefetching])
 
     const lineData = progress?.map(p => ({
         moyenne: p.average,
@@ -340,6 +334,8 @@ export const ClasseExamView = (
     const segmentChange = (value: number) => {
         setActiveExam(value)
     }
+
+    console.log("CLASSE EXAMS: ", activeExam)
 
     return(
         <>

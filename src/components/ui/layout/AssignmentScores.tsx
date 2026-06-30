@@ -1,8 +1,8 @@
 import {Collapse, Skeleton, TableColumnsType, TablePaginationConfig} from "antd";
-import {Assignment, Score} from "../../../entity";
-import {useEffect, useRef, useState} from "react";
+import {Assignment, Score} from "@/entity";
+import {useEffect, useState} from "react";
 import {ScoreItem} from "./ScoreItem.tsx";
-import {useScoreRepo} from "../../../hooks/actions/useScoreRepo.ts";
+import {useScoreRepo} from "@/hooks/actions/useScoreRepo.ts";
 
 interface AssignmentScoresProps {
     assignmentId?: bigint | number | undefined
@@ -19,34 +19,39 @@ interface AssignmentScoresProps {
 }
 
 const AssignmentScores = (
-    {assignmentId, size, markId, isTable, hasCollapse = true, height, tableColumns, addToScores, marks, loading, pagination}: AssignmentScoresProps
+    {assignmentId, size, markId, isTable, hasCollapse = true, height, tableColumns, addToScores, marks = [], loading, pagination}: AssignmentScoresProps
 ) => {
 
     const [scores, setScores] = useState<Score[] | null>(null)
     const [allScores, setAllScores] = useState<number>(0)
     const [scoreSize, setScoreSize] = useState<number>(size ?? 5)
-    const prevScoreSizeRef = useRef<number>(scoreSize);
 
-    const {useGetAllAssignmentMarks} = useScoreRepo()
+    const {useGetAllAssignmentMarks, useGetStudentScore} = useScoreRepo()
+    const hasMarks = (marks?.length ?? 0) > 0
+    const shouldFetchAll = !markId && !hasMarks
 
-    const {data, isLoading, isRefetching, isLoadingError, isSuccess, refetch} = useGetAllAssignmentMarks(assignmentId as bigint, scoreSize)
+    const {data, isLoading, isRefetching, isLoadingError, isSuccess} = useGetAllAssignmentMarks(assignmentId as number, scoreSize, shouldFetchAll)
+    const {data: studentScore} = useGetStudentScore(assignmentId as number, markId as string, !!markId)
     
     const scorePending: boolean = loading ?? (isLoading || isRefetching || isLoadingError)
 
     useEffect(() => {
-        if (marks && marks.length > 0) {
-            setScores(marks)
-        } else {
-            if (prevScoreSizeRef.current !== scoreSize) {
-                refetch().then(r => r.data)
-            }
-            if (isSuccess && 'content' in data && 'totalElements' in data) {
-                setScores(data.content as Score[])
-                setAllScores(data.totalElements as number)
-            }
-            prevScoreSizeRef.current = scoreSize
+        if (studentScore) setScores([studentScore])
+    }, [studentScore])
+
+    useEffect(() => {
+        if (!markId && hasMarks) {
+            setScores(marks!)
+            setAllScores(marks!.length)
         }
-    }, [data, isSuccess, marks, refetch, scoreSize]);
+    }, [markId, hasMarks, marks])
+
+    useEffect(() => {
+        if (shouldFetchAll && isSuccess && data && 'content' in data && 'totalElements' in data) {
+            setScores(data.content as Score[])
+            setAllScores(data.totalElements as number)
+        }
+    }, [shouldFetchAll, isSuccess, data])
 
     useEffect(() => {
         if (addToScores) {
@@ -64,11 +69,8 @@ const AssignmentScores = (
         )
     }
 
-    const scoresToShow: Score[] | null = scores && scores.length > 0 && markId ?
-        scores.filter(s => s.student?.id === markId) : scores
-
     const scoreItem = <ScoreItem
-        scores={scoresToShow as Score[]}
+        scores={scores as Score[]}
         isLoading={scorePending}
         scoreSize={scoreSize}
         allScores={allScores}

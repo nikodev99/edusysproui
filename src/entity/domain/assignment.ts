@@ -1,14 +1,19 @@
-import {Planning} from "@/entity";
-import {Exam} from "./exam.ts";
-import {Classe} from "./classe.ts";
-import {Course} from "./course.ts";
-import {Score} from "./score.ts";
-import {Individual} from "@/entity";
+import {Semester, Exam, Classe, Course, Score, Individual} from "@/entity";
 import {AssignmentType, AssignmentTypeLiteral} from "../enums/assignmentType.ts";
+
+export type AssignmentFilterProps = {
+    academicYearId: string
+    teacherId?: number
+    gradeId?: number
+    semesterId?: number
+    classeId?: number
+    courseId?: number
+    search?: string
+}
 
 export interface Assignment {
     id?: bigint | number
-    semester?: Planning
+    semester?: Semester
     exam?: Exam
     preparedBy?: Individual
     classe?: Classe

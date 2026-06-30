@@ -1,11 +1,11 @@
-import {Assignment, Schedule} from "../../entity";
+import {Assignment, Schedule} from "@/entity";
 import {ReactNode, useEffect, useState} from "react";
 import {SlotInfo, View} from "react-big-calendar";
-import {CalendarEvent, EventProps} from "../../core/utils/interfaces.ts";
-import {AssignmentTypeLiteral, typeColors} from "../../entity/enums/assignmentType.ts";
-import {BigCalendar} from "../graph/BigCalendar.tsx";
+import {CalendarEvent, EventProps} from "@/core/utils/interfaces.ts";
+import {AssignmentTypeLiteral, typeColors} from "@/entity/enums/assignmentType.ts";
+import {BigCalendar} from "@/components/graph/BigCalendar.tsx";
 import {AssignmentViewDesc} from "./AssignmentViewDesc.tsx";
-import Datetime from "../../core/datetime.ts";
+import Datetime from "@/core/datetime.ts";
 
 type AssignmentScheduleType = {
     eventTitle?: string | ReactNode | ((event: Schedule) => string)
@@ -83,7 +83,7 @@ export const AssignmentSchedule = (
                 endDate={endDate}
                 onSelectSlot={selectSlotAction}
             />
-            <AssignmentViewDesc
+            {selectedAssignment && <AssignmentViewDesc
                 assignment={selectedAssignment}
                 modalTitle={selectedAssignment?.examName}
                 isModal={true}
@@ -98,7 +98,7 @@ export const AssignmentSchedule = (
                 scoreSize={scoreSize}
                 showLink={true}
                 setRefetch={setRefetch}
-            />
+            />}
         </>
     )
 }

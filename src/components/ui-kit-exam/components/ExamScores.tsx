@@ -1,10 +1,10 @@
-import {AssignmentScores} from "../../ui/layout/AssignmentScores.tsx";
+import {AssignmentScores} from "@/components/ui/layout/AssignmentScores.tsx";
 import {TableColumnsType, Tag} from "antd";
-import {Assignment, Score} from "../../../entity";
-import {AvatarTitle} from "../../ui/layout/AvatarTitle.tsx";
-import {text} from "../../../core/utils/text_display.ts";
-import PageWrapper from "../../view/PageWrapper.tsx";
-import {InitMarkType, MarkBadge} from "../../../core/utils/tsxUtils.tsx";
+import {Assignment, Score} from "@/entity";
+import {AvatarTitle} from "@/components/ui/layout/AvatarTitle.tsx";
+import {text} from "@/core/utils/text_display.ts";
+import PageWrapper from "@/components/view/PageWrapper.tsx";
+import {InitMarkType, MarkBadge} from "@/core/utils/tsxUtils.tsx";
 
 export const ExamScores = (
     {assignment, scores, loading, record}: {assignment?: Assignment, scores?: Score[], loading?: boolean, record?: Assignment}

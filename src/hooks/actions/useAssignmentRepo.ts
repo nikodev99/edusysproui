@@ -1,18 +1,44 @@
 import {useFetch} from "../useFetch.ts";
 import {UseQueryResult} from "@tanstack/react-query";
-import {Assignment} from "../../entity";
+import {Assignment} from "@/entity";
 import {
+    getAllAssignments,
     getAllClasseAssignments,
     getAllClasseAssignmentsBySubject,
-    getAllCourseAssignments, getAllNotCompletedAssignment,
+    getAllCourseAssignments,
+    getAllNotCompletedAssignment,
     getAllTeacherAssignments,
-    getAllTeacherCourseAssignments, getAssignmentById,
+    getAllTeacherCourseAssignments,
+    getAssignmentById,
     getSomeTeacherAssignments,
-    getTeacherAssignments
-} from "../../data/repository/assignmentRepository.ts";
-import {ID, IDS} from "../../core/utils/interfaces.ts";
+    getTeacherAssignments, getTeacherAssignmentsList
+} from "@/data/repository/assignmentRepository.ts";
+import {ID, IDS} from "@/core/utils/interfaces.ts";
+import {UserPermission} from "@/core/shared/sharedEnums.ts";
+import {useAuth} from "@/hooks/useAuth.ts";
+import {getShortSortOrder} from "@/core/utils/utils.ts";
+import {AssignmentFilterProps} from "@/entity/domain/assignment.ts";
 
-export const useAssignmentRepo = () => {
+export const useAssignmentRepo = (context: UserPermission = UserPermission.ALL) => {
+    const useGetPaginatedExams = () => {
+        const {user} = useAuth()
+
+        return {
+            getAllSchoolAssignments: async (filters: AssignmentFilterProps, page: number, size: number, sortField?: string, sortOrder?: string) => {
+                if (sortField && sortOrder) {
+                    sortOrder = getShortSortOrder(sortOrder)
+                    sortField = assignmentSortedField(sortField)
+                }
+                switch (context) {
+                    case UserPermission.TEACHER:
+                        return await getTeacherAssignmentsList(user?.personalInfo as number, filters, page, size, sortField, sortOrder)
+                    default:
+                        return await getAllAssignments(filters, page, size, sortField, sortOrder)
+                }
+            }
+        }
+    }
+
     const useGetAllClasseAssignments = (classeId: number, academicYear: string, courseId?: number): UseQueryResult<Assignment[], unknown> => {
         return useFetch(
             courseId ? ['classe-course-assignments', classeId, courseId] : ['classe-assignments', classeId],
@@ -22,14 +48,13 @@ export const useAssignmentRepo = () => {
         )
     }
 
-    const useGetAllNotCompletedAssignments = (academicYear: string) => useFetch(
-        'Not-Completed-Assignments',
-        getAllNotCompletedAssignment, [academicYear],
-        true
+    const useGetAllNotCompletedAssignments = (academicYear: string, teacherId?: number) => useFetch(
+        ['Not-Completed-Assignments', academicYear, teacherId],
+        getAllNotCompletedAssignment, [academicYear, teacherId],
+        teacherId ? !!academicYear && !!teacherId : !!academicYear
     )
 
     const useGetAllCourseAssignments = (courseId: number, academicYear: string): UseQueryResult<Assignment[], unknown> => {
-        console.log('courseId: ', courseId, 'academicYear: ', academicYear)
         return useFetch(['course-assignments', courseId], getAllCourseAssignments, [courseId, academicYear], !!courseId && !!academicYear)
     }
 
@@ -62,6 +87,7 @@ export const useAssignmentRepo = () => {
     )
 
     return {
+        useGetPaginatedExams,
         useGetAllClasseAssignments,
         useGetAllNotCompletedAssignments,
         useGetAllCourseAssignments,
@@ -69,5 +95,18 @@ export const useAssignmentRepo = () => {
         useGetTeacherAssignments,
         useGetAllTeacherAssignments,
         useGetAssignment
+    }
+}
+
+const assignmentSortedField = (sortField: string) => {
+    switch (sortField) {
+        case 'examName':
+            return 'examName'
+        case 'examDate':
+            return 'examDate'
+        case 'subject':
+            return 'subject.course'
+        case 'classe':
+            return 'classeEntity.name'
     }
 }

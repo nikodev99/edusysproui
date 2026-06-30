@@ -35,7 +35,7 @@ export const useExamRepo = () => {
                 ['exam-id', examId, classeId, studentId && studentId],
                 studentId ? getStudentExamAssignments : getClasseExamAssignments,
                 studentId ? [examId, classeId, academicYear, studentId] : [examId, classeId, academicYear],
-                !!classeId && !!academicYear
+                studentId ? !!examId && !!classeId && !!academicYear && !!studentId : !!examId && !!classeId && !!academicYear
             )
         },
 

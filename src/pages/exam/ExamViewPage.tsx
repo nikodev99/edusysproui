@@ -1,23 +1,23 @@
 import {useParams} from "react-router-dom";
-import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
-import {useAssignmentRepo} from "../../hooks/actions/useAssignmentRepo.ts";
+import {useDocumentTitle} from "@/hooks/useDocumentTitle.ts";
+import {useAssignmentRepo} from "@/hooks/actions/useAssignmentRepo.ts";
 import {useCallback, useEffect, useMemo, useState} from "react";
-import {Assignment} from "../../entity";
-import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
-import {text} from "../../core/utils/text_display.ts";
-import {SuperWord} from "../../core/utils/tsxUtils.tsx";
-import {cutStatement, setFirstName, zeroFormat} from "../../core/utils/utils.ts";
-import ViewHeader from "../../components/ui/layout/ViewHeader.tsx";
-import {ExamEditDrawer, ExamInfo, ExamScores, ExamInsertScores, ExamActionLinks} from "../../components/ui-kit-exam";
-import {useToggle} from "../../hooks/useToggle.ts";
-import {ViewRoot} from "../../components/custom/ViewRoot.tsx";
-import Datetime from "../../core/datetime.ts";
+import {Assignment} from "@/entity";
+import {useBreadCrumb} from "@/hooks/useBreadCrumb.tsx";
+import {text} from "@/core/utils/text_display.ts";
+import {SuperWord} from "@/core/utils/tsxUtils.tsx";
+import {cutStatement, setFirstName, zeroFormat} from "@/core/utils/utils.ts";
+import ViewHeader from "@/components/ui/layout/ViewHeader.tsx";
+import {ExamEditDrawer, ExamInfo, ExamScores, ExamInsertScores, ExamActionLinks} from "@/components/ui-kit-exam";
+import {useToggle} from "@/hooks/useToggle.ts";
+import {ViewRoot} from "@/components/custom/ViewRoot.tsx";
+import Datetime from "@/core/datetime.ts";
 import {LuCalendarCheck, LuClock12, LuClock8, LuListPlus, LuX} from "react-icons/lu";
 import {Flex, Space} from "antd";
-import Tag from "../../components/ui/layout/Tag.tsx";
+import Tag from "@/components/ui/layout/Tag.tsx";
 import {ItemType} from "antd/es/menu/interface";
-import {TabItemType} from "../../core/utils/interfaces.ts";
-import {useScoreRepo} from "../../hooks/actions/useScoreRepo.ts";
+import {TabItemType} from "@/core/utils/interfaces.ts";
+import {useScoreRepo} from "@/hooks/actions/useScoreRepo.ts";
 
 const ExamViewPage = () => {
     const {id} = useParams()
@@ -60,7 +60,7 @@ const ExamViewPage = () => {
 
     useEffect(() => {
         if (isRefetch) {
-            refetch()
+            refetch().then(r => r)
         }
     }, [isRefetch, refetch]);
 
@@ -71,7 +71,7 @@ const ExamViewPage = () => {
         });
         setActiveTab(current => (current === key ? "0" : current));
         loadScores()
-        refetch()
+        refetch().then(r => r)
     }, [loadScores, refetch])
 
     const addTab = useCallback(() => {
@@ -112,7 +112,7 @@ const ExamViewPage = () => {
 
     const handleCloseDrawer = () => {
         setOpenDrawer()
-        refetch()
+        refetch().then(r => r)
     }
 
     return (

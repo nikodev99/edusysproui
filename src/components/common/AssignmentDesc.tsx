@@ -13,6 +13,7 @@ import {BarChart} from "../graph/BarChart.tsx";
 import Datetime from "../../core/datetime.ts";
 import {AssignmentViewDesc} from "./AssignmentViewDesc.tsx";
 import {AssignmentSchedule} from "./AssignmentSchedule.tsx";
+import {Moment} from "@/core/utils/interfaces.ts";
 
 interface AssignmentDescProps {
     assignments: Assignment[] | null
@@ -27,6 +28,10 @@ interface AssignmentDescProps {
     refetch?: boolean
     showBest?: boolean
     onlyMark?: string
+    calendarLimit?: {
+        startDate?: Moment
+        endDate?: Moment
+    }
 }
 
 const getNextAssignment = (assignments: Assignment[] | null): Assignment | null => {
@@ -50,7 +55,7 @@ const getLastPassedAssignment = (assignments: Assignment[] | null): Assignment |
 
 export const AssignmentDesc = (
     {assignments, listTitle, isLoading, studentAllScore, setRefetch, refetch, scoreLoading, hasLegend = true, showBarChart = false,
-    showBest = true, barLayout = 'vertical', onlyMark}: AssignmentDescProps
+    showBest = true, barLayout = 'vertical', onlyMark, calendarLimit}: AssignmentDescProps
 ) => {
     const [scoreSize, setScoreSize] = useState<number>(5)
     const assignment = useRef<Assignment | null>()
@@ -94,6 +99,8 @@ export const AssignmentDesc = (
                             onlyMark={onlyMark}
                             isLoading={isLoading}
                             showBest={showBest}
+                            startDate={Datetime.of(calendarLimit?.startDate as Moment).toDate()}
+                            endDate={Datetime.of(calendarLimit?.endDate as Moment).toDate()}
                         />
                     </Card>
                     : <VoidData />

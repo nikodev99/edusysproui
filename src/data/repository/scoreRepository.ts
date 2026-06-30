@@ -1,9 +1,9 @@
 import {AxiosResponse} from "axios";
-import {Score} from "../../entity";
+import {Score} from "@/entity";
 import {apiClient, request} from "../axiosConfig.ts";
-import {IDS} from "../../core/utils/interfaces.ts";
-import {getShortSortOrder} from "../../core/utils/utils.ts";
-import {ScoreSchema} from "../../schema";
+import {IDS} from "@/core/utils/interfaces.ts";
+import {getShortSortOrder} from "@/core/utils/utils.ts";
+import {ScoreSchema} from "@/schema";
 
 export const saveAllScores = (scores: ScoreSchema, assignmentId: number) => {
     return request({
@@ -29,7 +29,7 @@ export const updateAllScores = (scores: ScoreSchema, assignmentId: number) => {
     })
 }
 
-export const getAllAssignmentMarks = (assignmentId: bigint, size: number) => {
+export const getAllAssignmentMarks = (assignmentId: number, size: number) => {
     return apiClient.get(`/score/all_assignment_marks/${assignmentId}`, {
         params: {
             size: size
@@ -37,7 +37,7 @@ export const getAllAssignmentMarks = (assignmentId: bigint, size: number) => {
     })
 }
 
-export const getAssignmentMarks = (assignmentId: bigint) => {
+export const getAssignmentMarks = (assignmentId: number) => {
     return apiClient.get<Score[]>(`/score/assignment/${assignmentId}`)
 }
 
@@ -106,20 +106,24 @@ export const getCoursePoorStudents = (courseId: number, academicYear: string) =>
     })
 }
 
-export const getAllTeacherMarks = (teacherId: bigint | number | bigint[] | number[]) => {
+export const getAllTeacherMarks = (teacherId: number | number[]) => {
     const requestParam: string = Array.isArray(teacherId) ? teacherId?.join(',') : `${teacherId}`
     return apiClient.get(`/score/all_teacher_marks/${requestParam}`)
 }
 
-export const getBestTeacherStudentBySubject = (teacherId: bigint, subjectId: number) => {
+export const getBestTeacherStudentBySubject = (teacherId: number, subjectId: number) => {
     return apiClient.get<Score[]>(`/score/students/${teacherId}/${subjectId}`)
 }
 
-export const getBestTeacherStudentByScore = (personalInfoId: bigint) => {
+export const getBestTeacherStudentByScore = (personalInfoId: number) => {
     return apiClient.get<Score[]>(`/score/students/${personalInfoId}`)
 }
 
-export const countAssignmentMarks = (assignmentId: bigint | number) => {
+export const getStudentScoreOfAssignment = (assignmentId: number, studentId: number) => {
+    return apiClient.get<Score>(`/score/one/${assignmentId}/${studentId}`)
+}
+
+export const countAssignmentMarks = (assignmentId: number) => {
     return apiClient.get<number>(`/score/count/${assignmentId}`)
 }
 

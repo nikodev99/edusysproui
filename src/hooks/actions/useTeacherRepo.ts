@@ -7,7 +7,7 @@ import {
     getNumberOfStudentTaughtByTeacher,
     getSearchedTeachers,
     getTeacherBasicValues,
-    getTeacherById,
+    getTeacherById, getTeacherClasses, getTeacherCourses,
     getTeachersBasicValues,
     getTeacherSchedule,
     getTeacherScheduleByDay
@@ -73,11 +73,11 @@ export const useTeacherRepo = (context: UserPermission = UserPermission.ALL) => 
         !!input
     )
 
-    const useGetTeacherBasicValues = (classeId?: number, section?: SectionType) => useFetch(
-        ['teacher-basic', classeId, section],
+    const useGetTeacherBasicValues = (classeId?: number, section?: SectionType, enable: boolean = true) => useFetch(
+        ['teacher-basic', classeId, section, enable],
         getTeachersBasicValues,
         [classeId, section],
-        !!classeId && !!section
+        enable && !!classeId && !!section
     )
 
     const useGetTeacherBasic = (teacherId: number, classeId: number): Teacher | undefined => {
@@ -104,11 +104,11 @@ export const useTeacherRepo = (context: UserPermission = UserPermission.ALL) => 
         !!teacherId && !!schoolId
     )
 
-    const useGetTeacherSchedules = (teacherId: string,  allDay: boolean = false,  enable: boolean = true) => {
+    const useGetTeacherSchedules = (teacherId: string, academicYear: string, allDay: boolean = false,  enable: boolean = true) => {
         return useFetch(
             ['teacher-schedules', teacherId, allDay, enable],
             allDay ? getTeacherScheduleByDay : getTeacherSchedule,
-            allDay ? [teacherId, allDay] : [teacherId],
+            allDay ? [teacherId, academicYear, allDay] : [teacherId, academicYear],
             (!!teacherId && enable)
         )
     }
@@ -146,6 +146,20 @@ export const useTeacherRepo = (context: UserPermission = UserPermission.ALL) => 
 
         return count
     }
+
+    const useGetTeacherClasses = (teacherId: string, enable: boolean = true) => useFetch(
+        ['teacher-classes', teacherId, enable],
+        getTeacherClasses,
+        [teacherId, schoolId],
+        enable && !!teacherId && !!schoolId
+    )
+
+    const useGetTeacherCourses = (teacherId: string, enable: boolean = true) => useFetch(
+        ['teacher-courses', teacherId, enable],
+        getTeacherCourses,
+        [teacherId, schoolId],
+        enable && !!teacherId && !!schoolId
+    )
 
     const useCountAllTeachers = (): GenderCounted | undefined => {
         const [count, setCount] = useState<GenderCounted>()
@@ -189,6 +203,8 @@ export const useTeacherRepo = (context: UserPermission = UserPermission.ALL) => 
         useGetTeacherBasic,
         useGetTeacherStudentNumber,
         useGetTeacherClasseStudentNumber,
+        useGetTeacherClasses,
+        useGetTeacherCourses,
         useCountAllTeachers,
         useGetTeacherBasicValues,
         useSaveReport,

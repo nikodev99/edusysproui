@@ -22,9 +22,8 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
 
     const examCount = LocalStorageManager.get<number>('examCount') ?? 10;
 
-    const {academicYear, student, personalInfo, enrollments, classe} = useMemo(() => ({
+    const {academicYear, personalInfo, enrollments, classe} = useMemo(() => ({
         academicYear: enrolledStudent?.academicYear,
-        student: enrolledStudent?.student,
         personalInfo: enrolledStudent?.student?.personalInfo,
         enrollments: enrolledStudent?.student?.enrollments,
         classe: enrolledStudent?.classe,
@@ -36,13 +35,15 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
     const [size, setSize] = useState<number>(examCount)
     const [academicYearId, setAcademicYearId] = useState<string>(academicYear?.id ?? '')
 
+    console.log('Academic year: ', academicYear)
+
     const {useGetAllClasseAssignments} = useAssignmentRepo()
     const {useGetAllStudentScores} = useScoreRepo()
 
     const studentName = `${setFirstName(personalInfo?.lastName)} ${setFirstName(personalInfo?.firstName)}`
 
     const assignments = useGetAllClasseAssignments(classe?.id, academicYearId)
-    const {data, isSuccess, error, isLoading, isRefetching, refetch} = useGetAllStudentScores(student?.id, academicYearId, {size: size, page: 0}, subjectValue)
+    const {data, isSuccess, error, isLoading, isRefetching, refetch} = useGetAllStudentScores(enrolledStudent?.student?.id, academicYearId, {size: size, page: 0}, subjectValue)
 
     const academicYears = useMemo(() => {
         return enrollments && [
@@ -161,17 +162,21 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
 
     return(
         <AssignmentView
-            assignExams={assignments}
+            assignExams={assignments as never}
             title={`Les notes d${startsWithVowel(personalInfo?.lastName) ? "'" : 'e '}${studentName}`}
             label='Programmes des devoirs'
             selects={[
                 <Select
                     className='select-control'
-                    defaultValue={academicYearId}
+                    defaultValue={academicYearId ?? academicYear?.id}
                     options={academicYears}
                     onChange={handleAcademicYearIdValue}
                     variant='borderless'
-
+                    styles={{
+                        root: {
+                            width: 150
+                        }
+                    }}
                 />
             ]}
             calendarLimit={{
@@ -213,7 +218,7 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
             ]}
             getSubject={setSubjectValue}
             showBest={false}
-            studentId={student?.id}
+            studentId={enrolledStudent?.student?.id}
             disableSelect
         />
     )

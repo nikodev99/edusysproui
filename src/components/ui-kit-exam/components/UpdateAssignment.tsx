@@ -1,13 +1,13 @@
-import Responsive from "../../ui/layout/Responsive.tsx";
-import DateInput from "../../ui/form/DateInput.tsx";
+import Responsive from "@/components/ui/layout/Responsive.tsx";
+import DateInput from "@/components/ui/form/DateInput.tsx";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {assignmentDateUpdateSchema, AssignmentUpdateDate} from "../../../schema";
-import {TimeInput} from "../../ui/form/TimeInput.tsx";
-import Datetime from "../../../core/datetime.ts";
-import {UpdateSchema} from "../../custom/UpdateSchema.tsx";
-import {changeAssignmentDate} from "../../../data/repository/assignmentRepository.ts";
-import {Assignment} from "../../../entity";
+import {assignmentDateUpdateSchema, AssignmentUpdateDate} from "@/schema";
+import {TimeInput} from "@/components/ui/form/TimeInput.tsx";
+import Datetime from "@/components/../core/datetime.ts";
+import {UpdateSchema} from "@/components/custom/UpdateSchema.tsx";
+import {changeAssignmentDate} from "@/data/repository/assignmentRepository.ts";
+import {Assignment} from "@/entity";
 import {ZodSchema} from "zod";
 import {useEffect} from "react";
 
@@ -62,7 +62,7 @@ export const UpdateAssignmentDates = ({assignment, open, onCancel, resp}: Update
                         validateStatus={errors?.startTime ? 'error' : ''}
                         help={errors.examDate ? errors?.startTime?.message : ''}
                         required
-                        defaultValue={assignment ? Datetime.timeToCurrentDate(assignment?.startTime as number[]).toDayjs('HH:mm') as unknown : undefined}
+                        defaultValue={assignment ? Datetime.timeToCurrentDate(assignment?.startTime as number[]).toDayjs() as unknown : undefined}
                     />
                     <TimeInput
                         control={control}
@@ -71,7 +71,7 @@ export const UpdateAssignmentDates = ({assignment, open, onCancel, resp}: Update
                         validateStatus={errors?.endTime ? 'error' : ''}
                         help={errors.examDate ? errors?.endTime?.message : ''}
                         required
-                        defaultValue={assignment ? Datetime.timeToCurrentDate(assignment?.endTime as number[]).toDayjs('HH:mm') as unknown : undefined}
+                        defaultValue={assignment ? Datetime.timeToCurrentDate(assignment?.endTime as number[]).toDayjs() as unknown : undefined}
                     />
                 </Responsive>
             }

@@ -17,18 +17,19 @@ import {UserPermission} from "@/core/shared/sharedEnums.ts";
 
 const StudentListPage = () => {
     const {toEnrollStudent, toReenrollStudent, toSearch} = useRedirect()
-    const {canViewAndEdit, can} = usePermission()
+    const {canViewAndEdit, canViewAll, canViewSome, canViewSelf} = usePermission()
     const context = useMemo(() => {
-        if (can('teacherData', true)) {
-            return UserPermission.TEACHER
-        } 
-        
-        if (can('guardianData', true)) {
-            return UserPermission.GUARDIAN
+        if (canViewAll) {
+            return UserPermission.ALL
+        } else {
+            if (canViewSelf)
+                return UserPermission.GUARDIAN
+            if (canViewSome) {
+                return UserPermission.TEACHER
+            }
         }
-        
-        return UserPermission.ALL
-    }, [can])
+        return UserPermission.NONE
+    }, [canViewAll, canViewSelf, canViewSome])
 
     const {useGetPaginated} = useStudentRepo(context)
 

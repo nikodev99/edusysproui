@@ -35,6 +35,11 @@ export const usePermission = () => {
         canEdit: routeAccess.can(module, 'edit'),
         canDelete: routeAccess.can(module, 'delete'),
 
+        //LIST viewers
+        canViewAll: routeAccess.can(module, 'viewAll'),
+        canViewSome: routeAccess.can(module, 'viewSome'),
+        canViewSelf: routeAccess.can(module, 'viewSelf'),
+
         // Composite permissions - useful for complex UI logic
         isViewOnly: routeAccess.isViewOnly(module),
         canViewAndEdit: routeAccess.canViewAndEdit(module),

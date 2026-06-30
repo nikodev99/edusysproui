@@ -150,8 +150,8 @@ const TeacherViewPage = () => {
             {/*TODO Ne pas oublié de créer la page setting de l'anseignant où il pourra ajouter les programmes, les modifiés et surtout, changé le timing avec un nouveau academic year.*/}
             <ViewRoot
                 items={[
-                    {label: "Info", children: <TeacherInfo infoData={teacher as Teacher} color={color} dataKey='info' />},
-                    {label: "Agenda", children: <TeacherAgenda infoData={teacher as Teacher} dataKey='agenda' />},
+                    {label: "Info", children: <TeacherInfo infoData={teacher as Teacher} color={color} academicYear={currentAcademicYear?.id} dataKey='info' />},
+                    {label: "Agenda", children: <TeacherAgenda infoData={teacher as Teacher} academicYear={currentAcademicYear?.id} dataKey='agenda' />},
                     {label: "Programme", children: <TeacherProgram infoData={teacher as Teacher} hasPermission={hasPermission} color={color} dataKey='program' />},
                     {label: "Devoirs", children: <TeacherAssignments infoData={teacher as Teacher} hasPermission={hasPermission} dataKey='assignment' />},
                     {label: "Réprimande", children: <TeacherReprimand infoData={teacher as Teacher} dataKey='reprimand' />},

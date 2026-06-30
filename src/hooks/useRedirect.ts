@@ -85,17 +85,17 @@ export const useRedirect = () => {
 
     const toAddClasse = () => redirectTo(text.cc.group.classe.add.href)
 
-    const toViewClasse = (classeId: string) => redirectTo(text.cc.group.classe.view.href + classeId)
+    const toViewClasse = (classeId: number) => redirectTo(text.cc.group.classe.view.href + classeId)
 
     const toCoursePath = (courseId: string) => redirectTo(text.cc.group.course.path.view + courseId)
 
     const toAddCourse = () => redirectTo(text.cc.group.course.add.href)
 
-    const toViewCourse = (CourseId: string) => redirectTo(text.cc.group.course.view.href + CourseId)
+    const toViewCourse = (CourseId: number) => redirectTo(text.cc.group.course.view.href + CourseId)
 
     const toExam = () => redirectTo(text.exam.href)
 
-    const toViewExam = (examId: string) => redirectTo(text.exam.group.view.href + examId)
+    const toViewExam = (examId: number) => redirectTo(text.exam.group.view.href + examId)
 
     const toAddExam = () => redirectTo(text.exam.group.add.href)
 

@@ -8,13 +8,14 @@ import {datehelper} from "@/core/helpers/DateHelpers.ts";
 import Datetime from "@/core/datetime.ts";
 import Responsive from "@/components/ui/layout/Responsive.tsx";
 import Grid from "@/components/ui/layout/Grid.tsx";
-import {Day} from "@/entity/enums/day.ts";
+import {Day, WeekDay, WeekDays} from "@/entity/enums/day.ts";
 import {Alert} from "antd";
 import {LuServerCrash, LuTriangleAlert} from "react-icons/lu";
 import {reportStatusColors} from "@/entity/domain/report.ts";
 
 export const TeacherReports = ({infoData, resourceYear, hasPermission}: InfoPageProps<Teacher>) => {
     const [weekOffset,   setWeekOffset]   = useState<number>(0);
+    const [isAllDay, setIsAllDay] = useState(false)
     const {useGetTeacherSchedules, useGetAllWeekReport} = useTeacherRepo()
 
     const dayRef = useMemo(
@@ -30,7 +31,22 @@ export const TeacherReports = ({infoData, resourceYear, hasPermission}: InfoPage
 
     const weekDates = useMemo(() => Datetime.getWeekDates(weekOffset, dayRef.toDate()), [dayRef, weekOffset])
 
-    const {data: schedules} = useGetTeacherSchedules(infoData?.id as string)
+    const {data: fetchedSchedules} = useGetTeacherSchedules(infoData?.id as string, resourceYear?.id as string)
+
+    const schedules = useMemo(() => {
+        if (!fetchedSchedules) return []
+        const result = fetchedSchedules.map(s => ({...s}))
+
+        const allDays = result.filter(s => Day[s.dayOfWeek as unknown as keyof typeof Day] === Day.ALL_DAYS)
+        setIsAllDay(allDays.length > 0)
+
+        allDays.forEach((item, i) => {
+            const day = Day[WeekDays[i % WeekDays.length]] as unknown as keyof typeof Day;
+            item.dayOfWeek = day as WeekDay
+        })
+
+        return result
+    }, [fetchedSchedules])
 
     const {data: reports, refetch} = useGetAllWeekReport(
         infoData?.id as string,
@@ -41,8 +57,10 @@ export const TeacherReports = ({infoData, resourceYear, hasPermission}: InfoPage
     const submittedIds = useMemo(() => new Set(reports?.map(r => r.schedule.id) || []), [reports])
     const missingCount = useMemo(() => schedules?.filter(s => {
         const d = weekDates[Day[s?.dayOfWeek as unknown as keyof typeof Day]]
-        return d.isStrictBefore() && !submittedIds.has(s?.id)
+        return d?.isStrictBefore() && !submittedIds?.has(s?.id)
     }).length, [schedules, submittedIds, weekDates])
+
+    console.log('WEEK DATES: ', schedules)
     
     const isCurrentWeek = weekOffset === 0;
     const weekLabel = datehelper.formatWeekRange(weekDates)
@@ -113,6 +131,7 @@ export const TeacherReports = ({infoData, resourceYear, hasPermission}: InfoPage
                                 academicYear={resourceYear?.id}
                                 onRefetch={refetch as never}
                                 hasPermission={hasPermission}
+                                allDay={isAllDay}
                             />
                         </Grid>
                     ))}

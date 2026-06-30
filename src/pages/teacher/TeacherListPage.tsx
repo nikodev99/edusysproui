@@ -17,18 +17,30 @@ import {Status} from "@/entity/enums/status.ts";
 import {DataProps} from "@/core/utils/interfaces.ts";
 import {useRedirect} from "@/hooks/useRedirect.ts";
 import {useTeacherRepo} from "@/hooks/actions/useTeacherRepo.ts";
-import {useState} from "react";
+import {useMemo, useState} from "react";
 import {ItemType} from "antd/es/menu/interface";
 import {TeacherActionLinks} from "@/components/ui-kit-teacher";
-import {isTeacher} from "@/auth/dto/role.ts";
 import {UserPermission} from "@/core/shared/sharedEnums.ts";
+import {usePermission} from "@/hooks/usePermission.ts";
 
 const TeacherListPage = () => {
     const [selectedTeacher, setSelectedTeacher] = useState<Teacher | undefined>(undefined)
     const [linkButtons, setLinkButtons] = useState<ItemType[]>([])
     const [refresh, setRefresh] = useState<boolean>(false)
     const {toViewTeacher, toAddTeacher} = useRedirect()
-    const {useGetPaginated} = useTeacherRepo(isTeacher() ? UserPermission.TEACHER: UserPermission.ALL)
+    const {canViewAll, canViewSelf} = usePermission()
+    
+    const context = useMemo(() => {
+        if (canViewAll) {
+            return UserPermission.ALL
+        }
+        if (canViewSelf) {
+            return UserPermission.TEACHER
+        }
+        return UserPermission.NONE
+    }, [canViewAll, canViewSelf])
+    
+    const {useGetPaginated} = useTeacherRepo(context)
     const {getPaginatedTeachers, getSearchedTeachers} = useGetPaginated()
 
     useDocumentTitle({

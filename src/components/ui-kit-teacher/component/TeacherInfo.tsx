@@ -87,9 +87,9 @@ const ProsInfo = ({infoData, color}: TeacherInfo) => {
     )
 }
 
-const CalendarSection = ({infoData, seeMore}: TeacherInfo) => {
+const CalendarSection = ({infoData, seeMore, academicYear}: TeacherInfo) => {
     const {useGetTeacherSchedules} = useTeacherRepo()
-    const {data: schedules} = useGetTeacherSchedules(infoData?.id as string, !(infoData?.courses && infoData?.courses?.length > 0))
+    const {data: schedules} = useGetTeacherSchedules(infoData?.id as string, academicYear as string, !(infoData?.courses && infoData?.courses?.length > 0))
 
     const handleClick = () => {
         seeMore && seeMore('1')
@@ -145,8 +145,8 @@ const DepartmentInfo = ({infoData, color}: TeacherInfo) => {
 
     return(
         <>
-            {departments?.map((department: Department) => (
-                <div key={department?.id}>
+            {departments?.map((department: Department, index) => (
+                <div key={department?.id + `${index}`}>
                     <DepartmentDesc department={department} color={color} />
                 </div>
             ))}

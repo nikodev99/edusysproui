@@ -9,6 +9,7 @@ import Datetime from "@/core/datetime.ts";
 export const FormTimeInput = <T extends FieldValues>(timePickerProps: TimeInputType<T>) => {
 
     const {isCompact, placeholder, clearErrors, defaultValue, buttonLabel, disabled} = timePickerProps
+    console.log(timePickerProps)
 
     return(
         <FormItem {...timePickerProps} render={({field}) => (
@@ -19,10 +20,10 @@ export const FormTimeInput = <T extends FieldValues>(timePickerProps: TimeInputT
                             <TimePicker
                                 {...field}
                                 placeholder={placeholder as string}
-                                onChange={(time) => field.onChange(time ? time.toDate() : null)}
+                                onChange={(time) => field.onChange(time)}
                                 onFocus={() => clearErrors ? clearErrors(field.name) : null}
                                 value={field.value ? Datetime.timeToCurrentDate(field.value).toDayjs() : defaultValue ? Datetime.timeToCurrentDate(defaultValue as number[]).toDayjs() : null}
-                                defaultValue={Datetime.timeToCurrentDate(defaultValue as number[]).toDate() as PathValue<T, Path<T>>}
+                                defaultValue={defaultValue ? Datetime.timeToCurrentDate(defaultValue as number[]).toDayjs() as PathValue<T, Path<T>> : undefined}
                                 format="HH:mm"
                                 allowClear
                                 style={{width: '100%'}}
@@ -35,12 +36,22 @@ export const FormTimeInput = <T extends FieldValues>(timePickerProps: TimeInputT
                         <TimePicker
                             {...field}
                             placeholder={placeholder as string}
-                            onChange={(time) => field.onChange(time ? time.toDate() : null)}
+                            onChange={(time) => field.onChange(time)}
                             onFocus={() => clearErrors ? clearErrors(field.name) : null}
-                            value={field.value ? Datetime.timeToCurrentDate(field.value).toDayjs() : defaultValue ? Datetime.timeToCurrentDate(defaultValue as number[]).toDayjs() : null}
-                            defaultValue={Datetime.timeToCurrentDate(defaultValue as number[]).toDate() as PathValue<T, Path<T>>}
+                            value={
+                                field.value
+                                    ? Datetime.timeToCurrentDate(field.value).toDayjs()
+                                    : defaultValue
+                                        ? Datetime.timeToCurrentDate(defaultValue as number[]).toDayjs()
+                                        : null
+                            }
+                            defaultValue={
+                                defaultValue
+                                    ? Datetime.timeToCurrentDate(defaultValue as number[]).toDayjs()  // ← toDayjs()
+                                    : null
+                            }
                             format="HH:mm"
-                            style={{width: '100%'}}
+                            style={{ width: '100%' }}
                             allowClear
                             disabled={disabled}
                         />

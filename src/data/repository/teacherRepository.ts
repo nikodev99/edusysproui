@@ -57,6 +57,15 @@ export const getTeacherById = (teacherId: string, schoolId: string): Promise<Axi
     return apiClient.get<Teacher>(`/teachers/${teacherId}/${schoolId}`)
 }
 
+export const getTeacherClasses = (teacherId: string, schoolId: string) => {
+    return apiClient.get<Teacher>(`/teachers/classe/${teacherId}/${schoolId}`)
+}
+
+export const getTeacherCourses = (teacherId: string, schoolId: string) => {
+    return apiClient.get<Teacher>(`/teachers/course/${teacherId}/${schoolId}`)
+}
+
+
 export const getNumberOfStudentTaughtByTeacher = (teacherId: string) => {
     return apiClient.get<Counted>(`/teachers/${teacherId}/count_student`)
 }
@@ -65,13 +74,18 @@ export const getNumberOfStudentTaughtByClasse = (teacherId: string) => {
     return apiClient.get<CountType>(`/teachers/count_by_classe/${teacherId}`)
 }
 
-export const getTeacherSchedule = (teacherId: string): Promise<AxiosResponse<Schedule[]>> => {
-    return apiClient.get(`/schedule/teacher/${teacherId}`)
+export const getTeacherSchedule = (teacherId: string, academicYear: string): Promise<AxiosResponse<Schedule[]>> => {
+    return apiClient.get(`/schedule/teacher/${teacherId}`, {
+        params: {
+            academicYear: academicYear
+        }
+    })
 }
 
-export const getTeacherScheduleByDay = (teacherId: string, allDay: boolean): Promise<AxiosResponse<Schedule[]>> => {
+export const getTeacherScheduleByDay = (teacherId: string, academicYear: string, allDay: boolean): Promise<AxiosResponse<Schedule[]>> => {
     return apiClient.get(`/schedule/teacher_day/${teacherId}`, {
         params: {
+            academicYear: academicYear,
             allDay: allDay
         }
     })

@@ -17,7 +17,7 @@ export enum UpdateType {
 }
 
 export enum UserPermission {
-    GUARDIAN, TEACHER, ALL
+    GUARDIAN, TEACHER, ALL, NONE
 }
 
 export enum SearchType {

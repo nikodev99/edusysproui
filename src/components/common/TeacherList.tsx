@@ -1,9 +1,9 @@
-import {LoadMoreList} from "../ui/layout/LoadMoreList.tsx";
-import {AvatarListItem} from "../ui/layout/AvatarListItem.tsx";
-import {redirectTo} from "../../context/RedirectContext.ts";
-import {text} from "../../core/utils/text_display.ts";
+import {LoadMoreList} from "@/components/ui/layout/LoadMoreList.tsx";
+import {AvatarListItem} from "@/components/ui/layout/AvatarListItem.tsx";
+import {redirectTo} from "@/context/RedirectContext.ts";
+import {text} from "@/core/utils/text_display.ts";
 import {Tag} from "antd";
-import {Teacher} from "../../entity";
+import {Teacher} from "@/entity";
 import {ReactNode} from "react";
 
 export const TeacherList = (

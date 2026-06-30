@@ -146,7 +146,7 @@ export const InsertNewProgramTopic = (
 export const InsertNewReport = (
     {
         open, onClose, onRefetch, program, programTopic, schedules, teacherId, programOptions, programTopicOptions,
-        showSchedule = false, hasProgram, hasTopic, isRegularized, getProgram, sessionDate
+        showSchedule = false, hasProgram, hasTopic, isRegularized, getProgram, sessionDate, academicYear
     }: {
         open: boolean,
         onClose: () => void
@@ -163,12 +163,13 @@ export const InsertNewReport = (
         teacherId?: string,
         isRegularized?: boolean
         sessionDate?: Datetime
+        academicYear?: string
     }
 ) => {
     const [selectedSchedule, setSelectedSchedule] = useState<Schedule | undefined>(undefined)
     const {useGetTeacherSchedules, useSaveReport} = useTeacherRepo()
     const {saveReport} = useSaveReport()
-    const {data: scheduleData} = useGetTeacherSchedules(teacherId as string, false, !(schedules && schedules?.length > 0))
+    const {data: scheduleData} = useGetTeacherSchedules(teacherId as string, academicYear as string, false, !(schedules && schedules?.length > 0))
     const sch = schedules && schedules?.length > 0 ? schedules : scheduleData
 
     const scheduleOptions = useMemo(() => sch?.map(s => ({
@@ -194,10 +195,8 @@ export const InsertNewReport = (
 
     useEffect(() => {
         reset({
-            sessionStartingTime: Datetime.timeToCurrentDate(selectedSchedule?.startTime as number[])
-                .format("HH:mm:ss"),
-            sessionEndingTime: Datetime.timeToCurrentDate(selectedSchedule?.endTime as number[])
-                .format("HH:mm:ss"),
+            sessionStartingTime: Datetime.timeToCurrentDate(selectedSchedule?.startTime as number[]).time(),
+            sessionEndingTime: Datetime.timeToCurrentDate(selectedSchedule?.endTime as number[])?.time(),
             reportStatus: ReportStatusEnum.SUBMITTED,
             teacher: { id: teacherId },
             schedule: { id: selectedSchedule ? selectedSchedule?.id : sch?.length === 1 ? sch[0]?.id : undefined },

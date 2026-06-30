@@ -15,7 +15,7 @@ import {BloodType} from "@/entity/enums/bloodType.ts";
 import {ProgressProps} from "antd";
 import {Day} from "@/entity/enums/day.ts";
 import {Gender} from "@/entity/enums/gender.tsx";
-import {AcademicYear, Assignment, Enrollment, Individual, Planning, Schedule} from "@/entity";
+import {AcademicYear, Assignment, Enrollment, Individual, Planning} from "@/entity";
 import Datetime from "../datetime.ts";
 import {BROWSERS} from "./browser.ts";
 import {FieldError} from "react-hook-form";
@@ -256,33 +256,6 @@ export const arrayToDate = (dateArray: Date | number[], time?: number[]): Date =
         return new Date(year, month - 1, day, hour, minute, 0);
     }
     return new Date(dateArray);
-}
-
-export const getMinMaxTimes = (data: Schedule[]) => {
-    let minMinutes = Infinity;
-    let maxMinutes = -Infinity;
-
-    let minStartTime: [number, number] = [24, 0]
-    let maxEndTime: [number, number] = [0, 0]
-
-    for (const entry of data) {
-        const start: [number, number] = parseTimeString(entry.startTime as number[])
-        const end: [number, number] = parseTimeString(entry.endTime as [number, number])
-
-        const startMinutes = start[0] * 60 + start[1];
-        const endMinutes = end[0] * 60 + end[1];
-
-        if (startMinutes < minMinutes) {
-            minMinutes = startMinutes;
-            minStartTime = start;
-        }
-
-        if (endMinutes > maxMinutes) {
-            maxMinutes = endMinutes;
-            maxEndTime = end;
-        }
-    }
-    return {minStartTime, maxEndTime, minMinutes, maxMinutes}
 }
 
 export const getDistinctArray = <T>(arr: T[], keySelector: (item: T) => unknown): T[] => {
@@ -868,8 +841,6 @@ export const calculateTypeColumns = (type:  AssignmentTypeLiteral, examView: Exa
     }
 
     const maxCount = Math.max(...counts);
-
-    console.log("MAX COUNT: ", maxCount)
 
     return Array.from({length: maxCount}, (_, index) =>({
         title: `D${index + 1}`,

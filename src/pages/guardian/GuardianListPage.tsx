@@ -25,20 +25,21 @@ const GuardianListPage = () => {
     const [selectedGuardian, setSelectedGuardian] = useState<Guardian | undefined>(undefined)
     const [linkButtons, setLinkButtons] = useState<ItemType[]>([])
     const [refresh, setRefresh] = useState<boolean>(false)
-    const { can } = usePermission()
+    const { canViewAll, canViewSelf, canViewSome } = usePermission()
     const {toViewGuardian} = useRedirect()
 
     const context = useMemo(() => {
-        if (can('viewSome', true)) {
+        if (canViewAll) {
+            return UserPermission.ALL
+        }
+        if (canViewSome) {
             return UserPermission.TEACHER
         }
 
-        if (can('viewSelf', true)) {
+        if (canViewSelf) {
             return UserPermission.GUARDIAN
         }
-
-        return UserPermission.ALL
-    }, [can])
+    }, [canViewAll, canViewSelf, canViewSome])
 
     const {useGetPaginated} = useGuardianRepo(context)
 

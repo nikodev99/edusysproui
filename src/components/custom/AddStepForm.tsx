@@ -6,13 +6,12 @@ import {ReactNode, useCallback, useMemo} from "react";
 import {useLocation} from "react-router-dom";
 import queryString from 'query-string'
 import {Metadata} from "@/core/utils/interfaces.ts";
-import FormError from "@/components/ui/form/FormError.tsx";
-import FormSuccess from "@/components/ui/form/FormSuccess.tsx";
 import PageWrapper from "../view/PageWrapper.tsx";
 import {redirectTo} from "@/context/RedirectContext.ts";
 import {RequiredMark} from "@/core/utils/tsxUtils.tsx";
 import {ValidationAlert} from "../ui/form/ValidationAlert.tsx";
 import {LoadingButton} from "../ui/layout/LoadingButton.tsx";
+import {Notification} from "@/components/custom/Notification.tsx";
 
 interface AddStepsProps<TFieldValues extends FieldValues> {
     docTitle: Metadata,
@@ -79,8 +78,8 @@ const AddStepForm = <TFieldValues extends FieldValues>(
                     alertMessage='Une ou plusieurs erreurs de validation détectés'
                     message={errors}
                 />}
-                {error && (<FormError message={error} />)}
-                {success && (<FormSuccess message={success} setRedirect={setRedirect} setActivity={setActivity} />)}
+                {error && (<Notification responseMessages={{error: error}} />)}
+                {success && (<Notification responseMessages={{success: success}} setRedirect={setRedirect} onClose={setActivity} />)}
                 <Flex className='inscription-wrapper' vertical>
                     <div className='form-wrapper'>
                         <Form layout="vertical" initialValues={{requiredMarkValue: 'customize'}}

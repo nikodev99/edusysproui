@@ -13,7 +13,7 @@ export enum IndividualType {
 
 export enum UpdateType {
     ADDRESS, HEALTH, GUARDIAN, INFO, TEACHER, ASSIGNMENT, EMPLOYEE, SCHOOL,
-    ACADEMIC_YEAR, GRADE, DEPARTMENT, USER
+    ACADEMIC_YEAR, GRADE, DEPARTMENT, USER, REPRIMAND, PUNISHMENT
 }
 
 export enum UserPermission {

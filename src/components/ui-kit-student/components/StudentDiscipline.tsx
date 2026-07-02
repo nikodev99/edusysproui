@@ -2,7 +2,6 @@ import {useReprimandRepo} from "@/hooks/actions/useReprimandRepo.ts";
 import {AcademicYear, Classe, Enrollment, Individual, Punishment, Reprimand} from "@/entity";
 import {useEffect, useMemo, useState} from "react";
 import ListViewer from "@/components/custom/ListViewer.tsx";
-import {ReprimandFilterProps} from "@/data/repository/reprimandRepository.ts";
 import {Button, Card, Empty, TableColumnsType, Tag as AntTag, Typography} from "antd";
 import {useAcademicYearRepo} from "@/hooks/actions/useAcademicYearRepo.ts";
 import {LuCircleAlert, LuPlus, LuSmile} from "react-icons/lu";
@@ -18,6 +17,7 @@ import PageDescription from "@/components/custom/PageDescription.tsx";
 import {ReprimandFilters} from "@/components/filters/ReprimandFilters.tsx";
 import {usePermission} from "@/hooks/usePermission.ts";
 import {useRedirect} from "@/hooks/useRedirect.ts";
+import {ReprimandFilterProps} from "@/entity/domain/reprimand.ts";
 
 interface StudentDisciplineProps {
     enrolledStudent: Enrollment

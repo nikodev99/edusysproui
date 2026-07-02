@@ -1,20 +1,9 @@
 import {apiClient} from "../axiosConfig.ts";
-import {Moment, Pageable} from "@/core/utils/interfaces.ts";
-import {PunishmentType} from "@/entity/enums/punishmentType.ts";
-import {ReprimandType} from "@/entity/enums/reprimandType.ts";
-import {PunishmentStatus} from "@/entity/enums/punishmentStatus.ts";
+import {Pageable} from "@/core/utils/interfaces.ts";
 import {getShortSortOrder} from "@/core/utils/utils.ts";
 import {ReprimandSchema} from "@/schema";
 import {Reprimand} from "@/entity";
-
-export interface ReprimandFilterProps {
-    academicYear: string
-    classeId?: number
-    punishmentType?: PunishmentType
-    reprimandType?: ReprimandType
-    punishmentStatus?: PunishmentStatus
-    reprimandBetween?: [Moment, Moment]
-}
+import {ReprimandFilterProps} from "@/entity/domain/reprimand.ts";
 
 export const createReprimand = (reprimand: ReprimandSchema) => {
     return apiClient.post('/blame', reprimand)
@@ -78,15 +67,29 @@ export const getClasseReprimands = (
 }
 
 export const getSomeStudentReprimandedByTeacher = (teacherId: number) => {
-    return apiClient.get(`/blame/teacher_some/${teacherId}`)
+    return apiClient.get<Reprimand[]>(`/blame/teacher_some/${teacherId}`)
 }
 
-export const getAllStudentReprimandedByTeacher = (teacherId: number, academicYearId: string, pageable?: Pageable) => {
+export const getAllStudentReprimandedByTeacher = (
+    teacherId: number,
+    filter: ReprimandFilterProps,
+    pageable?: Pageable,
+    sortField?: string,
+    sortOrder?: string) => {
+    if (sortField && sortOrder) {
+        sortOrder = getShortSortOrder(sortOrder)
+        sortField = sortedField(sortField)
+    }
     return apiClient.get(`/blame/teacher_all/${teacherId}`, {
         params: {
-            academicYear: academicYearId,
+            academicYear: filter.academicYear,
             page: pageable?.page,
-            size: pageable?.size
+            size: pageable?.size,
+            sortCriteria: sortField && sortOrder ? `${sortField}:${sortOrder}` : 'reprimandDate:desc',
+            ...(filter.punishmentType ? { punishmentType: filter.punishmentType } : {}),
+            ...(filter.reprimandType ? { reprimandType: filter.reprimandType } : {}),
+            ...(filter.punishmentStatus ? { punishmentStatus: filter.punishmentStatus } : {}),
+            ...(filter.reprimandBetween ? { reprimandBetween: filter.reprimandBetween } : {}),
         }
     })
 }

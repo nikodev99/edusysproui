@@ -19,7 +19,7 @@ export const TeacherActionLinks = ({data, getItems}: TeacherActionButtons) => {
     const [removeGuardian, setRemoveGuardian] = useToggle(false)
     const {useAccountExists, useAccountExistsInSchool} = useAccount()
     const {canCreate, canDelete, can} = usePermission()
-    const {toViewTeacher, toDiscipline, toExam} = useRedirect()
+    const {toViewTeacher} = useRedirect()
 
     const {personalInfo} = useMemo(() => ({
         personalInfo: data?.personalInfo

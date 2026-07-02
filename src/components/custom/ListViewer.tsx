@@ -195,7 +195,6 @@ const ListViewer = <TData extends object, TError>(
 
     return(
         <>
-            {((dataSource && dataSource?.length > 0) || !emptyPage) ? <>
             {hasDesc && <PageTitle title={pageTitle} description={dataDescription} />}
             <div className='header__area'>
                 <Flex justify='space-between' align='middle' className='flex__between' wrap='wrap'>
@@ -282,7 +281,10 @@ const ListViewer = <TData extends object, TError>(
                                     onChange: handleSorterChange,
                                     onRow: (record: TData) => ({
                                         onClick: () => onSelectData ? onSelectData(record) : undefined
-                                    })
+                                    }),
+                                    locale: {
+                                        ...(emptyPage ? { emptyText: emptyPage }: null)
+                                    }
                                 }}
                                 isLoading={isLoading || isRefetching}
                                 allItems={dataCount}
@@ -304,6 +306,9 @@ const ListViewer = <TData extends object, TError>(
                                     y: tableHeight ?? 550,
                                     x: 'max-content'
                                 }}
+                                locale={{
+                                    ...(emptyPage ? { emptyText: emptyPage }: null)
+                                }}
                                 onRow={(record: TData) => ({
                                     style: onSelectData ? {cursor: 'pointer'} : {},
                                     onClick: () => onSelectData ? onSelectData(record) : undefined
@@ -323,9 +328,7 @@ const ListViewer = <TData extends object, TError>(
                     onChange={handleNavChange}
                     disabled={!!(isLoading || (searchQuery && !shareSearchQuery))}
                 />
-            </div>} </> : <>
-                {emptyPage}
-            </>}
+            </div>}
         </>
     )
 }

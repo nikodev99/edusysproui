@@ -45,7 +45,7 @@ export const ReportCard = ({schedule, status, report, onSubmitReport, hasPermiss
                 {/* Time + type */}
                 <Flex align='center' vertical>
                     <span style={{fontSize:12, fontWeight:700, letterSpacing:"0.06em", textTransform:"uppercase",}}>
-                        {allDay ? `Cours du ${date?.fullDay()}` : schedule?.designation}
+                        {allDay ? `Cours du ${date?.fDate()}` : schedule?.designation}
                     </span>
                     <span style={{fontSize:10, fontWeight:700, letterSpacing:"0.05em", padding:"2px 8px", borderRadius:99, color: "#94A3B8"}}>
                         {Datetime.timeToCurrentDate(allDay ? times?.min as [] : schedule?.startTime as [])?.time()} – {Datetime.timeToCurrentDate(allDay ? times?.max as [] : schedule?.endTime as [])?.time()}

@@ -71,7 +71,7 @@ const ReEnrollStudentPage = () => {
                             </Grid>
                         </Responsive>
                         {resource && <StudentResult
-                            title={`Dernière inscription année ${getStringAcademicYear(academicYear)}`}
+                            title={`Dernière année d'inscription ${getStringAcademicYear(academicYear)}`}
                             resource={resource}
                             modalTitle={`Voulez vraiment continuer avec la ré-inscription de ${setFirstName(`${ind?.lastName} ${ind?.firstName}`)}`}
                             submitBtnTxt='Réinscrire'

@@ -7,7 +7,7 @@ import {AxiosResponse} from "axios";
 import {ErrorCatch} from "../action/error_catch.ts";
 
 export class PatchContext {
-    patchPath = <T>(field: keyof T, value: unknown, studentId: string | number | bigint, type?: UpdateType) => {
+    patchPath = <T>(field: keyof T, value: unknown, entityId: string | number | bigint, type?: UpdateType) => {
         let url: string
         switch (type) {
             case UpdateType.ADDRESS:
@@ -37,13 +37,19 @@ export class PatchContext {
             case UpdateType.ACADEMIC_YEAR:
                 url = '/academic'
                 break
+            case UpdateType.REPRIMAND:
+                url = '/blame'
+                break
+            case UpdateType.PUNISHMENT:
+                url = '/blame/punishment'
+                break
             default:
                 url = '/student'
                 break
         }
         return request({
             method: 'PATCH',
-            url: `${url}/${studentId}`,
+            url: `${url}/${entityId}`,
             data: {
                 field: field,
                 value: value,

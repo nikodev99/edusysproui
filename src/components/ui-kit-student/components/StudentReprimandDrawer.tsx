@@ -34,8 +34,8 @@ export const StudentReprimandDrawer = ({reprimand, open, close}: {
                         {key: '2', label: 'Description', children: '', span: 3},
                         {key: '3', children: reprimand?.punishment?.description, span: 3},
                         {key: '4', label: 'Période', children: '', span: 3},
-                        {key: '5', label: <LuCalendarDays />, children: reprimand?.punishment?.startDate ? Datetime.of(reprimand?.punishment?.startDate).format("DD/MM/YYYY") : "—", span: 2},
-                        {key: '6', label: <LuCalendarCheck />, children: reprimand?.punishment?.endDate ? Datetime.of(reprimand?.punishment?.endDate).format("DD/MM/YYYY") : "—", span: 1},
+                        {key: '5', label: <LuCalendarDays />, children: reprimand?.punishment?.startDate ? Datetime.of(reprimand?.punishment?.startDate).fDate() : "—"},
+                        {key: '6', label: <LuCalendarCheck />, children: reprimand?.punishment?.endDate ? Datetime.of(reprimand?.punishment?.endDate).fDate() : "—", span: 2},
                         {key: '7', label: 'Exécuté par', children: reprimand?.punishment?.executedBy ? reprimand?.punishment?.executedBy : '-', span: 3},
                         {key: '8', label: 'Status', children: <Tag color={tagColor}>{tagText}</Tag>, span: 3},
                         {key: '9', label: 'En appel', children: <div>

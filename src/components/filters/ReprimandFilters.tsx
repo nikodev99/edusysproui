@@ -1,14 +1,14 @@
 import {Filter} from "../common/Filter.tsx";
 import {useMemo, useState} from "react";
-import {ReprimandFilterProps} from "../../data/repository/reprimandRepository.ts";
-import {FilterType, useFilter} from "../../hooks/useFilter.ts";
-import {useClasseRepo} from "../../hooks/actions/useClasseRepo.ts";
+import {FilterType, useFilter} from "@/hooks/useFilter.ts";
+import {useClasseRepo} from "@/hooks/actions/useClasseRepo.ts";
 import {ItemType} from "antd/es/menu/interface";
-import {Options} from "../../core/utils/interfaces.ts";
-import {enumToObjectArray} from "../../core/utils/utils.ts";
-import {PunishmentType} from "../../entity/enums/punishmentType.ts";
-import {ReprimandType} from "../../entity/enums/reprimandType.ts";
-import {PunishmentStatus} from "../../entity/enums/punishmentStatus.ts";
+import {Options} from "@/core/utils/interfaces.ts";
+import {enumToObjectArray} from "@/core/utils/utils.ts";
+import {PunishmentType} from "@/entity/enums/punishmentType.ts";
+import {ReprimandType} from "@/entity/enums/reprimandType.ts";
+import {PunishmentStatus} from "@/entity/enums/punishmentStatus.ts";
+import {ReprimandFilterProps} from "@/entity/domain/reprimand.ts";
 
 export const ReprimandFilters = (
     {academicYear, setFilters, academicYearOptions}: FilterType<ReprimandFilterProps>

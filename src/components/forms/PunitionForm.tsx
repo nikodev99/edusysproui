@@ -89,7 +89,7 @@ export const PunitionForm = ({control, errors, edit, data, handleUpdate, parent 
                 validateStatus: form.validate('status', parent),
                 help: form.error('status', parent),
                 defaultValue: (data ? data.status : undefined),
-                onFinish: edit && handleUpdate ? (value: unknown) => handleUpdate('type', value) : undefined,
+                onFinish: edit && handleUpdate ? (value: unknown) => handleUpdate('status', value) : undefined,
             }
         },
         {
@@ -105,7 +105,7 @@ export const PunitionForm = ({control, errors, edit, data, handleUpdate, parent 
                 validateStatus: form.validate('executedBy', parent),
                 help: form.error('executedBy', parent),
                 defaultValue: (data ? data.executedBy : undefined),
-                onFinish: edit && handleUpdate ? (value: unknown) => handleUpdate('type', value) : undefined,
+                onFinish: edit && handleUpdate ? (value: unknown) => handleUpdate('executedBy', value) : undefined,
             }
         },
         {
@@ -115,12 +115,12 @@ export const PunitionForm = ({control, errors, edit, data, handleUpdate, parent 
                 control: control,
                 name: form.name('description', parent),
                 label: 'Description',
-                lg: 12,
+                lg: edit ? onlyField : 12,
                 md: onlyField,
                 placeholder: "Description (max. 2000 characters)",
                 validateStatus: form.validate('description', parent),
                 help: form.error('description', parent),
-                defaultValue: (data ? data.type : undefined),
+                defaultValue: (data ? data.description : undefined),
                 onFinish: edit && handleUpdate ? (value: unknown) => handleUpdate('description', value) : undefined,
             }
         },
@@ -147,12 +147,12 @@ export const PunitionForm = ({control, errors, edit, data, handleUpdate, parent 
                 control: control,
                 name: form.name('appealedNote', parent),
                 label: "Note de l'appel",
-                lg: 12,
+                lg: edit ? onlyField : 12,
                 md: onlyField,
                 placeholder: "Note de l'appel (max. 2000 characters)",
                 validateStatus: form.validate('appealedNote', parent),
                 help: form.error('appealedNote', parent),
-                defaultValue: (data ? data.type : undefined),
+                defaultValue: (data ? data.appealedNote : undefined),
                 onFinish: edit && handleUpdate ? (value: unknown) => handleUpdate('appealedNote', value) : undefined,
             }
         },

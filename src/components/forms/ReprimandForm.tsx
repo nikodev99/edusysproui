@@ -66,6 +66,7 @@ export const ReprimandForm = <T extends object>(
                 options: [
                     {value: classe?.id, label: classe?.name}
                 ],
+                selectedValue: classe?.id as PathValue<T, Path<T>>,
                 validateStatus: form.validate('id', 'student.classe'),
                 help: form.error('id', 'student.classe'),
                 defaultValue: (data ? data.student.classe.id : classe?.id) as PathValue<T, Path<T>>,
@@ -86,6 +87,7 @@ export const ReprimandForm = <T extends object>(
                 options: [
                     {value: reprimandee?.id, label: setName(student)}
                 ],
+                selectedValue: (data ? data?.student?.id : reprimandee?.id) as PathValue<T, Path<T>>,
                 validateStatus: form.validate('id', 'student'),
                 help: form.error('id', 'student'),
                 defaultValue: (data ? data.student.id : reprimandee?.id) as PathValue<T, Path<T>>,
@@ -116,7 +118,7 @@ export const ReprimandForm = <T extends object>(
                 hasForm: edit,
                 control: control,
                 name: 'type' as Path<T>,
-                label: 'Type de reprimande',
+                label: 'Type de réprimande',
                 lg: onlyField,
                 md: onlyField,
                 required: true,
@@ -148,7 +150,7 @@ export const ReprimandForm = <T extends object>(
                 ],
                 validateStatus: form.validate('id', 'issuedBy'),
                 help: form.error('id', 'issuedBy'),
-                defaultValue: (data ? data.type : user?.personalInfo) as PathValue<T, Path<T>>,
+                defaultValue: (data ? data.issuedBy?.id : user?.personalInfo) as PathValue<T, Path<T>>,
             }
         },
         {
@@ -158,12 +160,13 @@ export const ReprimandForm = <T extends object>(
                 control: control,
                 name: form.name('description') as Path<T>,
                 label: 'Description',
-                lg: 12,
+                lg: edit ? onlyField : 12,
+                required: true,
                 md: onlyField,
                 placeholder: "Description (max. 2000 characters)",
                 validateStatus: form.validate('description'),
                 help: form.error('description'),
-                defaultValue: (data ? data.type : undefined) as PathValue<T, Path<T>>,
+                defaultValue: (data ? data.description : undefined) as PathValue<T, Path<T>>,
                 onFinish: edit && handleUpdate ? (value: unknown) => handleUpdate('description', value) : undefined,
             }
         },

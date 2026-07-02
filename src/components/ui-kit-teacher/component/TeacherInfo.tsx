@@ -15,8 +15,7 @@ import {Flex, TableColumnsType, Tag} from "antd";
 import {useRawFetch} from "@/hooks/useFetch.ts";
 import {getNumberOfStudentTaughtByClasse} from "@/data/repository/teacherRepository.ts";
 import {Timeline} from "@/components/graph/Timeline.tsx";
-import {getSomeStudentReprimandedByTeacher} from "@/data/repository/reprimandRepository.ts";
-import {Reprimand, Assignment} from "@/entity";
+import {Assignment} from "@/entity";
 import {Table as CustomTable} from "@/components/ui/layout/Table.tsx";
 import {ReprimandType} from "@/entity/enums/reprimandType.ts";
 import {ShapePieChart} from "@/components/graph/ShapePieChart.tsx";
@@ -34,6 +33,7 @@ import {ScheduleCalendar} from "@/components/common/ScheduleCalendar.tsx";
 import {useDepartmentRepo} from "@/hooks/actions/useDepartmentRepo.ts";
 import {statusConfig} from "@/entity/domain/courseProgram.ts";
 import {LuCircleCheck, LuClock} from "react-icons/lu";
+import {useReprimandRepo} from "@/hooks/actions/useReprimandRepo.ts";
 
 type TeacherInfo = InfoPageProps<Teacher>
 
@@ -201,17 +201,8 @@ const LessonPlan = ({infoData, color, seeMore}: TeacherInfo) => {
 const StudentReprimanded = ({infoData, color, seeMore}: TeacherInfo) => {
     const {personalInfo} = infoData
 
-    const [studentReprimanded, setStudentReprimanded] = useState<Reprimand[]>([])
-    const fetch = useRawFetch();
-
-    useEffect(() => {
-        fetch(getSomeStudentReprimandedByTeacher, [personalInfo?.id])
-            .then(resp => {
-                if(resp.success) {
-                    setStudentReprimanded(resp.data as Reprimand[])
-                }
-            })
-    }, [fetch, personalInfo?.id]);
+    const {useGetSomeStudentReprimandByTeacher} = useReprimandRepo()
+    const studentReprimanded = useGetSomeStudentReprimandByTeacher(personalInfo?.id as number)
 
     const dataSource = studentReprimanded?.map(r => ({
         key: r.id,

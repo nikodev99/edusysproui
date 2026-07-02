@@ -283,10 +283,10 @@ export const useStudentRepo = (context: UserPermission = UserPermission.ALL) => 
         return count
     };
 
-    const studentOptions = useCallback((data?: Enrollment[]): Options => {
+    const studentOptions = useCallback((data?: Enrollment[], isActualStudentId: boolean = false): Options => {
         return data ? data?.map(i => ({
             label: setFirstName(`${i?.student?.personalInfo?.lastName} ${i?.student?.personalInfo?.firstName}`),
-            value: i?.id as number
+            value: isActualStudentId ? i?.student?.id : i?.id as number
         })) : [] as Options
     }, [])
 

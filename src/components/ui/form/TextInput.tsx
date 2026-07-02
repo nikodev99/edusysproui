@@ -42,13 +42,14 @@ export const FormInput = <T extends FieldValues>(inputProps: dataEntryProps<T>) 
                         onFocus={() => clearErrors ? clearErrors(field.name) : null}
                         {...field}
                         defaultValue={defaultValue as PathValue<T, Path<T>>}
-                        autoSize={{minRows: 3, maxRows: 5}}
+                        autoSize={{minRows: 3}}
                     />}
                     {!inputType && <Input
                         onFocus={() => clearErrors ? clearErrors(field.name) : null}
                         placeholder={placeholder as string}
                         {...field}
                         defaultValue={defaultValue as PathValue<T, Path<T>>}
+                        disabled={disabled}
                     />}
                     <Button disabled={field.value === defaultValue} htmlType='submit'>{buttonLabel ?? <LuSave/>}</Button>
                 </Space.Compact>
@@ -94,8 +95,9 @@ export const FormInput = <T extends FieldValues>(inputProps: dataEntryProps<T>) 
                         disabled={disabled}
                         onFocus={() => clearErrors ? clearErrors(field.name) : null}
                         {...field}
+                        style={{width: '100%'}}
                         defaultValue={defaultValue as PathValue<T, Path<T>>}
-                        autoSize
+                        autoSize={{minRows: 3}}
                     />}
                     {!inputType && (addonAfter ? (
                         <Space.Compact>

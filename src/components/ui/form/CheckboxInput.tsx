@@ -1,8 +1,9 @@
 import {FieldValues} from "react-hook-form";
 import {TypedInputType} from "@/core/utils/interfaces.ts";
 import FormItem from "@/components/ui/form/FormItem.tsx";
-import {Checkbox, Form, Space} from "antd";
+import {Button, Checkbox, Form, Space} from "antd";
 import Grid from "@/components/ui/layout/Grid.tsx";
+import {LuSave} from "react-icons/lu";
 
 export const CheckboxForm = <T extends FieldValues>(
     checkboxProps: TypedInputType<T> & {isCompact?: boolean}
@@ -33,6 +34,7 @@ export const CheckboxForm = <T extends FieldValues>(
                                     {checkLabel}
                                 </Checkbox>
                             )}
+                            <Button disabled={field.value === defaultValue} htmlType='submit' icon={<LuSave/>} />
                         </Space.Compact>
                     ) : (
                         <>

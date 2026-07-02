@@ -1,11 +1,12 @@
 import {useFetch} from "../useFetch.ts";
 import {
     createReprimand, getAllStudentReprimandedByTeacher, getStudentReprimands, getSomeStudentReprimandedByTeacher,
-    ReprimandFilterProps, getAllStudentReprimands, getClasseReprimands
+    getAllStudentReprimands, getClasseReprimands
 } from "@/data/repository/reprimandRepository.ts";
-import {Pageable, RepoOptions} from "@/core/utils/interfaces.ts";
+import {RepoOptions} from "@/core/utils/interfaces.ts";
 import {useInsert} from "@/hooks/usePost.ts";
 import {reprimandSchema} from "@/schema/models/reprimandSchema.ts";
+import {ReprimandFilterProps} from "@/entity/domain/reprimand.ts";
 
 export const useReprimandRepo = () => {
     const useInsertReprimand = () => useInsert(reprimandSchema, createReprimand, {
@@ -37,17 +38,18 @@ export const useReprimandRepo = () => {
         }
     }
 
-    const useGetSomeStudentReprimandByTeacher = (teacherId: string) => {
+    const useGetSomeStudentReprimandByTeacher = (teacherId: number) => {
         const {data} = useFetch(['some-student-reprimands', teacherId], getSomeStudentReprimandedByTeacher, [teacherId], !!teacherId)
         return data
     }
 
-    const useGetAllStudentReprimandByTeacher = (teacherId: number, academicYearId: string, pageable: Pageable = {page: 0, size: 10}) => useFetch(
-        ['all-student-reprimands', teacherId, academicYearId],
-        getAllStudentReprimandedByTeacher,
-        [teacherId, academicYearId, pageable],
-        !!teacherId && !!academicYearId
-    )
+    const useGetAllStudentReprimandByTeacher = (teacherId: number) => {
+        return {
+            fetchReprimands: (filters: ReprimandFilterProps, page: number, size: number, sortField?: string, sortOrder?: string) => {
+                return getAllStudentReprimandedByTeacher(teacherId, filters, {page: page, size: size}, sortField, sortOrder)
+            }
+        }
+    }
 
     return {
         useInsertReprimand,

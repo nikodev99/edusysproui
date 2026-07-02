@@ -91,6 +91,14 @@ class Datetime {
         return instance;
     }
 
+    /**
+     * Parses the provided date input and returns a Dayjs instance adjusted to the specified timezone and locale.
+     *
+     * @param {DateInput} date - The date to be parsed. Can be a `string`, `Date` object, an array representing date components,
+     * a timestamp in milliseconds or seconds, or a Dayjs instance.
+     * @return {Dayjs} A Dayjs instance representing the parsed date, adjusted to the configured timezone and locale.
+     * @throws {Error} Throws an error if the date format is invalid or unsupported.
+     */
     private _parse(date: DateInput): Dayjs {
         if (typeof date === "string") {
             return dayjs.tz(date, this.timezone).locale(this.locale);
@@ -125,15 +133,38 @@ class Datetime {
 
     // ── Static factories ──────────────────────────────────────────────────────
 
+    /**
+     * Creates a new instance of the Datetime class using the provided date, timezone, and locale values.
+     *
+     * @param {DateInput | Params} date - The input date or parameters to initialize the Datetime instance.
+     * @param {string} [timezone] - Optional. The timezone to use for the Datetime instance.
+     * @param {string} [locale] - Optional. The locale to apply to the Datetime instance.
+     * @return {Datetime} A new Datetime instance initialized with the specified values.
+     */
     static of(date: DateInput | Params, timezone?: string, locale?: string): Datetime {
         return new Datetime(date, timezone, locale);
     }
 
-    /** Returns the current moment. No date argument — use Datetime.of() for that. */
+    /**
+     * Creates a new `Datetime` instance representing the current date and time.
+     *
+     * @param {string} [timezone] - The timezone to use for the new `Datetime` instance. If omitted, the default timezone is used.
+     * @param {string} [locale] - The locale to use for the new `Datetime` instance. If omitted, the default locale is used.
+     * @return {Datetime} A `Datetime` instance representing the current date and time.
+     */
     static now(timezone?: string, locale?: string): Datetime {
         return new Datetime(undefined, timezone, locale);
     }
 
+    /**
+     * Converts the provided time to a `Datetime` object representing the current date with the given time applied.
+     *
+     * @param {number[] | string | Params} time - The input time which can be a number array, string, or `Params` object.
+     * For an array, the format is `[hour, minute, second(optional)]`.
+     * For a `Params` object, it should have a `time` property as a number array.
+     * For a string, it is parsed into a time array using `datehelper.toTimeArray`.
+     * @return {Datetime} A `Datetime` object with the provided time applied to the current date, or the current date and time if the input is invalid.
+     */
     static timeToCurrentDate(time: number[] | string | Params): Datetime {
         const t = isParams(time) ? (time.time as number[]) : datehelper.toTimeArray(time)
         if (Array.isArray(t) && t.length >= 2) {
@@ -278,11 +309,25 @@ class Datetime {
 
     // ── Formatting ────────────────────────────────────────────────────────────
 
+    /**
+     * Formats the date into a specified string format.
+     *
+     * @param {string | Params} [format] - The format string or a Params object containing the format.
+     * If not specified, a default format is used.
+     * @return {string} The formatted date string.
+     */
     format(format?: string | Params): string {
         const f = (isParams(format) ? format.format : format) ?? Datetime.DEFAULT_FORMAT;
         return setFirstName(this.date.format(f));
     }
 
+    /**
+     * Formats the current date and time according to the specified format or parameters.
+     *
+     * @param {string | Params} [format] - The format string or an object containing formatting parameters. If a `Params` object is provided, it can include a `format` property for defining the date-time format and a `to` property that adjusts the format with additional context.
+     * @param {boolean} [to] - An optional flag to determine whether to use a specific format variant. Ignored if a `Params` object is passed as the `format` parameter.
+     * @return {string} The formatted date-time string based on the provided format or default settings.
+     */
     fDatetime(format?: string | Params, to?: boolean): string {
         const f = isParams(format) ? format.format : format;
         const defaultFormat = isParams(format)
@@ -291,14 +336,34 @@ class Datetime {
         return setFirstName(this.format(f || defaultFormat));
     }
 
+    /**
+     * Formats the current date based on the provided format string or parameters.
+     *
+     * @param {string | Params} [format] - A string defining the desired date format or an object of parameters. Defaults to "DD MMMM YYYY" if not provided.
+     * @return {string} The formatted date string.
+     */
     fDate(format?: string | Params): string {
         return setFirstName(this.format(format ?? "DD MMMM YYYY"));
     }
 
+    /**
+     * Returns the current time formatted according to the provided format string or Params object.
+     * If no format is provided, it defaults to "HH:mm".
+     *
+     * @param {string | Params} [format] - The format string or Params object to customize the output.
+     * @return {string} The formatted time as a string.
+     */
     time(format?: string | Params): string {
         return setFirstName(this.format(format ?? "HH:mm"));
     }
 
+    /**
+     * Converts the current date object into a formatted string representing
+     * the full day including the day name, date, month name, and year,
+     * and applies a custom transformation using `setFirstName` function.
+     *
+     * @return {string} A string formatted as "DayName Day MonthName Year" after processing with `setFirstName`.
+     */
     fullDay(): string {
         return setFirstName(this.format("dddd D MMMM YYYY"));
     }

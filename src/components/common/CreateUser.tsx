@@ -20,7 +20,6 @@ const CreateUser = ({open, onCancel, personalInfo, userType}: CreateUserProps) =
     console.log({submitCount, errors, formData: watch(), flowType})
 
     const createUser = async (data: SignupSchema | AssignUserToSchoolSchema) => {
-        console.log({userToCreate: data})
         return handleSubmitFlow(data)
     }
 
@@ -58,4 +57,10 @@ const CreateUser = ({open, onCancel, personalInfo, userType}: CreateUserProps) =
     )
 }
 
-export { CreateUser }
+const RemoveUser = () => {
+    return(
+        <div>Remove the user</div>
+    )
+}
+
+export { CreateUser, RemoveUser }

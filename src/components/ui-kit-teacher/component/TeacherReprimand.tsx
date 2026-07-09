@@ -1,7 +1,7 @@
 import {InfoPageProps, Pageable} from "@/core/utils/interfaces.ts";
 import {Enrollment, Reprimand, Teacher} from "@/entity";
 import Responsive from "@/components/ui/layout/Responsive.tsx";
-import {Button, Flex, Select, Space} from "antd";
+import {Button, Flex, Select, Skeleton, Space} from "antd";
 import Grid from "@/components/ui/layout/Grid.tsx";
 import {SelectAcademicYear} from "@/components/common/SelectAcademicYear.tsx";
 import {useEffect, useState} from "react";
@@ -20,7 +20,7 @@ import {filtersStatus, PunishmentStatus} from "@/entity/enums/punishmentStatus.t
 import {Pagination} from "@/components/custom/Pagination.tsx";
 import Block from "@/components/view/Block.tsx";
 
-export const TeacherReprimand = ({infoData}: InfoPageProps<Teacher>) => {
+export const TeacherReprimand = ({infoData, hasPermission, isSelf}: InfoPageProps<Teacher>) => {
     const [academicYear, setAcademicYear] = useState<string>()
     const [studentValue, setStudentValue] = useState<string | null>(null)
     const [openDialog, setOpenDialog] = useState(false)
@@ -63,6 +63,10 @@ export const TeacherReprimand = ({infoData}: InfoPageProps<Teacher>) => {
         })
     }, [academicYear, filter]);
 
+    if (!infoData) {
+        return <Skeleton active paragraph={{rows: 10}} />
+    }
+
     const handleToDiscipline = () => {
         if (resource) {
             toDiscipline(resource.student.id as string, resource)
@@ -85,7 +89,7 @@ export const TeacherReprimand = ({infoData}: InfoPageProps<Teacher>) => {
                                 getAcademicYear={setAcademicYear as () => void}
                                 variant={'filled'}
                             />
-                            <Select
+                            {(hasPermission && isSelf) && (<><Select
                                 placeholder={`Rechercher ${(text.student.label).toLowerCase()} à réprimander`}
                                 filterOption={false}
                                 onSearch={handleSearch}
@@ -99,7 +103,7 @@ export const TeacherReprimand = ({infoData}: InfoPageProps<Teacher>) => {
                                 showSearch
                                 value={studentValue}
                             />
-                            <Button type='primary' onClick={handleToDiscipline}>Reprimander</Button>
+                            <Button type='primary' onClick={handleToDiscipline}>Reprimander</Button></>)}
                         </Flex>
                     </Grid>
                 </Responsive>

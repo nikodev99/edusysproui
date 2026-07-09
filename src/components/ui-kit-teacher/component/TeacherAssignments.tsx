@@ -7,7 +7,7 @@ import {AssignmentView} from "@/components/common/AssignmentView.tsx";
 import {Button} from "antd";
 import {useRedirect} from "@/hooks/useRedirect.ts";
 
-export const TeacherAssignments = ({infoData, hasPermission, resourceYear}: InfoPageProps<Teacher>) => {
+export const TeacherAssignments = ({infoData, hasPermission, resourceYear, isSelf}: InfoPageProps<Teacher>) => {
     const {personalInfo, courses, classes} = infoData
     
     const [subjectValue, setSubjectValue] = useState<number | undefined>(courses && courses?.length > 0 ? courses[0].id as number : 0)
@@ -46,7 +46,7 @@ export const TeacherAssignments = ({infoData, hasPermission, resourceYear}: Info
                 startDate: resourceYear?.startDate,
                 endDate: resourceYear?.endDate
             }}
-            {...(hasPermission
+            {...(hasPermission && isSelf
                 ? {
                     selects: [
                         <Button key="add-exam" type="primary" onClick={toExam}>

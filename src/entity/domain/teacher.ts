@@ -12,3 +12,15 @@ export interface Teacher {
     createdAt?: Date
     modifyAt?: Date
 }
+
+export enum OperationType {ADD, REMOVE}
+
+export interface TeacherClassUpdateRequest {
+    operationType: OperationType;
+    classIds: number[];
+}
+
+export interface TeacherCourseUpdateRequest {
+    operationType: OperationType;
+    courseIds: number[];
+}

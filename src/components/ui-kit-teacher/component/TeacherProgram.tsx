@@ -3,7 +3,7 @@ import {InsertNewProgram, ProgramCard} from "@/components/ui-kit-teacher"
 import {Teacher} from "@/entity";
 import {ReactNode, useEffect, useMemo, useState} from "react";
 import TabItem from "@/components/view/TabItem.tsx";
-import {Button, Card, Flex, Progress, Select, Space} from "antd";
+import {Button, Card, Flex, Progress, Select, Skeleton, Space} from "antd";
 import Grid from "@/components/ui/layout/Grid.tsx";
 import Responsive from "@/components/ui/layout/Responsive.tsx";
 import {useCourseProgramRepo} from "@/hooks/actions/useCourseProgramRepo.ts";
@@ -32,7 +32,7 @@ function updateSaved(key: keyof SavedParams, value: unknown) {
     }))
 }
 
-export const TeacherProgram = ({infoData, color, hasPermission}: InfoPageProps<Teacher>) => {
+export const TeacherProgram = ({infoData, color, hasPermission, isSelf}: InfoPageProps<Teacher>) => {
     const {courses, classes} = infoData
     const saved = LocalStorageManager.get<SavedParams>("savedParams")
 
@@ -109,6 +109,9 @@ export const TeacherProgram = ({infoData, color, hasPermission}: InfoPageProps<T
         }
     }, [academicYear, classeValue, infoData?.id, refetch, subjectValue, teacherId]);
 
+    if (!infoData)
+        return <Skeleton active={true} paragraph={{ rows: 4 }} />
+
     const handleSubjectValue = (value: number) => {
         setSubjectValue(value)
         updateSaved('course', value)
@@ -172,7 +175,7 @@ export const TeacherProgram = ({infoData, color, hasPermission}: InfoPageProps<T
                     ))}
                 </Space>]: []),
 
-                ...(hasPermission ? [<Button
+                ...(hasPermission && isSelf ? [<Button
                     type='primary'
                     icon={<LuPlus />}
                     onClick={() => handleShowClasseField()}
@@ -270,7 +273,7 @@ export const TeacherProgram = ({infoData, color, hasPermission}: InfoPageProps<T
                                                     program={sp}
                                                     key={sp?.id}
                                                     index={index + 1}
-                                                    hasPermission={hasPermission}
+                                                    hasPermission={hasPermission && isSelf}
                                                     academicYearId={academicYear}
                                                     onRefetch={refetch}
                                                     teacherId={teacherId}
@@ -299,7 +302,7 @@ export const TeacherProgram = ({infoData, color, hasPermission}: InfoPageProps<T
                                                 <p style={{ fontSize: 13, color: "#94A3B8", margin: "0 0 24px", maxWidth: 360, marginInline: "auto" }}>
                                                     Créez un programme pour l'année <strong>{currentAcademicYear?.academicYear}</strong>.
                                                 </p>
-                                                {hasPermission && <div>
+                                                {(hasPermission && isSelf) && <div>
                                                     <Button type='primary' onClick={() => handleShowClasseField(false)}>
                                                         Créer un programme
                                                     </Button>
@@ -311,7 +314,7 @@ export const TeacherProgram = ({infoData, color, hasPermission}: InfoPageProps<T
                             </Flex>
                         </Grid>
                     </Responsive>
-                    {hasPermission && openNewProgramModal && (
+                    {(hasPermission && isSelf && openNewProgramModal) && (
                         <InsertNewProgram 
                             open={openNewProgramModal} 
                             onClose={setOpenNewProgramModal} 

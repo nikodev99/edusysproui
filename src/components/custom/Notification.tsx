@@ -14,11 +14,11 @@ export type NotificationProps = {
 export const Notification = ({responseMessages, setRedirect, isNotif = true, onClose, onlyNotif = false}: NotificationProps) => {
     return(
         <>
-            {!onlyNotif && responseMessages?.success && <FormSuccess message={responseMessages?.success} setRedirect={setRedirect} isNotif={isNotif}/>}
-            {!onlyNotif && responseMessages?.error && <FormError message={responseMessages?.error} isNotif={isNotif}/>}
+            {responseMessages?.success && <FormSuccess message={responseMessages?.success} setRedirect={setRedirect} isNotif={isNotif || onlyNotif}/>}
+            {responseMessages?.error && <FormError message={responseMessages?.error} isNotif={isNotif || onlyNotif}/>}
 
-            {responseMessages?.success && <Alert type={'success'} message={responseMessages?.success} closeIcon showIcon  onClose={onClose} style={{marginBottom: '10px'}}/>}
-            {responseMessages?.error && <Alert type={'error'} message={responseMessages?.error} closeIcon showIcon onClose={onClose} style={{marginBottom: '10px'}}/>}
+            {!onlyNotif &&  responseMessages?.success && <Alert type={'success'} message={responseMessages?.success} closeIcon showIcon  onClose={onClose} style={{marginBottom: '10px'}}/>}
+            {!onlyNotif && responseMessages?.error && <Alert type={'error'} message={responseMessages?.error} closeIcon showIcon onClose={onClose} style={{marginBottom: '10px'}}/>}
         </>
     )
 }

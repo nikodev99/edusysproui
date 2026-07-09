@@ -10,7 +10,7 @@ import {
     getTeacherById, getTeacherClasses, getTeacherCourses,
     getTeachersBasicValues,
     getTeacherSchedule,
-    getTeacherScheduleByDay
+    getTeacherScheduleByDay, getTeacherWidgets, updateTeacherClasses, updateTeacherCourses
 } from "@/data/repository/teacherRepository.ts";
 import {useEffect, useState} from "react";
 import {SectionType} from "@/entity/enums/section.ts";
@@ -21,6 +21,8 @@ import {useAuth} from "@/hooks/useAuth.ts";
 import {getShortSortOrder, setSortFieldName} from "@/core/utils/utils.ts";
 import {reportRepository} from "@/data/repository/reportRepository.ts";
 import {ReportSchema} from "@/schema";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
+import {TeacherClassUpdateRequest, TeacherCourseUpdateRequest} from "@/entity/domain/teacher.ts";
 
 export const useTeacherRepo = (context: UserPermission = UserPermission.ALL) => {
     const schoolId = useGlobalStore(state => state.schoolId)
@@ -119,7 +121,7 @@ export const useTeacherRepo = (context: UserPermission = UserPermission.ALL) => 
 
         useEffect(() => {
             if (teacherId)
-                fetch(getNumberOfStudentTaughtByTeacher, [teacherId])
+                fetch(getNumberOfStudentTaughtByTeacher, [teacherId, schoolId])
                     .then(resp => {
                         if (resp.isSuccess) {
                             setCount(resp.data as Counted)
@@ -136,7 +138,7 @@ export const useTeacherRepo = (context: UserPermission = UserPermission.ALL) => 
 
         useEffect(() => {
             if (teacherId)
-                fetch(getNumberOfStudentTaughtByClasse, [teacherId])
+                fetch(getNumberOfStudentTaughtByClasse, [teacherId, schoolId])
                     .then(resp => {
                         if (resp.isSuccess) {
                             setCount(resp.data as CountType[])
@@ -160,6 +162,37 @@ export const useTeacherRepo = (context: UserPermission = UserPermission.ALL) => 
         [teacherId, schoolId],
         enable && !!teacherId && !!schoolId
     )
+
+    const useGetWidgets = (teacherId: string, academicYear: string) => useFetch(
+        ['teacher-widgets', teacherId, academicYear],
+        getTeacherWidgets,
+        [teacherId, academicYear],
+        !!teacherId && !!academicYear
+    )
+
+    const useUpdateClasses = (teacherId: string) => {
+        const query = useQueryClient()
+        return useMutation({
+            mutationFn: async (payload: TeacherClassUpdateRequest) => {
+                return await updateTeacherClasses(teacherId, schoolId, payload)
+            },
+            onSuccess: () => {
+                query.invalidateQueries({queryKey: ["teacher", teacherId]}).then(r => r);
+                query.invalidateQueries({queryKey: ["teacher-classes", teacherId]}).then(r => r);
+            }
+        })
+    }
+
+    const useUpdateCourses = (teacherId: string) => {
+        const query = useQueryClient()
+        return useMutation({
+            mutationFn: async (payload: TeacherCourseUpdateRequest) => await updateTeacherCourses(teacherId, schoolId, payload),
+            onSuccess: () => {
+                query.invalidateQueries({queryKey: ["teacher", teacherId]}).then(r => r);
+                query.invalidateQueries({queryKey: ["teacher-courses", teacherId]}).then(r => r);
+            }
+        })
+    }
 
     const useCountAllTeachers = (): GenderCounted | undefined => {
         const [count, setCount] = useState<GenderCounted>()
@@ -205,10 +238,13 @@ export const useTeacherRepo = (context: UserPermission = UserPermission.ALL) => 
         useGetTeacherClasseStudentNumber,
         useGetTeacherClasses,
         useGetTeacherCourses,
+        useGetWidgets,
         useCountAllTeachers,
         useGetTeacherBasicValues,
         useSaveReport,
         useGetAllWeekReport,
+        useUpdateClasses,
+        useUpdateCourses,
         useViewReport
     }
 }

@@ -29,6 +29,7 @@ export const ReprimandCard = ({reprimand, refetch, dataKey}: {reprimand?: Reprim
     const [openEditDrawer, setOpenEditDrawer] = useToggle(false)
     const [openDetail, setOpenDetail] = useToggle(false)
     const {isSelfInd} = useUserRepo()
+
     if (!reprimand)
         return <Skeleton active paragraph={{ rows: 4 }} />
 

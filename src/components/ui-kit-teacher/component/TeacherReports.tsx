@@ -13,7 +13,7 @@ import {Alert} from "antd";
 import {LuServerCrash, LuTriangleAlert} from "react-icons/lu";
 import {reportStatusColors} from "@/entity/domain/report.ts";
 
-export const TeacherReports = ({infoData, resourceYear, hasPermission}: InfoPageProps<Teacher>) => {
+export const TeacherReports = ({infoData, resourceYear, hasPermission, isSelf}: InfoPageProps<Teacher>) => {
     const [weekOffset,   setWeekOffset]   = useState<number>(0);
     const [isAllDay, setIsAllDay] = useState(false)
     const {useGetTeacherSchedules, useGetAllWeekReport} = useTeacherRepo()
@@ -60,8 +60,6 @@ export const TeacherReports = ({infoData, resourceYear, hasPermission}: InfoPage
         return d?.isStrictBefore() && !submittedIds?.has(s?.id)
     }).length, [schedules, submittedIds, weekDates])
 
-    console.log('WEEK DATES: ', schedules)
-    
     const isCurrentWeek = weekOffset === 0;
     const weekLabel = datehelper.formatWeekRange(weekDates)
 
@@ -115,7 +113,7 @@ export const TeacherReports = ({infoData, resourceYear, hasPermission}: InfoPage
                 </button>
             </div>
             <main style={{ padding:"20px 28px 32px" }}>
-                <AlertBanner missing={missingCount} />
+                <AlertBanner missing={missingCount} hasPermission={hasPermission && isSelf} />
 
                 {/* Week grid */}
                 <Responsive gutter={[16, 16]}>
@@ -130,19 +128,19 @@ export const TeacherReports = ({infoData, resourceYear, hasPermission}: InfoPage
                                 reports={reports as []}
                                 academicYear={resourceYear?.id}
                                 onRefetch={refetch as never}
-                                hasPermission={hasPermission}
+                                hasPermission={hasPermission && isSelf}
                                 allDay={isAllDay}
                             />
                         </Grid>
                     ))}
                 </Responsive>
-                <ReportFooter />
+                <ReportFooter hasPermission={hasPermission} />
             </main>
         </PageWrapper>
     )
 }
 
-const ReportFooter = () => {
+const ReportFooter = ({hasPermission}: {hasPermission?: boolean}) => {
     return(
         <div style={{
             display:"flex", gap:16, marginTop:20, justifyContent:"center", flexWrap:"wrap",
@@ -153,15 +151,15 @@ const ReportFooter = () => {
                     <span style={{ fontSize:11, color:"#94A3B8", fontWeight:600 }}>{v.label}</span>
                 </div>
             ))}
-            <div style={{ fontSize:11, color:"#CBD5E1" }}>·</div>
+            {hasPermission && (<><div style={{ fontSize:11, color:"#CBD5E1" }}>·</div>
             <div style={{ fontSize:11, color:"#94A3B8" }}>
                 Les rapports sont liés à votre programme de cours et vérifiés lors du calcul de paie.
-            </div>
+            </div></>)}
         </div>
     )
 }
 
-const AlertBanner = ({missing}: {missing?: number}) => {
+const AlertBanner = ({missing, hasPermission}: {missing?: number, hasPermission?: boolean}) => {
     if (missing === 0) return null;
     const severe = missing && missing > 2
 
@@ -182,7 +180,7 @@ const AlertBanner = ({missing}: {missing?: number}) => {
                     ? "1 rapport manquant cette semaine"
                     : `${missing} rapports de séance manquants cette semaine`}
             </div>}
-            description={<div style={{flex:1}}>
+            description={hasPermission ? (<div style={{flex:1}}>
                 {severe && (
                     <>
                         <div style={{fontSize:12.5, color:"#B91C1C", lineHeight:1.65}}>
@@ -199,7 +197,7 @@ const AlertBanner = ({missing}: {missing?: number}) => {
                         </div>
                     </>
                 )}
-            </div>}
+            </div>): undefined}
         />
     );
 }

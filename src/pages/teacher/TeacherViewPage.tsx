@@ -1,14 +1,13 @@
 import {useLocation, useParams} from "react-router-dom";
-import {useEffect, useLayoutEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {Teacher} from "@/entity";
 import {chooseColor, MAIN_COLOR, setLastName, setName} from "@/core/utils/utils.ts";
-import {count} from "@/data";
 import {useDocumentTitle} from "@/hooks/useDocumentTitle.ts";
 import {text} from "@/core/utils/text_display.ts";
 import {useBreadCrumb} from "@/hooks/useBreadCrumb.tsx";
 import {Widgets} from "@/components/ui/layout/Widgets.tsx";
 import {WidgetItem} from "@/core/utils/interfaces.ts";
-import {Progress, Tag} from "antd";
+import {Tag} from "antd";
 import ViewHeader from "@/components/ui/layout/ViewHeader.tsx";
 import {getStatusKey, Status} from "@/entity/enums/status.ts";
 import {Gender} from "@/entity/enums/gender.tsx";
@@ -23,12 +22,12 @@ import {
 import {useToggle} from "@/hooks/useToggle.ts";
 import {ViewRoot} from "@/components/custom/ViewRoot.tsx";
 import {useTeacherRepo} from "@/hooks/actions/useTeacherRepo.ts";
-import {useStudentRepo} from "@/hooks/actions/useStudentRepo.ts"
 import {useAccount} from "@/hooks/useAccount.ts";
 import {ItemType} from "antd/es/menu/interface";
 import queryString from "query-string";
 import {usePermission} from "@/hooks/usePermission.ts";
 import {useAcademicYearRepo} from "@/hooks/actions/useAcademicYearRepo.ts";
+import {useUserRepo} from "@/hooks/actions/useUserRepo.ts";
 
 const TeacherViewPage = () => {
 
@@ -38,19 +37,19 @@ const TeacherViewPage = () => {
     const queryParam = queryString.parse(search);
     const activeTab = queryParam.show ? String(queryParam.show) : undefined;
     const [teacher, setTeacher] = useState<Teacher | null>(null)
-    const [studentTaughtCount, setStudentTaughtCount] = useState<number>(0)
     const [linkButtons, setLinkButtons] = useState<ItemType[]>([])
     const [shouldRefresh, setShouldRefresh] = useState<boolean>(false)
     const [openDrawer, setOpenDrawer] = useToggle(false)
-    const {can} = usePermission()
-    const {useCountStudent} = useStudentRepo()
-    const {useGetTeacher} = useTeacherRepo()
+    const {isSelfInd} = useUserRepo()
+    const {can, canEdit} = usePermission()
+    const {useGetTeacher, useGetWidgets} = useTeacherRepo()
     const {useAccountExists} = useAccount()
     const {currentAcademicYear} = useAcademicYearRepo()
 
-    const hasPermission = can('teacherAction', true)
+    const isTeacherAuthorized = can('teacherAction', true)
+    const isSelfAuthorized = isSelfInd(teacher?.personalInfo?.id as number)
     const {data, isLoading, isSuccess, refetch} = useGetTeacher(id as string)
-    const studentCount = useCountStudent()
+    const {data: widgets} = useGetWidgets(id as string, currentAcademicYear?.id as string)
     const accountExists = useAccountExists(teacher?.personalInfo?.id as number)
 
     const teacherName = setName(teacher?.personalInfo)
@@ -80,16 +79,6 @@ const TeacherViewPage = () => {
                 .then()
     }, [refetch, shouldRefresh]);
 
-    useLayoutEffect(() => {
-        if (teacher?.id) {
-            count(teacher.id).then((resp) => {
-                if (resp.isSuccess && 'data' in resp) {
-                    setStudentTaughtCount(resp.data ? resp?.data.count : 0);
-                }
-            });
-        }
-    }, [teacher]);
-
     const widgetItems: WidgetItem[] = [
         {
             title: 'Classes',
@@ -97,21 +86,15 @@ const TeacherViewPage = () => {
         },
         {
             title: 'Étudiants enseignés',
-            value: studentTaughtCount,
-            bottomValue: <Progress
-                percent={Math.round((studentTaughtCount * 100) / (studentCount?.total as number))}
-                size={{height: 20}}
-                percentPosition={{align: 'center', type: 'inner'}}
-                strokeColor={color}
-            />
+            value: widgets?.students ?? 0
         },
         {
-            title: 'Commentaires',
-            value: '',
+            title: 'Rapport',
+            value: widgets?.reports ?? 0
         },
         {
             title: 'Étudiants blamés',
-            value: '',
+            value: widgets?.reprimands ?? 0,
         }
     ]
 
@@ -155,6 +138,7 @@ const TeacherViewPage = () => {
                         color={color}
                         academicYear={currentAcademicYear?.id}
                         dataKey='info'
+                        isSelf={isSelfAuthorized}
                     />},
                     {label: "Agenda", children: <TeacherAgenda
                         infoData={teacher as Teacher}
@@ -163,24 +147,29 @@ const TeacherViewPage = () => {
                     />},
                     {label: "Programme", children: <TeacherProgram
                         infoData={teacher as Teacher}
-                        hasPermission={hasPermission}
+                        hasPermission={isTeacherAuthorized}
+                        isSelf={isSelfAuthorized}
                         color={color}
                         dataKey='program'
                     />},
                     {label: "Devoirs", children: <TeacherAssignments
                         infoData={teacher as Teacher}
-                        hasPermission={hasPermission}
+                        hasPermission={isTeacherAuthorized}
+                        isSelf={isSelfAuthorized}
                         resourceYear={currentAcademicYear}
                         dataKey='assignment'
                     />},
                     {label: "Réprimande", children: <TeacherReprimand
                         infoData={teacher as Teacher}
                         dataKey='reprimand'
+                        hasPermission={isTeacherAuthorized}
+                        isSelf={isSelfAuthorized}
                     />},
                     {label: "Rapport Journalier", children: <TeacherReports
                         infoData={teacher as Teacher}
                         resourceYear={currentAcademicYear}
-                        hasPermission={hasPermission}
+                        hasPermission={isTeacherAuthorized}
+                        isSelf={isSelfAuthorized}
                         dataKey={"reports"}
                     />},
                 ]}
@@ -192,7 +181,7 @@ const TeacherViewPage = () => {
                 activeTab={activeTab}
                 memorizedTabKey={'teacherTabKey'}
             />
-            {teacher && openDrawer && <section>
+            {(canEdit && teacher && openDrawer) && <section>
                 <TeacherEditDrawer
                     open={openDrawer}
                     close={handleCloseDrawer}

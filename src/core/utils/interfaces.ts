@@ -414,6 +414,7 @@ export interface InfoPageProps<T extends object> {
     academicYear?: string
     resourceYear?: AcademicYear
     hasPermission?: boolean
+    isSelf?: boolean
 }
 
 export interface EditProps<TData extends object> {

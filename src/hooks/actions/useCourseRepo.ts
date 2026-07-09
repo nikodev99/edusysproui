@@ -1,11 +1,11 @@
 import {useFetch, useRawFetch} from "../useFetch.ts";
-import {Pageable} from "../../core/utils/interfaces.ts";
-import {getAllSchoolCourses} from "../../data/action/courseAction.ts";
+import {Pageable} from "@/core/utils/interfaces.ts";
+import {getAllSchoolCourses} from "@/data/action/courseAction.ts";
 import {UseQueryResult} from "@tanstack/react-query";
-import {Course} from "../../entity";
-import {getAllBasicCourses, getAllCoursesSearch, getCourseById} from "../../data/repository/courseRepository.ts";
+import {Course} from "@/entity";
+import {getAllBasicCourses, getAllCoursesSearch, getCourseById} from "@/data/repository/courseRepository.ts";
 import {useEffect, useState} from "react";
-import {useGlobalStore} from "../../core/global/store.ts";
+import {useGlobalStore} from "@/core/global/store.ts";
 
 export const useCourseRepo = () => {
     const schoolId = useGlobalStore(state => state.schoolId)

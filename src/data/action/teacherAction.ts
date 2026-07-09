@@ -1,7 +1,5 @@
 import {getShortSortOrder, setSortFieldName} from "@/core/utils/utils.ts";
-import {getAllTeachers, getNumberOfStudentTaughtByTeacher, getTeacherById} from "../repository/teacherRepository.ts";
-import {ErrorCatch} from "./error_catch.ts";
-import {Counted} from "@/core/utils/interfaces.ts";
+import {getAllTeachers, getTeacherById} from "../repository/teacherRepository.ts";
 import {loggedUser} from "@/auth/jwt/LoggedUser.ts";
 
 const schoolId: string = loggedUser.getSchool()?.id as string;
@@ -17,24 +15,6 @@ export const fetchTeachers = async (page: number, size: number, sortField?: stri
 
 export const fetchTeacherById = async (teacherId: string) => {
     return await getTeacherById(teacherId, schoolId)
-}
-
-export const count = async (teacherId: string) => {
-    try {
-        const resp = await getNumberOfStudentTaughtByTeacher(teacherId)
-        if (resp && resp.status === 200) {
-            return {
-                isSuccess: true,
-                data: resp.data as Counted
-            }
-        }else {
-            return {
-                isSuccess: false,
-            }
-        }
-    }catch (e: unknown) {
-        return ErrorCatch(e)
-    }
 }
 
 const sortedField = (sortField: string[] | string) => {

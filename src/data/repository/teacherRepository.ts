@@ -4,6 +4,7 @@ import {Counted, CountType} from "@/core/utils/interfaces.ts";
 import {AxiosResponse} from "axios";
 import {TeacherSchema} from "@/schema";
 import {SectionType} from "@/entity/enums/section.ts";
+import {TeacherClassUpdateRequest, TeacherCourseUpdateRequest} from "@/entity/domain/teacher.ts";
 
 export const insertTeacher = async (teacher: TeacherSchema): Promise<AxiosResponse<Teacher>> => {
     return await apiClient.post<Teacher>('/teachers', teacher)
@@ -66,12 +67,12 @@ export const getTeacherCourses = (teacherId: string, schoolId: string) => {
 }
 
 
-export const getNumberOfStudentTaughtByTeacher = (teacherId: string) => {
-    return apiClient.get<Counted>(`/teachers/${teacherId}/count_student`)
+export const getNumberOfStudentTaughtByTeacher = (teacherId: string, schoolId: string) => {
+    return apiClient.get<Counted>(`/teachers/${teacherId}/count_student/${schoolId}`)
 }
 
-export const getNumberOfStudentTaughtByClasse = (teacherId: string) => {
-    return apiClient.get<CountType>(`/teachers/count_by_classe/${teacherId}`)
+export const getNumberOfStudentTaughtByClasse = (teacherId: string, schoolId: string) => {
+    return apiClient.get<CountType>(`/teachers/count_by_classe/${teacherId}/${schoolId}`)
 }
 
 export const getTeacherSchedule = (teacherId: string, academicYear: string): Promise<AxiosResponse<Schedule[]>> => {
@@ -80,6 +81,26 @@ export const getTeacherSchedule = (teacherId: string, academicYear: string): Pro
             academicYear: academicYear
         }
     })
+}
+
+export const getTeacherWidgets = (teacherId: string, academicYear: string) => {
+    return apiClient.get<{
+        students: number,
+        reports: number,
+        reprimands: number
+    }>(`/teachers/widgets/${teacherId}`, {
+        params: {
+            academicYear: academicYear
+        }
+    })
+}
+
+export const updateTeacherClasses = (teacherId: string, schoolId: string, request: TeacherClassUpdateRequest) => {
+    return apiClient.patch<string>(`/teachers/classes/${teacherId}/${schoolId}`, request)
+}
+
+export const updateTeacherCourses = (teacherId: string, schoolId: string, request: TeacherCourseUpdateRequest) => {
+    return apiClient.patch<string>(`/teachers/courses/${teacherId}/${schoolId}`, request)
 }
 
 export const getTeacherScheduleByDay = (teacherId: string, academicYear: string, allDay: boolean): Promise<AxiosResponse<Schedule[]>> => {

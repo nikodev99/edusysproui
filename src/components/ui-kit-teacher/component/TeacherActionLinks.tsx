@@ -1,6 +1,6 @@
 import {ActionButtonsProps} from "@/core/utils/interfaces.ts";
 import {useMemo} from "react";
-import {CreateUser} from "../../common/CreateUser.tsx";
+import {CreateUser, RemoveUser} from "../../common/CreateUser.tsx";
 import {UserType} from "@/auth/dto/user.ts";
 import {Teacher} from "@/entity";
 import {useToggle} from "@/hooks/useToggle.ts";
@@ -18,7 +18,7 @@ export const TeacherActionLinks = ({data, getItems}: TeacherActionButtons) => {
     const [openCreateUser, setOpenCreateUser] = useToggle(false)
     const [removeGuardian, setRemoveGuardian] = useToggle(false)
     const {useAccountExists, useAccountExistsInSchool} = useAccount()
-    const {canCreate, canDelete, can} = usePermission()
+    const {canCreate, canDelete} = usePermission()
     const {toViewTeacher} = useRedirect()
 
     const {personalInfo} = useMemo(() => ({
@@ -82,6 +82,7 @@ export const TeacherActionLinks = ({data, getItems}: TeacherActionButtons) => {
                 personalInfo={personalInfo}
                 userType={UserType.TEACHER}
             />}
+            {canDelete && removeGuardian && <RemoveUser />}
         </section>
     )
 }

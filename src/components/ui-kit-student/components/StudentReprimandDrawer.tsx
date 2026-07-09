@@ -6,7 +6,7 @@ import Tag from "@/components/ui/layout/Tag.tsx";
 import {punishmentStatusTag} from "@/entity/enums/punishmentStatus.ts";
 import {ReprimandType} from "@/entity/enums/reprimandType.ts";
 import {setFirstName} from "@/core/utils/utils.ts";
-import {LuCalendarCheck, LuCalendarDays} from "react-icons/lu";
+import {LuCalendarDays} from "react-icons/lu";
 import {PunishmentType} from "@/entity/enums/punishmentType.ts";
 
 export const StudentReprimandDrawer = ({reprimand, open, close}: {
@@ -34,8 +34,14 @@ export const StudentReprimandDrawer = ({reprimand, open, close}: {
                         {key: '2', label: 'Description', children: '', span: 3},
                         {key: '3', children: reprimand?.punishment?.description, span: 3},
                         {key: '4', label: 'Période', children: '', span: 3},
-                        {key: '5', label: <LuCalendarDays />, children: reprimand?.punishment?.startDate ? Datetime.of(reprimand?.punishment?.startDate).fDate() : "—"},
-                        {key: '6', label: <LuCalendarCheck />, children: reprimand?.punishment?.endDate ? Datetime.of(reprimand?.punishment?.endDate).fDate() : "—", span: 2},
+                        {
+                            key: '5',
+                            label: <LuCalendarDays />,
+                            children: reprimand?.punishment?.startDate && reprimand?.punishment?.endDate
+                                ? `${Datetime.of(reprimand?.punishment?.startDate).fDate('DD MMM YYYY')} - ${Datetime.of(reprimand?.punishment?.endDate).fDate('DD MMM YYYY')}`
+                                : "—",
+                            span: 3
+                        },
                         {key: '7', label: 'Exécuté par', children: reprimand?.punishment?.executedBy ? reprimand?.punishment?.executedBy : '-', span: 3},
                         {key: '8', label: 'Status', children: <Tag color={tagColor}>{tagText}</Tag>, span: 3},
                         {key: '9', label: 'En appel', children: <div>

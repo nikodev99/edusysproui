@@ -1,8 +1,8 @@
-import {School} from "../../entity";
+import {School} from "@/entity";
 import {useFetch} from "../useFetch.ts";
-import {getSchool, getSchoolSections} from "../../data/repository/schoolRepository.ts";
-import {SectionType} from "../../entity/enums/section.ts";
-import {useGlobalStore} from "../../core/global/store.ts";
+import {getSchool, getSchoolSections} from "@/data/repository/schoolRepository.ts";
+import {SectionType} from "@/entity/enums/section.ts";
+import {useGlobalStore} from "@/core/global/store.ts";
 
 export const useSchoolRepo = () => {
     const schoolId = useGlobalStore(state => state.schoolId)

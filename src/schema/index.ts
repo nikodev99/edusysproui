@@ -6,7 +6,7 @@ import {enrollmentSchema} from "./models/enrollmentSchema.ts";
 import {studentSchema} from "./models/studentSchema.ts";
 import {addressSchema} from "./models/addressSchema.ts";
 import {healthSchema} from "./models/healthSchema.ts";
-import {teacherSchema} from "./models/teacherSchema.ts";
+import {teacherSchema, teacherSchoolAffiliationSchema} from "./models/teacherSchema.ts";
 import {individualSchema, individualSchemaMerge} from "./models/individualSchema.ts";
 import {assignmentDateUpdateSchema, assignmentSchema} from "./models/assignmentSchema.ts";
 import {attendanceSchema} from "./models/attendanceSchema.ts";
@@ -19,7 +19,7 @@ import {
     selectSchoolSchema,
     signupSchema
 } from "./models/authSchema.ts";
-import {employeeSchema} from "./models/employeeSchema.ts";
+import {employeeContractSchema, employeeSchema} from "./models/employeeSchema.ts";
 import {schoolSchema} from "./models/schoolSchema.ts";
 import {academicYearSchema} from "./models/academicYearSchema.ts";
 import {gradeSchema} from "./models/gradeSchema.ts";
@@ -42,7 +42,7 @@ export {departmentSchemaMerge,departmentSchema} from './models/departmentSchema.
 export {schoolMergeSchema, schoolSchema} from './models/schoolSchema'
 export {guardianSchema} from './models/guardianSchema'
 export {studentSchema, studentSchemaMerge} from './models/studentSchema'
-export {teacherSchema, teacherSchemaMerge} from './models/teacherSchema'
+export {teacherSchema, teacherSchemaMerge, teacherSchoolAffiliationSchema} from './models/teacherSchema'
 export {addressSchema} from './models/addressSchema'
 export {healthSchema} from './models/healthSchema'
 export {individualSchema, individualSchemaMerge} from './models/individualSchema.ts'
@@ -56,6 +56,7 @@ export {semesterSchema, semesterTemplateSchema, allSemesterSchema, allSemesterTe
 export {courseProgramSchema, courseProgramSchemaMerge, topicSchema, programTiming, topicSchemaMerge} from './models/courseProgramSchema.ts'
 export {scheduleSchema, scheduleSchemaMerge} from './models/scheduleSchema.ts'
 export {reportSchema} from './models/reportSchema.ts'
+export {employeeSchema, employeeContractSchema} from './models/employeeSchema.ts'
 
 export type CourseSchema = z.infer<typeof courseSchema>
 export type CourseSchemaMerge = z.infer<typeof courseSchemaMerge>
@@ -67,6 +68,7 @@ export type StudentSchema = z.infer<typeof studentSchema>
 export type AddressSchema = z.infer<typeof addressSchema>
 export type HealthSchema = z.infer<typeof healthSchema>
 export type TeacherSchema = z.infer<typeof teacherSchema>
+export type TeacherSchoolAffiliationSchema = z.infer<typeof teacherSchoolAffiliationSchema>
 export type IndividualSchema = z.infer<typeof individualSchema>
 export type AssignmentUpdateDate = z.infer<typeof assignmentDateUpdateSchema>
 export type AttendanceSchema = z.infer<typeof attendanceSchema>
@@ -81,7 +83,8 @@ export type LoginSchema = z.infer<typeof loginSchema>
 export type SchoolSelectionSchema = z.infer<typeof selectSchoolSchema>
 export type LogoutSchema = z.infer<typeof logoutSchema>
 export type SignupSchema = z.infer<typeof signupSchema>
-export type EmployeeSchema = z.infer<typeof employeeSchema>
+export type EmployeeSchema= z.infer<typeof employeeSchema>
+export type EmployeeContractSchema = z.infer<typeof employeeContractSchema>
 export type SchoolSchema = z.infer<typeof schoolSchema>
 export type AcademicYearSchema = z.infer<typeof academicYearSchema>
 export type GradeSchema = z.infer<typeof gradeSchema>

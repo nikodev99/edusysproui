@@ -29,7 +29,9 @@ type ClasseInfoProps = InfoPageProps<Classe> & {
 };
 
 const ClasseInfoData = ({infoData, color, studentCount, totalStudents, seeMore}: ClasseInfoProps) => {
-    const {principalTeacher, principalStudent, principalCourse, classeTeachers} = infoData
+    const {principalTeacher, principalStudent, principalCourse} = infoData
+
+    const classeTeachers = principalTeacher?.principalTeacher?.courses?.map(c => c.teacher)
 
     const studentAverageAge = studentCount?.totalAverageAge
     const maxAge = studentCount?.genders ? Math.max(...studentCount.genders.map(group => group.ageAverage)) : 1
@@ -191,7 +193,7 @@ const ClassePoorStudent = ({infoData, academicYear, color}: ClasseInfoProps) => 
 }
 
 const ClasseTeachers = ({infoData, seeMore}: ClasseInfoProps) => {
-    const {classeTeachers} = infoData
+    const classeTeachers = infoData?.classeTeachers?.map(t => t.teacher)
 
     const handleClick = () => {
         seeMore && seeMore('5')

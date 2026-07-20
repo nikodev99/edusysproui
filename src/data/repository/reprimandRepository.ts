@@ -66,8 +66,8 @@ export const getClasseReprimands = (
     })
 }
 
-export const getSomeStudentReprimandedByTeacher = (teacherId: number) => {
-    return apiClient.get<Reprimand[]>(`/blame/teacher_some/${teacherId}`)
+export const getSomeStudentReprimandedByTeacher = (teacherId: number, schoolId: string) => {
+    return apiClient.get<Reprimand[]>(`/blame/teacher_some/${teacherId}/${schoolId}`)
 }
 
 export const getAllStudentReprimandedByTeacher = (

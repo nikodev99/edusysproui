@@ -16,12 +16,12 @@ export const TeacherList = (
     const descriptions = (teacher: Teacher) =>  showCourse
         ? <div>
             {teacher?.classes?.map(c => (
-                <Tag key={c?.id}>{c.name}</Tag>
+                <Tag key={c?.id}>{c?.classe.name}</Tag>
             ))}
         </div>
         : <div>
             {teacher?.courses?.map(c => (
-                <Tag key={c?.id}>{c.course}</Tag>
+                <Tag key={c?.id}>{c?.course.course}</Tag>
             ))}
         </div>
 

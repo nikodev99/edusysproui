@@ -1,4 +1,4 @@
-import {text} from "@/core/utils/text_display.ts";
+import {globalSchool, text} from "@/core/utils/text_display.ts";
 import {AddStepForm} from "@/components/custom/AddStepForm.tsx";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useForm} from "react-hook-form";
@@ -6,16 +6,15 @@ import {EmployeeSchema} from "@/schema";
 import {employeeSchema} from "@/schema/models/employeeSchema.ts";
 import {ReactNode, useMemo, useState, useTransition} from "react";
 import {IndividualForm} from "@/components/forms/IndividualForm.tsx";
-import {AddressOwner, IndividualType} from "@/core/shared/sharedEnums.ts";
+import {AddressOwner, ContractOwner, IndividualType} from "@/core/shared/sharedEnums.ts";
 import {Gender} from "@/entity/enums/gender.tsx";
 import {Status} from "@/entity/enums/status.ts";
 import AddressForm from "@/components/forms/AddressForm.tsx";
-import {EmployeeForm} from "@/components/forms/EmployeeForm.tsx";
 import {AttachmentForm} from "@/components/ui-kit-student";
 import {OutputFileEntry} from "@uploadcare/blocks";
-import {redirectTo} from "@/context/RedirectContext.ts";
 import {useEmployeeRepo} from "@/hooks/actions/useEmployeeRepo.ts";
-import {loggedUser} from "@/auth/jwt/LoggedUser.ts";
+import {EmployeeContractForm} from "@/components/forms/EmployeeContractForm.tsx";
+import {useRedirect} from "@/hooks/useRedirect.ts";
 
 const AddEmployeePage = () => {
   const metadata = {
@@ -38,6 +37,7 @@ const AddEmployeePage = () => {
   const [validationTriggered, setValidationTriggered] = useState(false)
   const [image, setImage] = useState<string | undefined>(undefined)
   const [isPending, startTransition] = useTransition()
+  const {toAddEmployee} = useRedirect()
   const {useInsertEmployee} = useEmployeeRepo()
 
   const form = useForm<EmployeeSchema>({
@@ -60,7 +60,7 @@ const AddEmployeePage = () => {
     if (validateFields) {
       setValidationTriggered(true);
       clearErrors()
-      redirectTo(`${text.employee.group.add.href}?step=${current + 1}`)
+      toAddEmployee(current + 1)
     }
   }
 
@@ -84,7 +84,9 @@ const AddEmployeePage = () => {
           validate(validateFields, current);
           break
         case 2:
-          validateFields = await trigger(['hireDate', "jobTitle", "contractType"])
+          validateFields = await trigger([
+              'contract.role', "contract.contractType", "contract.salaryBasis", "contract.currency", "contract.startDate",
+          ])
               validate(validateFields, current);
           break
       }
@@ -125,11 +127,12 @@ const AddEmployeePage = () => {
     },
     {
       title: 'Embauche',
-      content: <EmployeeForm
-          control={control}
+      content: <EmployeeContractForm
+          type={ContractOwner.EMPLOYEE}
+          control={control as never}
           errors={errors}
           edit={false}
-          clearErrors={clearErrors}
+          clearErrors={clearErrors as never}
       />
     },
     {
@@ -144,16 +147,14 @@ const AddEmployeePage = () => {
   const onSubmit = (data: EmployeeSchema) => {
     setErrorMessage(undefined)
     setSuccessMessage(undefined)
+    const school = globalSchool.school
 
-    const school = loggedUser.getSchool()
-
-    if(submitCount === 0 && school !== null && school.id) {
+    if(submitCount === 0 && school !== null && school?.id) {
       data = {...data, personalInfo: {...data.personalInfo,
           image: image,
-          reference: `${school.abbr}0004000`
         },
         school: {...data.school,
-          id: school.id
+          id: school?.id
         }
       }
 
@@ -175,7 +176,7 @@ const AddEmployeePage = () => {
       <AddStepForm
           docTitle={metadata}
           breadCrumb={items}
-          addLink={text.employee.group.add.href}
+          prevRedirect={toAddEmployee}
           handleForm={form}
           triggerNext={triggerNext}
           onSubmit={onSubmit}

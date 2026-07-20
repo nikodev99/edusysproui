@@ -83,7 +83,7 @@ const AddStepForm = <TFieldValues extends FieldValues>(
                 <Flex className='inscription-wrapper' vertical>
                     <div className='form-wrapper'>
                         <Form layout="vertical" initialValues={{requiredMarkValue: 'customize'}}
-                              requiredMark={RequiredMark} onFinish={handleForm.handleSubmit(onSubmit)}>
+                              requiredMark={RequiredMark} onFinish={handleSubmit(onSubmit)}>
                             <div className='step-content'>
                                 {steps[current].content}
                             </div>
@@ -97,7 +97,9 @@ const AddStepForm = <TFieldValues extends FieldValues>(
                                 {current === steps.length - 1 && (
                                     <LoadingButton
                                         buttonText='Terminer'
-                                        onConfirm={() => handleSubmit(onSubmit)()}
+                                        onConfirm={() => handleSubmit(onSubmit, (errors) => {
+                                            console.log("RHF validation errors:", errors);
+                                        })()}
                                         isDisabled={isPending}
                                         modalContent={modalMessage ?? "Souhaitez vous vraiment poursuivre avec l'inscription ?"}
                                     />

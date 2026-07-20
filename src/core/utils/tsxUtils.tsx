@@ -4,7 +4,7 @@ import Tag from "@/components/ui/layout/Tag.tsx";
 import {Badge, Button, Card, Descriptions, Flex, Popover, Skeleton, Space, StepsProps, Tooltip, Typography} from "antd";
 import {Color} from "./interfaces.ts";
 import {MarkType} from "@/entity/enums/MarkType.ts";
-import {Assignment} from "@/entity";
+import {AffiliationStatus, AffiliationStatusEnum, Assignment} from "@/entity";
 import {
     LuArrowRight,
     LuAward, LuBadgeDollarSign,
@@ -45,6 +45,19 @@ export const StatusTags = ({status, female}: {status: Status, female?: boolean})
             return <Tag color='success'>{label}</Tag>
         case Status.SEPARE:
             return <Tag color='processing'>{label}</Tag>
+        default:
+            return <Tag color='danger'>Inconnu</Tag>
+    }
+}
+
+export const AffiliateStatusTag = ({status}: {status?: AffiliationStatus}): ReactNode => {
+    switch (status) {
+        case 'ACTIVE':
+            return <Tag color='success'>{AffiliationStatusEnum[status]}</Tag>
+        case 'SUSPENDED':
+            return <Tag color='success'>{AffiliationStatusEnum[status]}</Tag>
+        case 'TERMINATED':
+            return <Tag color='danger'>{AffiliationStatusEnum[status]}</Tag>
         default:
             return <Tag color='danger'>Inconnu</Tag>
     }

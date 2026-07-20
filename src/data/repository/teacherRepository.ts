@@ -1,13 +1,21 @@
 import {apiClient, request} from "../axiosConfig.ts";
-import {Schedule, Teacher} from "@/entity";
+import {Individual, Schedule, Teacher} from "@/entity";
 import {Counted, CountType} from "@/core/utils/interfaces.ts";
 import {AxiosResponse} from "axios";
-import {TeacherSchema} from "@/schema";
+import {TeacherSchema, TeacherSchoolAffiliationSchema} from "@/schema";
 import {SectionType} from "@/entity/enums/section.ts";
 import {TeacherClassUpdateRequest, TeacherCourseUpdateRequest} from "@/entity/domain/teacher.ts";
 
 export const insertTeacher = async (teacher: TeacherSchema): Promise<AxiosResponse<Teacher>> => {
     return await apiClient.post<Teacher>('/teachers', teacher)
+}
+
+export const affiliateTeacher = async (teacher: TeacherSchoolAffiliationSchema) => {
+    return await apiClient.post<string>('/teachers/affiliate', teacher)
+}
+
+export const deleteTeacherAffiliation = async (teacherId: string, schoolId: string) => {
+    return await apiClient.delete<string>(`/teachers/${teacherId}/${schoolId}`)
 }
 
 export const getAllTeachers = (schoolId: string, page: number, size: number, sortCriteria?: string) => {
@@ -38,6 +46,10 @@ export const getSearchedTeachers = (schoolId: string, input: string): Promise<Ax
     return apiClient.get<Teacher[]>("/teachers/search/" + schoolId, {params: {q: input}})
 }
 
+export const getSearchedTeacher = (schoolId: string, searchInput: string) => {
+    return apiClient.get<Teacher>("/teachers/search-one/" + schoolId, {params: {q: searchInput}})
+}
+
 export const getTeachersBasicValues = (classeId: number, section: SectionType): Promise<AxiosResponse<Teacher[], unknown>> => {
     return apiClient.get<Teacher[]>(`/teachers/basic/${classeId}`, {
         params: {
@@ -52,6 +64,10 @@ export const getTeacherBasicValues = (teacherId: number, classeId: number): Prom
             classe: classeId
         }
     })
+}
+
+export const getTeacherPersonalInfo = (teacherId: string) => {
+    return apiClient.get<Individual>(`/teachers/personal/${teacherId}`)
 }
 
 export const getTeacherById = (teacherId: string, schoolId: string): Promise<AxiosResponse<Teacher>> => {

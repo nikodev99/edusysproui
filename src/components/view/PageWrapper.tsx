@@ -1,11 +1,16 @@
-import {ReactNode} from "react";
+import React, {ReactNode} from "react";
 import {Color} from "@/core/utils/interfaces.ts";
 
-const PageWrapper = ({children, classNameList, background}: {children: ReactNode, classNameList?: string, background?: Color}) => {
+const PageWrapper = ({children, classNameList, background, styles}: {
+    children: ReactNode,
+    classNameList?: string,
+    background?: Color,
+    styles?: React.CSSProperties
+}) => {
     return (
         <section
             className={`page-wrapper ${classNameList}`}
-            style={background ? {background: background}: undefined}>
+            style={background ? {...styles, background: background}: styles}>
             {children}
         </section>
     )

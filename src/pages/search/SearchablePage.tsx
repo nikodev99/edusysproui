@@ -57,13 +57,13 @@ const SearchablePage = () => {
             }}
             setActivity={handleActivity}
             content={
-            <>
+            <main>
                 <PageTitle title={"Recherche"} description={<p>
                     Cette page vous permet de rechercher les potentiels élèves à inscrire. Recherchez un élève d’un autre établissement
-                    par son nom et prénom complet ou son numéro de référence pour l'inscrire à votre école. Utilisez la sélection dans
-                    la liste de résultats pour vérifier les informations de l’élève, choisissez la nouvelle classe puis confirmez la réinscription.
+                    par son nom(s) + prénom(s) complet ou son numéro de référence pour le retrouvé et l'inscrire à votre école.
+                    vérifier les informations de l’élève, et choisissez de l'inscrire ou non à votre école.
                 </p>} />
-                <PageWrapper>
+                <PageWrapper styles={{marginBottom: 20}}>
                     <Responsive gutter={[16, 16]} align='middle' justify='center'>
                         <Grid xs={24} md={12} lg={12}>
                             <Form>
@@ -83,6 +83,7 @@ const SearchablePage = () => {
                                         allowClear
                                         variant='filled'
                                         onSearch={handleSearch}
+                                        onClear={() => setSearchValue(undefined)}
                                     />
                                 </Form.Item>
                             </Form>
@@ -104,7 +105,7 @@ const SearchablePage = () => {
                         ]} />
                     </div>}
                 </PageWrapper>
-            </>
+            </main>
             }
         />
     )

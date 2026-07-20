@@ -8,7 +8,10 @@ import {Button} from "antd";
 import {useRedirect} from "@/hooks/useRedirect.ts";
 
 export const TeacherAssignments = ({infoData, hasPermission, resourceYear, isSelf}: InfoPageProps<Teacher>) => {
-    const {personalInfo, courses, classes} = infoData
+    const {personalInfo} = infoData
+
+    const classes = infoData?.classes?.map(tc => tc.classe)
+    const courses = infoData?.courses?.map(tc => tc.course)
     
     const [subjectValue, setSubjectValue] = useState<number | undefined>(courses && courses?.length > 0 ? courses[0].id as number : 0)
     const [classeValue, setClasseValue] = useState<number>(classes && classes?.length > 0 ? classes[0].id as number : 0)
@@ -17,7 +20,11 @@ export const TeacherAssignments = ({infoData, hasPermission, resourceYear, isSel
     const {useGetBestTeacherStudents} = useScoreRepo()
     const {toExam} = useRedirect()
     
-    const assignments = useGetAllTeacherAssignments(personalInfo?.id as number, {classId: classeValue, courseId: subjectValue})
+    const assignments = useGetAllTeacherAssignments(
+        personalInfo?.id as number,
+        resourceYear?.id as string,
+        {classId: classeValue, courseId: subjectValue}
+    )
     const {data, isSuccess} =  useGetBestTeacherStudents(personalInfo?.id as number, subjectValue)
 
     useEffect(() => {

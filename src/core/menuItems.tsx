@@ -50,7 +50,7 @@ export const getMenuItemForUser = (): ItemType[] => {
         {
             key: text.teacher.href,
             icon: <LuUsers />,
-            label: text.teacher.label + 's'
+            label: text.teacher.label
         },
         {
             key: text.cc.href,

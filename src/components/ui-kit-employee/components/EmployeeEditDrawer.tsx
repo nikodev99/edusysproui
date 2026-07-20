@@ -1,33 +1,21 @@
 import RightSidePane from "@/components/ui/layout/RightSidePane.tsx";
 import {EditProps} from "@/core/utils/interfaces.ts";
-import {Employee, Individual} from "@/entity";
+import {Employee} from "@/entity";
 import {useEffect, useState} from "react";
 import {useToggle} from "@/hooks/useToggle.ts";
-import {useForm} from "react-hook-form";
-import {EmployeeSchema} from "@/schema";
-import {zodResolver} from "@hookform/resolvers/zod";
-import {employeeSchema} from "@/schema/models/employeeSchema.ts";
-import {hasField} from "@/core/utils/utils.ts";
-import {PatchUpdate} from "@/core/PatchUpdate.ts";
-import {AddressOwner, IndividualType, UpdateType} from "@/core/shared/sharedEnums.ts";
+import {AddressOwner, ContractOwner, IndividualType} from "@/core/shared/sharedEnums.ts";
 import FormSuccess from "@/components/ui/form/FormSuccess.tsx";
 import FormError from "@/components/ui/form/FormError.tsx";
 import {UpdatePersonalData} from "@/components/custom/UpdatePersonalData.tsx";
-import {Button} from "antd";
-import {EmployeeForm} from "@/components/forms/EmployeeForm.tsx";
+import {Button, Space} from "antd";
 import {UpdateAddress} from "@/components/custom/UpdateAddress.tsx";
+import {UpdateEmployeeContract} from "@/components/custom/UpdateEmployeeContract.tsx";
 
-export const EmployeeEditDrawer = ({open, close, isLoading, data}: EditProps<Employee>) => {
+export const EmployeeEditDrawer = ({open, close, data}: EditProps<Employee>) => {
     const [successMessage, setSuccessMessage] = useState<string | undefined>(undefined)
     const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined)
     const [addressDrawer, showAddressDrawer] = useToggle(false)
     const [employeeJob, showEmployeeJob] = useToggle(false)
-
-    const {watch, control, formState: {errors}} = useForm<EmployeeSchema>({
-        resolver: zodResolver(employeeSchema)
-    })
-
-    const formData = watch()
 
     useEffect(() => {
 
@@ -45,21 +33,6 @@ export const EmployeeEditDrawer = ({open, close, isLoading, data}: EditProps<Emp
         showEmployeeJob()
     }
 
-    const handleEmployeeUpdate = async (field: keyof Employee | keyof Individual) => {
-        if (data?.id) {
-            if (hasField(data, field as keyof Employee)) {
-                await PatchUpdate.set(
-                    field,
-                    formData,
-                    data.id,
-                    setSuccessMessage,
-                    setErrorMessage,
-                    UpdateType.EMPLOYEE,
-                )
-            }
-        }
-    }
-
     return(
         <RightSidePane loading={data?.personalInfo === null} open={open} onClose={close}>
             {successMessage && (<FormSuccess message={successMessage} isNotif />)}
@@ -70,31 +43,26 @@ export const EmployeeEditDrawer = ({open, close, isLoading, data}: EditProps<Emp
                 setSuccessMessage={setSuccessMessage}
                 setErrorMessage={setErrorMessage}
             />
-            <section>
-                <div style={{marginBottom: 10}}>
-                    <Button type='dashed' onClick={showAddressDrawer}>Modifier l'adresse </Button>
-                </div>
-                <div>
-                    <Button type='dashed' onClick={showEmployeeJob}>Modifier Employée</Button>
-                </div>
-            </section>
-            <RightSidePane loading={isLoading} open={employeeJob} onClose={closeEmployeeDrawer}>
-                <EmployeeForm
-                    control={control}
-                    errors={errors}
-                    edit={true}
-                    data={data}
-                    handleUpdate={handleEmployeeUpdate}
-                />
-            </RightSidePane>
-            <UpdateAddress
+            <Space direction='vertical'>
+                <Button type='dashed' onClick={showAddressDrawer}>Modifier adresse </Button>
+                <Button type='dashed' onClick={showEmployeeJob}>Modifier termes du contrat</Button>
+            </Space>
+            {employeeJob && <UpdateEmployeeContract
+                data={data}
+                personal={ContractOwner.EMPLOYEE}
+                setSuccessMessage={setSuccessMessage}
+                setErrorMessage={setErrorMessage}
+                close={closeEmployeeDrawer}
+                open={employeeJob}
+            />}
+            {addressDrawer && <UpdateAddress
                 data={data}
                 personal={AddressOwner.EMPLOYEE}
                 setSuccessMessage={setSuccessMessage}
                 setErrorMessage={setErrorMessage}
                 close={closeAddressDrawer}
                 open={addressDrawer}
-            />
+            />}
         </RightSidePane>
     )
 }

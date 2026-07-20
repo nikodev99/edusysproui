@@ -56,6 +56,8 @@ import AddGuardianPage from "@/pages/guardian/AddGuardianPage.tsx";
 import GuardianPaymentPage from "@/pages/guardian/GuardianPaymentPage.tsx";
 import GuardianPaymentHistoryPage from "@/pages/guardian/GuardianPaymentHistoryPage.tsx";
 import GuardianBillingSettingPage from "@/pages/guardian/GuardianBillingSettingPage.tsx";
+import AffiliateTeacherPage from "@/pages/teacher/AffiliateTeacherPage.tsx";
+import AffiliateNewTeacherPage from "@/pages/teacher/AffiliateNewTeacherPage.tsx";
 
 const DashboardPage = withAuthProtection(withRoleProtection(Dashboard));
 
@@ -70,6 +72,8 @@ const SearchPage = withAuthProtection(withRoleProtection(SearchablePage))
 const ListTeacherPage = withAuthProtection(withRoleProtection(TeacherListPage));
 const TeacherAddPage = withAuthProtection(withRoleProtection(AddTeacherPage));
 const ViewTeacherPage = withAuthProtection(withRoleProtection(TeacherViewPage));
+const AffiliateTeacher = withAuthProtection(withRoleProtection(AffiliateTeacherPage))
+const AffiliateNewTeacher = withAuthProtection(withRoleProtection(AffiliateNewTeacherPage))
 
 const GuardianAddingPage = withAuthProtection(withRoleProtection(AddGuardianPage))
 const ProtectedGuardianListPage = withAuthProtection(withRoleProtection(GuardianListPage));
@@ -155,8 +159,10 @@ export const Route = createBrowserRouter([
                 children: [
                     { path: text.path.page, element: <ListTeacherPage /> },
                     { path: text.path.new, element: <TeacherAddPage /> },
+                    { path: text.path.new + '/affiliate/:id', element: <AffiliateNewTeacher /> },
                     { path: text.path.view, element: <ViewTeacherPage /> },
-                    { path: text.path.view + '/discipline', element: <StudentDiscipline /> }
+                    { path: text.path.view + '/discipline', element: <StudentDiscipline /> },
+                    { path: 'affiliate', element: <AffiliateTeacher /> },
                 ]
             },
             {

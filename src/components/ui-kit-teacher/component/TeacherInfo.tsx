@@ -2,24 +2,20 @@ import Section from "@/components/ui/layout/Section.tsx";
 import Block from "@/components/view/Block.tsx";
 import PanelSection from "@/components/ui/layout/PanelSection.tsx";
 import PanelTable from "@/components/ui/layout/PanelTable.tsx";
-import {InfoPageProps, ReprimandData} from "@/core/utils/interfaces.ts";
-import {Classe, Course, Department, Teacher} from "@/entity";
+import {InfoPageProps, Moment, ReprimandData} from "@/core/utils/interfaces.ts";
+import {Department, StaffRole, Teacher} from "@/entity";
 import {
-    getAge,
     getDistinctArray,
     cLowerName,
     setTime
 } from "@/core/utils/utils.ts";
-import {useEffect, useMemo, useState} from "react";
+import {useMemo} from "react";
 import {Flex, Skeleton, TableColumnsType, Tag} from "antd";
-import {useRawFetch} from "@/hooks/useFetch.ts";
 import {Timeline} from "@/components/graph/Timeline.tsx";
-import {Assignment} from "@/entity";
 import {Table as CustomTable} from "@/components/ui/layout/Table.tsx";
 import {ReprimandType} from "@/entity/enums/reprimandType.ts";
 import {ShapePieChart} from "@/components/graph/ShapePieChart.tsx";
 import {PieChartDataEntry} from "@/components/ui/ui_interfaces.ts";
-import {getSomeTeacherAssignments} from "@/data/repository/assignmentRepository.ts";
 import {useGlobalStore} from "@/core/global/store.ts";
 import {DatedListItem} from "@/components/ui/layout/DatedListItem.tsx";
 import {DepartmentDesc} from "@/components/common/DepartmentDesc.tsx";
@@ -33,10 +29,12 @@ import {useDepartmentRepo} from "@/hooks/actions/useDepartmentRepo.ts";
 import {statusConfig} from "@/entity/domain/courseProgram.ts";
 import {LuCircleCheck, LuClock} from "react-icons/lu";
 import {useReprimandRepo} from "@/hooks/actions/useReprimandRepo.ts";
+import {datehelper} from "@/core/helpers/DateHelpers.ts";
+import {useAssignmentRepo} from "@/hooks/actions/useAssignmentRepo.ts";
 
-type TeacherInfo = InfoPageProps<Teacher>
+type TeacherInfo = InfoPageProps<Teacher> & {readonly?: boolean}
 
-const IndividualInfo = ({infoData, color}: TeacherInfo) => {
+export const IndividualInfo = ({infoData, color}: TeacherInfo) => {
     if (!infoData)
         return <PanelSection title={"Informations Générales sur l'enseignant"}><Skeleton active paragraph={{ rows: 4 }} /></PanelSection>
     const {personalInfo} = infoData ?? {}
@@ -44,7 +42,7 @@ const IndividualInfo = ({infoData, color}: TeacherInfo) => {
     return(
         <PanelSection title={
             <div className='name__title'>
-                <h2 className='name'>{`${personalInfo?.firstName} ${personalInfo?.lastName}`}</h2>
+                <h3 className='name'>{`${personalInfo?.firstName} ${personalInfo?.lastName}`}</h3>
                 <p className='subtitle'>Informations Générales sur l'enseignant</p>
             </div>
         }>
@@ -53,30 +51,33 @@ const IndividualInfo = ({infoData, color}: TeacherInfo) => {
     )
 }
 
-const ProsInfo = ({infoData, color}: TeacherInfo) => {
+export const ProsInfo = ({infoData, color, isSelf, readonly = false}: TeacherInfo) => {
     if (!infoData)
         return <PanelSection title={"Informations Professionnelles"}><Skeleton active paragraph={{ rows: 4 }} /></PanelSection>
 
-    const {courses, classes, salaryByHour, hireDate} = infoData
+    const {courses, classes, contract} = infoData
+
+    const isHourly = !!contract?.salaryByHour
 
     const employmentData = [
         //TODO adding prof job id {incorporating reference in personalInfo} and position in the database
-        {statement: 'ID', response: "1"},
-        {statement: 'Position', response: "Professeur de Collège"},
-        {statement: 'Date d\'Embauche', response: Datetime.of(hireDate as number[]).fDate()},
-        {statement: 'Ancienneté', response: getAge(hireDate as number[]) + ' ans'},
-        {statement: 'Salaire par heure', response: salaryByHour}
+        {statement: 'Référence', response: infoData?.personalInfo?.reference},
+        {statement: "Role dans établissement", response: StaffRole[infoData?.contract?.role]},
+        ...(infoData?.contract?.jobTitle ? [{statement: 'Position', response: infoData?.contract?.jobTitle}] : []),
+        ...(!readonly ? [{statement: 'Date d\'Embauche', response: Datetime.of(contract?.startDate as number[]).fDate()}] : []),
+        {statement: 'Ancienneté', response: datehelper.timeAgo(contract?.startDate as Moment)},
+        ...(!readonly && isSelf ? [{statement: `Salaire par ${isHourly ? 'heure' : 'mois'}`, response: isHourly ? contract?.salaryByHour: contract?.monthlySalary}] : [])
     ]
 
     const courseTaught = [
         {response: <Flex wrap gap={.5} justify='end' style={{padding: '10px'}}>
-                {courses?.map((c: Course, i) => <Tag key={i}>{c.abbr}</Tag>)}
+                {courses?.map((c, i) => <Tag key={i}>{c?.course?.abbr}</Tag>)}
         </Flex>, tableRow: true}
     ]
 
     const classeTaught = [
         {response: <Flex wrap gap={.5} justify='end' style={{padding: '10px'}}>
-                {classes?.map((c: Classe, i) => <Tag key={i}>{c.name}</Tag>)}
+                {classes?.map((c, i) => <Tag key={i}>{c.classe?.name}</Tag>)}
         </Flex>, tableRow: true}
     ]
 
@@ -84,7 +85,7 @@ const ProsInfo = ({infoData, color}: TeacherInfo) => {
         <PanelSection title="Informations Professionnelles">
             <PanelTable title='Position' data={employmentData} panelColor={color}/>
             {courses && courses?.length > 0 ? <PanelTable title='Cours' data={courseTaught} panelColor={color}/> : undefined}
-            {classes && classes?.length > 0 ? <PanelTable title='Classes' data={classeTaught} panelColor={color}/> : undefined}
+            {!readonly && classes && classes?.length > 0 ? <PanelTable title='Classes' data={classeTaught} panelColor={color}/> : undefined}
         </PanelSection>
     )
 }
@@ -111,7 +112,7 @@ const CalendarSection = ({infoData, seeMore, academicYear}: TeacherInfo) => {
     )
 }
 
-const MarkMean = ({infoData, color}: TeacherInfo) => {
+export const MarkMean = ({infoData, color}: TeacherInfo) => {
     const {useGetAllTeacherMarks} = useScoreRepo()
     const {data: fetchedMarks, isLoading, isFetching} = useGetAllTeacherMarks(infoData?.personalInfo?.id as number)
 
@@ -141,7 +142,7 @@ const DepartmentInfo = ({infoData, color}: TeacherInfo) => {
         let settingDepartments: Department[];
         if (infoData.courses && infoData.courses?.length !== 0) {
             settingDepartments =  Array.from(
-                new Set(infoData.courses?.map((course) => course.department))
+                new Set(infoData.courses?.map((course) => course?.course.department))
             ) as Department[]
             
         }else {
@@ -298,19 +299,9 @@ const StudentByClasse = ({infoData, color}: TeacherInfo) => {
 }
 
 const AssignmentPlan = ({infoData,color, seeMore, isSelf}: TeacherInfo) => {
-    const {personalInfo} = infoData
-
-    const [assignments, setAssignments] = useState<Assignment[]>([])
-    const fetch = useRawFetch();
-
-    useEffect(() => {
-        fetch(getSomeTeacherAssignments, [personalInfo.id])
-            .then(resp => {
-                if (resp.isSuccess) {
-                    setAssignments(resp.data as Assignment[])
-                }
-            })
-    }, [fetch, personalInfo.id]);
+    const { personalInfo } = infoData
+    const { useGetSomeTeacherAssignments } = useAssignmentRepo()
+    const { data: assignments } = useGetSomeTeacherAssignments(personalInfo.id as number)
 
     if (!infoData || !assignments)
         return <PanelSection title='Suivi des devoirs'><Skeleton active paragraph={{ rows: 4 }} /></PanelSection>

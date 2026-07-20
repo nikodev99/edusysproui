@@ -3,7 +3,7 @@ import {text} from "../core/utils/text_display.ts";
 import {redirectTo} from "../context/RedirectContext.ts";
 import {SectionType} from "../entity/enums/section.ts";
 import {getSlug, joinWord} from "../core/utils/utils.ts";
-import {Enrollment, Individual} from "@/entity";
+import {Enrollment, Individual, Teacher} from "@/entity";
 
 export const useRedirect = () => {
     const {schoolSlug} = useParams<{ schoolSlug: string }>()
@@ -19,7 +19,11 @@ export const useRedirect = () => {
 
     const toStudent = () => redirectTo(text.student.href)
 
-    const toEnrollStudent = () => redirectTo(text.student.group.add.href)
+    const toEnrollStudent = (step?: number) => {
+        const addLink = text.student.group.add.href
+        const link = step ? `${addLink}?step=${step}` : addLink
+        return redirectTo(link)
+    }
 
     const toReenrollStudent = () => redirectTo(text.student.group.reAdd.href)
 
@@ -48,7 +52,15 @@ export const useRedirect = () => {
 
     const toTeacher = () => redirectTo(text.teacher.href)
 
-    const toAddTeacher = () => redirectTo(text.teacher.group.add.href)
+    const toAddTeacher = (step?: number, toAffiliate: boolean = false, state?: Teacher) => {
+        const addLink = toAffiliate ? text.teacher.group.add.affiliate_href + '/' + state?.id : text.teacher.group.add.href
+        const link = step ? `${addLink}?step=${step}` : addLink
+        return redirectTo(link, state ? {state: state} : undefined)
+    }
+
+    const toAffiliateTeacher = () => {
+        return redirectTo(text.teacher.group.affiliate.href)
+    }
 
     const toViewTeacher = (teacherId: string, active?: string, teacherSlug?: string) => {
         if (!teacherSlug) {
@@ -119,7 +131,11 @@ export const useRedirect = () => {
 
     const toEmployee = () => redirectTo(text.employee.href)
 
-    const toAddEmployee = () => redirectTo(text.employee.group.add.href)
+    const toAddEmployee = (step?: number) => {
+        const addLink = text.employee.group.add.href
+        const completeLink = step ? `${addLink}?step=${step}` : addLink
+        redirectTo(completeLink)
+    }
 
     const toViewEmployee = (employeeId: string, employeeSlug?: string) => {
         if (employeeSlug)
@@ -200,6 +216,7 @@ export const useRedirect = () => {
         toDiscipline,
         toTeacher,
         toAddTeacher,
+        toAffiliateTeacher,
         toViewTeacher,
         toAddGuardian,
         toGuardian,

@@ -574,3 +574,11 @@
     position: relative;
   }
 }
+
+.current-year-row {
+  background-color: #e6f4ff;
+
+  &:hover > td {
+    background-color: #bae0ff !important;
+  }
+}

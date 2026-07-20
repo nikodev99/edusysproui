@@ -17,6 +17,7 @@ import Datetime from "@/core/datetime.ts";
 import {useToggle} from "@/hooks/useToggle.ts";
 import LocalStorageManager from "@/core/LocalStorageManager.ts";
 import {useSemesterRepo} from "@/hooks/actions/useSemesterRepo.ts";
+import {getClasses, getCourses} from "@/entity/domain/teacher.ts";
 
 type SavedParams = {
     academicYear?: string;
@@ -33,7 +34,7 @@ function updateSaved(key: keyof SavedParams, value: unknown) {
 }
 
 export const TeacherProgram = ({infoData, color, hasPermission, isSelf}: InfoPageProps<Teacher>) => {
-    const {courses, classes} = infoData
+    const [courses, classes] = [getCourses(infoData), getClasses(infoData)]
     const saved = LocalStorageManager.get<SavedParams>("savedParams")
 
     const {currentAcademicYear} = useAcademicYearRepo()
@@ -47,8 +48,8 @@ export const TeacherProgram = ({infoData, color, hasPermission, isSelf}: InfoPag
     const [showClasseField, setShowClasseField] = useState(true)
     
     const {useGetTeacherPrograms} = useCourseProgramRepo()
-    const {useGetAllSemesters, semesterOptions} = useSemesterRepo()
-    const semesters = useGetAllSemesters()
+    const { useGetCurrentSemesters } = useSemesterRepo()
+    const semesters = useGetCurrentSemesters(academicYear)
 
     const {data: courseProgram, refetch, isLoading, isRefetching, isLoadingError} = useGetTeacherPrograms(teacherId, {classId: classeValue, courseId: subjectValue}, academicYear)
 
@@ -78,8 +79,11 @@ export const TeacherProgram = ({infoData, color, hasPermission, isSelf}: InfoPag
 
     }, [courseProgram?.classe, courseProgram?.course, courseProgram?.semesters, semesterValue])
 
-
     const pending: boolean = isLoading || isRefetching || isLoadingError
+
+    const semesterOptions = useMemo(() => semesters?.map(s => ({
+        value: s?.semesterId, label: s?.template?.semesterName,
+    })) || [], [semesters])
 
     const subjects = useMemo(() => {
         return courses?.map(c => ({

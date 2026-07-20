@@ -43,6 +43,9 @@ export class PatchContext {
             case UpdateType.PUNISHMENT:
                 url = '/blame/punishment'
                 break
+            case UpdateType.CONTRACT:
+                url = '/employee/contract'
+                break
             default:
                 url = '/student'
                 break

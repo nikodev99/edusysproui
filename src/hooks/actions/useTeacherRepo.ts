@@ -2,12 +2,13 @@ import {Counted, CountType, GenderCounted, Moment, Pageable} from "@/core/utils/
 import {useFetch, useRawFetch} from "../useFetch.ts";
 import {fetchTeachers} from "@/data";
 import {
-    countAllTeachers, getAllSelfTeachers, getAllTeachers,
+    affiliateTeacher,
+    countAllTeachers, deleteTeacherAffiliation, getAllSelfTeachers, getAllTeachers,
     getNumberOfStudentTaughtByClasse,
-    getNumberOfStudentTaughtByTeacher,
+    getNumberOfStudentTaughtByTeacher, getSearchedTeacher,
     getSearchedTeachers,
     getTeacherBasicValues,
-    getTeacherById, getTeacherClasses, getTeacherCourses,
+    getTeacherById, getTeacherClasses, getTeacherCourses, getTeacherPersonalInfo,
     getTeachersBasicValues,
     getTeacherSchedule,
     getTeacherScheduleByDay, getTeacherWidgets, updateTeacherClasses, updateTeacherCourses
@@ -20,7 +21,7 @@ import {UserPermission} from "@/core/shared/sharedEnums.ts";
 import {useAuth} from "@/hooks/useAuth.ts";
 import {getShortSortOrder, setSortFieldName} from "@/core/utils/utils.ts";
 import {reportRepository} from "@/data/repository/reportRepository.ts";
-import {ReportSchema} from "@/schema";
+import {ReportSchema, TeacherSchoolAffiliationSchema} from "@/schema";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {TeacherClassUpdateRequest, TeacherCourseUpdateRequest} from "@/entity/domain/teacher.ts";
 
@@ -61,6 +62,13 @@ export const useTeacherRepo = (context: UserPermission = UserPermission.ALL) => 
         }
     }
 
+    const useGetSearchedTeacher = (searchInput: string) => useFetch(
+        ['searched-teacher'],
+        getSearchedTeacher,
+        [schoolId, searchInput],
+        !!schoolId && !!searchInput
+    )
+
     const useGetAllTeachers = (pageable: Pageable, sortField: string, sortOrder: string) => useFetch(
         ['teacher-list'],
         fetchTeachers,
@@ -97,6 +105,11 @@ export const useTeacherRepo = (context: UserPermission = UserPermission.ALL) => 
         }, [classeId, fetch, teacherId]);
 
         return teacher
+    }
+
+    const useGetTeacherPersonalInfo = (teacherId?: string) => {
+        const {data} = useFetch(['teacher-personal-info', teacherId], getTeacherPersonalInfo, [teacherId], !!teacherId)
+        return data
     }
 
     const useGetTeacher = (teacherId: string) => useFetch(
@@ -194,6 +207,23 @@ export const useTeacherRepo = (context: UserPermission = UserPermission.ALL) => 
         })
     }
 
+    const useAffiliateTeacher = () => {
+        const query = useQueryClient()
+        return useMutation({
+            mutationFn: async (payload: TeacherSchoolAffiliationSchema) => await affiliateTeacher(payload),
+            onSuccess: () => {
+                query.invalidateQueries({queryKey: ["affiliate-teacher"]}).then(r => r);
+            }
+        })
+    }
+
+    const useRemoveTeacherAffiliation = () => {
+        return useMutation({
+            mutationFn: async (payload: {teacherId: string, schoolId: string}) =>
+                deleteTeacherAffiliation(payload.teacherId, payload.schoolId),
+        })
+    }
+
     const useCountAllTeachers = (): GenderCounted | undefined => {
         const [count, setCount] = useState<GenderCounted>()
         const fetch = useRawFetch()
@@ -231,9 +261,11 @@ export const useTeacherRepo = (context: UserPermission = UserPermission.ALL) => 
         useGetPaginated,
         useGetAllTeachers,
         useGetSearchedTeachers,
+        useGetSearchedTeacher,
         useGetTeacher,
         useGetTeacherSchedules,
         useGetTeacherBasic,
+        useGetTeacherPersonalInfo,
         useGetTeacherStudentNumber,
         useGetTeacherClasseStudentNumber,
         useGetTeacherClasses,
@@ -245,6 +277,8 @@ export const useTeacherRepo = (context: UserPermission = UserPermission.ALL) => 
         useGetAllWeekReport,
         useUpdateClasses,
         useUpdateCourses,
+        useAffiliateTeacher,
+        useRemoveTeacherAffiliation,
         useViewReport
     }
 }

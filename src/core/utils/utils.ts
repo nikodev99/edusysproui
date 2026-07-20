@@ -526,11 +526,25 @@ export const setFirstName = (firstName?: string): string => {
     return ''
 }
 
-export const setPlural = (word?: string): string => {
+export const setPlural = (word?: string, allWords: boolean = false): string => {
     if (!word) return '';
 
     const rawWord = word.trim();
-    return rawWord.endsWith('s') ? rawWord : `${rawWord}s`;
+
+    const pluralize = (w: string) => (w.endsWith('s') ? w : `${w}s`);
+
+    if (!allWords) {
+        return pluralize(rawWord)
+    }
+
+    return rawWord
+        .split(/([\s/\\:;,|()[\]{}-]+)/)
+        .map(part =>
+            /^[A-Za-zÀ-ÖØ-öø-ÿ0-9]+$/.test(part)
+                ? pluralize(part)
+                : part
+        )
+        .join('');
 };
 
 export const toLower = (sequence?: string): string | null => {

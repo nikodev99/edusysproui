@@ -1,10 +1,12 @@
 import PanelTable from "../ui/layout/PanelTable.tsx";
-import {Teacher} from "../../entity";
-import {firstLetter, getAge, getCountry, isNull, setName} from "../../core/utils/utils.ts";
+import {Teacher} from "@/entity";
+import {firstLetter, getAge, getCountry, isNull, setName} from "@/core/utils/utils.ts";
 import {Gender} from "../../entity/enums/gender.tsx";
 import Datetime from "../../core/datetime.ts";
 import {Flag} from "../ui/layout/Flag.tsx";
 import {useEffect, useState} from "react";
+import {getStatusKey, Status} from "@/entity/enums/status.ts";
+import {Tag} from "antd";
 
 export const TeacherIndividual = ({teacher, color}: {teacher: Teacher, color?: string}) => {
     const [nation, setNation] = useState<string>()
@@ -22,6 +24,9 @@ export const TeacherIndividual = ({teacher, color}: {teacher: Teacher, color?: s
     const informationData = [
         {statement: 'Nom complet', response: setName(personalInfo)},
         {statement: 'Genre', response: Gender[personalInfo?.gender as unknown as keyof typeof Gender]},
+        {statement: 'État civil', response: <Tag color={color}>{getStatusKey(
+            teacher?.personalInfo?.status as Status, teacher?.personalInfo?.gender === Gender.FEMME
+        )}</Tag>},
         {statement: 'Date de naissance', response: `${Datetime?.of(personalInfo?.birthDate).fDate()} (${getAge(personalInfo?.birthDate as number[])} ans)`},
         {statement: 'Lieu de naissance', response: firstLetter(personalInfo?.birthCity)},
         {statement: 'Pays de naissance', response: <div className='country__flag'>

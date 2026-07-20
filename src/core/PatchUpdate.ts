@@ -1,4 +1,4 @@
-import {Individual} from "../entity";
+import {Individual} from "@/entity";
 import {UpdateType} from "./shared/sharedEnums.ts";
 import {ID} from "./utils/interfaces.ts";
 import {patchContext} from "../data/repository/patchContext.ts";
@@ -76,5 +76,15 @@ export class PatchUpdate {
         setErrorMessage: (msg?: string) => void
     ) {
         await PatchUpdate.set(field, value, addressId, setSuccessMessage, setErrorMessage, UpdateType.ADDRESS)
+    }
+
+    static async contract<T> (
+        field: keyof T,
+        value: T,
+        contractId: ID,
+        setSuccessMessage: (msg?: string) => void,
+        setErrorMessage: (msg?: string) => void
+    ) {
+        await PatchUpdate.set(field, value, contractId, setSuccessMessage, setErrorMessage, UpdateType.CONTRACT)
     }
 }

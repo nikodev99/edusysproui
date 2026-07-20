@@ -1,4 +1,4 @@
-import {Department} from "./department.ts";
+import {Department} from "@/entity";
 
 export interface Course {
     id?: number

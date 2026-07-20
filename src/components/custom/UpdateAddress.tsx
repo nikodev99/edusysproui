@@ -9,7 +9,9 @@ import {CustomUpdateProps} from "@/core/utils/interfaces.ts";
 import {AddressOwner} from "@/core/shared/sharedEnums.ts";
 import {useMemo} from "react";
 
-export const UpdateAddress = ({data, open, close, personal, setSuccessMessage, setErrorMessage}: CustomUpdateProps<Student | Teacher | Employee | Guardian | School>) => {
+export const UpdateAddress = (
+    {data, open, close, personal, setSuccessMessage, setErrorMessage}: CustomUpdateProps<Student | Teacher | Employee | Guardian | School, AddressOwner>
+) => {
 
     const {control, formState: {errors}, watch} = useForm<AddressSchema>({
         resolver: zodResolver(addressSchema)
@@ -41,7 +43,7 @@ export const UpdateAddress = ({data, open, close, personal, setSuccessMessage, s
             <AddressForm
                 control={control}
                 errors={errors}
-                type={personal as AddressOwner}
+                type={personal}
                 edit={true}
                 data={address as Address}
                 handleUpdate={handleAddressUpdate}

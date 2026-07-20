@@ -1,7 +1,7 @@
-import {TeacherSchema, teacherSchema} from "../../schema";
+import {TeacherSchema, teacherSchema} from "@/schema";
 import {ErrorCatch} from "./error_catch.ts";
 import {AxiosResponse} from "axios";
-import {Teacher} from "../../entity";
+import {Teacher} from "@/entity";
 import {insertTeacher} from "../repository/teacherRepository.ts";
 import {ResponseRepo as CustomResponse} from "./responseRepo.ts";
 

@@ -1,27 +1,22 @@
 import {EditProps} from "@/core/utils/interfaces.ts";
 import RightSidePane from "@/components/ui/layout/RightSidePane.tsx";
-import {TeacherForm} from "@/components/forms/TeacherForm.tsx";
-import {useForm} from "react-hook-form";
-import {zodResolver} from "@hookform/resolvers/zod";
-import {TeacherSchema, teacherSchema} from "@/schema";
-import {Teacher, Individual, Classe, Course} from "@/entity";
+import {Teacher, Classe, Course} from "@/entity";
 import {ReactNode, useEffect, useMemo, useState} from "react";
 import {useToggle} from "@/hooks/useToggle.ts";
 import FormSuccess from "@/components/ui/form/FormSuccess.tsx";
 import FormError from "@/components/ui/form/FormError.tsx";
 import {Button, Empty, Modal, Radio, Select, Space, Tabs, Tag, Typography} from "antd";
-import {AddressOwner, IndividualType, UpdateType} from "@/core/shared/sharedEnums.ts";
-import {hasField} from "@/core/utils/utils.ts";
-import {PatchUpdate} from "@/core/PatchUpdate.ts";
+import {AddressOwner, ContractOwner, IndividualType} from "@/core/shared/sharedEnums.ts";
 import {UpdateAddress} from "@/components/custom/UpdateAddress.tsx";
 import {UpdatePersonalData} from "@/components/custom/UpdatePersonalData.tsx";
-import { OperationType } from "@/entity/domain/teacher";
+import {getClasses, getCourses, OperationType} from "@/entity/domain/teacher";
 import {useClasseRepo} from "@/hooks/actions/useClasseRepo.ts";
 import {useCourseRepo} from "@/hooks/actions/useCourseRepo.ts";
 import {useTeacherRepo} from "@/hooks/actions/useTeacherRepo.ts";
 import {catchError} from "@/data/action/error_catch.ts";
 import {Notification} from "@/components/custom/Notification.tsx";
 import {ModalConfirmButton} from "@/components/ui/layout/ModalConfirmButton.tsx";
+import {UpdateEmployeeContract} from "@/components/custom/UpdateEmployeeContract.tsx";
 
 interface TeacherClassCourseModalProps {
     open: boolean
@@ -37,19 +32,13 @@ const { Text } = Typography;
 
 type TabKey = "classes" | "courses";
 
-const TeacherEditDrawer = ({open, close, isLoading, data}: EditProps<Teacher>) => {
+const TeacherEditDrawer = ({open, close, data}: EditProps<Teacher>) => {
 
     const [successMessage, setSuccessMessage] = useState<string | undefined>(undefined)
     const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined)
     const [addressDrawer, showAddressDrawer] = useToggle(false)
     const [teacherJob, showTeacherJob] = useToggle(false)
     const [editClasses, setEditClasses] = useToggle(false)
-
-    const {watch, control, formState: {errors}} = useForm<TeacherSchema>({
-        resolver: zodResolver(teacherSchema)
-    })
-
-    const teacherData = watch()
 
     useEffect(() => {
         if(successMessage || errorMessage) {
@@ -73,20 +62,8 @@ const TeacherEditDrawer = ({open, close, isLoading, data}: EditProps<Teacher>) =
         showTeacherJob()
     }
 
-    const handleTeacherUpdate = async (field: keyof Teacher | keyof Individual) => {
-        if (data.id) {
-            if (hasField(data, field as keyof Teacher)) {
-                await PatchUpdate.set(
-                    field,
-                    teacherData,
-                    data?.id,
-                    setSuccessMessage,
-                    setErrorMessage,
-                    UpdateType.TEACHER
-                )
-            }
-        }
-    }
+    const classes = getClasses(data)
+    const courses = getCourses(data)
 
     return(
         <RightSidePane loading={data?.personalInfo === null} open={open} onClose={close}>
@@ -100,18 +77,17 @@ const TeacherEditDrawer = ({open, close, isLoading, data}: EditProps<Teacher>) =
             />
             <Space style={{marginBottom: 10}} direction="vertical">
                 <Button type='link' size='small' onClick={showAddressDrawer}>Modifier l'adresse </Button>
-                <Button type='link' size='small' onClick={showTeacherJob}>Modifier Salariale </Button>
+                <Button type='link' size='small' onClick={showTeacherJob}>Modifier terme de contrat </Button>
                 <Button type='link' size='small' onClick={setEditClasses}>Classe & Cours </Button>
             </Space>
-            {teacherJob && <RightSidePane loading={isLoading} open={teacherJob} onClose={closeTeacherJob}>
-                <TeacherForm
-                    control={control}
-                    errors={errors}
-                    edit={true}
-                    data={data}
-                    handleUpdate={handleTeacherUpdate}
-                />
-            </RightSidePane>}
+            {teacherJob && <UpdateEmployeeContract
+                open={teacherJob}
+                close={closeTeacherJob}
+                data={data}
+                personal={ContractOwner.TEACHER}
+                setSuccessMessage={setSuccessMessage}
+                setErrorMessage={setErrorMessage}
+            />}
             {addressDrawer && <UpdateAddress
                 data={data}
                 open={addressDrawer}
@@ -123,8 +99,8 @@ const TeacherEditDrawer = ({open, close, isLoading, data}: EditProps<Teacher>) =
             {data && editClasses && <TeacherClassCourseModal
                 open={editClasses}
                 teacherId={data?.id as string}
-                currentClasses={data?.classes as Classe[]}
-                currentCourses={data?.courses as Course[] }
+                currentClasses={classes as Classe[]}
+                currentCourses={courses as Course[]}
                 onClose={setEditClasses}
             />}
         </RightSidePane>

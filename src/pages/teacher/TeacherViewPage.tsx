@@ -1,16 +1,13 @@
 import {useLocation, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
-import {Teacher} from "@/entity";
+import {AffiliationStatus, Teacher} from "@/entity";
 import {chooseColor, MAIN_COLOR, setLastName, setName} from "@/core/utils/utils.ts";
 import {useDocumentTitle} from "@/hooks/useDocumentTitle.ts";
 import {text} from "@/core/utils/text_display.ts";
 import {useBreadCrumb} from "@/hooks/useBreadCrumb.tsx";
 import {Widgets} from "@/components/ui/layout/Widgets.tsx";
 import {WidgetItem} from "@/core/utils/interfaces.ts";
-import {Tag} from "antd";
 import ViewHeader from "@/components/ui/layout/ViewHeader.tsx";
-import {getStatusKey, Status} from "@/entity/enums/status.ts";
-import {Gender} from "@/entity/enums/gender.tsx";
 import {
     TeacherActionLinks,
     TeacherAgenda,
@@ -28,6 +25,8 @@ import queryString from "query-string";
 import {usePermission} from "@/hooks/usePermission.ts";
 import {useAcademicYearRepo} from "@/hooks/actions/useAcademicYearRepo.ts";
 import {useUserRepo} from "@/hooks/actions/useUserRepo.ts";
+import {AffiliateStatusTag} from "@/core/utils/tsxUtils.tsx";
+import {Skeleton} from "antd";
 
 const TeacherViewPage = () => {
 
@@ -103,6 +102,10 @@ const TeacherViewPage = () => {
         refetch().then(r => r.data)
     }
 
+    console.log("TEACHER: ", teacher)
+
+    if (!teacher) return <Skeleton active paragraph={{rows: 10}} />
+
     return(
         <>
             {context}
@@ -118,12 +121,8 @@ const TeacherViewPage = () => {
                 }}
                 blockProps={[
                     {
-                        title: 'Etat Civil',
-                        mention: <Tag color={color}>{
-                            getStatusKey(
-                                teacher?.personalInfo?.status as Status,
-                                teacher?.personalInfo?.gender === Gender.FEMME
-                            )}</Tag>
+                        title: "Status d'affiliation",
+                        mention: <AffiliateStatusTag status={teacher.status as AffiliationStatus} />
                     },
                     {title: 'Télephone', mention: teacher?.personalInfo?.telephone},
                 ]}
@@ -173,7 +172,7 @@ const TeacherViewPage = () => {
                         dataKey={"reports"}
                     />},
                 ]}
-                exists={teacher !== null}
+                exists={!!teacher}
                 addMargin={{
                     position: "top",
                     size: 30

@@ -91,7 +91,7 @@ export const ReprimandCard = ({reprimand, refetch, dataKey}: {reprimand?: Reprim
                     </div>
                 </div>
                 <div style={{ fontSize: 12, color: "rgba(0,0,0,0.45)", whiteSpace: "nowrap" }}>
-                    {Datetime.of(reprimandDate).fDate()}
+                    {Datetime.of(reprimandDate).fDate("DD MMM YY")}
                 </div>
             </div>
 
@@ -125,14 +125,13 @@ export const ReprimandCard = ({reprimand, refetch, dataKey}: {reprimand?: Reprim
                     </div>
                     <div style={{ fontSize: 12, color: "rgba(0,0,0,0.55)" }}>{cutStatement(punishment.description, 100)}</div>
                     <div style={{ fontSize: 12, color: "rgba(0,0,0,0.45)" }}>
-                        {Datetime.of(punishment.startDate).fDate()} → {Datetime.of(punishment.endDate).fDate()} · exécuté par{" "}
-                        {punishment.executedBy}
+                        {Datetime.of(punishment.startDate).fDate("DD MMM YY")} → {Datetime.of(punishment.endDate).fDate("DD MMM YY")} {`${punishment.executedBy ? `· exécuté par: ${punishment?.executedBy}`:''}`}
                     </div>
                     {punishment?.appealed && (
                         <div
                             style={{
                                 fontSize: 12,
-                                color: "#722ed1",
+                                color: "#260f49",
                                 background: "#f9f0ff",
                                 border: "1px solid #d3adf7",
                                 borderRadius: 4,

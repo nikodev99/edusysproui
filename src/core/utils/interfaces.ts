@@ -15,7 +15,6 @@ import {AcademicYear, Guardian, Individual} from "@/entity";
 import {SectionType} from "@/entity/enums/section.ts";
 import {Gender} from "@/entity/enums/gender.tsx";
 import {AttendanceStatus} from "@/entity/enums/attendanceStatus.ts";
-import {AddressOwner, IndividualType} from "../shared/sharedEnums.ts";
 import {CalendarProps, Event, SlotInfo, View, ViewsProps} from "react-big-calendar";
 import {ReprimandType} from "@/entity/enums/reprimandType.ts";
 import {PunishmentType} from "@/entity/enums/punishmentType.ts";
@@ -409,6 +408,7 @@ export interface InfoPageProps<T extends object> {
     infoData: T
     dataKey: string
     seeMore?: (key: string) => void
+    showMoreBtn?: boolean
     color?: string
     viewLink?: string
     academicYear?: string
@@ -505,10 +505,10 @@ export type TabItemType = {
     closable?: boolean
 }
 
-export type CustomUpdateProps<T extends object> = {
+export type CustomUpdateProps<T extends object, Q extends EnumType[keyof EnumType]> = {
     data: T,
     open?: boolean, close?: () => void,
-    personal: AddressOwner | IndividualType,
+    personal: Q,
     setSuccessMessage: (msg: string | undefined) => void,
     setErrorMessage: (msg: string | undefined) => void
 }

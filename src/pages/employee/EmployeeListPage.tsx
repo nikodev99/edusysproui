@@ -1,22 +1,22 @@
-import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
-import {text} from "../../core/utils/text_display.ts";
-import {BreadcrumbType, useBreadcrumbItem} from "../../hooks/useBreadCrumb.tsx";
-import {ListPageHierarchy} from "../../components/custom/ListPageHierarchy.tsx";
-import {useRedirect} from "../../hooks/useRedirect.ts";
+import {useDocumentTitle} from "@/hooks/useDocumentTitle.ts";
+import {text} from "@/core/utils/text_display.ts";
+import {BreadcrumbType, useBreadcrumbItem} from "@/hooks/useBreadCrumb.tsx";
+import {ListPageHierarchy} from "@/components/custom/ListPageHierarchy.tsx";
+import {useRedirect} from "@/hooks/useRedirect.ts";
 import {LuEllipsisVertical, LuEye, LuUserPlus} from "react-icons/lu";
-import ListViewer from "../../components/custom/ListViewer.tsx";
-import {fetchAllEmployees, fetchSearchedEmployees} from "../../data/action/employeeAction.ts";
+import ListViewer from "@/components/custom/ListViewer.tsx";
+import {fetchAllEmployees, fetchSearchedEmployees} from "@/data/action/employeeAction.ts";
 import {TableColumnsType} from "antd";
-import {Employee} from "../../entity";
-import {AvatarTitle} from "../../components/ui/layout/AvatarTitle.tsx";
-import {getAge, getSlug} from "../../core/utils/utils.ts";
-import {Gender} from "../../entity/enums/gender.tsx";
-import {StatusTags} from "../../core/utils/tsxUtils.tsx";
-import {ActionButton} from "../../components/ui/layout/ActionButton.tsx";
+import {Employee} from "@/entity";
+import {AvatarTitle} from "@/components/ui/layout/AvatarTitle.tsx";
+import {getAge, getSlug} from "@/core/utils/utils.ts";
+import {Gender} from "@/entity/enums/gender.tsx";
+import {StatusTags} from "@/core/utils/tsxUtils.tsx";
+import {ActionButton} from "@/components/ui/layout/ActionButton.tsx";
 import {BiSolidUserAccount} from "react-icons/bi";
 import {AiOutlineUserDelete} from "react-icons/ai";
-import {DataProps} from "../../core/utils/interfaces.ts";
-import {Status} from "../../entity/enums/status.ts";
+import {DataProps} from "@/core/utils/interfaces.ts";
+import {Status} from "@/entity/enums/status.ts";
 
 const EmployeeListPage = () => {
     const {toAddEmployee, toViewEmployee} = useRedirect()
@@ -87,7 +87,7 @@ const EmployeeListPage = () => {
         },
         {
             title: 'Poste',
-            dataIndex: 'jobTitle',
+            dataIndex: ['contract', 'jobTitle'],
             key: 'jobTitle',
             align: 'center',
         },

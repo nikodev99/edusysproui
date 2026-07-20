@@ -57,10 +57,4 @@ const CreateUser = ({open, onCancel, personalInfo, userType}: CreateUserProps) =
     )
 }
 
-const RemoveUser = () => {
-    return(
-        <div>Remove the user</div>
-    )
-}
-
-export { CreateUser, RemoveUser }
+export { CreateUser }

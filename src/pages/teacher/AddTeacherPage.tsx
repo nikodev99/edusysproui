@@ -1,21 +1,22 @@
-import {text} from "../../core/utils/text_display.ts";
+import {globalSchool, text} from "@/core/utils/text_display.ts";
 import {useEffect, useState, useTransition} from "react";
-import {TeacherAcademicForm} from "../../components/ui-kit-teacher";
+import {TeacherAcademicForm} from "@/components/ui-kit-teacher";
 import {useForm} from "react-hook-form";
-import {AddressOwner, IndividualType} from "../../core/shared/sharedEnums.ts";
+import {AddressOwner, ContractOwner, IndividualType} from "@/core/shared/sharedEnums.ts";
 import AddressForm from "../../components/forms/AddressForm.tsx";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {ClasseSchemaMerge, CourseSchemaMerge, TeacherSchema, teacherSchema} from "../../schema";
+import {ClasseSchemaMerge, CourseSchemaMerge, TeacherSchema, teacherSchema} from "@/schema";
 import {AddStepForm} from "../../components/custom/AddStepForm.tsx";
 import {CustomDot} from "../../core/utils/tsxUtils.tsx";
-import {redirectTo} from "../../context/RedirectContext.ts";
-import {TeacherForm} from "../../components/forms/TeacherForm.tsx";
 import {Gender} from "../../entity/enums/gender.tsx";
-import {Status} from "../../entity/enums/status.ts";
+import {Status} from "@/entity/enums/status.ts";
 import {UploadCareForm} from "../../components/forms/UploadCareForm.tsx";
 import {OutputFileEntry} from "@uploadcare/blocks";
-import {addTeacher} from "../../data";
+import {addTeacher} from "@/data";
 import {IndividualForm} from "../../components/forms/IndividualForm.tsx";
+import {useRedirect} from "@/hooks/useRedirect.ts";
+import {loggedUser} from "@/auth/jwt/LoggedUser.ts";
+import {EmployeeContractForm} from "@/components/forms/EmployeeContractForm.tsx";
 
 const AddTeacherPage = () => {
 
@@ -44,8 +45,8 @@ const AddTeacherPage = () => {
     const [courses, setCourses] = useState<CourseSchemaMerge[]>([])
     const [defaultCourses, setDefaultCourses] = useState<number[]>()
     const [isPending, startTransition] = useTransition()
-
-    const addUrl = text.teacher.group.add.href
+    const user = loggedUser.getUser()
+    const {toAddTeacher} = useRedirect()
 
     const form = useForm<TeacherSchema>({
         resolver: zodResolver(teacherSchema)
@@ -56,14 +57,11 @@ const AddTeacherPage = () => {
     const formData = watch()
 
     const handleTeacherClassCourse = ({ courses, classes }: { courses: CourseSchemaMerge[], classes: ClasseSchemaMerge[] }) => {
-        setValue('classes', classes, {
+        setValue('classes', classes?.map(c => ({classe: {id: c.id}})), {
             shouldValidate: true,
         })
-        setValue('courses', courses, {
+        setValue('courses', courses?.map(c => ({course: {id: c.id}})), {
             shouldValidate: true,
-        })
-        setValue('school.id', text.schoolID, {
-            shouldValidate: true
         })
     }
 
@@ -73,16 +71,28 @@ const AddTeacherPage = () => {
         }
     }, [formData?.personalInfo?.gender, formData?.personalInfo?.status])
 
+    useEffect(() => {
+        reset({
+            school: {
+                    id: globalSchool.school?.id,
+            },
+            contract: {
+                status: 'ACTIVE',
+                createdBy: {id: user?.personalInfo}
+            },
+        })
+    }, [reset, user?.personalInfo]);
+
     const validate = (validateFields: boolean, current: number) => {
         if (validateFields) {
             setValidationTriggered(true);
             clearErrors()
-            redirectTo(`${addUrl}?step=${current + 1}`)
+            toAddTeacher(current + 1)
         }
     }
 
     const triggerNext = async (current: number) => {
-        let validateFields
+        let validateFields: boolean
         try {
             switch (current) {
                 case 0:
@@ -113,7 +123,7 @@ const AddTeacherPage = () => {
                     break
                 case 3:
                     validateFields = await trigger([
-                        "salaryByHour"
+                        "contract.role", "contract.contractType", "contract.salaryBasis", "contract.currency", "contract.startDate",
                     ])
                     validate(validateFields, current)
                     break
@@ -168,11 +178,13 @@ const AddTeacherPage = () => {
         },
         {
             title: 'Embauche',
-            content: <TeacherForm
-                control={control}
+            content: <EmployeeContractForm
+                type={ContractOwner.TEACHER}
+                control={control as never}
                 errors={errors}
                 edit={false}
-                clearErrors={clearErrors}
+                clearErrors={clearErrors as never}
+                validationTriggered={validationTriggered}
             />
         },
         {
@@ -207,7 +219,7 @@ const AddTeacherPage = () => {
         <AddStepForm
             docTitle={metadata}
             breadCrumb={items}
-            addLink={addUrl}
+            prevRedirect={toAddTeacher}
             handleForm={form}
             triggerNext={triggerNext}
             onSubmit={onsubmit}

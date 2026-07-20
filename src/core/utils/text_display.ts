@@ -40,8 +40,13 @@ export const raw = {
                 href: '/teachers/'
             },
             add: {
-                label: 'Nouveau enseignant',
+                label: 'Ajouter enseignant',
+                affiliate_href: '/teachers/new/affiliate',
                 href: '/teachers/new'
+            },
+            affiliate: {
+                label: 'Affilier un enseignant',
+                href: '/teachers/affiliate'
             }
         }
     },
@@ -256,7 +261,7 @@ export const withSlug = (schoolSlug: string): typeof raw => {
         Object.keys(obj).forEach(key => {
             if (typeof obj[key] === 'object') {
                 walk(obj[key] as Record<string, unknown>)
-            }else if (key === 'href') {
+            }else if (key.includes('href')) {
                 obj[key] = prefix + obj[key]
             }
         })
@@ -288,5 +293,8 @@ export const jwt = {
     roles: '@edusyspro-roles',
 }
 
-const school = loggedUser.getSchool()
-export const text = withSlug(toLower(school?.abbr as string) as string)
+export const globalSchool = {
+    school: loggedUser.getSchool()
+}
+
+export const text = withSlug(toLower(globalSchool.school?.abbr as string) as string)

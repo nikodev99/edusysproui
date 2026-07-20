@@ -1,19 +1,17 @@
 import {useDocumentTitle} from "@/hooks/useDocumentTitle.ts";
 import {text} from "@/core/utils/text_display.ts";
 import {BreadcrumbType, useBreadcrumbItem} from "@/hooks/useBreadCrumb.tsx";
-import {LuEllipsisVertical, LuEye} from "react-icons/lu";
-import {AiOutlineUsergroupAdd} from "react-icons/ai";
-import {Divider, Flex, TableColumnsType, Tag} from "antd";
-import {Classe, Course, Teacher} from "@/entity";
+import {LuEllipsisVertical, LuEye, LuHandshake, LuUserPlus, LuUserRoundPlus} from "react-icons/lu";
+import {Button, Divider, Flex, TableColumnsType, Tag} from "antd";
+import {Teacher, TeacherCourses} from "@/entity";
 import {Avatar} from "@/components/ui/layout/Avatar.tsx";
 import {enumToObjectArrayForFiltering, getAge, setFirstName, setPlural} from "@/core/utils/utils.ts";
 import {Gender} from "@/entity/enums/gender.tsx";
-import {StatusTags} from "@/core/utils/tsxUtils.tsx";
+import {AffiliateStatusTag} from "@/core/utils/tsxUtils.tsx";
 import {ActionButton} from "@/components/ui/layout/ActionButton.tsx";
 import {ListPageHierarchy} from "@/components/custom/ListPageHierarchy.tsx";
 import ListViewer from "@/components/custom/ListViewer.tsx";
 import {AxiosResponse} from "axios";
-import {Status} from "@/entity/enums/status.ts";
 import {DataProps} from "@/core/utils/interfaces.ts";
 import {useRedirect} from "@/hooks/useRedirect.ts";
 import {useTeacherRepo} from "@/hooks/actions/useTeacherRepo.ts";
@@ -27,7 +25,7 @@ const TeacherListPage = () => {
     const [selectedTeacher, setSelectedTeacher] = useState<Teacher | undefined>(undefined)
     const [linkButtons, setLinkButtons] = useState<ItemType[]>([])
     const [refresh, setRefresh] = useState<boolean>(false)
-    const {toViewTeacher, toAddTeacher} = useRedirect()
+    const {toViewTeacher, toAddTeacher, toAffiliateTeacher} = useRedirect()
     const {canViewAll, canViewSelf} = usePermission()
     
     const context = useMemo(() => {
@@ -89,13 +87,13 @@ const TeacherListPage = () => {
             firstName: t?.personalInfo?.firstName,
             gender: t?.personalInfo?.gender,
             reference: t?.personalInfo?.emailId,
-            tag: <StatusTags status={t?.personalInfo?.status as Status} female={t?.personalInfo?.gender === Gender.FEMME} />,
+            tag: <AffiliateStatusTag status={t?.status} />,
             description: <>
                 <Divider style={{fontSize: '12px'}}>Cours ou classes</Divider>
                 <Flex gap={2} wrap justify={"center"}>
                     {(t.courses && t.courses.length > 0
-                        ? t.courses.map((tcc) => tcc?.course).filter(Boolean)
-                        : t.classes?.map((c) => c?.name).filter(Boolean) ?? []).map((item, index) => (
+                        ? t.courses.map((tcc) => tcc?.course?.course).filter(Boolean)
+                        : t.classes?.map((c) => c?.classe?.name).filter(Boolean) ?? []).map((item, index) => (
                         <Tag key={index}>{item}</Tag>
                     ))}
                 </Flex>
@@ -150,13 +148,13 @@ const TeacherListPage = () => {
         },
         {
             title: "Status",
-            dataIndex: ['personalInfo', 'status'],
+            dataIndex: 'status',
             key: 'status',
             align: 'center',
             responsive: ['md'],
             sorter: true,
             showSorterTooltip: false,
-            render: (text, {personalInfo}) => <StatusTags status={text} female={personalInfo?.gender === Gender.FEMME} />
+            render: (status) => <AffiliateStatusTag status={status} />
         },
         {
             title: "Matières",
@@ -164,17 +162,17 @@ const TeacherListPage = () => {
             key: 'emailId',
             align: 'center',
             width: "15%",
-            render: (text: Course[], record: Teacher) => {
+            render: (text: TeacherCourses[], record: Teacher) => {
                 if (text && text?.length > 0) {
                     return<Flex justify='center' gap={2} wrap>
-                        {text?.map((c: Course, index: number) => (
-                            <Tag key={index}>{c.course}</Tag>
+                        {text?.map((c, index: number) => (
+                            <Tag key={index}>{c.course.course}</Tag>
                         ))}
                     </Flex>
                 }else {
                     return <Flex justify='center' gap={2} wrap>
-                        {record?.classes?.map((c: Classe, index: number) => (
-                            <Tag key={index}>{c?.name}</Tag>
+                        {record?.classes?.map((c, index: number) => (
+                            <Tag key={index}>{c?.classe?.name}</Tag>
                         ))}
                     </Flex>
                 }
@@ -207,11 +205,12 @@ const TeacherListPage = () => {
         <>
             <ListPageHierarchy
                 items={pageHierarchy as [BreadcrumbType]}
-                onClick={toAddTeacher}
-                hasButton
-                type='primary'
-                icon={<AiOutlineUsergroupAdd />}
-                label='Ajouter enseignant'
+                hasDropdownButton
+                dropdownItems={[
+                    {key: '1', label: 'Nouveau enseignant', icon: <LuUserRoundPlus />, onClick: () => toAddTeacher()},
+                    {key: '2', label: 'Affilié enseignant', icon: <LuHandshake />, onClick: () => toAffiliateTeacher() },
+                ]}
+                icon={<Button type='primary'><LuUserPlus /> {text.teacher.group.add.label}</Button>}
             />
             <ListViewer
                 callback={getPaginatedTeachers as () => Promise<AxiosResponse<Teacher[]>>}

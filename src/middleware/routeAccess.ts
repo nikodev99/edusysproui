@@ -11,6 +11,7 @@ import {
 } from "../auth/dto/role.ts";
 import {text} from "../core/utils/text_display.ts";
 import {ItemType} from "antd/es/menu/interface";
+import {setPlural} from "@/core/utils/utils.ts";
 
 /**
  * Permission Levels
@@ -1010,7 +1011,7 @@ class RouteAccess {
                 return item
             }
 
-            const itemCopy = {...item}
+            const itemCopy = {...item, label: setPlural(item['label'], true)}
 
             // If this item has children (it's a submenu), filter the children recursively
             if ('children' in itemCopy && Array.isArray(itemCopy.children)) {

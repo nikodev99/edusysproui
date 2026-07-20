@@ -1,6 +1,6 @@
 import {useParams} from "react-router-dom";
 import {useEffect, useMemo, useState} from "react";
-import {Classe, Course, Schedule, Teacher} from "@/entity";
+import {Classe, Course, Schedule, Teacher, TeacherClasses} from "@/entity";
 import {useDocumentTitle} from "@/hooks/useDocumentTitle.ts";
 import {cutStatement, getUniqueness} from "@/core/utils/utils.ts";
 import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
@@ -70,7 +70,9 @@ const SubjectViewPage = () => {
                         s?.teacher?.personalInfo?.firstName === teacher?.personalInfo?.firstName &&
                         s?.teacher?.personalInfo?.lastName === teacher?.personalInfo?.lastName
                     )
-                ) as Classe[]
+                ).map(c => ({
+                    classe: c
+                })) as TeacherClasses[]
         });
 
         return teachers;

@@ -8,7 +8,9 @@ import {PatchUpdate} from "@/core/PatchUpdate.ts";
 import {Employee, Guardian, Individual, Student, Teacher} from "@/entity";
 import {Gender} from "../../entity/enums/gender.tsx";
 
-export const UpdatePersonalData = ({data, setSuccessMessage, setErrorMessage, personal}: CustomUpdateProps<Student | Teacher | Employee | Guardian>) => {
+export const UpdatePersonalData = (
+    {data, setSuccessMessage, setErrorMessage, personal}: CustomUpdateProps<Student | Teacher | Employee | Guardian, IndividualType>
+) => {
 
     const {control, formState: {errors}, watch} = useForm<IndividualSchema>({
         resolver: zodResolver(individualSchema)
@@ -33,7 +35,7 @@ export const UpdatePersonalData = ({data, setSuccessMessage, setErrorMessage, pe
         <IndividualForm
             control={control}
             errors={errors}
-            type={personal as IndividualType}
+            type={personal}
             data={data?.personalInfo}
             showField={data?.personalInfo?.gender === Gender.FEMME}
             edit

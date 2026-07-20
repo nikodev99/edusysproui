@@ -1,6 +1,17 @@
 import Datetime from "@/core/datetime.ts";
 import {Moment} from "@/core/utils/interfaces.ts";
 
+const DEFAULT_LABELS = {
+    seconds : 'sec.',
+    minutes : 'min.',
+    hours   : 'h',
+    weeks   : 'sem.',
+    months  : 'mois',
+    years   : 'An',
+} as const;
+
+type LabelOverrides = Partial<typeof DEFAULT_LABELS>
+
 export class DateHelpers {
     formatWeekRange(weekDates: Datetime[]): string {
         if (!weekDates || weekDates.length === 0) return ""
@@ -41,6 +52,30 @@ export class DateHelpers {
         if (typeof arg === "string") return arg.split(":").map(Number);
         return "";
     }
+
+    timeAgo (then: Moment, options?: {showLabels?: boolean, label?: LabelOverrides}): string {
+        const showLabels = options?.showLabels ?? true
+        const labels = {...DEFAULT_LABELS, ...options?.label}
+
+        const now = Datetime.now()
+
+        const seconds = Math.abs(now.diffSecond(then))
+        const minutes = Math.abs(now.diffMinutes(then))
+        const hours = Math.abs(now.diffHour(then))
+        const weeks = Math.abs(now.diffWeek(then))
+        const months = Math.abs(now.diffMonth(then))
+        const years = Math.abs(now.diffYear(then))
+
+        const format = (x: number, label: string) => showLabels ? `${x} ${label}` : `${x}`
+
+        if (seconds < 60) return format(seconds, labels.seconds)
+        if (minutes < 60) return format(minutes, labels.minutes)
+        if (hours < 24) return format(hours, labels.hours)
+        if (weeks < 4) return format(weeks, labels.weeks)
+        if (months < 12) return format(months, labels.months)
+        return format(years, years > 1 ? `${labels.years}s` : labels.years)
+    }
+    
 }
 
 export const datehelper = new DateHelpers()

@@ -7,8 +7,11 @@ import {RepoOptions} from "@/core/utils/interfaces.ts";
 import {useInsert} from "@/hooks/usePost.ts";
 import {reprimandSchema} from "@/schema/models/reprimandSchema.ts";
 import {ReprimandFilterProps} from "@/entity/domain/reprimand.ts";
+import {useGlobalStore} from "@/core/global/store.ts";
 
 export const useReprimandRepo = () => {
+    const schoolId =  useGlobalStore(state => state.schoolId)
+
     const useInsertReprimand = () => useInsert(reprimandSchema, createReprimand, {
         mutationKey: ['reprimand-post']
     })
@@ -39,7 +42,12 @@ export const useReprimandRepo = () => {
     }
 
     const useGetSomeStudentReprimandByTeacher = (teacherId: number) => {
-        const {data} = useFetch(['some-student-reprimands', teacherId], getSomeStudentReprimandedByTeacher, [teacherId], !!teacherId)
+        const {data} = useFetch(
+            ['some-student-reprimands', teacherId,],
+            getSomeStudentReprimandedByTeacher,
+            [teacherId, schoolId],
+            !!teacherId
+        )
         return data
     }
 

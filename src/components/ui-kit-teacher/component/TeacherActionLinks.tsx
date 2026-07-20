@@ -1,6 +1,6 @@
 import {ActionButtonsProps} from "@/core/utils/interfaces.ts";
-import {useMemo} from "react";
-import {CreateUser, RemoveUser} from "../../common/CreateUser.tsx";
+import {useMemo, useState} from "react";
+import {CreateUser} from "../../common/CreateUser.tsx";
 import {UserType} from "@/auth/dto/user.ts";
 import {Teacher} from "@/entity";
 import {useToggle} from "@/hooks/useToggle.ts";
@@ -11,13 +11,21 @@ import {LuClipboardPenLine, LuListChecks, LuListTodo, LuTrash2, LuUserCheck, LuU
 import {useMenuItemsEffect} from "@/hooks/useMenuItemsEffect.ts";
 import {useRedirect} from "@/hooks/useRedirect.ts";
 import {useUserRepo} from "@/hooks/actions/useUserRepo.ts";
+import {ConfirmationModal, Messages} from "@/components/ui/layout/ConfirmationModal.tsx";
+import {setName} from "@/core/utils/utils.ts";
+import {useTeacherRepo} from "@/hooks/actions/useTeacherRepo.ts";
+import {globalSchool} from "@/core/utils/text_display.ts";
+import {catchError} from "@/data/action/error_catch.ts";
+import {Alert} from "antd";
 
 type TeacherActionButtons = ActionButtonsProps<Teacher>
 
-export const TeacherActionLinks = ({data, getItems}: TeacherActionButtons) => {
+export const TeacherActionLinks = ({data, getItems, setRefresh}: TeacherActionButtons) => {
+    const [message, setMessage] = useState<Messages>({success: null, error: null})
     const [openCreateUser, setOpenCreateUser] = useToggle(false)
-    const [removeGuardian, setRemoveGuardian] = useToggle(false)
+    const [removeTeacher, setRemoveTeacher] = useToggle(false)
     const {useAccountExists, useAccountExistsInSchool} = useAccount()
+    const {useRemoveTeacherAffiliation} = useTeacherRepo()
     const {canCreate, canDelete} = usePermission()
     const {toViewTeacher} = useRedirect()
 
@@ -26,6 +34,7 @@ export const TeacherActionLinks = ({data, getItems}: TeacherActionButtons) => {
     }), [data])
 
     const accountExists = useAccountExists(personalInfo?.id as number)
+    const remove = useRemoveTeacherAffiliation()
     const {isSelfUser} = useUserRepo()
     const isSelf = isSelfUser()
     const isPresentInSchool = useAccountExistsInSchool(personalInfo?.id as number)
@@ -63,16 +72,38 @@ export const TeacherActionLinks = ({data, getItems}: TeacherActionButtons) => {
             icon: <LuListTodo/>,
             onClick: () => toViewTeacher(data?.id as string, '5'),
         }] : []),
-
+        {type: 'divider'},
         ...(canDelete ? [{
             key: `delete-${data?.id}`,
             label: 'Retirer l\'enseignant', 
             danger: true, 
-            icon: <LuTrash2/>
+            icon: <LuTrash2/>,
+            onClick: () => setRemoveTeacher()
         }] : [])
-    ], [accountExists, canCreate, canDelete, data?.id, isPresentInSchool, isSelf, setOpenCreateUser, toViewTeacher])
+    ], [
+        accountExists, canCreate, canDelete, data?.id, isPresentInSchool, isSelf, setOpenCreateUser, setRemoveTeacher,
+        toViewTeacher
+    ])
+
+    console.log({removeTeacher})
 
     useMenuItemsEffect(items, getItems)
+
+    const onClose = () => {
+        setMessage({success: null, error: null})
+        setRefresh?.(true)
+        setRemoveTeacher()
+    }
+
+    const onDeleteTeacher = () => {
+        setMessage({success: null, error: null})
+        remove.mutate({
+            teacherId: data?.id as string, schoolId: globalSchool.school?.id as string
+        }, {
+            onSuccess: r => setMessage({success: r.data}),
+            onError: e => setMessage({error: catchError(e) as string})
+        })
+    }
 
     return (
         <section>
@@ -82,7 +113,25 @@ export const TeacherActionLinks = ({data, getItems}: TeacherActionButtons) => {
                 personalInfo={personalInfo}
                 userType={UserType.TEACHER}
             />}
-            {canDelete && removeGuardian && <RemoveUser />}
+            {canDelete && removeTeacher && <ConfirmationModal
+                open={removeTeacher}
+                close={onClose}
+                setRefetch={setRefresh as () => void}
+                handleFunc={onDeleteTeacher}
+                content={<Alert type='warning' message={"Lorsque vous confirmerez, cet enseignant ne sera plus active dans votre " +
+                    "établissement. Toutes les données qu'il a ajouté pour le compte de votre établissement demeurera accessible."} />}
+                alertDesc={{type: 'warning', msg: "Lorsque vous confirmerez, cet enseignant ne sera plus active dans votre " +
+                        "établissement. Toutes les données qu'il a ajouté pour le compte de votre établissement demeurera accessible."}}
+                data={data as Teacher}
+                btnTxt='Supprimer'
+                btnProps={{
+                    danger: true,
+                    type: 'default',
+                    variant: 'solid'
+                }}
+                messages={message}
+                modalTitle={<span>Supprimé {setName(data?.personalInfo)}</span>}
+            />}
         </section>
     )
 }

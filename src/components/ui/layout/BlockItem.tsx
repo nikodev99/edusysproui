@@ -3,7 +3,7 @@ import {ReactNode} from "react";
 
 interface BlockItemProps {
     children: ReactNode;
-    dataKey: string;
+    dataKey?: string;
 }
 
 const BlockItem = ({children, dataKey}: BlockItemProps) => {

@@ -1,7 +1,7 @@
 import TabItem from "@/components/view/TabItem.tsx";
 import {Attendance, Enrollment} from "@/entity";
 import {firstLetter, getUniqueness, setFirstName, startsWithVowel} from "@/core/utils/utils.ts";
-import {TableColumnsType} from "antd";
+import {Skeleton, TableColumnsType} from "antd";
 import {useState, useMemo, useRef, useEffect} from "react";
 import {AttendanceAnalysis} from "./AttendanceAnalysis.tsx";
 import {useAttendanceRepo} from "@/hooks/actions/useAttendanceRepo.ts";
@@ -67,6 +67,9 @@ export const StudentAttendance = ({enrolledStudent, infinite = true}: {enrolledS
             setAllItems(data.totalElements as number)
         }
     }, [academicYearId, data, isLoading, isSuccess, personalInfo?.id, refetch, size])
+
+    if (!enrolledStudent || !attendances)
+        return <Skeleton paragraph={{rows: 5}} active />
 
     if(error) return <PageError />
 

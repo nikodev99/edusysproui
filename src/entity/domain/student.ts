@@ -1,11 +1,4 @@
-import {Enrollment} from "./enrollment.ts";
-import {Guardian} from "./guardian.ts";
-import {HealthCondition} from "./healthCondition.ts"
-import {Score} from "./score.ts";
-import {Attendance} from "./attendance.ts";
-import {Individual} from "./individual.ts";
-import {Classe} from "./classe.ts";
-import {School} from "./school.ts";
+import {Enrollment, Guardian, HealthCondition, Score, Attendance, Individual, Classe, School} from "@/entity";
 
 export interface Student {
     id: string

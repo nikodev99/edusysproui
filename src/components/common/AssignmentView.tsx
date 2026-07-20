@@ -35,8 +35,8 @@ interface AssignmentViewProps {
 
 const AssignmentView = (
     {
-        assignExams, academicYear, bestScores, tabViews, title, name, showBarChart, hasLegend, showBest = true, getSubject,
-        classeId, getClasse, courses, classes, selects, studentId, disableSelect, label = 'Evaluation', calendarLimit
+        assignExams, bestScores, tabViews, title, name, showBarChart, hasLegend, showBest = true, getSubject,
+        getClasse, courses, classes, selects, studentId, disableSelect, label = 'Evaluation', calendarLimit
     }: AssignmentViewProps
 ) => {
     const [assignments, setAssignments] = useState<Assignment[] | null>(null)
@@ -46,15 +46,11 @@ const AssignmentView = (
     const [selectedClasse, setSelectedClasse] = useState<string | null>(null)
     const [selectedTabKey, setSelectedTabKey] = useState<string | undefined>('assignment-list')
     const [classeValue, setClasseValue] = useState<number>(classes && classes?.length > 0 ? classes[0].id as number : 0)
-    const [bestStudent, setBestStudent] = useState<Score[] | null>()
     const [loading] = useState<boolean>(false);
-    const [isLoading, setIsLoading] = useState(true);
-    const [toRefetch, setToRefetch] = useState<boolean>(false)
-    const [disabledSelect, setDisabledSelect] = useState<boolean>(false)
 
     const courseExists: boolean = courses && courses?.length > 0 || false
 
-    const {data, isSuccess, refetch, isFetching, isRefetching, isFetched, isLoading: isFetchLoading, isPending} = assignExams
+    const {data, isSuccess, refetch, isFetching, isRefetching, isLoading: isFetchLoading, isPending} = assignExams
 
     const subjects = useMemo(() => {
         return courseExists ? courses?.map(c => ({
@@ -77,17 +73,19 @@ const AssignmentView = (
         }): []
     }, [selects])
 
-    useEffect(() => {
-        if(classeId || classeValue || academicYear || subjectValue || toRefetch) {
-            refetch()
-                .then(r => {
-                    if (toRefetch) {
-                        setToRefetch(false)
-                    }
-                    return r.data
-                })
-        }
+    const isLoading = useMemo(() => {
+        return isFetching || isRefetching || isFetchLoading || isPending
+    }, [isFetchLoading, isFetching, isPending, isRefetching]);
+    
+    const bestStudent = useMemo(() => bestScores && bestScores?.length > 0 ? bestScores : null, [bestScores])
 
+    const disabledSelect = useMemo(() => 
+            selectedTabKey === 'exam-list' || 
+            (disableSelect && selectedTabKey === 'assignment-list'), 
+        [disableSelect, selectedTabKey]
+    )
+
+    useEffect(() => {
         if (isSuccess) {
             setAssignments(data as Assignment[])
             setAllSubjects((prevSubjects) => {
@@ -107,61 +105,28 @@ const AssignmentView = (
             })
         }
 
-    }, [academicYear, classeId, classeValue, courses, courseExists, data, isSuccess, refetch, subjectValue, toRefetch]);
-
-    useEffect(() => {
-        if(isFetching || isRefetching || isFetchLoading || isPending) {
-            setIsLoading(true)
-        }else {
-            setIsLoading(false)
-        }
-    }, [isFetchLoading, isFetched, isFetching, isPending, isRefetching]);
-
-    useEffect(() => {
-        if (bestScores)
-            setBestStudent(bestScores)
-
-        if (getSubject) {
-            getSubject(subjectValue)
-        }
-
-        if (getClasse && classeValue) {
-            getClasse(classeValue)
-        }
-
-    }, [bestScores, classeValue, getClasse, getSubject, subjectValue]);
-
-    useEffect(() => {
-        setSelectedSubject(subjectValue !== 0 ? (allSubjects ?? subjects)?.find(s => s.value === subjectValue)?.label ?? null : null)
-        setSelectedClasse(classeValue !== 0 ? classes?.find(c => c.id === classeValue)?.name ?? null : null)
-    }, [allSubjects, classeValue, classes, subjectValue, subjects]);
-
-    useEffect(() => {
-        if (disableSelect && selectedTabKey === 'assignment-list') {
-            setDisabledSelect(true)
-        }else {
-            setDisabledSelect(false)
-        }
-    }, [disableSelect, selectedTabKey]);
+    }, [courseExists, data, isSuccess]);
 
     const handleSubjectValue = (value: number) => {
         setSubjectValue(prev => prev === value ? prev : value)
+        setSelectedSubject((allSubjects ?? subjects)?.find(s => s.value === value)?.label ?? null)
+        getSubject?.(value)
+        refetch()?.then(r => r.data)
     }
     
     const handleClasseValue = (value: number) => {
         setClasseValue(prev => prev === value ? prev : value)
+        setSelectedClasse(classes?.find(c => c.id === value)?.name ?? null)
+        getClasse?.(value)
+        refetch()?.then(r => r.data)
     }
 
-    const handleConfirmation = (value: boolean) => {
-        setToRefetch(value);
+    const handleConfirmation = () => {
+        refetch().then(r => r.data)
     };
 
     const changeTab = (activeKey: string) => {
         setSelectedTabKey(activeKey)
-        if (activeKey === 'exam-list')
-            setDisabledSelect(true)
-        else
-            setDisabledSelect(false)
     }
 
     return (

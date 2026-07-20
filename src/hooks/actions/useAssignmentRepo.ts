@@ -18,8 +18,11 @@ import {UserPermission} from "@/core/shared/sharedEnums.ts";
 import {useAuth} from "@/hooks/useAuth.ts";
 import {getShortSortOrder} from "@/core/utils/utils.ts";
 import {AssignmentFilterProps} from "@/entity/domain/assignment.ts";
+import {useGlobalStore} from "@/core/global/store.ts";
 
 export const useAssignmentRepo = (context: UserPermission = UserPermission.ALL) => {
+    const schoolId = useGlobalStore(state => state.schoolId)
+
     const useGetPaginatedExams = () => {
         const {user} = useAuth()
 
@@ -61,21 +64,21 @@ export const useAssignmentRepo = (context: UserPermission = UserPermission.ALL) 
     const useGetSomeTeacherAssignments = (preparedById: number) => useFetch(
         ['teacher-assignments', preparedById],
         getSomeTeacherAssignments,
-        [preparedById],
-        !!preparedById
+        [preparedById, schoolId],
+        !!preparedById && !!schoolId
     )
 
-    const useGetTeacherAssignments = (preparedById: number) => useFetch(
-        ['teacher-assignments', preparedById],
+    const useGetTeacherAssignments = (preparedById: number, academicYear: string) => useFetch(
+        ['teacher-assignments', preparedById, academicYear],
         getTeacherAssignments,
-        [preparedById],
-        !!preparedById
+        [preparedById, academicYear],
+        !!preparedById && !!academicYear
     )
 
-    const useGetAllTeacherAssignments = (preparedById: number, ids: IDS): UseQueryResult<Assignment[], unknown> => useFetch(
-        ids.courseId ? ['teacher-course-assignments', preparedById, ids.courseId, ids.courseId] : ['teacher-assignments', preparedById, ids.classId],
+    const useGetAllTeacherAssignments = (preparedById: number, academicYear: string, ids: IDS): UseQueryResult<Assignment[], unknown> => useFetch(
+        ids.courseId ? ['teacher-course-assignments', preparedById, academicYear, ids.courseId, ids.courseId] : ['teacher-assignments', preparedById, ids.classId],
         ids.courseId ? getAllTeacherCourseAssignments : getAllTeacherAssignments,
-        [preparedById, ids],
+        [preparedById, academicYear, ids],
         ids.courseId ? !!preparedById && !!ids.courseId && !!ids.classId : !!preparedById && !!ids.classId
     )
 

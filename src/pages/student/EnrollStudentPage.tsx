@@ -8,7 +8,6 @@ import {useMemo, useState, useTransition} from "react";
 import {Gender} from "@/entity/enums/gender.tsx";
 import {Status} from "@/entity/enums/status.ts";
 import {Address, Enrollment, Guardian, Individual, toGuardianSchema} from "@/entity";
-import {redirectTo} from "@/context/RedirectContext.ts";
 import {addStudent} from "@/data";
 import StudentForm from "@/components/forms/StudentForm.tsx";
 import AddressForm from "@/components/forms/AddressForm.tsx";
@@ -50,9 +49,8 @@ const EnrollStudentPage = () => {
     const [isPending, startTransition] = useTransition()
     const [validationTriggered, setValidationTriggered] = useState(false)
     const [image, setImage] = useState<string | undefined>(undefined)
-    const addLink = text.student.group.add.href
 
-    const {toViewStudent} = useRedirect()
+    const {toViewStudent, toEnrollStudent} = useRedirect()
     const {enrollStudentActivity} = useActivity()
 
     const form = useForm<EnrollmentSchema>({
@@ -77,7 +75,7 @@ const EnrollStudentPage = () => {
     const validate = (validateFields: boolean, current: number) => {
         if (validateFields) {
             setValidationTriggered(true);
-            redirectTo(`${addLink}?step=${current + 1}`)
+            toEnrollStudent(current + 1)
         }
     }
 
@@ -261,7 +259,7 @@ const EnrollStudentPage = () => {
         <AddStepForm
             docTitle={documentTitle}
             breadCrumb={breadCrumb}
-            addLink={addLink}
+            prevRedirect={toEnrollStudent}
             triggerNext={triggerNext}
             onSubmit={onSubmit}
             steps={steps}

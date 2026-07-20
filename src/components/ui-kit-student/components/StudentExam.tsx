@@ -84,7 +84,7 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
 
     const columns: TableColumnsType<ExamData> = [
         {
-            title: "Examen",
+            title: "Evaluation",
             dataIndex: 'examName',
             key: 'ExamName',
             align: 'left',
@@ -92,11 +92,19 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
             render: text => <Typography.Link>{text}</Typography.Link>
         },
         {
+            title: "Type d'évaluation",
+            dataIndex: 'examType',
+            key: 'subjet',
+            align: 'center',
+            width: '10%',
+            render: text => <Tag>{text}</Tag>
+        },
+        {
             title: "Matière",
             dataIndex: 'subject',
             key: 'subjet',
             align: 'center',
-            width: '18%',
+            width: '12%',
             render: text => <Tag>{text}</Tag>
         },
         {
@@ -113,7 +121,7 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
             key: 'examDate',
             align: 'right',
             responsive: ['md'],
-            width: '13%',
+            width: '12%',
             render: text => fDate(text),
         },
         {
@@ -121,7 +129,7 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
             dataIndex: 'coefficient',
             key: 'coefficient',
             align: 'center',
-            width: '10%',
+            width: '8%',
             render: (text: number) => <Tag>{text}</Tag>
         },
         {
@@ -130,7 +138,7 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
             dataIndex: 'obtainedMark',
             key: 'obtainedMark',
             align: 'end',
-            width: '10%',
+            width: '8%',
             //sorter: true,
             //showSorterTooltip: false,
             render: (text: number, record) => <Typography.Title level={4}>

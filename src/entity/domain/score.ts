@@ -1,5 +1,5 @@
-import {Student} from "./student.ts";
-import {Assignment} from "./assignment.ts";
+import {Student, Assignment} from "@/entity";
+import {AssignmentTypeLiteral} from "@/entity/enums/assignmentType.ts";
 
 export interface Score {
     id?: bigint | number
@@ -14,6 +14,7 @@ export const initExamData = (scores: Score[]) => {
         examId: s?.assignment?.id,
         examDate: s?.assignment?.examDate ?? '',
         examName: s?.assignment?.examName ?? '',
+        examType: AssignmentTypeLiteral[s?.assignment?.type as unknown as keyof typeof AssignmentTypeLiteral],
         classe: s?.assignment?.classe?.name ?? '',
         subject: s?.assignment?.subject?.course ?? undefined,
         obtainedMark: s?.obtainedMark ?? 0,

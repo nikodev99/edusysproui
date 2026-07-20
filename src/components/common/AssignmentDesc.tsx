@@ -24,7 +24,7 @@ interface AssignmentDescProps {
     hasLegend?: boolean
     showBarChart?: boolean
     barLayout?: 'horizontal' | 'vertical'
-    setRefetch?: (refetch: boolean) => void
+    setRefetch?: () => void
     refetch?: boolean
     showBest?: boolean
     onlyMark?: string
@@ -63,7 +63,7 @@ export const AssignmentDesc = (
 
     useLayoutEffect(() => {
         if (refetch) {
-            setRefetch && setRefetch(refetch)
+            setRefetch && setRefetch()
         }
     }, [refetch, setRefetch])
 

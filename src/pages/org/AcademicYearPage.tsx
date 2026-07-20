@@ -1,19 +1,20 @@
-import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
-import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
-import {text} from "../../core/utils/text_display.ts";
+import {useDocumentTitle} from "@/hooks/useDocumentTitle.ts";
+import {useBreadCrumb} from "@/hooks/useBreadCrumb.tsx";
+import {text} from "@/core/utils/text_display.ts";
 import {Alert, Badge, Button, Card, Divider, Flex, Table, TableColumnsType, Typography} from "antd";
-import Responsive from "../../components/ui/layout/Responsive.tsx";
+import Responsive from "@/components/ui/layout/Responsive.tsx";
 import {AiOutlineEdit} from "react-icons/ai";
-import Grid from "../../components/ui/layout/Grid.tsx";
-import {useAcademicYearRepo} from "../../hooks/actions/useAcademicYearRepo.ts";
+import Grid from "@/components/ui/layout/Grid.tsx";
+import {useAcademicYearRepo} from "@/hooks/actions/useAcademicYearRepo.ts";
 import {useEffect, useMemo} from "react";
-import {AcademicYear, Semester} from "../../entity";
-import Datetime from "../../core/datetime.ts";
-import {AcademicYearEditDrawer, SaveAcademicYear, SaveSemesterTemplate} from "../../components/ui-kit-org";
-import {useToggle} from "../../hooks/useToggle.ts";
-import {useSemesterRepo} from "../../hooks/actions/useSemesterRepo.ts";
+import {AcademicYear, Semester} from "@/entity";
+import Datetime from "@/core/datetime.ts";
+import {AcademicYearEditDrawer, SaveAcademicYear, SaveSemesterTemplate} from "@/components/ui-kit-org";
+import {useToggle} from "@/hooks/useToggle.ts";
+import {useSemesterRepo} from "@/hooks/actions/useSemesterRepo.ts";
 import Marquee from "react-fast-marquee";
-import {loggedUser} from "../../auth/jwt/LoggedUser.ts";
+import {loggedUser} from "@/auth/jwt/LoggedUser.ts";
+import {LuPencil} from "react-icons/lu";
 
 const AcademicYearPage = () => {
     useDocumentTitle({
@@ -121,6 +122,7 @@ const AcademicYearPage = () => {
             title: 'Année',
             key: 'academicYear',
             dataIndex: 'academicYear',
+            align: "center",
             render: (academicYear: AcademicYear) => {
                 return academicYear?.current ?
                     <Text strong>{academicYear?.academicYear}</Text> :
@@ -131,23 +133,29 @@ const AcademicYearPage = () => {
             title: 'Début',
             key: 'startDate',
             dataIndex: 'startDate',
+            align: "center",
             render: (date) => {
-                return date ? Datetime.of(date).format({format: 'DD-MM-YYYY'}) : '';
+                return date ? Datetime.of(date).format({format: 'DD MMM YYYY'}) : '';
             },
         },
         {
             title: 'Fin',
             key: 'endDate',
             dataIndex: 'endDate',
+            align: "center",
             render: (date) => {
-                return date ? Datetime.of(date).format({format: 'DD-MM-YYYY'}) : '';
+                return date ? Datetime.of(date).format({format: 'DD MMM YYYY'}) : '';
             },
         },
         {
             title: 'Action',
             key: 'semesterId',
             dataIndex: 'semesterId',
-            render: (id) => id
+            align: 'end',
+            render: (id, record) => {
+                const isCurrent = record?.academicYear?.current;
+                return isCurrent && <Button type='primary' size='small' icon={<LuPencil />} onClick={() => alert("Modifier semester " + id)}></Button>
+            }
         },
     ], [Text, mergeCells])
     
@@ -174,7 +182,7 @@ const AcademicYearPage = () => {
             <Responsive gutter={[16, 16]}>
                 <Grid xs={24} md={12} lg={12}>
                     <Grid xs={24} md={24} lg={24} style={{marginBottom: '15px'}}>
-                        <Card bordered={false}>
+                        <Card variant={'outlined'}>
                             <Card.Meta title={
                                 <Flex align='center' justify={'space-between'} wrap>
                                     <h3>Année Académique Actuelle</h3>
@@ -203,7 +211,7 @@ const AcademicYearPage = () => {
                                 dataSource={academicYears}
                                 pagination={false}
                                 rowKey='id'
-                                scroll={{y: 300}}
+                                scroll={{y: 500}}
                             />
                         </Card>
                     </Grid>
@@ -211,7 +219,7 @@ const AcademicYearPage = () => {
 
                 <Grid xs={24} md={12} lg={12}>
                     <Grid xs={24} md={24} lg={24} style={{marginBottom: '15px'}}>
-                        <Card bordered={false}>
+                        <Card variant={'outlined'}>
                             <Card.Meta title={
                                 <Flex align='center' justify={'space-between'} wrap>
                                     <h3>Semestre/Trimestre Actuelle</h3>
@@ -255,7 +263,10 @@ const AcademicYearPage = () => {
                                 dataSource={semesters}
                                 pagination={false}
                                 rowKey='semesterId'
-                                scroll={{y: 300}}
+                                rowClassName={(record) => record.academicYear?.current ? 'current-year-row' : ''}
+                                bordered={true}
+                                scroll={{y: 500}}
+                                size={'small'}
                             />
                         </Card>
                     </Grid>

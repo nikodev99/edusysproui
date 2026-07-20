@@ -23,22 +23,24 @@ export const getClasseExams = (classeId: number, academicYear: string): Promise<
     })
 }
 
-export const getClasseExamAssignments = (examId: number, classeId: number, academicYear: string): Promise<AxiosResponse<ExamResponse, unknown>> => {
+export const getClasseExamAssignments = (examId: number, classeId: number, academicYear: string, onlyStat: boolean = false): Promise<AxiosResponse<ExamResponse, unknown>> => {
     return request({
         method: 'GET',
         url: `/exam/${examId}/classe_${classeId}`,
         params: {
-            academicYear: academicYear
+            academicYear: academicYear,
+            onlyStat: onlyStat
         }
     })
 }
 
-export const getStudentExamAssignments = (examId: number, classeId: number, academicYear: string, studentId: string): Promise<AxiosResponse<ExamResponse, unknown>> => {
+export const getStudentExamAssignments = (examId: number, classeId: number, academicYear: string, studentId: string, onlySTat: boolean = false): Promise<AxiosResponse<ExamResponse, unknown>> => {
     return request({
         method: 'GET',
         url: `/exam/${examId}/${studentId}/${classeId}`,
         params: {
-            academicYear: academicYear
+            academicYear: academicYear,
+            onlyStat: onlySTat
         }
     })
 }

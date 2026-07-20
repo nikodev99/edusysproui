@@ -4,7 +4,7 @@ import {HTMLProps, ReactNode, useEffect, useMemo, useState} from "react";
 import {Enrollment, HealthCondition, Schedule} from "@/entity";
 import {
     bloodLabel, convertToM, fDate, firstLetter, fullDay, getAge, getCountry,
-    chooseColor, isNull, monthsBetween, setFirstName, currency
+    chooseColor, isNull, setFirstName
 } from "@/core/utils/utils.ts";
 import PanelStat from "@/components/ui/layout/PanelStat.tsx";
 import { Table as CustomTable } from "@/components/ui/layout/Table.tsx";
@@ -22,7 +22,7 @@ import Section from "@/components/ui/layout/Section.tsx";
 import PanelSection from "@/components/ui/layout/PanelSection.tsx";
 import {InfoPageProps} from "@/core/utils/interfaces.ts";
 import {initExamData} from "@/entity/domain/score.ts";
-import {attendanceTag} from "@/entity/enums/attendanceStatus.ts";
+import {AttendanceStatus, attendanceTag, calculateTotal} from "@/entity/enums/attendanceStatus.ts";
 import Tag from "@/components/ui/layout/Tag.tsx";
 import {LuBan} from "react-icons/lu";
 import {StudentCarousel} from "@/components/common/StudentCarousel.tsx";
@@ -33,17 +33,24 @@ import {useStudentRepo} from "@/hooks/actions/useStudentRepo.ts";
 import {useReprimandRepo} from "@/hooks/actions/useReprimandRepo.ts";
 import {ReprimandType} from "@/entity/enums/reprimandType.ts";
 import {ExamData} from "@/entity/domain/exam.ts";
+import {useAttendanceRepo} from "@/hooks/actions/useAttendanceRepo.ts";
+import {BarChart} from "@/components/graph/BarChart.tsx";
+import {useExamRepo} from "@/hooks/actions/useExamRepo.ts";
+import {LineChart} from "@/components/graph/LineChart.tsx";
+import VoidData from "@/components/view/VoidData.tsx";
 
-type StudentInfoProps = InfoPageProps<Enrollment>
+type StudentInfoProps = InfoPageProps<Enrollment> & {
+    readonly?: boolean
+}
 
 interface HistoryData {
     dataId: string
     academicYear: string
     classeName: string
-    yearAmount: number
+    schoolName: number
 }
 
-const IndividualInfo = ({infoData, color}: StudentInfoProps) => {
+export const IndividualInfo = ({infoData, color}: StudentInfoProps) => {
 
     const {student, personalInfo, healthCondition} = useMemo(() => ({
         student: infoData?.student,
@@ -57,6 +64,7 @@ const IndividualInfo = ({infoData, color}: StudentInfoProps) => {
     const birthDay = fDate(personalInfo?.birthDate)
     const individualData = [
         {statement: 'Genre', response: firstLetter(personalInfo?.gender)},
+        {statement: 'Référence', response: personalInfo?.reference},
         {statement: 'Nom(s) et prénom(s) du père', response: setFirstName(student?.dadName)},
         {statement: 'Nom(s) et prénom(s) de la mère', response: setFirstName(student?.momName)},
         ...(isNull(personalInfo?.telephone) ? [] : [{statement: 'Téléphone', response: personalInfo?.telephone}]),
@@ -98,15 +106,28 @@ const IndividualInfo = ({infoData, color}: StudentInfoProps) => {
     )
 }
 
-const GuardianBlock = ({infoData, color}: StudentInfoProps) => {
+export const GuardianBlock = ({infoData, color}: StudentInfoProps) => {
     const {personalInfo, linkToStudent, jobTitle, company} = useMemo(() => ({
         personalInfo: infoData?.student?.guardian?.personalInfo,
         linkToStudent: infoData?.student?.guardian?.linkToStudent,
         jobTitle: infoData?.student?.guardian?.jobTitle,
         company: infoData?.student?.guardian?.company,
     }), [infoData?.student?.guardian])
+    
+    const isSameAddress = useMemo(() => 
+        personalInfo?.address?.number === infoData?.student?.personalInfo?.address?.number &&
+        personalInfo?.address?.street === infoData?.student?.personalInfo?.address?.street &&
+        personalInfo?.address?.neighborhood === infoData?.student?.personalInfo?.address?.neighborhood,
+    [
+        infoData?.student?.personalInfo?.address?.neighborhood,
+        infoData?.student?.personalInfo?.address?.number,
+        infoData?.student?.personalInfo?.address?.street,
+        personalInfo?.address?.neighborhood, personalInfo?.address?.number,
+        personalInfo?.address?.street
+    ])
 
     const guardianData = [
+        {statement: 'Référence', response: personalInfo?.reference},
         {statement: 'Nom(s)', response: personalInfo?.lastName},
         {statement: 'Prénoms(s)', response: personalInfo?.firstName},
         {statement: 'Téléphone', response: personalInfo?.telephone},
@@ -114,7 +135,13 @@ const GuardianBlock = ({infoData, color}: StudentInfoProps) => {
         {statement: '@', response: personalInfo?.emailId},
         ...(isNull(linkToStudent) ? [] : [{statement: 'Lien de parenté', response: LinkToStudent[linkToStudent]}])
     ]
-    const addressData = [
+    const addressData = isSameAddress ? [
+        {statement: 'Adresse', response: `
+            ${personalInfo?.address?.number}, ${personalInfo?.address?.street} 
+            ${personalInfo?.address?.neighborhood}, ${personalInfo?.address?.city}
+            `
+        }
+    ] : [
         {statement: 'Numéro', response: personalInfo?.address?.number},
         {statement: 'Rue', response: personalInfo?.address?.street},
         {statement: 'Quartier', response: personalInfo?.address?.neighborhood},
@@ -200,6 +227,37 @@ const ExamList = ({infoData, seeMore, color}: StudentInfoProps) => {
     )
 }
 
+export const ExamInsight = ({infoData, seeMore}: StudentInfoProps) => {
+    const {useGetStudentExamProgress} = useExamRepo()
+    const progress = useGetStudentExamProgress(infoData?.student?.id as string, infoData?.classe?.id, infoData?.academicYear?.id)
+
+    const lineData = progress?.map(p => ({
+        moyenne: p.average,
+        examen: p.examName,
+        date: Datetime.of(p.examDate).format("DD/MM/YYYY")
+    })) ?? []
+
+    const handleClick = () => {
+        seeMore && seeMore('1')
+    }
+
+    return(
+        <Section title='Progression aux examens' more={true} seeMore={handleClick}>
+            {lineData && lineData?.length > 0 ? (<div style={{padding: '15px 15px 15px 0'}}>
+                <LineChart
+                    data={lineData}
+                    dataKey={['moyenne', 'examen']}
+                    height={300}
+                    minHeight={300}
+                    legend='date'
+                    type='bumpX'
+                    showLegend
+                />
+            </div>): <VoidData />}
+        </Section>
+    )
+}
+
 const GraphSection = ({infoData}: StudentInfoProps) => {
 
     const {personalInfo, marks} = useMemo(() => ({
@@ -221,16 +279,23 @@ const GraphSection = ({infoData}: StudentInfoProps) => {
     }
 
     return (
-        <Section title='Progression aux examens'>
+        <Section title='Cartographie des aptitudes'>
             <RadarChart data={graphData}  xField='subject' yField='score' color={chooseColor(personalInfo?.firstName as string)} />
         </Section>
     )
 }
 
-const SchoolHistory = ({infoData, color}: StudentInfoProps) => {
+export const SchoolHistory = ({infoData, color, readonly = false}: StudentInfoProps) => {
     const {enrollments} = useMemo(() => ({
         enrollments: infoData?.student?.enrollments
     }), [infoData?.student?.enrollments])
+
+    const presentHistory = readonly ? [{
+        dataId: infoData?.classe?.id.toString(),
+        academicYear: infoData?.academicYear?.academicYear ?? '',
+        classeName: infoData?.classe?.name ?? '',
+        schoolName: infoData?.academicYear?.school?.name ?? ''
+    }] : []
 
     const columns: TableColumnsType<HistoryData> = [
         {
@@ -248,30 +313,29 @@ const SchoolHistory = ({infoData, color}: StudentInfoProps) => {
             align: 'center'
         },
         {
-            title: "Montant Annuel",
-            dataIndex: 'yearAmount',
+            title: "École",
+            dataIndex: 'schoolName',
             key: 'yearAmount',
             align: 'center',
-            render: (text) => {
-                if (text)
-                    return(<span>{text ? currency(text) : ''}</span>)
-            },
         },
     ];
 
-    const historyData: HistoryData[] = enrollments?.map((e) => ({
-        dataId: e.classe.id.toString(),
-        academicYear: e.academicYear?.academicYear ?? '',
-        classeName: e.classe?.name ?? '',
-        yearAmount: (e.classe?.monthCost || 0) * (monthsBetween(e.academicYear?.startDate, e.academicYear?.endDate) || 0),
-    })) ?? [];
+    const historyData  = [
+        ...(presentHistory ?? []),
+        ...(enrollments?.map((e) => ({
+            dataId: e.classe?.id?.toString() ?? '',
+            academicYear: e.academicYear?.academicYear ?? '',
+            classeName: e.classe?.name ?? '',
+            schoolName: e.academicYear?.school?.name ?? '',
+        })) ?? [])
+    ];
 
     return (
         <Section title='Hystorique'>
             <Table
                 className='score-table'
                 size='small'
-                columns={columns}
+                columns={columns as []}
                 dataSource={historyData}
                 pagination={false}
                 rowKey={(record) => record.dataId}
@@ -285,6 +349,49 @@ const SchoolHistory = ({infoData, color}: StudentInfoProps) => {
             />
         </Section>
     )
+}
+
+export const AttendanceWidget = ({infoData, color, seeMore}: StudentInfoProps) => {
+    const {useGetStudentAttendanceStatusCount} = useAttendanceRepo()
+    const {data: counts} = useGetStudentAttendanceStatusCount(
+        infoData?.student?.personalInfo?.id as number,
+        infoData?.academicYear?.id
+    )
+
+    const total = calculateTotal(counts?.statusCount)
+    const percent = (present: number): string =>
+        total > 0 ? ((present / total) * 100).toFixed(2) : '0.00';
+
+    console.log(counts)
+
+    const composeData = [
+        {
+            name: AttendanceStatus.PRESENT as string,
+            valeur: percent(counts?.statusCount.PRESENT ?? 0),
+        },
+        {
+            name: AttendanceStatus.ABSENT as string,
+            valeur: percent(counts?.statusCount.ABSENT ?? 0),
+        },
+        {
+            name: AttendanceStatus.LATE as string,
+            valeur: percent(counts?.statusCount.LATE ?? 0),
+        },
+        {
+            name: AttendanceStatus.EXCUSED as string,
+            valeur: percent(counts?.statusCount.EXCUSED ?? 0)
+        }
+    ];
+
+    const handleClick = () => {
+        seeMore && seeMore('2')
+    }
+
+    return(
+       <Section title={'Taux de présence'} more={true} seeMore={handleClick}>
+           <BarChart data={composeData} dataKey={['valeur']} legend='name' eachBarColor isPercent color={color} />
+       </Section>
+   )
 }
 
 const AttendanceSection = ({infoData, seeMore, color}: StudentInfoProps) => {
@@ -344,7 +451,7 @@ const SchoolColleagues = ({infoData, seeMore, color}: StudentInfoProps) => {
     )
 }
 
-const HealthData = ({infoData, color}: StudentInfoProps) => {
+export const HealthData = ({infoData, color}: StudentInfoProps) => {
 
     const student = useMemo(() => infoData?.student, [infoData?.student])
 
@@ -404,7 +511,7 @@ const CourseSchedule = ({infoData}: StudentInfoProps) => {
     )
 }
 
-const DisciplinaryRecords = ({infoData, seeMore, color}: StudentInfoProps) => {
+export const DisciplinaryRecords = ({infoData, seeMore, color, showMoreBtn = true}: StudentInfoProps) => {
     const {useGetAllStudentReprimand} = useReprimandRepo()
     const personalInfo = useMemo(() => infoData?.student?.personalInfo, [infoData?.student?.personalInfo])
     const reprimands = useGetAllStudentReprimand(infoData?.student?.id)
@@ -424,7 +531,7 @@ const DisciplinaryRecords = ({infoData, seeMore, color}: StudentInfoProps) => {
     }
 
     return (
-        <Section title={`Dossiers disciplinaires de ${setFirstName(personalInfo?.firstName)}`} more={true} seeMore={handClick}>
+        <Section title={`Dossiers disciplinaires de ${setFirstName(personalInfo?.firstName)}`} more={showMoreBtn} seeMore={handClick}>
             {reprimands?.length !== 0 && values ? (<Card variant={'borderless'}>
                 <Card.Meta title={`Total réprimande: ${values?.length}`} style={{textAlign: 'center', marginTop: '5px'}} />
                     <PieChart
@@ -464,22 +571,24 @@ export const StudentInfo = ({enrollment, seeMore, color}: { enrollment: Enrollme
 
     const items: ReactNode[] = [
         <IndividualInfo infoData={enrollment} dataKey='individual-block' color={color}/>,
+        <GuardianBlock infoData={enrollment} dataKey='guardian-section' color={color} />,
         ...(!sections.includes(SectionType[classe?.grade?.section as keyof typeof SectionType]) ? [
             <GraphSection infoData={enrollment} dataKey='graph-block' color={color}/>
         ] : []),
-        <GuardianBlock infoData={enrollment} dataKey='guardian-section' color={color} />,
         ...(!sections.includes(SectionType[classe?.grade?.section as keyof typeof SectionType]) ? [
             <ExamList infoData={enrollment} seeMore={seeMore} dataKey='exam-block' color={color}/>
         ] : []),
-        <SchoolHistory infoData={enrollment} seeMore={seeMore} dataKey='school-history-block' color={color}/>,
+        <ExamInsight infoData={enrollment} seeMore={seeMore} dataKey={'exam-insights'} color={color} />,
+        <CourseSchedule infoData={enrollment} dataKey='schedule-section' color={color} />,
+        <AttendanceWidget infoData={enrollment} seeMore={seeMore} dataKey='student-attendance-details' color={color} />,
         <AttendanceSection infoData={enrollment} seeMore={seeMore} dataKey='attendance-block' color={color}/>,
         <HealthData infoData={enrollment} dataKey='health-section' color={color} />,
         <SchoolColleagues infoData={enrollment} seeMore={seeMore} dataKey='classmates-block' color={color}/>,
-        <CourseSchedule infoData={enrollment} dataKey='schedule-section' color={color} />,
-        <DisciplinaryRecords infoData={enrollment} dataKey='disciplinary-section' seeMore={seeMore} color={color} />
+        <DisciplinaryRecords infoData={enrollment} dataKey='disciplinary-section' seeMore={seeMore} color={color} />,
+        <SchoolHistory infoData={enrollment} seeMore={seeMore} dataKey='school-history-block' color={color}/>,
     ]
 
     return (
-        <Block items={items}/>
+        <Block items={items} />
     )
 }

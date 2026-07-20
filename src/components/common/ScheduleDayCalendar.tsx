@@ -1,12 +1,13 @@
-import {Schedule} from "../../entity";
-import {getMinMaxTimes, timeToCurrentDatetime} from "../../core/utils/utils.ts";
+import {Schedule} from "@/entity";
+import {timeToCurrentDatetime} from "@/core/utils/utils.ts";
 import Section from "../ui/layout/Section.tsx";
 import {BigCalendar} from "../graph/BigCalendar.tsx";
 import {ReactNode} from "react";
 import {Descriptions, Popover} from "antd";
 import {DescriptionsItemType} from "antd/es/descriptions";
 import {Link} from "react-router-dom";
-import {text} from "../../core/utils/text_display.ts";
+import {text} from "@/core/utils/text_display.ts";
+import {scheduleHelper} from "@/core/helpers/ScheduleHelpers.ts";
 
 export const ScheduleDayCalendar = (
     {eventSchedule, sectionTitle, seeMore, hasTeacher}: {
@@ -27,7 +28,7 @@ export const ScheduleDayCalendar = (
         allDay: false
     }))
 
-    const {minStartTime, maxEndTime} = getMinMaxTimes(eventSchedule)
+    const {minStartTime, maxEndTime} = scheduleHelper.getMinMaxTimes(eventSchedule)
 
     return(
         <Section title={sectionTitle} more={seeMore !== undefined} seeMore={seeMore}>

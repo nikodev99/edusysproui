@@ -93,26 +93,32 @@ export const getAllCourseAssignments = (courseId: number, academicYear: string) 
     })
 }
 
-export const getSomeTeacherAssignments = (personalInfoId: number) => {
-    return apiClient.get<Assignment[]>(`/assignment/teacher_some_${personalInfoId}`)
+export const getSomeTeacherAssignments = (personalInfoId: number, schoolId: string) => {
+    return apiClient.get<Assignment[]>(`/assignment/teacher_some_${personalInfoId}/${schoolId}`)
 }
 
-export const getTeacherAssignments = (personalInfoId: number) => {
-    return apiClient.get<Assignment[]>(`/assignment/teacher_all/${personalInfoId}`)
+export const getTeacherAssignments = (personalInfoId: number, academicYear: string) => {
+    return apiClient.get<Assignment[]>(`/assignment/teacher_all/${personalInfoId}`, {
+        params: {
+            academicYear: academicYear
+        }
+    })
 }
 
-export const getAllTeacherCourseAssignments = (personalInfoId: number, ids: IDS) => {
+export const getAllTeacherCourseAssignments = (personalInfoId: number, academicYear: string, ids: IDS) => {
     return apiClient.get<Assignment[]>(`/assignment/teacher_all_course_${personalInfoId}`, {
         params: {
+            academicYear: academicYear,
             classe: ids.classId,
             course: ids.courseId
         }
     })
 }
 
-export const getAllTeacherAssignments = (personalInfoId: number, ids: IDS) => {
+export const getAllTeacherAssignments = (personalInfoId: number, academicYear: string, ids: IDS) => {
     return apiClient.get<Assignment[]>(`/assignment/teacher_all_${personalInfoId}`, {
         params: {
+            academicYear: academicYear,
             classe: ids.classId
         }
     })

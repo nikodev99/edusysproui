@@ -33,7 +33,6 @@ export const StudentReprimandDrawer = ({reprimand, open, close}: {
                         {key: '1', label: 'Punition', children: <span>{PunishmentType[reprimand?.punishment?.type]}</span>, span: 3},
                         {key: '2', label: 'Description', children: '', span: 3},
                         {key: '3', children: reprimand?.punishment?.description, span: 3},
-                        {key: '4', label: 'Période', children: '', span: 3},
                         {
                             key: '5',
                             label: <LuCalendarDays />,
@@ -44,16 +43,29 @@ export const StudentReprimandDrawer = ({reprimand, open, close}: {
                         },
                         {key: '7', label: 'Exécuté par', children: reprimand?.punishment?.executedBy ? reprimand?.punishment?.executedBy : '-', span: 3},
                         {key: '8', label: 'Status', children: <Tag color={tagColor}>{tagText}</Tag>, span: 3},
-                        {key: '9', label: 'En appel', children: <div>
+                        {key: '9', label: 'Réprimande contestée', children: <div>
                             {reprimand?.punishment?.appealed ? (
                                 <Tag color='success'>Oui</Tag>
                             ) : (
                                 <Tag color="processing">Non</Tag>
                             )}
-                            {reprimand?.punishment?.appealedNote && (
-                                <div style={{ marginTop: 6, color: "var(--ant-gray-6)" }}>{reprimand?.punishment?.appealedNote}</div>
-                            )}
                         </div>, span: 3},
+                        ...(reprimand?.punishment?.appealedNote ? [{key: '10', span: 3, children: reprimand?.punishment?.appealedNote && (
+                            <div
+                                style={{
+                                    fontSize: 12,
+                                    color: "#260f49",
+                                    background: "#f9f0ff",
+                                    border: "1px solid #d3adf7",
+                                    borderRadius: 4,
+                                    padding: "4px 8px",
+                                    width: '100%'
+                                }}
+                            >
+                                {reprimand?.punishment?.appealedNote}
+                            </div>
+                            )
+                        }]: [])
                     ]} /> : (
                     <Text type="secondary">Aucune sanction associée à cette réprimande.</Text>
                 )}

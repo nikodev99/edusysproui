@@ -1,7 +1,7 @@
-import {GenderCounted, InfoPageProps} from "../../../core/utils/interfaces.ts";
-import {Classe} from "../../../entity";
+import {GenderCounted, InfoPageProps} from "@/core/utils/interfaces.ts";
+import {Classe} from "@/entity";
 import PageWrapper from "../../view/PageWrapper.tsx";
-import {ClasseAttendanceAnalysis} from "./ClasseAttendanceAnalysis.tsx";
+import {ClasseAttendanceAnalysis} from "@/components/ui-kit-cc";
 
 export const ClasseAttendance = (props: InfoPageProps<Classe> & {studentCount: GenderCounted | null}) => {
     return (

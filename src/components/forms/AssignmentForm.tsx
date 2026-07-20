@@ -69,14 +69,14 @@ export const AssignmentForm = <T extends FieldValues, Q>(
         setAllClasses(classes && classes?.length > 0
             ? classes
             : teacherClasses?.classes && teacherClasses?.classes?.length > 0
-                ? teacherClasses?.classes
+                ? teacherClasses?.classes?.map(tc => tc.classe)
                 : []
         )
         
         setAllCourses(courses && courses?.length > 0
             ? courses
             : teacherCourses?.courses && teacherCourses?.courses?.length > 0
-                ? teacherCourses?.courses
+                ? teacherCourses?.courses?.map(tc => tc.course)
                 : []
         )
     }, [classes, courses, teacherClasses, teacherCourses?.courses]);

@@ -16,6 +16,7 @@ export interface ExamData {
     examId?: number
     examDate: string;
     examName: string;
+    examType: ExamType;
     classe: string;
     subject: string
     obtainedMark: number;

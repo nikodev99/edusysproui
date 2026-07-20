@@ -32,6 +32,7 @@ const GuardianViewPage: React.FC = () => {
     const {data: teacher} = useGetTeacherClasses(logged?.userId as string, isTeacher())
     
     const guardianName = guardian ? setName(guardian?.personalInfo) : 'Tuteur'
+    const allowedClasses = teacher?.classes?.map(c => c.classe) || []
 
     console.log('User: ', guardian?.students)
     console.log('Teacher: ', teacher?.classes)
@@ -112,7 +113,7 @@ const GuardianViewPage: React.FC = () => {
                             label: 'List des étudiants',
                             children: <GuardianStudentList
                                 students={guardian?.students}
-                                allowedClasses={teacher?.classes as []}
+                                allowedClasses={allowedClasses as []}
                             />
                         }
                     ]}

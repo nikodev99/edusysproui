@@ -1,5 +1,5 @@
-import {Attendance} from "../domain/attendance.ts";
-import {AttendanceCount, AttendanceRecord} from "../../core/utils/interfaces.ts";
+import {Attendance} from "@/entity";
+import {AttendanceCount, AttendanceRecord, AttendanceStatusCount} from "@/core/utils/interfaces.ts";
 
 export enum AttendanceStatus {
     PRESENT = 'Présent',
@@ -95,6 +95,11 @@ export const getColors = (attendanceStatus: AttendanceStatus) => {
             return '#ccc'
     }
 }
+
+export const calculateTotal = (data?: AttendanceStatusCount): number => {
+    if (!data) return 1
+    return Object.values(data).reduce((acc: number, curr: number) => acc + curr, 0);
+};
 
 export const countAll = (status: AttendanceCount[]) => {
     return status?.reduce((sum, record) => sum + record.count, 0) || 0;

@@ -1,13 +1,14 @@
-import {Option, ZodProps} from "../../../core/utils/interfaces.ts";
-import Responsive from "../../ui/layout/Responsive.tsx";
+import {Option, ZodProps} from "@/core/utils/interfaces.ts";
+import Responsive from "@/components/ui/layout/Responsive.tsx";
 import {useMemo} from "react";
-import SelectInput from "../../ui/form/SelectInput.tsx";
-import {EnrollmentSchema} from "../../../schema";
-import {useAcademicYearRepo} from "../../../hooks/actions/useAcademicYearRepo.ts";
-import {useClasseRepo} from "../../../hooks/actions/useClasseRepo.ts";
+import SelectInput from "@/components/ui/form/SelectInput.tsx";
+import {EnrollmentSchema} from "@/schema";
+import {useAcademicYearRepo} from "@/hooks/actions/useAcademicYearRepo.ts";
+import {useClasseRepo} from "@/hooks/actions/useClasseRepo.ts";
 
-export const AcademicForm = ({control, errors, getSchool}: ZodProps<EnrollmentSchema> & {
+export const AcademicForm = ({control, errors, getSchool, xs}: ZodProps<EnrollmentSchema> & {
     getSchool?: (classe: Option) => void
+    xs?: boolean
 }) => {
 
     const {useGetCurrentAcademicYear} = useAcademicYearRepo()
@@ -29,7 +30,7 @@ export const AcademicForm = ({control, errors, getSchool}: ZodProps<EnrollmentSc
     return(
         <Responsive gutter={[16, 16]}>
             <SelectInput
-                lg={12}
+                lg={xs ? 24 : 12}
                 control={control}
                 name='academicYear.id'
                 label='Année Scolaire/Academique'
@@ -41,7 +42,7 @@ export const AcademicForm = ({control, errors, getSchool}: ZodProps<EnrollmentSc
                 options={[{value: academicYear?.id as string, label: academicYear?.academicYear as string}]}
             />
             <SelectInput
-                lg={12}
+                lg={xs ? 24 : 12}
                 control={control}
                 name='classe.id'
                 label='Classe'

@@ -30,11 +30,11 @@ export const useExamRepo = () => {
             ).data as Exam[]
         },
 
-        useGetExamAssignments: (examId: number, classeId: number, academicYear: string, studentId?: string) => {
+        useGetExamAssignments: (examId: number, classeId: number, academicYear: string, studentId?: string, onlyStat: boolean = false) => {
             return useFetch(
                 ['exam-id', examId, classeId, studentId && studentId],
                 studentId ? getStudentExamAssignments : getClasseExamAssignments,
-                studentId ? [examId, classeId, academicYear, studentId] : [examId, classeId, academicYear],
+                studentId ? [examId, classeId, academicYear, studentId, onlyStat] : [examId, classeId, academicYear, onlyStat],
                 studentId ? !!examId && !!classeId && !!academicYear && !!studentId : !!examId && !!classeId && !!academicYear
             )
         },

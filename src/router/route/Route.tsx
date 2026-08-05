@@ -58,6 +58,7 @@ import GuardianPaymentHistoryPage from "@/pages/guardian/GuardianPaymentHistoryP
 import GuardianBillingSettingPage from "@/pages/guardian/GuardianBillingSettingPage.tsx";
 import AffiliateTeacherPage from "@/pages/teacher/AffiliateTeacherPage.tsx";
 import AffiliateNewTeacherPage from "@/pages/teacher/AffiliateNewTeacherPage.tsx";
+import ClasseSchedulePage from "@/pages/classe_subject/ClasseSchedulePage.tsx";
 
 const DashboardPage = withAuthProtection(withRoleProtection(Dashboard));
 
@@ -85,6 +86,7 @@ const GuardianBillingSetting = withAuthProtection(withRoleProtection(GuardianBil
 const ProtectedClasseSubjectListsPage = withAuthProtection(withRoleProtection(ClasseSubjectListsPage));
 const ProtectedClasseViewPage = withAuthProtection(withRoleProtection(ClasseViewPage));
 const ProtectedSubjectViewPage = withAuthProtection(withRoleProtection(SubjectViewPage));
+const ProtectedClasseSchedulePage = withAuthProtection(withRoleProtection(ClasseSchedulePage))
 
 const ListEmployeePage = withAuthProtection(withRoleProtection(EmployeeListPage));
 const EmployeeAddPage = withAuthProtection(withRoleProtection(AddEmployeePage));
@@ -181,6 +183,7 @@ export const Route = createBrowserRouter([
                 children: [
                     {path: text.path.page, element: <ProtectedClasseSubjectListsPage />},
                     {path: text.cc.group.classe.path.view, element: <ProtectedClasseViewPage />},
+                    {path: text.cc.group.classe.path.view + '/schedules', element: <ProtectedClasseSchedulePage />},
                     {path: text.cc.group.course.path.view, element: <ProtectedSubjectViewPage />},
                 ]
             },

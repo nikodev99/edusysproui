@@ -39,7 +39,9 @@ export const useSearch = <T extends object>(
                 // Call the rawFetch with proper parameters
                 const response = await rawFetch(
                     fetchFunc as (...args: unknown[]) => Promise<AxiosResponse<T, unknown>>,
-                    [value, ...funcParams]
+                    !funcParams || funcParams.length === 0
+                        ? [value]
+                        : [...funcParams, value]
                 );
 
                 if (response && 'data' in response) {

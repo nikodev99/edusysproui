@@ -33,6 +33,7 @@ export const toEnrollment = (data: StudentListDataType): Enrollment => {
                 section: data?.grade
             }
         } as Classe,
+        isArchived: data?.isArchived,
         enrollmentDate: data?.lastEnrolledDate as Date
     } as Enrollment
 }

@@ -119,6 +119,8 @@ export const useRedirect = () => {
 
     const toEditAttendance = () => redirectTo(text.att.group.edit.href)
 
+    const toAddSchedule = (classeId: number) =>  redirectTo(text.cc.group.classe.view.href + classeId + '/schedules')
+
     const toLibrary = () => redirectTo(text.library.href)
 
     const toViewLibrary = (libraryId: string) => redirectTo(text.library.group.view.href + libraryId)
@@ -238,6 +240,7 @@ export const useRedirect = () => {
         toViewAttendance,
         toAddAttendance,
         toEditAttendance,
+        toAddSchedule,
         toLibrary,
         toViewLibrary,
         toAddLibrary,

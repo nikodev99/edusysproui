@@ -6,8 +6,9 @@ import {EnrollmentSchema} from "@/schema";
 import {useAcademicYearRepo} from "@/hooks/actions/useAcademicYearRepo.ts";
 import {useClasseRepo} from "@/hooks/actions/useClasseRepo.ts";
 
-export const AcademicForm = ({control, errors, getSchool, xs}: ZodProps<EnrollmentSchema> & {
+export const AcademicForm = ({control, errors, getSchool, xs, existingClassId}: ZodProps<EnrollmentSchema> & {
     getSchool?: (classe: Option) => void
+    existingClassId?: number
     xs?: boolean
 }) => {
 
@@ -15,7 +16,9 @@ export const AcademicForm = ({control, errors, getSchool, xs}: ZodProps<Enrollme
     const {useGetClasseBasicValues} = useClasseRepo()
 
     const academicYear = useGetCurrentAcademicYear()
-    const classes = useGetClasseBasicValues()
+    const allClasses = useGetClasseBasicValues()
+    const classes = useMemo(() =>
+        existingClassId ? allClasses?.filter(c => c.id !== existingClassId) : allClasses, [allClasses, existingClassId])
 
     //TODO ensure the client is connected
     const classeOptions = useMemo(() => classes.map(c => ({

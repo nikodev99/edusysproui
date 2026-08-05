@@ -75,7 +75,7 @@ const TeacherViewPage = () => {
     useEffect(() => {
         if (shouldRefresh)
             refetch()
-                .then()
+                .then(r => r)
     }, [refetch, shouldRefresh]);
 
     const widgetItems: WidgetItem[] = [

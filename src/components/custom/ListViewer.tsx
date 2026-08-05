@@ -1,6 +1,16 @@
-import {ChangeEvent, Key, ReactNode, useEffect, useLayoutEffect, useMemo, useState} from "react";
+import {
+    ChangeEvent,
+    Key,
+    MouseEvent,
+    ReactNode,
+    useCallback,
+    useEffect,
+    useLayoutEffect,
+    useMemo,
+    useState
+} from "react";
 import {Button, Flex, Input, Pagination, Space, Table, TablePaginationConfig, Tooltip} from "antd";
-import {FilterValue, SorterResult } from "antd/es/table/interface";
+import {FilterValue, SorterResult} from "antd/es/table/interface";
 import LocalStorageManager from "@/core/LocalStorageManager.ts";
 import Responsive from "@/components/ui/layout/Responsive.tsx";
 import CardList from "../view/CardList.tsx";
@@ -16,11 +26,12 @@ import Grid from "../ui/layout/Grid.tsx";
 import {useToggle} from "@/hooks/useToggle.ts";
 import {PageTitle} from "./PageTitle.tsx";
 import {useGlobalStore} from "@/core/global/store.ts";
+import {ActionButton} from "@/components/ui/layout/ActionButton.tsx";
 
 const ListViewer = <TData extends object, TError>(
     {
-        callback, searchCallback, tableColumns, dropdownItems, throughDetails, hasCount, countTitle, localStorage,
-        fetchId, cardData, cardNotAvatar, level, refetchCondition, callbackParams, searchCallbackParams, infinite,
+        callback, searchCallback, tableColumns, dropdownItems, throughDetails, hasCount, countTitle, localStorage, onRowRedirect,
+        fetchId, cardData, cardNotAvatar, level, refetchCondition, callbackParams, searchCallbackParams, infinite, getSelectedRecord,
         uuidKey, tableProps, descMargin, itemSize, displayItem, filters, shareSearchQuery, onSelectData, dataDescription,
         tableHeight, hasDesc = true, pageTitle, noSearch = false, setLoading, emptyPage, btnFilter, searchInputPlaceholder, onInputSearch
     }: ListViewerProps<TData, TError>
@@ -30,6 +41,10 @@ const ListViewer = <TData extends object, TError>(
     const pageSizeCount = !infinite && itemSize ? itemSize : localStorage?.pageSize ? LocalStorageManager.get<number>(localStorage?.pageSize) ?? itemSize ?? 10 : 10
     const paginationPage = !infinite && localStorage?.page ? LocalStorageManager.get<number>(localStorage?.page) ?? 1 : 1
     const count = !infinite && localStorage?.pageCount ? LocalStorageManager.get<number>(localStorage?.pageCount) ?? 0 : 0
+
+    const [contextMenuVisible, setContextMenuVisible] = useState<boolean>(false);
+    const [contextMenuPosition, setContextMenuPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+    const [selectedRecord, setSelectedRecord] = useState<TData | null>(null);
 
     const [content, setContent] = useState<TData[] | undefined>(undefined)
     const [dataCount, setDataCount] = useState<number>(0)
@@ -70,6 +85,7 @@ const ListViewer = <TData extends object, TError>(
                     age: getAge(c?.student.personalInfo?.birthDate as number[]),
                     grade: c?.classe?.grade?.section,
                     image: c?.student?.personalInfo?.image,
+                    isArchived: c?.isArchived
                 };
             }) as StudentListDataType[]
         } else {
@@ -133,6 +149,20 @@ const ListViewer = <TData extends object, TError>(
         if (filters)
             setFilterUI(filters)
     }, [filters, refetch, refetchCondition]);
+
+    const handleContextMenu = useCallback((record: TData, event: MouseEvent<HTMLElement>) =>{
+        event.preventDefault()
+        setSelectedRecord(record)
+        setContextMenuPosition({x: event.clientX, y: event.clientY})
+        getSelectedRecord?.(record)
+        setContextMenuVisible(true)
+    }, [getSelectedRecord])
+
+    const clearSelectionContextMenu = () => {
+        setContextMenuVisible(false)
+        setSelectedRecord(null)
+        getSelectedRecord?.(null)
+    }
     
     if (error) {
         return <PageError />
@@ -196,7 +226,7 @@ const ListViewer = <TData extends object, TError>(
     return(
         <>
             {hasDesc && <PageTitle title={pageTitle} description={dataDescription} />}
-            <div className='header__area'>
+            <div className='header__area' onClick={clearSelectionContextMenu}>
                 <Flex justify='space-between' align='middle' className='flex__between' wrap='wrap'>
                     <PageDescription
                         count={dataCount}
@@ -258,18 +288,21 @@ const ListViewer = <TData extends object, TError>(
             </div>
             <Responsive gutter={[16, 16]} className={`${activeIcon !== 2 ? 'student__list__datatable' : ''}`}>
                 {
-                    activeIcon === 2 && cardData ? <CardList
-                        content={cardData ? cardData(dataSource as TData[]) : []}
-                        isActive={activeIcon === 2 }
-                        isLoading={isLoading || dataSource === undefined}
-                        dropdownItems={dropdownItems!}
-                        throughDetails={throughDetails!}
-                        avatarLess={cardNotAvatar}
-                        titleLevel={level as 1}
-                        displayItem={displayItem}
-                        onSelectData={onSelectData}
-                    />
-                        : <Grid xs={24} md={24} lg={24}>
+                    activeIcon === 2 && cardData ? (<Grid xs={24} md={24} lg={24}>
+                        <CardList
+                            content={cardData ? cardData(dataSource as TData[]) : []}
+                            isActive={activeIcon === 2 }
+                            isLoading={isLoading || dataSource === undefined}
+                            dropdownItems={dropdownItems!}
+                            throughDetails={throughDetails!}
+                            avatarLess={cardNotAvatar}
+                            titleLevel={level as 1}
+                            displayItem={displayItem}
+                            onSelectData={onSelectData}
+                        />
+
+                    </Grid>)
+                        : (<Grid xs={24} md={24} lg={24}>
                             {infinite ? <AutoScrollTable
                                 tableProps={{
                                     ...tableProps,
@@ -280,7 +313,11 @@ const ListViewer = <TData extends object, TError>(
                                     pagination: false,
                                     onChange: handleSorterChange,
                                     onRow: (record: TData) => ({
-                                        onClick: () => onSelectData ? onSelectData(record) : undefined
+                                        onContextMenu: (e) => handleContextMenu(record, e),
+                                        onClick: onSelectData ? () => onSelectData?.(record) : () => {
+                                            setContextMenuVisible(false)
+                                            onRowRedirect?.(record)
+                                        }
                                     }),
                                     locale: {
                                         ...(emptyPage ? { emptyText: emptyPage }: null)
@@ -310,11 +347,30 @@ const ListViewer = <TData extends object, TError>(
                                     ...(emptyPage ? { emptyText: emptyPage }: null)
                                 }}
                                 onRow={(record: TData) => ({
-                                    style: onSelectData ? {cursor: 'pointer'} : {},
-                                    onClick: () => onSelectData ? onSelectData(record) : undefined
+                                    style: (onSelectData || onRowRedirect) ? {cursor: 'pointer'} : {},
+                                    onContextMenu: (e) => handleContextMenu(record, e),
+                                    onClick: onSelectData ? () => onSelectData?.(record) : () => {
+                                        clearSelectionContextMenu()
+                                        onRowRedirect?.(record)
+                                    }
                                 })}
                             />}
-                        </Grid>
+                            {contextMenuVisible && (
+                                <ActionButton
+                                    items={Array.isArray(dropdownItems) ? dropdownItems : dropdownItems?.(selectedRecord?.['id'] as string, selectedRecord as TData)}
+                                    trigger={['contextMenu']}
+                                    dropdownProps={{
+                                        open: contextMenuVisible,
+                                        overlayStyle: {
+                                            position: 'fixed',
+                                            left: contextMenuPosition.x,
+                                            top: contextMenuPosition.y
+                                        }
+                                    }}
+                                    hasButton={false}
+                                />
+                            )}
+                    </Grid>)
                 }
             </Responsive>
             {(!infinite || activeIcon === 2) && <div style={{textAlign: 'right', marginTop: '15px'}}>

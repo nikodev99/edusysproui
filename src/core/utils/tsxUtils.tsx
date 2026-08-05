@@ -11,7 +11,8 @@ import {
     LuCalendarDays,
     LuCheck, LuCircleAlert,
     LuCircleCheck, LuCircleX,
-    LuClock,
+    LuClock, LuClock1, LuClock10, LuClock11, LuClock12, LuClock2, LuClock3,
+    LuClock4, LuClock5, LuClock6, LuClock7, LuClock8,
     LuClock9, LuCreditCard, LuFileText, LuHandCoins,
     LuMedal, LuPhoneOutgoing,
     LuRefreshCcw, LuSend, LuThumbsDown, LuThumbsUp, LuTrendingDown,
@@ -26,6 +27,7 @@ import {AssignmentType, getAssignmentType} from "@/entity/enums/assignmentType.t
 import {InvoiceStatus, StatusInput} from "@/finance/models/invoice.ts";
 import {GATEWAY_META, PaymentGateway, PaymentMethod, PaymentStatus, STATUS_META} from "@/finance/models/payment.ts";
 import {ProgramStatus, statusConfig} from "@/entity/domain/courseProgram.ts";
+import {datehelper} from "@/core/helpers/DateHelpers.ts";
 
 export const StatusTags = ({status, female}: {status: Status, female?: boolean}): ReactNode => {
     const label = getStatusKey(status, female)
@@ -90,39 +92,73 @@ export const IconText = ({ icon, text, color }: {
     </Space>
 );
 
-export const SuperWord = ({ input, isUpper, textSize = .6, isSpan = false, style }: { input: string; isUpper?: boolean, textSize?: number /** @range {0-1} */, isSpan?: boolean, style?: CSSProperties }) => {
+export const ClockIcon = ({time}: { time: string }) => {
+    const timeDigit = Number(datehelper.toTimeArray(time)[0])
+
+    switch (timeDigit) {
+        case 0: return <LuClock12 />
+        case 1: return <LuClock1 />
+        case 2: return <LuClock2 />
+        case 3: return <LuClock3 />
+        case 4: return <LuClock4 />
+        case 5: return <LuClock5 />
+        case 6: return <LuClock6 />
+        case 7: return <LuClock7 />
+        case 8: return <LuClock8 />
+        case 9: return <LuClock9 />
+        case 10: return <LuClock10 />
+        case 11: return <LuClock11 />
+        case 12: return <LuClock12 />
+        case 13: return <LuClock1 />
+        case 14: return <LuClock2 />
+        case 15: return <LuClock3 />
+        case 16: return <LuClock4 />
+        case 17: return <LuClock5 />
+        case 18: return <LuClock6 />
+        case 19: return <LuClock7 />
+        case 20: return <LuClock8 />
+        case 21: return <LuClock9 />
+        case 22: return <LuClock10 />
+        case 23: return <LuClock11 />
+        default: return <LuClock />
+    }
+}
+
+export const SuperWord = ({ input, isUpper, textSize = .6, isSpan = false, style }: { input: string | ReactNode; isUpper?: boolean, textSize?: number /** @range {0-1} */, isSpan?: boolean, style?: CSSProperties }) => {
     const regex = /\b(\d)([a-zA-Z]{1,3})\b/g;
 
     const parts: (string | ReactNode)[] = [];
     let lastIndex = 0;
     let match: RegExpExecArray | [never, never, never] | null;
 
-    while ((match = regex?.exec(input)) !== null) {
-        const [fullMatch, digit, letters] = match;
-        const matchIndex = match?.index;
+    if (typeof input === 'string') {
+        while ((match = regex?.exec(input)) !== null) {
+            const [fullMatch, digit, letters] = match;
+            const matchIndex = match?.index;
 
-        if (matchIndex > lastIndex) {
-            parts.push(input?.substring(lastIndex, matchIndex));
-        }
+            if (matchIndex > lastIndex) {
+                parts.push(input?.substring(lastIndex, matchIndex));
+            }
 
-        parts.push(
-            <span key={matchIndex} style={{padding: 0, margin: 0}}>
+            parts.push(
+                <span key={matchIndex} style={{padding: 0, margin: 0}}>
                 {digit}
-                <span style={{
-                    ...(isUpper ? {textTransform: 'uppercase'}: {}),
-                    fontSize: `${textSize}em`,
-                    verticalAlign: 'super',
-                    padding: 0, margin: 0
-                }}>
+                    <span style={{
+                        ...(isUpper ? {textTransform: 'uppercase'} : {}),
+                        fontSize: `${textSize}em`,
+                        verticalAlign: 'super',
+                        padding: 0, margin: 0
+                    }}>
                     {letters}
                 </span>
             </span>
-        )
-        lastIndex = matchIndex + fullMatch?.length;
-    }
+            )
+            lastIndex = matchIndex + fullMatch?.length;
+        }
 
-    if (lastIndex < input?.length) {
-        parts.push(input.substring(lastIndex));
+        if (lastIndex < input?.length) {
+            parts.push(input.substring(lastIndex));
+        }
     }
 
     return (

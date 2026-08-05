@@ -32,6 +32,7 @@ export interface TeacherCourses {
 export interface TeacherClasses {
     id: number
     classe: Classe
+    teacher: Teacher
     affiliation: TeacherSchoolAffiliate
 }
 

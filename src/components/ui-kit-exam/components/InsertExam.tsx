@@ -10,7 +10,6 @@ import {useForm} from "react-hook-form";
 import {assignmentSchema, AssignmentSchema} from "@/schema";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {insertAssignment} from "@/data/repository/assignmentRepository.ts";
-import {SlotInfo} from "react-big-calendar";
 import {useToggle} from "@/hooks/useToggle.ts";
 import {Typography} from "antd";
 import {AssignmentForm} from "@/components/forms/AssignmentForm.tsx";
@@ -19,6 +18,7 @@ import {useAcademicYearRepo} from "@/hooks/actions/useAcademicYearRepo.ts";
 import {isTeacher} from "@/auth/dto/role.ts";
 import {Moment} from "@/core/utils/interfaces.ts";
 import {loggedUser} from "@/auth/jwt/LoggedUser.ts";
+import {SlotInfo} from "@/components/graph/BigCalendar.tsx";
 
 const InsertExam = () => {
     const {Title} = Typography
@@ -76,14 +76,11 @@ const InsertExam = () => {
         setOpenModal()
     }
 
-    console.log("ERRORS: ", errors)
-
     return (
         <PageWrapper>
             <Responsive gutter={[16, 16]}>
                 <Grid xs={24} md={24} lg={24}>
                     <AssignmentSchedule
-                        views={['month']}
                         setRefetch={setIsRefetch}
                         eventSchedule={assignments}
                         selectable={true}

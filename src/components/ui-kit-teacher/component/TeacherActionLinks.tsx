@@ -14,13 +14,14 @@ import {useUserRepo} from "@/hooks/actions/useUserRepo.ts";
 import {ConfirmationModal, Messages} from "@/components/ui/layout/ConfirmationModal.tsx";
 import {setName} from "@/core/utils/utils.ts";
 import {useTeacherRepo} from "@/hooks/actions/useTeacherRepo.ts";
-import {globalSchool} from "@/core/utils/text_display.ts";
 import {catchError} from "@/data/action/error_catch.ts";
 import {Alert} from "antd";
 
-type TeacherActionButtons = ActionButtonsProps<Teacher>
+type TeacherActionButtons = ActionButtonsProps<Teacher> & {
+    schoolId?: string
+}
 
-export const TeacherActionLinks = ({data, getItems, setRefresh}: TeacherActionButtons) => {
+export const TeacherActionLinks = ({data, getItems, setRefresh, schoolId}: TeacherActionButtons) => {
     const [message, setMessage] = useState<Messages>({success: null, error: null})
     const [openCreateUser, setOpenCreateUser] = useToggle(false)
     const [removeTeacher, setRemoveTeacher] = useToggle(false)
@@ -85,8 +86,6 @@ export const TeacherActionLinks = ({data, getItems, setRefresh}: TeacherActionBu
         toViewTeacher
     ])
 
-    console.log({removeTeacher})
-
     useMenuItemsEffect(items, getItems)
 
     const onClose = () => {
@@ -98,7 +97,7 @@ export const TeacherActionLinks = ({data, getItems, setRefresh}: TeacherActionBu
     const onDeleteTeacher = () => {
         setMessage({success: null, error: null})
         remove.mutate({
-            teacherId: data?.id as string, schoolId: globalSchool.school?.id as string
+            teacherId: data?.id as string, schoolId: schoolId as string
         }, {
             onSuccess: r => setMessage({success: r.data}),
             onError: e => setMessage({error: catchError(e) as string})

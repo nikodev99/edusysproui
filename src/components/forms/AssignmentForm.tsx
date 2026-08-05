@@ -27,7 +27,7 @@ export const AssignmentForm = <T extends FieldValues, Q>(
     const [pickedSection, setPickedSection] = useState<SectionType | null>(null)
     const [allClasses, setAllClasses] = useState<Classe[]>([])
     const [allCourses, setAllCourses] = useState<Course[]>([])
-    const {semesterOptions} = useSemesterRepo()
+    const {useGetCurrentSemesters} = useSemesterRepo()
     const {useGetTeacherBasicValues, useGetTeacherCourses, useGetTeacherClasses} = useTeacherRepo()
     const {useGetClasseBasicValues} = useClasseRepo()
     const {useGetBasicCourses} = useCourseRepo()
@@ -42,6 +42,7 @@ export const AssignmentForm = <T extends FieldValues, Q>(
     const form = new FormConfig(errors, true)
     const {data: teachers} = useGetTeacherBasicValues(selectedClasse ?? data?.classe?.id, pickedSection ?? data?.classe?.grade?.section as SectionType, showField)
     const exams = useGetAllExams(academicYear)
+    const semesters = useGetCurrentSemesters(academicYear as string)
 
     const classeOptions = useMemo(() => allClasses?.map(c => ({
         value: c.id,
@@ -64,6 +65,11 @@ export const AssignmentForm = <T extends FieldValues, Q>(
         value: e.id,
         label: e.examType?.name
     })): [], [exams])
+
+    const semesterOptions = useMemo(() => semesters && semesters?.length > 0 ? semesters.map(s => ({
+        value: s.semesterId,
+        label: s.template.semesterName
+    })): [], [semesters])
 
     useEffect(() => {
         setAllClasses(classes && classes?.length > 0

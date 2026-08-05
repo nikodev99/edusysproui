@@ -137,6 +137,7 @@ export const getClasseEnrolledStudents = (classeId: number, academicYear: string
 }
 
 export const getClasseEnrolledStudentsSearch = (classeId: number, academicYear: string, searchName?: string) => {
+    console.log({classeId, academicYear, searchName})
     return request({
         method: 'GET',
         url: `/enroll/classroom_search/${classeId}`,

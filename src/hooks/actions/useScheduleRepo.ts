@@ -1,16 +1,30 @@
 import {useFetch} from "../useFetch.ts";
 import {
+    deleteSchedule,
     getAllClasseSchedule,
     getAllCourseSchedule,
-    getCourseHoursByClasse, getCourseHoursByTeacher
+    getCourseHoursByClasse, getCourseHoursByTeacher, saveSchedule, updateSchedule
 } from "../../data/repository/scheduleRepository.tsx";
-import {UseQueryResult} from "@tanstack/react-query";
+import {useMutation, UseQueryResult} from "@tanstack/react-query";
 import {Schedule} from "@/entity";
 import {ScheduleHoursBy} from "@/core/utils/interfaces.ts";
+import {ScheduleSchema} from "@/schema";
 
 export const useScheduleRepo = () => {
-    const useGetAllClasseSchedule = (classeId: number): UseQueryResult<Schedule[], unknown> => {
-        return useFetch(['classe-schedule', classeId], getAllClasseSchedule, [classeId], !!classeId)
+    const useSaveSchedule = () => useMutation({
+        mutationFn: (payload: ScheduleSchema) => saveSchedule(payload)
+    })
+
+    const useUpdateSchedule = () => useMutation({
+        mutationFn: ({payload, onlyTime = false}: {payload: ScheduleSchema, onlyTime: boolean}) => updateSchedule(payload, onlyTime)
+    })
+
+    const useDeleteSchedule = () => useMutation({
+        mutationFn: (payload: Schedule) => deleteSchedule(payload)
+    })
+
+    const useGetAllClasseSchedule = (classeId: number, academicYear: string): UseQueryResult<Schedule[], unknown> => {
+        return useFetch(['classe-schedule', classeId, academicYear], getAllClasseSchedule, [classeId, academicYear], !!classeId && !!academicYear)
     }
 
     const useGetAllCourseSchedule = (courseId: number, byDay: boolean): UseQueryResult<Schedule[], unknown> => {
@@ -26,6 +40,9 @@ export const useScheduleRepo = () => {
     }
 
     return {
+        useSaveSchedule,
+        useUpdateSchedule,
+        useDeleteSchedule,
         useGetAllClasseSchedule,
         useGetAllCourseSchedule,
         useGetCourseHourByClasse,

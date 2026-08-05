@@ -1,7 +1,7 @@
 import {InfoPageProps} from "@/core/utils/interfaces.ts";
 import {Teacher} from "@/entity";
 import {getTeacherSchedule} from "@/data/repository/teacherRepository.ts";
-import {ScheduleCalendar} from "@/components/common/ScheduleCalendar.tsx";
+import {ScheduleCalendar} from "@/components/ui-kit-schedule/components/ScheduleCalendar.tsx";
 import {Skeleton} from "antd";
 
 export const TeacherAgenda = ({infoData, academicYear}: InfoPageProps<Teacher>) => {

@@ -1,13 +1,13 @@
 import FormContent from "../ui/form/FormContent.tsx";
 import {FieldValues, Path, PathValue} from "react-hook-form";
-import {FormContentProps} from "../../core/utils/interfaces.ts";
-import {Grade} from "../../entity";
-import {FormConfig} from "../../config/FormConfig.ts";
-import {FormUtils} from "../../core/utils/formUtils.ts";
+import {FormContentProps} from "@/core/utils/interfaces.ts";
+import {Grade} from "@/entity";
+import {FormConfig} from "@/config/FormConfig.ts";
+import {FormUtils} from "@/core/utils/formUtils.ts";
 import {useMemo} from "react";
-import {enumToObjectArray} from "../../core/utils/utils.ts";
-import {SectionType} from "../../entity/enums/section.ts";
-import {InputTypeEnum} from "../../core/shared/sharedEnums.ts";
+import {enumToObjectArray} from "@/core/utils/utils.ts";
+import {SectionType} from "@/entity/enums/section.ts";
+import {InputTypeEnum} from "@/core/shared/sharedEnums.ts";
 
 type GradeFormProps<T extends FieldValues> = FormContentProps<T, Grade> &{
     handleUpdate?: (field: keyof Grade, value: unknown) => void

@@ -1,10 +1,10 @@
 import {useFetch, useRawFetch} from "../useFetch.ts";
-import {Pageable} from "@/core/utils/interfaces.ts";
+import {Options, Pageable} from "@/core/utils/interfaces.ts";
 import {getAllSchoolCourses} from "@/data/action/courseAction.ts";
 import {UseQueryResult} from "@tanstack/react-query";
 import {Course} from "@/entity";
 import {getAllBasicCourses, getAllCoursesSearch, getCourseById} from "@/data/repository/courseRepository.ts";
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {useGlobalStore} from "@/core/global/store.ts";
 
 export const useCourseRepo = () => {
@@ -42,8 +42,17 @@ export const useCourseRepo = () => {
 
         return courses
     }
+    
+    const courses = useGetBasicCourses()
+
+    const courseOptions: Options = useMemo(() => courses && courses?.length > 0 ? courses.map(c => ({
+        value: c.id,
+        label: `${c.course} [${c.abbr}]`
+    })): [], [courses])
 
     return {
+        courses,
+        courseOptions,
         useGetAllCourses,
         useGetAllCourseSearched,
         useGetCourse,

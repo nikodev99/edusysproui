@@ -20,7 +20,7 @@ export function useEnrollmentForm(
     const [errorMessage, setErrorMessage] = useState<ReactNode | undefined>(undefined);
     const [isPending, startTransition] = useTransition();
 
-    const { control, formState: { errors }, handleSubmit, reset } = useForm<EnrollmentSchema>({
+    const { control, formState: { errors }, handleSubmit, reset, watch } = useForm<EnrollmentSchema>({
         defaultValues: {
             student: { id: initialStudentId ?? "" }
         },
@@ -64,6 +64,7 @@ export function useEnrollmentForm(
         successMessage,
         errorMessage,
         setSuccessMessage,
-        setErrorMessage
+        setErrorMessage,
+        watch
     };
 }

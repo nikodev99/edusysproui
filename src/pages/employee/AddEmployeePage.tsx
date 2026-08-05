@@ -1,4 +1,4 @@
-import {globalSchool, text} from "@/core/utils/text_display.ts";
+import {text} from "@/core/utils/text_display.ts";
 import {AddStepForm} from "@/components/custom/AddStepForm.tsx";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useForm} from "react-hook-form";
@@ -15,6 +15,7 @@ import {OutputFileEntry} from "@uploadcare/blocks";
 import {useEmployeeRepo} from "@/hooks/actions/useEmployeeRepo.ts";
 import {EmployeeContractForm} from "@/components/forms/EmployeeContractForm.tsx";
 import {useRedirect} from "@/hooks/useRedirect.ts";
+import {useAuth} from "@/hooks/useAuth.ts";
 
 const AddEmployeePage = () => {
   const metadata = {
@@ -39,6 +40,7 @@ const AddEmployeePage = () => {
   const [isPending, startTransition] = useTransition()
   const {toAddEmployee} = useRedirect()
   const {useInsertEmployee} = useEmployeeRepo()
+  const {userSchool} = useAuth()
 
   const form = useForm<EmployeeSchema>({
     resolver: zodResolver(employeeSchema)
@@ -147,7 +149,7 @@ const AddEmployeePage = () => {
   const onSubmit = (data: EmployeeSchema) => {
     setErrorMessage(undefined)
     setSuccessMessage(undefined)
-    const school = globalSchool.school
+    const school = userSchool
 
     if(submitCount === 0 && school !== null && school?.id) {
       data = {...data, personalInfo: {...data.personalInfo,

@@ -1,19 +1,13 @@
 import {useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
-import {Classe} from "../../entity";
-import {Color, GenderCounted} from "../../core/utils/interfaces.ts";
-import {useFetch} from "../../hooks/useFetch.ts";
-import {getClasse} from "../../data/repository/classeRepository.ts";
-import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
-import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
-import {text} from "../../core/utils/text_display.ts";
-import ViewHeader from "../../components/ui/layout/ViewHeader.tsx";
-import {Select, Tag} from "antd";
-import {
-    LuBookOpenCheck, LuBookPlus, LuCalendarCheck, LuCalendarPlus, LuUserCheck,
-    LuUserPlus, LuUserRoundCheck, LuUserRoundPlus,
-} from "react-icons/lu";
-import {ViewRoot} from "../../components/custom/ViewRoot.tsx";
+import {AcademicYear, Classe} from "@/entity";
+import {Color, GenderCounted} from "@/core/utils/interfaces.ts";
+import {useDocumentTitle} from "@/hooks/useDocumentTitle.ts";
+import {useBreadCrumb} from "@/hooks/useBreadCrumb.tsx";
+import {text} from "@/core/utils/text_display.ts";
+import ViewHeader from "@/components/ui/layout/ViewHeader.tsx";
+import {Skeleton, Tag} from "antd";
+import {ViewRoot} from "@/components/custom/ViewRoot.tsx";
 import {
     ClasseAttendance,
     ClasseExams,
@@ -21,28 +15,42 @@ import {
     ClasseSchedule,
     ClasseStudent,
     ClasseReport,
-    ClasseEditDrawer
-} from "../../components/ui-kit-cc";
-import {SuperWord} from "../../core/utils/tsxUtils.tsx";
-import {useToggle} from "../../hooks/useToggle.ts";
-import {useAcademicYear} from "../../hooks/useAcademicYear.ts";
-import {useStudentRepo} from "../../hooks/actions/useStudentRepo.ts";
+    ClasseEditDrawer, ClasseActionLinks, ClasseReprimand
+} from "@/components/ui-kit-cc";
+import {SuperWord} from "@/core/utils/tsxUtils.tsx";
+import {useToggle} from "@/hooks/useToggle.ts";
+import {useStudentRepo} from "@/hooks/actions/useStudentRepo.ts";
+import {useClasseRepo} from "@/hooks/actions/useClasseRepo.ts";
+import {SelectAcademicYear} from "@/components/common/SelectAcademicYear.tsx";
+import {useAcademicYearRepo} from "@/hooks/actions/useAcademicYearRepo.ts";
+import {usePermission} from "@/hooks/usePermission.ts";
+import {ItemType} from "antd/es/menu/interface";
+import {stringhelper} from "@/core/helpers/StringHelper.ts";
+import {useTeacherRepo} from "@/hooks/actions/useTeacherRepo.ts";
 
 const ClasseViewPage = () => {
 
     const {id} = useParams();
 
     const [classe, setClasse] = useState<Classe | null>(null)
+    const [linkButtons, setLinkButtons] = useState<ItemType[]>([])
+    const [shouldRefresh, setShouldRefresh] = useState<boolean>(false)
     const [color, setColor] = useState<Color>('')
     const [studentCount, setStudentCount] = useState<GenderCounted | null>(null)
+    const [academicYear, setAcademicYear] = useState<AcademicYear | undefined>(undefined)
+    const [usedAcademicYearId, setUsedAcademicYearId] = useState<string>()
     const [open, setOpen] = useToggle(false)
+    const {currentAcademicYear} = useAcademicYearRepo()
     const {useCountClasseStudents} = useStudentRepo()
+    const {useCheckPrincipal} = useTeacherRepo()
+    const {useGetClasse} = useClasseRepo()
+    const {can, canCreate, canDelete} = usePermission()
 
-    const {usedAcademicYearId, currentAcademicYear, academicYearOptions, handleAcademicYearIdValue} = useAcademicYear(classe?.createdAt as number)
+    const {isPrincipal} = useCheckPrincipal(Number(id))
+    const isTeacherAuthorized = can('teacherAction', true)
 
-    const {data, isSuccess, error, isLoading, refetch} = useFetch(['classe-id', id], getClasse, [id, usedAcademicYearId], usedAcademicYearId !== null)
+    const {data, isSuccess, error, isLoading, refetch} = useGetClasse(Number(id), (usedAcademicYearId || currentAcademicYear?.id) as string)
 
-    console.log('Error: ', error);
     const {data: countData, isSuccess: isCountSuccess} = useCountClasseStudents(Number.parseInt(id ?? '0'), usedAcademicYearId as string)
 
     useDocumentTitle({
@@ -63,16 +71,16 @@ const ClasseViewPage = () => {
     }, [countData, isCountSuccess]);
 
     useEffect(() => {
-        if (usedAcademicYearId) {
-            refetch().then(r => r.data)
-        }
-    }, [refetch, usedAcademicYearId]);
-
-    useEffect(() => {
         if(isSuccess && data) {
             setClasse(data as Classe);
         }
-    }, [classe?.createdAt, currentAcademicYear, data, isSuccess]);
+    }, [data, isSuccess])
+    
+    useEffect(() => {
+        if (shouldRefresh)
+            refetch().then(r => r)
+        
+    }, [refetch, shouldRefresh]) 
 
     const handleCloseDrawer = () => {
         setOpen()
@@ -80,27 +88,11 @@ const ClasseViewPage = () => {
     }
 
     const linkItem = [
-        {
-            label: classe?.principalStudent ? 'Changer chef de classe' : 'Ajouter chef de classe',
-            icon: classe?.principalStudent ? <LuUserRoundCheck /> : <LuUserRoundPlus />,
-            onClick: () => alert('Pour changer le chef de classe')
-        },
-        {
-            label: classe?.principalTeacher ? 'Changer prof principal' : 'Ajouter prof principal',
-            icon: classe?.principalTeacher ? <LuUserCheck /> : <LuUserPlus />,
-            onClick: () => alert('Pour changer le prof principal')
-        },
-        {
-            label: classe?.principalCourse ? 'Changer matière principal' : 'Ajouter matière principal',
-            icon: classe?.principalCourse ? <LuBookOpenCheck /> : <LuBookPlus />,
-            onClick: () => alert('Pour changer le prof principal')
-        },
-        {
-            label: classe?.schedule && classe.schedule?.length > 0 ? "Changer l'emploi du temps" : "Ajouter l'emploi du temps",
-            icon: classe?.schedule && classe.schedule?.length > 0 ? <LuCalendarCheck /> : <LuCalendarPlus />,
-            onClick: () => alert('Pour changer le prof principal')
-        }
+        ...linkButtons
     ]
+
+    if (!classe || (error && Object.keys(error).length > 0))
+        return <Skeleton active paragraph={{ rows: 10 }} />
 
     return(
         <>
@@ -115,15 +107,15 @@ const ClasseViewPage = () => {
                 }}
                 blockProps={[
                     {title: 'Niveau', mention: <Tag>{classe?.grade.section}</Tag>},
-                    {title: "Nombre " + text.student.label + 's', mention: studentCount?.total},
+                    {
+                        title: "Nombre " + stringhelper.setPlural({word: text.student.label, count: studentCount?.total}),
+                        mention: studentCount?.total
+                    },
                     {
                         title: "Année Académique",
-                        mention: <Select
-                            className='select-control'
-                            defaultValue={currentAcademicYear?.academicYear}
-                            options={academicYearOptions}
-                            onChange={handleAcademicYearIdValue}
-                            variant='borderless'
+                        mention: <SelectAcademicYear
+                            getResource={setAcademicYear as never}
+                            getAcademicYear={setUsedAcademicYearId as never}
                         />
                     }
                 ]}
@@ -135,38 +127,96 @@ const ClasseViewPage = () => {
             />
             <ViewRoot
                 items={[
-                    {label: 'Info', children: <ClasseInfo
+                    {
+                        label: 'Info',
+                        children: <ClasseInfo
                             infoData={classe!}
                             color={color}
                             dataKey='Info'
                             studentCount={studentCount}
                             totalStudents={studentCount?.total}
                             academicYear={usedAcademicYearId as string}
+                            resourceYear={academicYear}
+                            hasPermission={canCreate}
                         />
                     },
-                    {label: 'Étudiants', children: <ClasseStudent
-                        infoData={classe!}
-                        academicYear={usedAcademicYearId as string}
-                        studentCount={studentCount}
-                        dataKey='students'
-                    />},
-                    {label: 'Emploi du Temps', children: <ClasseSchedule infoData={classe!} academicYear={usedAcademicYearId as string} dataKey='schedule' />},
-                    {label: 'Présence', children: <ClasseAttendance
-                        infoData={classe!}
-                        academicYear={usedAcademicYearId as string}
-                        dataKey='attendance'
-                        studentCount={studentCount}
-                    />},
-                    {label: 'Examens', children: <ClasseExams infoData={classe!} academicYear={usedAcademicYearId as string} dataKey='exams' />},
-                    {label: 'Compte Rendu', children: <ClasseReport />}
+                    {
+                        label: 'Étudiants',
+                        children: <ClasseStudent
+                            infoData={classe!}
+                            academicYear={usedAcademicYearId as string}
+                            studentCount={studentCount}
+                            dataKey='students'
+                        />
+                    },
+                    {
+                        label: 'Emploi du Temps',
+                        children: <ClasseSchedule
+                            infoData={classe!}
+                            academicYear={usedAcademicYearId as string}
+                            dataKey='schedule'
+                        />
+                    },
+                    {
+                        label: 'Présence',
+                        children: <ClasseAttendance
+                            infoData={classe!}
+                            academicYear={usedAcademicYearId as string}
+                            dataKey='attendance'
+                            studentCount={studentCount}
+                        />
+                    },
+                    {
+                        label: 'Examens',
+                        children: <ClasseExams
+                            infoData={classe!}
+                            academicYear={usedAcademicYearId as string}
+                            resourceYear={academicYear}
+                            dataKey='exams'
+                        />
+                    },
+                    {
+                        label: 'Réprimandes',
+                        children: <ClasseReprimand
+                            infoData={classe!}
+                            academicYear={usedAcademicYearId as string}
+                            dataKey='classe-reprimands'
+                        />
+                    },
+                    {
+                        label: 'Compte Rendu',
+                        children: <ClasseReport
+                            infoData={classe}
+                            academicYear={usedAcademicYearId}
+                            resourceYear={academicYear}
+                            hasPermission={isTeacherAuthorized}
+                            isSelf={false}
+                            dataKey='reports'
+                        />
+                    }
                 ]}
-                exists={classe !== null && usedAcademicYearId !== null}
+                exists={!!classe && !!usedAcademicYearId}
                 memorizedTabKey='classeTabKey'
                 tab={{
                     centered: true
                 }}
             />
-            <ClasseEditDrawer open={open} close={handleCloseDrawer} data={classe as Classe} />
+            {open && <ClasseEditDrawer
+                open={open}
+                close={handleCloseDrawer}
+                data={classe as Classe}
+            />}
+            {classe && <ClasseActionLinks 
+                data={classe} 
+                getItems={setLinkButtons} 
+                setRefresh={setShouldRefresh} 
+                academicYear={usedAcademicYearId as string}
+                permissions={{
+                    canCreate,
+                    canDelete,
+                    isPrincipal: (isPrincipal || false)
+                }}
+            />}
         </>
     )
 }

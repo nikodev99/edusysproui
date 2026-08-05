@@ -1,62 +1,68 @@
-import {Pageable} from "@/core/utils/interfaces.ts";
 import {useFetch, useRawFetch} from "../useFetch.ts";
 import {
-    getAllClasses,
-    getAllSearchClasses,
+    getAllClasses, getAllClassesByTeacher,
+    getAllSearchClasses, getAllSearchClassesByTeacher,
     getClasse,
-    getClassesBasicValues
+    getClassesBasicValues, updatePrincipalCourse
 } from "@/data/repository/classeRepository.ts";
 import {useEffect, useState} from "react";
 import {Classe} from "@/entity";
 import {getShortSortOrder, setSortFieldName} from "@/core/utils/utils.ts";
 import {useGlobalStore} from "@/core/global/store.ts";
+import {UserPermission} from "@/core/shared/sharedEnums.ts";
+import {useAuth} from "@/hooks/useAuth.ts";
+import {useMutation} from "@tanstack/react-query";
 
-export const useClasseRepo = () => {
+export const useClasseRepo = (context: UserPermission = UserPermission.ALL) => {
     const schoolId = useGlobalStore(state => state.schoolId)
 
-    const useGetAllClasse = (page: Pageable, sortCriteria?: string) => useFetch(
-        ['classes'],
-        getAllClasses,
-        [schoolId, page, sortCriteria],
-        !!schoolId && !!page.size
-    )
+    const useGetPaginated = () => {
+        const {user} = useAuth()
 
-    const getPaginatedClasses = async (page: number, size: number, sortField?: string, sortOrder?: string) => {
-        if(sortField && sortOrder) {
-            sortOrder = getShortSortOrder(sortOrder)
-            sortField = sortedField(sortField);
-            return await getAllClasses(schoolId as string, {page: page, size: size}, `${sortField}:${sortOrder}`);
-        }
-        return await getAllClasses(schoolId as string, {page: page, size: size})
-    }
-    
-    const useGetAllSearchClasses = (classeName: string) => {
-        const [classes, setClasses] = useState<Classe[]>([])
-        const fetch = useRawFetch()
-
-        useEffect(() => {
-            if (classeName)
-                fetch(getAllSearchClasses, [schoolId, classeName])
-                    .then(resp => {
-                        if (resp.isSuccess) {
-                            setClasses(resp.data as Classe[])
-                        }
+        return{
+            getPaginatedClasses: async (page: number, size: number, sortField?: string, sortOrder?: string) => {
+                if (sortField && sortOrder) {
+                    sortOrder = getShortSortOrder(sortOrder)
+                    sortField = sortedField(sortField);
+                    switch (context) {
+                        case UserPermission.ALL:
+                            return await getAllClasses(schoolId as string, {
+                                page: page,
+                                size: size
+                            }, `${sortField}:${sortOrder}`);
+                        case UserPermission.TEACHER:
+                            return await getAllClassesByTeacher(schoolId, user?.userId as string, {
+                                page: page,
+                                size: size
+                            }, `${sortField}:${sortOrder}`)
                     }
-                )
-        }, [classeName, fetch]);
-
-        return classes
+                }
+                switch (context) {
+                    case UserPermission.ALL:
+                        return await getAllClasses(schoolId as string, {page: page, size: size})
+                    case UserPermission.TEACHER:
+                        return await getAllClassesByTeacher(schoolId, user?.userId as string, {
+                        page: page,
+                        size: size
+                    })
+                }
+            },
+            getSearchedClasses: async (classeName: string) => {
+                switch (context) {
+                    case UserPermission.TEACHER:
+                        return await getAllSearchClassesByTeacher(schoolId as string, user?.userId as string, classeName)
+                    case UserPermission.ALL:
+                        return await getAllSearchClasses(schoolId as string, classeName)
+                }
+            }
+        }
     }
 
-    const getSearchedClasses = async (classeName: string) => {
-        return await getAllSearchClasses(schoolId as string, classeName)
-    }
-
-    const useGetClasse = (classeId: number, academicYear: string) => useFetch(
-        ['classe', classeId],
+    const useGetClasse = (classeId: number, academicYear: string, isBasic?: boolean) => useFetch(
+        ['classe', classeId, academicYear, isBasic],
         getClasse,
-        [classeId, academicYear],
-        !!classeId && !!academicYear
+        isBasic ? [classeId, academicYear, isBasic] : [classeId, academicYear],
+        isBasic ? !!classeId && isBasic : !!classeId && !!academicYear
     )
 
     const useGetClasseBasicValues = (enabled: boolean = true) => {
@@ -77,13 +83,15 @@ export const useClasseRepo = () => {
         return classes
     }
 
+    const useUpdateClasseCourse = (classeId: number) => useMutation({
+        mutationFn: async ({courseId}: {courseId: number}) => await updatePrincipalCourse(classeId, courseId),
+    })
+
     return {
-        useGetAllClasse,
-        getPaginatedClasses,
-        useGetAllSearchClasses,
-        getSearchedClasses,
+        useGetPaginated,
         useGetClasse,
-        useGetClasseBasicValues
+        useGetClasseBasicValues,
+        useUpdateClasseCourse
     }
 }
 

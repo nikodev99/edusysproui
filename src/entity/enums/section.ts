@@ -36,10 +36,8 @@ export const anyIsUniversity = (sections: (SectionType | string)[]) =>
     sections.some(isUniversity)
 
 export const isUniversity = (section: SectionType | string) => {
-    console.log('section: ', section)
     if (typeof section === 'string') {
         const enumVal = SectionType[section]
-        console.log('enumVal: ', enumVal)
         if(enumVal === undefined || enumVal === null) return false
         return UNIVERSITY_SECTIONS.has(enumVal)
     }

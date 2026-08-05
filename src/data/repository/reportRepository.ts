@@ -17,6 +17,15 @@ export const reportRepository = {
         })
     },
 
+    getAllClasseWeekReport: (classeId: number, startDate: Moment, endDate: Moment) => {
+        return apiClient.get<Report[]>(`/report/classe_week/${classeId}`, {
+            params: {
+                startDate: startDate,
+                endDate: endDate
+            }
+        })
+    },
+
     viewReport: (reportId: number) => {
         return apiClient.get<Report>(`/report/${reportId}`)
     }

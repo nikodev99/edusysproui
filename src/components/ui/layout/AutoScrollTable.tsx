@@ -35,7 +35,7 @@ export const AutoScrollTable = <T extends object>(props: AutoScrollTableProps<T>
                 scrollableTarget='tableAutoScroll'
             >
                 <Table
-                    tableProps={tableProps}
+                    tableProps={{scroll: {x: 'max-content'}, ...tableProps}}
                     color={color}
                 />
             </InfiniteScroll>

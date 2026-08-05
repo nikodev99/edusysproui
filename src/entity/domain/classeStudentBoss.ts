@@ -1,11 +1,12 @@
-import {AcademicYear} from "./academicYear.ts";
-import {Student} from "./student.ts";
+import {AcademicYear, Classe, Student} from "@/entity";
+import {Moment} from "@/core/utils/interfaces.ts";
 
 export interface ClasseStudentBoss {
     id?: number
     academicYear?: AcademicYear
+    classe?: Classe
     principalStudent?: Student
     current?: boolean
-    startPeriod?: Date | number[]
-    endPeriod?:  | number[]
+    startPeriod?: Moment
+    endPeriod?: Moment
 }

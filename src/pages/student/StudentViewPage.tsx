@@ -21,6 +21,7 @@ import {ItemType} from "antd/es/menu/interface";
 import {catchError} from "@/data/action/error_catch.ts";
 import {useRedirect} from "@/hooks/useRedirect.ts";
 import {usePermission} from "@/hooks/usePermission.ts";
+import {Result} from "antd";
 
 const StudentViewPage = () => {
     const {toViewGuardian} = useRedirect()
@@ -44,8 +45,6 @@ const StudentViewPage = () => {
         description: "Student description",
         hasEdu: false
     })
-
-    console.log('ITEMS: ', linkButtons)
 
     const {context} = useBreadCrumb({
         bCItems: [
@@ -80,6 +79,9 @@ const StudentViewPage = () => {
         refetch().then(r => r.data)
     }
 
+    if (!enrolledStudent)
+        return <Result title={"Aucune information correspond à cet étudiant dans cet école."} />
+
     return(
         <>
             {context}
@@ -107,7 +109,7 @@ const StudentViewPage = () => {
             />
 
             <ViewRoot
-                exists={enrolledStudent !== null}
+                exists={!!enrolledStudent}
                 items={[
                     {label: 'Info', children: <StudentInfo enrollment={enrolledStudent!} color={color}/>},
                     {label: 'Examens', children: <StudentExam enrolledStudent={enrolledStudent!}/>},

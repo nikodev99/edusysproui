@@ -21,6 +21,7 @@ type InsertSchemaType<TData extends FieldValues> = SchemaProps<TData>
         width?: number | string
         popup?: boolean
         btnProps?: ButtonProps
+        doNotMutate?: boolean
     }
 
 const InsertModal = <TData extends FieldValues>(
@@ -43,7 +44,8 @@ const InsertModal = <TData extends FieldValues>(
         isNotif,
         width,
         popup = false,
-        btnProps
+        btnProps,
+        doNotMutate = false
     }: InsertSchemaType<TData>
 ) => {
     const breakpoints = useGlobalStore.use.modalBreakpoints();
@@ -95,6 +97,7 @@ const InsertModal = <TData extends FieldValues>(
                 isNotif={isNotif}
                 popup={popup}
                 btnProps={btnProps}
+                doNotMutate={doNotMutate}
             />
         </Modal>
     );
@@ -118,7 +121,8 @@ const InsertSchema = <TData extends FieldValues>(
         isNotif = false,
         toReset = true,
         popup = true,
-        btnProps
+        btnProps,
+        doNotMutate = false
     }: InsertSchemaType<TData> & {
         onSuccess?: (response: unknown) => void,
         onError?: (error: string) => void
@@ -136,30 +140,35 @@ const InsertSchema = <TData extends FieldValues>(
         setSuccessMessage(undefined);
     };
 
-    const onSubmit = (formData: TData) => {
+    const onSubmit = async (formData: TData) => {
         clearMessages();
-
-        console.log("THIS IS NOT RUNNING")
-        console.log({addedData: formData})
-
-        mutate(
-            { postFn: postFunc, data: formData },
-            {
-                onSuccess: (response) => {
-                    if (response.status === 200) {
-                        setSuccessMessage(messageSuccess);
-                        toReset ? handleForm.reset() : undefined;
-                        onSuccess?.(response);
-                    }
-                },
-                onError: (error) => {
-                    const errorMsg = catchError(error) as string;
-                    setErrorMessage(errorMsg);
-                    onError?.(errorMsg);
-                },
-            }
-        );
-        setOpenConfirm(false);
+        if (!doNotMutate) {
+            mutate(
+                {postFn: postFunc, data: formData},
+                {
+                    onSuccess: (response) => {
+                        if (response.status >= 200 && response.status < 300) {
+                            const data = response.data
+                            if (typeof messageSuccess === 'function') {
+                                setSuccessMessage(messageSuccess?.(data));
+                            }else {
+                                setSuccessMessage(messageSuccess as string)
+                            }
+                            toReset ? handleForm.reset() : undefined;
+                            onSuccess?.(response);
+                        }
+                    },
+                    onError: (error) => {
+                        const errorMsg = catchError(error) as string;
+                        setErrorMessage(errorMsg);
+                        onError?.(errorMsg);
+                    },
+                }
+            );
+            setOpenConfirm(false);
+        }else {
+            return await postFunc?.(formData)
+        }
     };
 
     const handleCancel = () => {
@@ -179,13 +188,13 @@ const InsertSchema = <TData extends FieldValues>(
         <>
             {successMessage && (
                 <>
-                    <FormSuccess message={successMessage} isNotif={isNotif} onClose={clearMessages} />
+                    <FormSuccess message={successMessage} isNotif={isNotif} />
                     {isNotif && <Alert message={successMessage} type="success" showIcon closable onClose={clearMessages}/>}
                 </>
             )}
             {errorMessage && (
                 <>
-                    <FormError message={errorMessage} isNotif={isNotif} onClose={clearMessages} />
+                    <FormError message={errorMessage} isNotif={isNotif} />
                     {isNotif && <Alert message={errorMessage} type="error" showIcon closable onClose={clearMessages}/>}
                 </>
             )}

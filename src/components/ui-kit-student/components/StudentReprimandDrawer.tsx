@@ -5,7 +5,7 @@ import Datetime from "@/core/datetime.ts";
 import Tag from "@/components/ui/layout/Tag.tsx";
 import {punishmentStatusTag} from "@/entity/enums/punishmentStatus.ts";
 import {ReprimandType} from "@/entity/enums/reprimandType.ts";
-import {setFirstName} from "@/core/utils/utils.ts";
+import {setFirstName, setName} from "@/core/utils/utils.ts";
 import {LuCalendarDays} from "react-icons/lu";
 import {PunishmentType} from "@/entity/enums/punishmentType.ts";
 
@@ -19,7 +19,7 @@ export const StudentReprimandDrawer = ({reprimand, open, close}: {
     const [tagColor, tagText] = punishmentStatusTag(reprimand?.punishment?.status)
 
     return(
-        <RightSidePane open={open} onClose={close} title={`Détails — ${reprimand?.student?.student?.personalInfo?.firstName}`} destroyOnHidden>
+        <RightSidePane open={open} onClose={close} title={<h3>{setName(reprimand?.student?.student?.personalInfo)}</h3>} destroyOnHidden>
             {reprimand ? (<div>
                 <Descriptions title='Réprimande' style={{width: '100%'}} items={[
                     {key: '1', label: 'Date', children: Datetime.of(reprimand?.reprimandDate).fDate(), span: 3},

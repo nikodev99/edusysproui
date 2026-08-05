@@ -1,5 +1,5 @@
 import {AddStepForm} from "@/components/custom/AddStepForm.tsx";
-import {globalSchool, text} from "@/core/utils/text_display.ts";
+import {text} from "@/core/utils/text_display.ts";
 import {useRedirect} from "@/hooks/useRedirect.ts";
 import {useForm} from "react-hook-form";
 import {
@@ -19,6 +19,7 @@ import {TeacherAcademicForm} from "@/components/ui-kit-teacher";
 import {EmployeeContractForm} from "@/components/forms/EmployeeContractForm.tsx";
 import {catchError} from "@/data/action/error_catch.ts";
 import {loggedUser} from "@/auth/jwt/LoggedUser.ts";
+import {useAuth} from "@/hooks/useAuth.ts";
 
 const AffiliateNewTeacherPage = () => {
     const [successMessage, setSuccessMessage] = useState<string | undefined>(undefined)
@@ -32,6 +33,7 @@ const AffiliateNewTeacherPage = () => {
     const {id} = useParams()
     const {toTeacher, toAffiliateTeacher, toAddTeacher} = useRedirect()
     const {useGetTeacherPersonalInfo, useAffiliateTeacher} = useTeacherRepo(UserPermission.TEACHER)
+    const {userSchool} = useAuth()
     const form = useForm<TeacherSchoolAffiliationSchema>({
         resolver: zodResolver(teacherSchoolAffiliationSchema)
     })
@@ -57,7 +59,7 @@ const AffiliateNewTeacherPage = () => {
     useEffect(() => {
         reset({
             school: {
-                id: globalSchool.school?.id,
+                id: userSchool?.id,
             },
             teacher: {
                 id: teacher?.id
@@ -66,7 +68,7 @@ const AffiliateNewTeacherPage = () => {
                 createdBy: {id: loggedUser.getUser()?.personalInfo},
             }
         })
-    }, [reset, teacher?.id]);
+    }, [reset, teacher?.id, userSchool?.id]);
 
     const handleTeacherClassCourse = ({ courses, classes }: { courses: CourseSchemaMerge[], classes: ClasseSchemaMerge[] }) => {
         setValue('classes', classes?.map(c => ({classe: {id: c.id}})), {

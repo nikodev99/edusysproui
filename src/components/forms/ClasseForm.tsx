@@ -6,11 +6,13 @@ import {FieldValues, Path, PathValue} from "react-hook-form";
 import {FormConfig} from "@/config/FormConfig.ts";
 import {useDepartmentRepo} from "@/hooks/actions/useDepartmentRepo.ts";
 import {useMemo} from "react";
+import {useCourseRepo} from "@/hooks/actions/useCourseRepo.ts";
 
 export const ClasseForm = <T extends FieldValues>(
     {control, data, errors,showField = false, gradeOptions}: FormContentProps<T, Classe> & {gradeOptions: Options}
 ) => {
     const {useGetAllDepartments} = useDepartmentRepo()
+    const {courseOptions} = useCourseRepo()
     const departments = useGetAllDepartments({enable: showField})
     const form = new FormConfig(errors, false)
 
@@ -32,7 +34,7 @@ export const ClasseForm = <T extends FieldValues>(
                     placeholder: 'Terminal A',
                     validateStatus: form.validate('name'),
                     help: form.error('name'),
-                    defaultValue: (data ? data.name : undefined) as PathValue<T, Path<T>>
+                    defaultValue: (data ? data?.name : undefined) as PathValue<T, Path<T>>
                 }
             },
             {
@@ -43,7 +45,7 @@ export const ClasseForm = <T extends FieldValues>(
                     control: control,
                     name: 'category' as Path<T>,
                     placeholder: 'Terminal Littéraire',
-                    defaultValue: (data ? data.category : undefined) as PathValue<T, Path<T>>
+                    defaultValue: (data ? data?.category : undefined) as PathValue<T, Path<T>>
                 }
             },
             {
@@ -58,7 +60,7 @@ export const ClasseForm = <T extends FieldValues>(
                     placeholder: 'Lycée',
                     validateStatus: form.validate('id', 'grade'),
                     help: form.error('id', 'grade'),
-                    selectedValue: (data ? data.grade.id : undefined) as PathValue<T, Path<T>>
+                    selectedValue: (data ? data?.grade?.id : undefined) as PathValue<T, Path<T>>
                 }
             },
             ...(showField ? [{
@@ -73,9 +75,24 @@ export const ClasseForm = <T extends FieldValues>(
                     placeholder: 'Département',
                     validateStatus: form.validate('id', 'department'),
                     help: form.error('id', 'department'),
-                    selectedValue: (data ? data.department.id : undefined) as PathValue<T, Path<T>>
+                    selectedValue: (data ? data?.department?.id : undefined) as PathValue<T, Path<T>>
                 }
             }] as never: []),
+            {
+                type: InputTypeEnum.SELECT,
+                inputProps: {
+                    lg: 12,
+                    options: courseOptions,
+                    label: 'Matière principale',
+                    control: control,
+                    name: 'principalCourse.id' as Path<T>,
+                    required: showField,
+                    placeholder: 'Math',
+                    validateStatus: form.validate('id', 'principalCourse'),
+                    help: form.error('id', 'principalCourse'),
+                    selectedValue: (data ? data?.principalCourse?.id : undefined) as PathValue<T, Path<T>>
+                }
+            },
             {
                 type: InputTypeEnum.NUMBER,
                 inputProps: {
@@ -84,7 +101,7 @@ export const ClasseForm = <T extends FieldValues>(
                     control: control,
                     name: 'roomNumber' as Path<T>,
                     placeholder: '30',
-                    defaultValue: (data ? data.roomNumber : undefined) as PathValue<T, Path<T>>
+                    defaultValue: (data ? data?.roomNumber : undefined) as PathValue<T, Path<T>>
                 }
             },
             {
@@ -98,7 +115,7 @@ export const ClasseForm = <T extends FieldValues>(
                     placeholder: '15000',
                     validateStatus: form.validate('monthCost'),
                     help: form.error('monthCost'),
-                    defaultValue: (data ? data.monthCost : undefined) as PathValue<T, Path<T>>
+                    defaultValue: (data ? data?.monthCost : undefined) as PathValue<T, Path<T>>
                 }
             }
         ]} />

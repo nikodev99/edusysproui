@@ -1,41 +1,61 @@
 import {TableColumnsType, Tag} from "antd";
-import {ActionButton} from "../../ui/layout/ActionButton.tsx";
-import {Classe, Department} from "../../../entity";
-import {LuDot, LuEye} from "react-icons/lu";
-import ListViewer from "../../custom/ListViewer.tsx";
-import {redirectTo} from "../../../context/RedirectContext.ts";
-import {text} from "../../../core/utils/text_display.ts";
+import {Classe, Department} from "@/entity";
+import {LuEye} from "react-icons/lu";
+import ListViewer from "@/components/custom/ListViewer.tsx";
+import {text} from "@/core/utils/text_display.ts";
 import {AxiosResponse} from "axios";
-import {fDatetime} from "../../../core/utils/utils.ts";
-import {DataProps} from "../../../core/utils/interfaces.ts";
-import {SuperWord} from "../../../core/utils/tsxUtils.tsx";
-import {useClasseRepo} from "../../../hooks/actions/useClasseRepo.ts";
-import {AvatarTitle} from "../../ui/layout/AvatarTitle.tsx";
-import {SectionType} from "../../../entity/enums/section.ts";
-import {useCallback} from "react";
+import {currency, fDatetime} from "@/core/utils/utils.ts";
+import {DataProps} from "@/core/utils/interfaces.ts";
+import {SuperWord} from "@/core/utils/tsxUtils.tsx";
+import {useClasseRepo} from "@/hooks/actions/useClasseRepo.ts";
+import {AvatarTitle} from "@/components/ui/layout/AvatarTitle.tsx";
+import {anyIsUniversity, SectionType} from "@/entity/enums/section.ts";
+import {useCallback, useMemo, useState} from "react";
 import {ItemType} from "antd/es/menu/interface";
+import {useGradeRepo} from "@/hooks/actions/useGradeRepo.ts";
+import {usePermission} from "@/hooks/usePermission.ts";
+import {UserPermission} from "@/core/shared/sharedEnums.ts";
+import {ClasseActionLinks} from "@/components/ui-kit-cc";
+import {useRedirect} from "@/hooks/useRedirect.ts";
 
 export const ClasseList = ({condition}: {condition?: boolean}) => {
+    const [selectedClasse, setSelectedClasse] = useState<Classe | null>(null)
+    const [linkButtons, setLinkButtons] = useState<ItemType[]>([])
+    const [refresh, setRefresh] = useState<boolean>(condition as boolean)
+    const {toViewClasse} = useRedirect()
+    const {useGetAllGrades} = useGradeRepo()
+    const {canViewAll, canViewSome} = usePermission()
 
-    const {getPaginatedClasses, getSearchedClasses} = useClasseRepo()
+    const context = useMemo(() => {
+        if (canViewAll) return UserPermission.ALL
+        if (canViewSome) return UserPermission.TEACHER
+        return UserPermission.NONE
+    }, [canViewAll, canViewSome])
 
-    const throughDetails = (link: string | number) => {
-        redirectTo(`${text.cc.group.classe.view.href}${link}`)
-    }
+    const {useGetPaginated} = useClasseRepo(context)
+    const {getPaginatedClasses, getSearchedClasses} = useGetPaginated()
+    const grades = useGetAllGrades()
+
+    const isUniv = anyIsUniversity(grades?.map(g => g.section as string) || [])
+
+    const throughDetails = useCallback((link: string | number) => {
+        toViewClasse(link as number)
+    }, [toViewClasse])
 
     const getItems = useCallback((url?: string): ItemType[] => {
         if (url)
             return [
                 {
                     key: `details-${url}`,
-                    icon: <LuEye size={20}/>,
+                    icon: <LuEye />,
                     label: text.cc.group.classe.view.label,
                     onClick: () => throughDetails(url)
                 },
-                {key: `delete-${url}`, label: 'Delete', danger: true}
+                {type: 'divider'},
+                ...linkButtons
             ]
         return []
-    }, [])
+    }, [linkButtons, throughDetails])
 
     const cardData = (data: Classe[]) => {
         return data?.map(c => ({
@@ -67,16 +87,21 @@ export const ClasseList = ({condition}: {condition?: boolean}) => {
             key: 'category',
             align: 'center',
         },
-        {
-            title: 'Departement',
+        ...(isUniv ? [{
+            title: 'Département',
             dataIndex: 'department',
             key: 'department',
-            render: (department: Department) => <AvatarTitle
-                firstName={department?.name}
-                reference={department?.code}
-                size={40}
-            />
-        },
+            render: (department: Department) => {
+                if (!department || !Object.keys(department).length) return <span style={{ color: '#aaa' }}>—</span>; // or return null
+                return (
+                    <AvatarTitle
+                        firstName={department.name}
+                        reference={department.code}
+                        size={40}
+                    />
+                );
+            }
+        }]: []),
         {
             title: "Niveau",
             dataIndex: ['grade', 'section'],
@@ -85,24 +110,31 @@ export const ClasseList = ({condition}: {condition?: boolean}) => {
             render: (text) => (<Tag color='geekblue'>{SectionType[text]}</Tag>)
             //TODO getting all the grade distinct grade and filter by grade
         },
+
+        {
+            title: 'Numéro de la classe',
+            dataIndex: 'roomNumber',
+            key: 'roomNumber',
+            align: 'center',
+        },
+
+        {
+            title: "Montant par mois",
+            dataIndex: 'monthCost',
+            key: 'monthCost',
+            align: 'right',
+            render: amount => currency(amount)
+        },
         {
             title: "Date d'ajout",
             dataIndex: 'createdAt',
             key: 'createdAt',
             align: 'right',
             render: text => fDatetime(text, true)
-        },
-        {
-            title: <LuDot />,
-            dataIndex: 'id',
-            key: 'action',
-            align: 'right',
-            width: '10%',
-            render: (text) => (<ActionButton items={getItems(text)}/>)
         }
     ];
 
-    return (
+    return (<>
         <ListViewer
             callback={getPaginatedClasses as () => Promise<AxiosResponse<Classe[]>>}
             searchCallback={getSearchedClasses as (input: unknown) => Promise<AxiosResponse<Classe[]>>}
@@ -116,8 +148,15 @@ export const ClasseList = ({condition}: {condition?: boolean}) => {
             localStorage={{
                 activeIcon: 'classeActiveIcon'
             }}
-            refetchCondition={condition}
+            onRowRedirect={record => throughDetails(record?.id)}
+            getSelectedRecord={setSelectedClasse}
+            refetchCondition={refresh}
             descMargin={{size: '10px 0'}}
         />
-    )
+        {selectedClasse && <ClasseActionLinks
+            getItems={setLinkButtons}
+            data={selectedClasse}
+            setRefresh={setRefresh}
+        />}
+    </>)
 }

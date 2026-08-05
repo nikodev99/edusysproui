@@ -47,7 +47,6 @@ const FormSuccess = ({message, setRedirect, isNotif, type = 'success', onClose, 
             }).then()
 
             setTimeout(() => {
-                console.log('2 seconds passed, showing success message');
                 messageApi.open({
                     key,
                     type: 'success',

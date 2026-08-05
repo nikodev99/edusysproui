@@ -1,5 +1,6 @@
 import {Semester, Exam, Classe, Course, Score, Individual} from "@/entity";
 import {AssignmentType, AssignmentTypeLiteral} from "../enums/assignmentType.ts";
+import {EventType} from "@/core/utils/interfaces.ts";
 
 export type AssignmentFilterProps = {
     academicYearId: string
@@ -34,3 +35,5 @@ export interface AssignmentTypeAverage {
     type: AssignmentType | AssignmentTypeLiteral,
     average: number
 }
+
+export type AssignmentCalendarEvents = EventType<Assignment>

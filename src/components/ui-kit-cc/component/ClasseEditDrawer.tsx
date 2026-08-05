@@ -1,12 +1,12 @@
-import {EditProps} from "../../../core/utils/interfaces.ts";
-import {Classe} from "../../../entity";
-import {UpdateSchema} from "../../custom/UpdateSchema.tsx";
+import {EditProps} from "@/core/utils/interfaces.ts";
+import {Classe} from "@/entity";
+import {UpdateSchema} from "@/components/custom/UpdateSchema.tsx";
 import {useForm} from "react-hook-form";
-import {classeSchema, ClasseSchema} from "../../../schema";
+import {classeSchema, ClasseSchema} from "@/schema";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {ClasseForm} from "../../forms/ClasseForm.tsx";
-import {updateClasseValues} from "../../../data/repository/classeRepository.ts";
-import {useGradeRepo} from "../../../hooks/actions/useGradeRepo.ts";
+import {ClasseForm} from "@/components/forms/ClasseForm.tsx";
+import {updateClasseValues} from "@/data/repository/classeRepository.ts";
+import {useGradeRepo} from "@/hooks/actions/useGradeRepo.ts";
 
 export const ClasseEditDrawer = ({open, close, data}: EditProps<Classe>) => {
 

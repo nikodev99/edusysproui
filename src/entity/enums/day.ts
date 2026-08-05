@@ -21,6 +21,7 @@ export const frenchDay = (day: Day | WeekDay, isShort: boolean = false) => {
         case Day.FRIDAY : case "FRIDAY": return isShort ? 'Ven.' : 'Vendredi'
         case Day.SATURDAY : case "SATURDAY": return isShort ? 'Sam.' : 'Samedi'
         case Day.SUNDAY : case "SUNDAY": return isShort ? 'Dim.' : 'Dimanche'
+        case Day.ALL_DAYS : case "ALL_DAYS": return isShort ? 'Rec.' : 'Récurrente'
         default: return null
     }
 }

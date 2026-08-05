@@ -24,7 +24,7 @@ import {useScoreRepo} from "@/hooks/actions/useScoreRepo.ts";
 import {MarksHistogram} from "@/components/common/MarksHistogram.tsx";
 import {TeacherIndividual} from "@/components/common/TeacherIndividual.tsx";
 import {useTeacherRepo} from "@/hooks/actions/useTeacherRepo.ts";
-import {ScheduleCalendar} from "@/components/common/ScheduleCalendar.tsx";
+import {ScheduleCalendar} from "@/components/ui-kit-schedule/components/ScheduleCalendar.tsx";
 import {useDepartmentRepo} from "@/hooks/actions/useDepartmentRepo.ts";
 import {statusConfig} from "@/entity/domain/courseProgram.ts";
 import {LuCircleCheck, LuClock} from "react-icons/lu";

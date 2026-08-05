@@ -99,6 +99,14 @@ export const getTeacherSchedule = (teacherId: string, academicYear: string): Pro
     })
 }
 
+export const getAllClasseScheduledTeachers = (schoolId: string, classe: number, academicYear: string): Promise<AxiosResponse<Teacher[]>> => {
+    return apiClient.get(`/schedule/teachers/${schoolId}/${classe}`, {
+        params: {
+            academicYear: academicYear
+        }
+    })
+}
+
 export const getTeacherWidgets = (teacherId: string, academicYear: string) => {
     return apiClient.get<{
         students: number,
@@ -124,6 +132,14 @@ export const getTeacherScheduleByDay = (teacherId: string, academicYear: string,
         params: {
             academicYear: academicYear,
             allDay: allDay
+        }
+    })
+}
+
+export const checkTeacherIsPrincipal = (teacherId: string, classeId: number) => {
+    return apiClient.get<boolean>(`/teachers/principal/${teacherId}`, {
+        params: {
+            classe: classeId
         }
     })
 }

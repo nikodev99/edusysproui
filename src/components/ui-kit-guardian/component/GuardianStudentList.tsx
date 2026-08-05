@@ -7,13 +7,13 @@ import {text} from "@/core/utils/text_display.ts";
 import {BloodType} from "@/entity/enums/bloodType.ts";
 import {useRedirect} from "@/hooks/useRedirect.ts";
 
-export const GuardianStudentList = ({students, allowedClasses = []}: {students?: Student[], allowedClasses?: Classe[]}) => {
+export const GuardianStudentList = ({students, handlePermission}: {students?: Student[], handlePermission: (classe?: Classe) => boolean}) => {
     const {toViewStudent} = useRedirect()
 
     const {Link} = Typography
 
     const canViewStudent = (classe?: Classe)=> {
-        return allowedClasses?.some(c => c?.id === classe?.id)
+        return handlePermission(classe)
     }
 
     return (

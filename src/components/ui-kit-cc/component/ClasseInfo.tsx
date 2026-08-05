@@ -1,27 +1,31 @@
-import {GenderCounted, InfoPageProps} from "../../../core/utils/interfaces.ts";
-import {Classe, Teacher, Individual} from "../../../entity";
-import Block from "../../view/Block.tsx";
+import {GenderCounted, InfoPageProps} from "@/core/utils/interfaces.ts";
+import {Classe, Teacher, Individual} from "@/entity";
+import Block from "@/components/view/Block.tsx";
 import {ReactNode} from "react";
-import Section from "../../ui/layout/Section.tsx";
-import PanelStat from "../../ui/layout/PanelStat.tsx";
-import {findPercent, setFirstName, setGender} from "../../../core/utils/utils.ts";
-import {text} from "../../../core/utils/text_display.ts";
-import PanelTable from "../../ui/layout/PanelTable.tsx";
-import {SuperWord} from "../../../core/utils/tsxUtils.tsx";
-import {Avatar as AntAvatar, Progress} from "antd";
-import {IndividualDescription} from "../../ui/layout/IndividualDescription.tsx";
-import PanelSection from "../../ui/layout/PanelSection.tsx";
-import {AvatarTitle} from "../../ui/layout/AvatarTitle.tsx";
-//import {StudentCarousel} from "../../common/StudentCarousel.tsx";
-import {AttendanceStatus, getColors} from "../../../entity/enums/attendanceStatus.ts";
-import {ShapePieChart} from "../../graph/ShapePieChart.tsx";
-import VoidData from "../../view/VoidData.tsx";
-import {TeacherList} from "../../common/TeacherList.tsx";
-import {BestScoredTable} from "../../common/BestScoredTable.tsx";
-import {ScheduleCalendar} from "../../common/ScheduleCalendar.tsx";
-import {useScoreRepo} from "../../../hooks/actions/useScoreRepo.ts";
-import {useAttendanceRepo} from "../../../hooks/actions/useAttendanceRepo.ts";
-import {GradeCard} from "../../ui-kit-org";
+import Section from "@/components/ui/layout/Section.tsx";
+import PanelStat from "@/components/ui/layout/PanelStat.tsx";
+import {findPercent, setFirstName, setGender} from "@/core/utils/utils.ts";
+import {text} from "@/core/utils/text_display.ts";
+import PanelTable from "@/components/ui/layout/PanelTable.tsx";
+import {SuperWord} from "@/core/utils/tsxUtils.tsx";
+import {Avatar as AntAvatar, Progress, Skeleton} from "antd";
+import {IndividualDescription} from "@/components/ui/layout/IndividualDescription.tsx";
+import PanelSection from "@/components/ui/layout/PanelSection.tsx";
+import {AvatarTitle} from "@/components/ui/layout/AvatarTitle.tsx";
+//import {StudentCarousel} from "@/components/common/StudentCarousel.tsx";
+import {AttendanceStatus, getColors} from "@/entity/enums/attendanceStatus.ts";
+import {ShapePieChart} from "@/components/graph/ShapePieChart.tsx";
+import VoidData from "@/components/view/VoidData.tsx";
+import {TeacherList} from "@/components/common/TeacherList.tsx";
+import {BestScoredTable} from "@/components/common/BestScoredTable.tsx";
+import {ScheduleCalendar} from "@/components/ui-kit-schedule/components/ScheduleCalendar.tsx";
+import {useScoreRepo} from "@/components/../hooks/actions/useScoreRepo.ts";
+import {useAttendanceRepo} from "@/components/../hooks/actions/useAttendanceRepo.ts";
+import {GradeCard} from "@/components/ui-kit-org";
+import {datehelper} from "@/core/helpers/DateHelpers.ts";
+import {stringhelper} from "@/core/helpers/StringHelper.ts";
+import {useRedirect} from "@/hooks/useRedirect.ts";
+import {CourseTypeEnum} from "@/entity/domain/course.ts";
 
 type ClasseInfoProps = InfoPageProps<Classe> & {
     studentCount?: GenderCounted | null
@@ -29,9 +33,14 @@ type ClasseInfoProps = InfoPageProps<Classe> & {
 };
 
 const ClasseInfoData = ({infoData, color, studentCount, totalStudents, seeMore}: ClasseInfoProps) => {
+    const {toViewStudent, toViewTeacher} = useRedirect()
+
+    if (!infoData)
+        return <PanelSection title={"Profile Classe"}><Skeleton active paragraph={{ rows: 4 }} /></PanelSection>
+
     const {principalTeacher, principalStudent, principalCourse} = infoData
 
-    const classeTeachers = principalTeacher?.principalTeacher?.courses?.map(c => c.teacher)
+    const classeTeachers = principalTeacher?.principalTeacher?.courses?.map(c => c?.affiliation?.teacher)
 
     const studentAverageAge = studentCount?.totalAverageAge
     const maxAge = studentCount?.genders ? Math.max(...studentCount.genders.map(group => group.ageAverage)) : 1
@@ -47,6 +56,8 @@ const ClasseInfoData = ({infoData, color, studentCount, totalStudents, seeMore}:
         seeMore && seeMore('1')
     }
 
+    studentCount?.genders?.map(s => console.log({count: s.count, word: stringhelper.setPlural({word: text.student.label, count: s.count})}))
+
     return(
         <Section title={<SuperWord input={`Profile de ${infoData?.name}`} />} more={true} seeMore={handleClick}>
             <div className='panel'>
@@ -54,9 +65,9 @@ const ClasseInfoData = ({infoData, color, studentCount, totalStudents, seeMore}:
                     <PanelStat
                         key={i}
                         title={s.count}
-                        subTitle={`${text.student.label}${s.count > 1 ? 's' : ''}`}
+                        subTitle={stringhelper.setPlural({word: text.student.label, count: s.count})}
                         round={<Progress percent={findPercent(s.count, totalStudents!) as number} type='circle' size={35} strokeColor={color} />}
-                        desc={setFirstName(setGender(s.gender)) + `${s.count > 1 ? 's' : ''}`}
+                        desc={stringhelper.setPlural({word: setFirstName(setGender(s.gender)), count: s.count})}
                     />
                 ))}
                 {studentAverageAge && <PanelStat
@@ -72,7 +83,7 @@ const ClasseInfoData = ({infoData, color, studentCount, totalStudents, seeMore}:
                     show={principalTeacher === null || principalTeacher?.principalTeacher === undefined}
                     color={color}
                     titles={{panel: 'Responsable de classe'}}
-                    redirectLink={redirectLink(principalTeacher?.principalTeacher?.id)}
+                    onRedirect={principalTeacher?.current ? () => toViewTeacher(principalTeacher?.principalTeacher?.id as string) : undefined}
                     period={principalTeacher?.startPeriod as number[]}
                     isCurrent={principalTeacher?.current}
                 />
@@ -81,7 +92,7 @@ const ClasseInfoData = ({infoData, color, studentCount, totalStudents, seeMore}:
                     show={principalStudent === null || principalStudent === undefined}
                     color={color}
                     titles={{panel: 'Chef de Classe'}}
-                    redirectLink={`${text.student.group.view.href}${principalStudent?.principalStudent?.id}`}
+                    onRedirect={principalStudent?.current ? () => toViewStudent(principalStudent?.principalStudent?.id as string) : undefined}
                     period={principalStudent?.startPeriod as number[]}
                     isCurrent={principalStudent?.current}
                 />
@@ -94,7 +105,7 @@ const ClasseInfoData = ({infoData, color, studentCount, totalStudents, seeMore}:
                             {principalCourse?.abbr}
                         </AntAvatar>
                     </p>},
-                    {statement: 'Départment', response: principalCourse?.department?.name},
+                    {statement: 'Discipline', response: CourseTypeEnum[principalCourse?.courseType]},
                     ...(teacher ? [{
                         statement: 'Professeur',
                         response: teacher && <AvatarTitle
@@ -111,19 +122,25 @@ const ClasseInfoData = ({infoData, color, studentCount, totalStudents, seeMore}:
     )
 }
 
-const PlanningInfo = ({infoData}: ClasseInfoProps) => {
-
+const PlanningInfo = ({infoData, resourceYear}: ClasseInfoProps) => {
     const {grade} = infoData
+    const day = datehelper.getDateReference(resourceYear?.startDate, resourceYear?.endDate)
+
+    if (!infoData)
+        return <PanelSection title={'Planning de la classe'}><Skeleton active paragraph={{ rows: 4 }} /></PanelSection>
 
     return(
-        <PanelSection title='Planning de la classe'>
-            <GradeCard data={grade} size='small' onlyPlanning={true} />
+        <PanelSection title={`Planning de la classe ${day.format('MMM-YY')}`}>
+            {!grade ? <GradeCard data={grade} size='small' onlyPlanning={true} /> : <VoidData />}
         </PanelSection>
     )
 }
 
 const ClasseSchedule = ({infoData, seeMore}: ClasseInfoProps) => {
     const {schedule} = infoData
+
+    if (!infoData)
+        return <PanelSection title={'Emploi du temps'}><Skeleton active paragraph={{ rows: 4 }} /></PanelSection>
 
     const handleSeeMore = ()=> {
         seeMore && seeMore('2')
@@ -134,7 +151,8 @@ const ClasseSchedule = ({infoData, seeMore}: ClasseInfoProps) => {
             <ScheduleCalendar
                 eventSchedule={schedule}
                 views={['day']}
-                height={400}
+                height={500}
+                toolbar={false}
             />
         </Section>
 
@@ -168,6 +186,10 @@ const ClasseSchedule = ({infoData, seeMore}: ClasseInfoProps) => {
 const ClasseBestStudent = ({infoData, academicYear, color}: ClasseInfoProps) => {
     const {useGetClasseBestStudents} = useScoreRepo()
     const bestStudents = useGetClasseBestStudents(infoData?.id, academicYear as string)
+
+    if (!infoData)
+        return <Section title={'Meilleurs élève de la classe'}><Skeleton active paragraph={{ rows: 4 }} /></Section>
+
     return(
         <Section title='Meilleurs élèves de la classe'>
             <BestScoredTable
@@ -181,8 +203,12 @@ const ClasseBestStudent = ({infoData, academicYear, color}: ClasseInfoProps) => 
 const ClassePoorStudent = ({infoData, academicYear, color}: ClasseInfoProps) => {
     const {useGetClassePoorStudents} = useScoreRepo()
     const poorStudents = useGetClassePoorStudents(infoData?.id, academicYear as string)
+
+    if (!infoData)
+        return <Section title={'Étudiant nécessitant une suivie'}><Skeleton active paragraph={{ rows: 4 }} /></Section>
+
     return(
-        <Section title='Elèves necessitant une suivie'>
+        <Section title='Étudiant necessitant une suivie'>
             <BestScoredTable
                 providedData={poorStudents}
                 color={color}
@@ -192,27 +218,29 @@ const ClassePoorStudent = ({infoData, academicYear, color}: ClasseInfoProps) => 
     )
 }
 
-const ClasseTeachers = ({infoData, seeMore}: ClasseInfoProps) => {
+const ClasseTeachers = ({infoData, seeMore, hasPermission}: ClasseInfoProps) => {
     const classeTeachers = infoData?.classeTeachers?.map(t => t.teacher)
 
+    if (!infoData || (classeTeachers.length && classeTeachers[0].id === undefined))
+        return <Section title={'Enseignants de la classe'}><Skeleton active paragraph={{ rows: 4 }} /></Section>
+
     const handleClick = () => {
-        seeMore && seeMore('5')
+        seeMore && seeMore('6')
     }
 
     return(
-        <Section title={'Les profs de la classe'} more={true} seeMore={handleClick}>
+        <Section title={'Enseignants de la classe'} more={true} seeMore={handleClick}>
             <TeacherList
                 teachers={classeTeachers}
+                hasPermission={hasPermission}
             />
         </Section>
     )
 }
 
 const ClasseAttendanceGraph = ({infoData, seeMore, academicYear}: ClasseInfoProps) => {
-
-    const {id} = infoData
     const {useGetClasseAttendanceCount} = useAttendanceRepo()
-    const {data: classeAttendances} = useGetClasseAttendanceCount(id, academicYear as string)
+    const {data: classeAttendances} = useGetClasseAttendanceCount(infoData?.id, academicYear as string)
 
     const graphData = classeAttendances && classeAttendances?.statusCount ? Object.entries(classeAttendances?.statusCount).map(([key, value]) => ({
         name: AttendanceStatus[key as unknown as keyof typeof AttendanceStatus],
@@ -220,14 +248,15 @@ const ClasseAttendanceGraph = ({infoData, seeMore, academicYear}: ClasseInfoProp
         color: getColors(AttendanceStatus[key as unknown as keyof typeof AttendanceStatus])
     })): []
 
-    console.log('graphData: ', graphData)
+    if (!infoData)
+        return <Section title={'Taux de présence'}><Skeleton active paragraph={{ rows: 4 }} /></Section>
 
     const handleClick = () => {
         seeMore && seeMore('3')
     }
 
     return(
-        <Section title='Donnée de présence' more={true} seeMore={handleClick}>
+        <Section title='Taux de présence' more={true} seeMore={handleClick}>
             {classeAttendances && classeAttendances.statusCount ? <ShapePieChart
                 data={graphData as []}
                 height={280}

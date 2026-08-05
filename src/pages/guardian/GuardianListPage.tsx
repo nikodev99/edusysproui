@@ -144,6 +144,7 @@ const GuardianListPage = () => {
             reference: c.personalInfo?.emailId,
             tag: <StatusTags status={c.personalInfo?.status as Status} female={c.personalInfo?.gender === Gender.FEMME} />,
             description: [],
+            record: c,
         })) || [] as DataProps<Guardian>[]
     }
 

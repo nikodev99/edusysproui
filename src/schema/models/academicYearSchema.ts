@@ -1,8 +1,8 @@
 import {z, ZodType} from "zod";
-import {schoolMergeSchema} from "./schoolSchema.ts";
+import {schoolMergeSchema} from "@/schema";
 import {dateProcess} from "../commonSchema.ts";
-import Datetime from "../../core/datetime.ts";
-import {semesterSchema} from "./semesterSchema.ts";
+import Datetime from "@/core/datetime.ts";
+import {semesterSchema} from "@/schema";
 
 export const academicYearSchema: ZodType = z.lazy(() => z.object({
     startDate: dateProcess("La date de début est requise"),
@@ -22,5 +22,6 @@ export const academicYearSchema: ZodType = z.lazy(() => z.object({
 })
 
 export const academicYearSchemaMerge = z.object({
-    id: z.string()
+    id: z.string(),
+    school: schoolMergeSchema.optional()
 })

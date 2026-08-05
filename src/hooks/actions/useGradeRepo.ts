@@ -1,17 +1,17 @@
-import {Grade} from "../../entity";
+import {Grade} from "@/entity";
 import {useFetch} from "../useFetch.ts";
 import {
     getAllSchoolGrades,
     getGradeById,
     getGradesWithPlanning, getGradeWithPlannings,
     saveGrade
-} from "../../data/repository/gradeRepository.ts";
+} from "@/data/repository/gradeRepository.ts";
 import {useInsert} from "../usePost.ts";
-import {gradeSchema} from "../../schema";
-import {Options, RepoOptions} from "../../core/utils/interfaces.ts";
+import {gradeSchema} from "@/schema";
+import {Options, RepoOptions} from "@/core/utils/interfaces.ts";
 import {useMemo} from "react";
-import {SectionType} from "../../entity/enums/section.ts";
-import {useGlobalStore} from "../../core/global/store.ts";
+import {SectionType} from "@/entity/enums/section.ts";
+import {useGlobalStore} from "@/core/global/store.ts";
 
 export const useGradeRepo = () => {
     const schoolId = useGlobalStore(state => state.schoolId)
@@ -63,7 +63,7 @@ export const useGradeRepo = () => {
 
     const gradeOptions: Options = useMemo(() => allGrades ? allGrades?.map(g => ({
         value: g.id,
-        label: SectionType[g.section as unknown as keyof typeof SectionType],
+        label: `${SectionType[g.section as unknown as keyof typeof SectionType]} ${g?.subSection ? (' [' + g.subSection + ']') : ''}`,
     })) : [], [allGrades])
 
     return {

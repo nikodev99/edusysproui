@@ -6,7 +6,7 @@ import {useScoreRepo} from "@/hooks/actions/useScoreRepo.ts";
 import {AssignmentView} from "@/components/common/AssignmentView.tsx";
 import {useState} from "react";
 
-export const ClasseExams = ({infoData, academicYear}: InfoPageProps<Classe>) => {
+export const ClasseExams = ({infoData, academicYear, resourceYear}: InfoPageProps<Classe>) => {
     const {id} = infoData
     const [subject, setSubject] = useState<number | undefined>(undefined)
     const {useGetAllClasseAssignments} = useAssignmentRepo()
@@ -30,6 +30,10 @@ export const ClasseExams = ({infoData, academicYear}: InfoPageProps<Classe>) => 
                }]}
                name={infoData?.name}
                hasLegend={false}
+               calendarLimit={{
+                   startDate: resourceYear?.startDate,
+                   endDate: resourceYear?.endDate
+               }}
                showBarChart
                getSubject={setSubject}
            />

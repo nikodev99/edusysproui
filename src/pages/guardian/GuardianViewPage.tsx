@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {useParams} from "react-router-dom";
-import {Guardian} from "@/entity";
+import {Classe, Guardian} from "@/entity";
 import {setLastName, setName} from "@/core/utils/utils.ts";
 import {useBreadCrumb} from "@/hooks/useBreadCrumb.tsx";
 import {text} from "@/core/utils/text_display.ts";
@@ -15,6 +15,7 @@ import {ItemType} from "antd/es/menu/interface";
 import {loggedUser} from "@/auth/jwt/LoggedUser.ts";
 import {useTeacherRepo} from "@/hooks/actions/useTeacherRepo.ts";
 import {isTeacher} from "@/auth/dto/role.ts";
+import {usePermission} from "@/hooks/usePermission.ts";
 
 const GuardianViewPage: React.FC = () => {
 
@@ -27,15 +28,22 @@ const GuardianViewPage: React.FC = () => {
     const [linkButtons, setLinkButtons] = useState<ItemType[]>([])
     const {useGetGuardianWithStudents} = useGuardianRepo()
     const {useGetTeacherClasses} = useTeacherRepo()
+    const {can} = usePermission()
 
     const {data, isLoading, isSuccess, refetch} = useGetGuardianWithStudents(guardianId as string)
     const {data: teacher} = useGetTeacherClasses(logged?.userId as string, isTeacher())
     
     const guardianName = guardian ? setName(guardian?.personalInfo) : 'Tuteur'
-    const allowedClasses = teacher?.classes?.map(c => c.classe) || []
+    const allowedClasses = useMemo(() => teacher?.classes?.map(c => c.classe) || [], [teacher?.classes])
 
-    console.log('User: ', guardian?.students)
-    console.log('Teacher: ', teacher?.classes)
+    const handlePermission = useCallback((classe?: Classe): boolean => {
+        const canViewGuardianStudents = can('viewStudent')
+        const teacherAllowedToView = allowedClasses?.some(c => c?.id === classe?.id)
+        if (isTeacher()) {
+            return canViewGuardianStudents && teacherAllowedToView
+        }
+        return canViewGuardianStudents
+    }, [allowedClasses, can])
 
     useDocumentTitle({
         title: guardianName,
@@ -113,7 +121,7 @@ const GuardianViewPage: React.FC = () => {
                             label: 'List des étudiants',
                             children: <GuardianStudentList
                                 students={guardian?.students}
-                                allowedClasses={allowedClasses as []}
+                                handlePermission={handlePermission}
                             />
                         }
                     ]}

@@ -303,7 +303,7 @@ class RouteAccess {
             ],
             permissions: {
                 create: [
-                    () => isTopAdmin() || isAdmin() || isSecretary()
+                    () => isTopAdmin() || isAdmin() || isSecretary() || isEnroll()
                 ],
                 edit: [
                     () => isTopAdmin() || isAdmin() || isSecretary()
@@ -325,7 +325,14 @@ class RouteAccess {
                     // Only admins can modify the class schedule
                     'modifySchedule': [
                         () => isTopAdmin() || isAdmin() || isSecretary()
-                    ]
+                    ],
+
+                    'reprimand': [
+                        () => isTopAdmin() || isTeacher()
+                    ],
+                    'teacherAction': [
+                        () => isTeacher()
+                    ],
                 }
             }
         },

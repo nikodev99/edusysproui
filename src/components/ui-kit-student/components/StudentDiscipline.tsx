@@ -1,183 +1,30 @@
 import {useReprimandRepo} from "@/hooks/actions/useReprimandRepo.ts";
-import {AcademicYear, Classe, Enrollment, Individual, Punishment, Reprimand} from "@/entity";
-import {useEffect, useMemo, useState} from "react";
-import ListViewer from "@/components/custom/ListViewer.tsx";
-import {Button, Card, Empty, TableColumnsType, Tag as AntTag, Typography} from "antd";
-import {useAcademicYearRepo} from "@/hooks/actions/useAcademicYearRepo.ts";
-import {LuCircleAlert, LuPlus, LuSmile} from "react-icons/lu";
-import Tag from "@/components/ui/layout/Tag.tsx";
-import Datetime from "@/core/datetime.ts";
-import {ReprimandType, typeColor} from "@/entity/enums/reprimandType.ts";
-import {PunishmentType} from "@/entity/enums/punishmentType.ts";
-import {punishmentStatusTag} from "@/entity/enums/punishmentStatus.ts";
-import {StudentReprimandDrawer} from "./StudentReprimandDrawer.tsx";
-import {useToggle} from "@/hooks/useToggle.ts";
-import {setFirstName} from "@/core/utils/utils.ts";
-import PageDescription from "@/components/custom/PageDescription.tsx";
-import {ReprimandFilters} from "@/components/filters/ReprimandFilters.tsx";
-import {usePermission} from "@/hooks/usePermission.ts";
+import {Enrollment} from "@/entity";
+import {useMemo} from "react";
 import {useRedirect} from "@/hooks/useRedirect.ts";
-import {ReprimandFilterProps} from "@/entity/domain/reprimand.ts";
+import {ReprimandList} from "@/components/common/ReprimandList.tsx";
 
 interface StudentDisciplineProps {
     enrolledStudent: Enrollment
 }
 
 export const StudentDiscipline = ({enrolledStudent}: StudentDisciplineProps) => {
-    const [filters, setFilters] = useState<ReprimandFilterProps>()
-    const [selectedReprimand, setSelectedReprimand] = useState<Reprimand | null>(null)
-    const {academicYearOptions} = useAcademicYearRepo()
-    const [openDrawer, setOpenDrawer] = useToggle(false)
     const {toDiscipline} = useRedirect()
-    const {can} = usePermission()
     
     const {useGetStudentReprimands} = useReprimandRepo()
     
     const {academicYear, student} = useMemo(() => ({
         academicYear: enrolledStudent?.academicYear,
         student: enrolledStudent?.student,
-    }), [enrolledStudent])
+    }), [enrolledStudent?.academicYear, enrolledStudent?.student])
 
-    const {Title, Text} = Typography
-
-    useEffect(() => {
-        setFilters({
-            academicYear: academicYear?.id
-        })
-    }, [academicYear?.id]);
-    
     const {fetchReprimands} = useGetStudentReprimands(student?.id as string)
 
-    const tableColumns: TableColumnsType<Reprimand> = [
-        {
-            key: '@Icons',
-            render: () => <LuCircleAlert color={'red'} size={18} />
-        },
-        {
-            title: "Année Academique",
-            dataIndex: ['student', 'academicYear'],
-            key: '@AcademicYear',
-            render: (a: AcademicYear) => a.academicYear
-        },
-        {
-            title: "Classe",
-            dataIndex: ['student', 'classe'],
-            key: '@Classe',
-            render: (c: Classe) => <AntTag>{c.name}</AntTag>
-        },
-        {
-            title: 'Réprimande',
-            dataIndex: 'type',
-            key: '@reprimandType',
-            render: type => <Tag color={typeColor(ReprimandType[type])}>
-                {setFirstName(ReprimandType[type])}
-            </Tag>
-        },
-        {
-            title: 'Date',
-            dataIndex: 'reprimandDate',
-            key: '@date',
-            render: date => Datetime.of(date).fDate()
-        },
-        {
-            title: 'Punition',
-            dataIndex: 'punishment',
-            key: '@punishment',
-            render: (punishment: Punishment) => <span>
-                {PunishmentType[punishment?.type]}
-            </span>
-        },
-        {
-            title: 'Status',
-            dataIndex: 'punishment',
-            key: '@status',
-            render: (punishment: Punishment) => {
-                const [tagColor, tagText] = punishmentStatusTag(punishment?.status)
-                return <Tag color={tagColor}>{tagText}</Tag>
-            }
-        },
-        {
-            title: 'Administré par',
-            dataIndex: 'issuedBy',
-            key: '@issueBy',
-            render: (t: Individual) => `${t.lastName} ${t.firstName}`
-        }
-    ]
-
-    const filterParams = [filters]
-    const academicYearOption = academicYearOptions()
-
-    const handleSelectReprimand = (data: Reprimand) => {
-        setSelectedReprimand(data)
-        setOpenDrawer()
-    }
-
-    const handleFilters = (value: ReprimandFilterProps) => {
-        setFilters(value)
-    }
-
-    
-    const handleCloseDrawer = () => {
-        setOpenDrawer()
-    }
-    
     return(
-        <>
-            {can('reprimand') && <PageDescription title={
-                <Button onClick={() => toDiscipline(
-                    enrolledStudent?.student?.id,
-                    enrolledStudent
-                )} type={'primary'} icon={<LuPlus />}>
-                    Ajouter une réprimande
-                </Button>
-            } addMargin={{position: 'bottom', size: 20}} />}
-            <ListViewer
-                callback={fetchReprimands as () => never}
-                callbackParams={filterParams}
-                tableColumns={tableColumns}
-                countTitle='Blame'
-                fetchId='reprimand-list'
-                cardNotAvatar={true}
-                filters={
-                    <>
-                    {/* TODO The classe filter should be only of the student history */}
-                    <ReprimandFilters
-                        setFilters={handleFilters}
-                        academicYear={academicYear?.id}
-                        academicYearOptions={academicYearOption}
-                    />
-                    </>
-                }
-                onSelectData={handleSelectReprimand}
-                noSearch={true}
-                emptyPage={
-                    <Card
-                        styles={{
-                            body: { padding: 32, textAlign: "center" }
-                        }}
-                    >
-                        <Empty
-                            image={<LuSmile style={{ fontSize: 64, color: "#52c41a" }} />}
-                            description={
-                                <div className="space-y-2">
-                                    <Title level={4} className="!mb-0">
-                                        Aucun blâme enregistré
-                                    </Title>
-                                    <Text type="secondary">
-                                        Cet élève n’a fait l’objet d’aucune réprimande disciplinaire.
-                                    </Text>
-                                </div>
-                            }
-                        />
-                    </Card>
-                }
-            />
-
-            {selectedReprimand && <StudentReprimandDrawer
-                reprimand={selectedReprimand as Reprimand}
-                open={openDrawer} 
-                close={handleCloseDrawer}
-            />}
-        </>
+        <ReprimandList
+            callback={fetchReprimands as () => never}
+            toDiscipline={() => toDiscipline(student?.id, enrolledStudent)}
+            academicYear={academicYear?.id}
+        />
     )
 }

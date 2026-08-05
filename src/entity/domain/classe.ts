@@ -1,11 +1,4 @@
-import {Grade} from "./grade.ts";
-import {Schedule} from "./schedule.ts";
-import {Course} from "./course.ts";
-import {ClasseTeacherBoss} from "./classeTeacherBoss.ts";
-import {ClasseStudentBoss} from "./classeStudentBoss.ts";
-import {TeacherClasses} from "./teacher.ts";
-import {Enrollment} from "./enrollment.ts";
-import {Department} from "./department.ts";
+import {Schedule, Grade, Course, ClasseTeacherBoss, ClasseStudentBoss, TeacherClasses, Enrollment, Department} from "@/entity";
 
 export interface Classe {
     id: number
@@ -23,4 +16,12 @@ export interface Classe {
     monthCost: number
     createdAt: Date | number
     modifiedAt: Date | number
+}
+
+export interface ClasseBossesProps {
+    academicYear: string,
+    classeId: number,
+    classe?: Classe
+    open?: boolean,
+    onClose?: () => void
 }

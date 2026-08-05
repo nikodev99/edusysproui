@@ -1,5 +1,5 @@
-import ListViewer from "../../custom/ListViewer.tsx";
-import {getClasseAttendanceStatus, getClasseAttendanceStatusSearch} from "../../../data/repository/attendanceRepository.ts";
+import ListViewer from "@/components/custom/ListViewer.tsx";
+import {getClasseAttendanceStatus, getClasseAttendanceStatusSearch} from "@/data/repository/attendanceRepository.ts";
 import {Avatar, Badge, Progress, TableColumnsType, Typography} from "antd";
 import {
     AttendanceCount,
@@ -7,13 +7,13 @@ import {
     AttendanceSummary,
     Color,
     DataProps
-} from "../../../core/utils/interfaces.ts";
-import {Individual} from "../../../entity";
-import {AvatarTitle} from "../../ui/layout/AvatarTitle.tsx";
+} from "@/core/utils/interfaces.ts";
+import {Individual} from "@/entity";
+import {AvatarTitle} from "@/components/ui/layout/AvatarTitle.tsx";
 import {AxiosResponse} from "axios";
-import {AttendanceStatus, countAll, getColors} from "../../../entity/enums/attendanceStatus.ts";
-import {ATTENDANCE_STATUS_COLORS, findPercent} from "../../../core/utils/utils.ts";
-import {Table} from "../../ui/layout/Table.tsx";
+import {AttendanceStatus, countAll, getColors} from "@/entity/enums/attendanceStatus.ts";
+import {ATTENDANCE_STATUS_COLORS, findPercent} from "@/core/utils/utils.ts";
+import {Table} from "@/components/ui/layout/Table.tsx";
 
 type NestedType = {category: string} & AttendanceInfo
 
@@ -34,8 +34,7 @@ const ClasseAttendanceTable = (
             render: (text: Individual) => (
                 <AvatarTitle
                     image={text?.image}
-                    firstName={text?.firstName}
-                    lastName={text?.lastName}
+                    personalInfo={text}
                     size={30}
                 />
             )
@@ -236,7 +235,8 @@ const ClasseAttendanceTable = (
                                 dataSource: nestedDataSource(record?.statusCount),
                                 columns: nestedColumns,
                                 rowKey: (record) => `${index}-nested-${record?.present}-${record?.absent}-${record?.late}-${record?.excused}`,
-                                pagination: false
+                                pagination: false,
+                                size: 'small'
                             }}
                             color={color}
                         />

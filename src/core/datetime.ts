@@ -20,14 +20,64 @@ dayjs.extend(isTomorrow);
 dayjs.extend(isSameOrBefore);
 dayjs.extend(isSameOrAfter); // FIX: was isSameOfAfter (typo in original)
 dayjs.extend(isoWeek);
+dayjs.tz.setDefault('Africa/Brazzaville')
 
 type DateInput = Moment | Dayjs;
+
+/**
+ * Common date format patterns — French (fr-FR) conventions:
+ * day-month-year order, 24h time, and locale-dependent tokens
+ * (MMMM/EEEE) rendered in French when you pass { locale: fr } (date-fns)
+ * or call dayjs.locale("fr") / moment.locale("fr") beforehand.
+ * Tokens are compatible with date-fns, dayjs (with plugins), and moment.js.
+ */
+export enum DateFormat {
+    // ISO (locale-independent, use for storage/APIs)
+    ISO_DATE = "YYYY-MM-DD",                      // 2026-07-25
+    ISO_DATETIME = "YYYY-MM-DD'T'HH:mm:ss",        // 2026-07-25T14:30:00
+    ISO_DATETIME_MS = "YYYY-MM-DD'T'HH:mm:ss.SSS", // 2026-07-25T14:30:00.000
+    ISO_DATETIME_TZ = "YYYY-MM-DD'T'HH:mm:ssXXX",  // 2026-07-25T14:30:00+01:00
+
+    // Date only - numeric (jour/mois/année)
+    DATE_SLASH = "DD/MM/YYYY",                     // 25/07/2026
+    DATE_DASH = "DD-MM-YYYY",                      // 25-07-2026
+    DATE_DOT = "DD.MM.YYYY",                       // 25.07.2026
+    DATE_COMPACT = "YYYYMMdd",                     // 20260725
+    DATE_SHORT_YEAR = "dd/MM/yy",                   // 25/07/26
+
+    // Date only - written out (needs French locale set on the library)
+    DATE_LONG = "D MMMM YYYY",                     // 25 juillet 2026
+    DATE_MEDIUM = "D MMM YYYY",                    // 25 juil. 2026
+    DATE_SHORT_WEEKDAY = "ddd D MMM YYYY",          // ven. 25 juil. 2026
+    DATE_FULL_WEEKDAY = "dddd D MMMM YYYY",         // vendredi 25 juillet 2026
+
+    // Time only (24h, standard in France)
+    TIME = "HH:mm",                                // 14:30
+    TIME_SEC = "HH:mm:ss",                         // 14:30:00
+    TIME_H_SUFFIX = "HH'h'mm",                     // 14h30
+
+    // Date + time combined
+    DATETIME_SLASH = "DD/MM/YYYY HH:mm",           // 25/07/2026 14:30
+    DATETIME_SLASH_TO = "DD/MM/YYYY à HH:mm",       // 25/07/2026 à 14:30
+    DATETIME_SLASH_SEC = "DD/MM/YYYY HH:mm:ss",     // 25/07/2026 14:30:00
+    DATETIME_MEDIUM = "D MMM YYYY 'à' HH:mm",       // 25 juil. 2026 à 14:30
+    DATETIME_FULL = "dddd D MMMM YYYY 'à' HH:mm:ss",// vendredi 25 juillet 2026 à 14:30:00
+
+    // Month / year only
+    MONTH_YEAR = "MMMM YYYY",                      // juillet 2026
+    MONTH_YEAR_SHORT = "MMM YYYY",                 // juil. 2026
+    YEAR_MONTH_NUMERIC = "YYYY-MM",                // 2026-07
+
+    // File-safe / log formats
+    FILENAME_TIMESTAMP = "YYYYMMDD_HHmmss",        // 20260725_143000
+    LOG_TIMESTAMP = "YYYY-MM-DD HH:mm:ss.SSS",     // 2026-07-25 14:30:00.000
+}
 
 type Params = {
     date?: DateInput;
     timezone?: string;
     locale?: string;
-    format?: string;
+    format?: string | DateFormat;
     to?: boolean;
     time?: number[];
     startTime?: number[]; // FIX: was statTime (typo in original)
@@ -58,9 +108,9 @@ class Datetime {
     private date: Dayjs;
     private readonly timezone: string;
     private readonly locale: string;
-    private static readonly DEFAULT_TIMEZONE = "Africa/Brazzaville";
+    public static readonly DEFAULT_TIMEZONE = "Africa/Brazzaville";
     private static readonly DEFAULT_LOCALE = "fr";
-    private static readonly DEFAULT_FORMAT = "YYYY-MM-DD";
+    private static readonly DEFAULT_FORMAT = DateFormat.ISO_DATE;
 
     constructor(input?: DateInput | Params, timezone?: string, locale?: string) {
         let dateInput: DateInput | undefined;
@@ -202,7 +252,7 @@ class Datetime {
     get HOUR(): number        { return this.date.hour(); }
     get MINUTE(): number      { return this.date.minute(); }
     get SECOND(): number      { return this.date.second(); }
-    get TIME(): number[] {return [this.date.hour(), this.date.minute()]}
+    get TIME(): [number, number] | number[] {return [this.date.hour(), this.date.minute()]}
     get TIME_WITH_SECONDS(): number[] {
         return [this.date.hour(), this.date.minute(), this.date.second()]
     }
@@ -286,7 +336,7 @@ class Datetime {
     // produced wrong results (isCurrentTimeBetween was comparing date2 vs. date2).
 
     timeToDatetime(time: number[] | Params): Datetime {
-        const t = isParams(time) ? (time.time as number[]) : time;
+        const t = isParams(time) ? datehelper.toTimeArray(time.time as number[]) : datehelper.toTimeArray(time);
         return this._clone(this.date.hour(t[0]).minute(t[1]).second(0).millisecond(0));
     }
 
@@ -316,7 +366,7 @@ class Datetime {
      * If not specified, a default format is used.
      * @return {string} The formatted date string.
      */
-    format(format?: string | Params): string {
+    format(format?: string | DateFormat | Params): string {
         const f = (isParams(format) ? format.format : format) ?? Datetime.DEFAULT_FORMAT;
         return setFirstName(this.date.format(f));
     }
@@ -328,11 +378,11 @@ class Datetime {
      * @param {boolean} [to] - An optional flag to determine whether to use a specific format variant. Ignored if a `Params` object is passed as the `format` parameter.
      * @return {string} The formatted date-time string based on the provided format or default settings.
      */
-    fDatetime(format?: string | Params, to?: boolean): string {
+    fDatetime(format?: string | DateFormat | Params, to?: boolean): string {
         const f = isParams(format) ? format.format : format;
         const defaultFormat = isParams(format)
-            ? format.to ? "DD/MM/YYYY à HH:mm" : "DD/MM/YYYY HH:mm"
-            : to ? "DD/MM/YYYY à HH:mm" : "DD/MM/YYYY HH:mm";
+            ? format.to ? DateFormat.DATETIME_SLASH_TO : DateFormat.DATETIME_SLASH
+            : to ? DateFormat.DATETIME_SLASH_TO : DateFormat.DATETIME_SLASH
         return setFirstName(this.format(f || defaultFormat));
     }
 
@@ -342,8 +392,8 @@ class Datetime {
      * @param {string | Params} [format] - A string defining the desired date format or an object of parameters. Defaults to "DD MMMM YYYY" if not provided.
      * @return {string} The formatted date string.
      */
-    fDate(format?: string | Params): string {
-        return setFirstName(this.format(format ?? "DD MMMM YYYY"));
+    fDate(format?: string | DateFormat | Params): string {
+        return setFirstName(this.format(format ?? DateFormat.DATE_LONG));
     }
 
     /**
@@ -354,7 +404,7 @@ class Datetime {
      * @return {string} The formatted time as a string.
      */
     time(format?: string | Params): string {
-        return setFirstName(this.format(format ?? "HH:mm"));
+        return setFirstName(this.format(format ?? DateFormat.TIME));
     }
 
     /**
@@ -365,7 +415,7 @@ class Datetime {
      * @return {string} A string formatted as "DayName Day MonthName Year" after processing with `setFirstName`.
      */
     fullDay(): string {
-        return setFirstName(this.format("dddd D MMMM YYYY"));
+        return setFirstName(this.format(DateFormat.DATE_FULL_WEEKDAY));
     }
 
     // ── Comparisons ───────────────────────────────────────────────────────────

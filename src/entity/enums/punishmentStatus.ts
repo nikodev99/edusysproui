@@ -21,7 +21,7 @@ export const punishmentStatusTag = (status: PunishmentStatus): [string, Punishme
         tagColor = 'warning'
         break;
     case 'COMPLETED' as PunishmentStatus:
-        tagColor = 'blue'
+        tagColor = 'success'
         break;
     case 'CANCELLED' as PunishmentStatus:
     case 'APPEALED' as PunishmentStatus:

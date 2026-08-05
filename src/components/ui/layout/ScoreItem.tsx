@@ -1,10 +1,10 @@
-import {Score} from "../../../entity";
+import {Score} from "@/entity";
 import {Badge, List, Skeleton, TableColumnsType, TablePaginationConfig, Tag, Typography} from "antd";
 import {Avatar} from "./Avatar.tsx";
-import {setFirstName} from "../../../core/utils/utils.ts";
+import {setFirstName} from "@/core/utils/utils.ts";
 import {AutoScrollList} from "./AutoScrollList.tsx";
 import {AvatarTitle} from "./AvatarTitle.tsx";
-import {text} from "../../../core/utils/text_display.ts";
+import {text} from "@/core/utils/text_display.ts";
 import {AutoScrollTable} from "./AutoScrollTable.tsx";
 import {Table} from "./Table.tsx";
 import {useCallback, useMemo} from "react";
@@ -32,6 +32,8 @@ const ScoreItem = (
 
     const load = useCallback(() => onLoadMore?.(), [onLoadMore])
 
+    console.log("SCORES: ", sortedScores)
+
     const columns: TableColumnsType<Score> = customHeaders ?? [
         {
             title: 'Noms & Prénoms',
@@ -42,7 +44,7 @@ const ScoreItem = (
                 reference={student?.reference}
                 image={student?.personalInfo?.image}
                 link={text.student.group.view.href + student.id}
-                size={50}
+                size={30}
             />
         },
         {
@@ -73,6 +75,7 @@ const ScoreItem = (
                     dataSource: sortedScores,
                     pagination: hasPagination,
                     className: 'score-table',
+                    size: 'small',
                     loading: isLoading,
                     rowKey: item => item?.student?.id as string
                 }}
@@ -91,8 +94,9 @@ const ScoreItem = (
                     pagination: hasPagination,
                     className: 'score-table',
                     loading: isLoading,
+                    size: 'small',
                     rowKey: item => item?.student?.id as string,
-                    scroll: {y: height ?? 200}
+                    scroll: {y: height ?? 200, x: 'max-content'}
                 }}
             />
             )

@@ -257,7 +257,7 @@ const ExamDescription = (
                                         tableProps={{
                                             columns:assignmentsColumns,
                                             dataSource:assignments as [],
-                                            scroll:{y: 300},
+                                            scroll:{y: 300, x: 'max-content'},
                                             size:'small',
                                             rowKey:'id'
                                         }}
@@ -282,14 +282,14 @@ const ExamDescription = (
                                 tableProps={{
                                     columns: averageColumns as [],
                                     dataSource: examView,
-                                    scroll: {y: 700},
+                                    scroll: {y: 700, x: 'max-content'},
                                     loading: loading,
                                     rowKey: 'studentId',
                                     expandable: {
                                         expandedRowRender: (record) => (
                                             <Table tableProps={{
                                                 columns: nestedTableColumns,
-                                                dataSource: record.nested,
+                                                dataSource: record?.nested,
                                                 rowKey: (record) => {
                                                     const s = record?.subject
                                                     return s && typeof s === 'object' ? `@nested-${s['id']}` : `@nested-${s}`
@@ -334,8 +334,6 @@ export const ClasseExamView = (
     const segmentChange = (value: number) => {
         setActiveExam(value)
     }
-
-    console.log("CLASSE EXAMS: ", activeExam)
 
     return(
         <>

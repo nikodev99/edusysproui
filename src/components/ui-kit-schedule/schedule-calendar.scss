@@ -1,0 +1,12 @@
+.schedule-page {
+  padding: 16px;
+
+  .rbc-event-content {
+    pointer-events: none;
+  }
+}
+
+.event-content { padding: 2px 6px; cursor: grab; height: 100%; }
+.event-content:active { cursor: grabbing; }
+.event-content strong { display: block; font-size: 12px; line-height: 1.2; }
+.event-teacher { font-size: 11px; opacity: .85; }

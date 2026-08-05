@@ -15,7 +15,6 @@ import {AcademicYear, Guardian, Individual} from "@/entity";
 import {SectionType} from "@/entity/enums/section.ts";
 import {Gender} from "@/entity/enums/gender.tsx";
 import {AttendanceStatus} from "@/entity/enums/attendanceStatus.ts";
-import {CalendarProps, Event, SlotInfo, View, ViewsProps} from "react-big-calendar";
 import {ReprimandType} from "@/entity/enums/reprimandType.ts";
 import {PunishmentType} from "@/entity/enums/punishmentType.ts";
 import {PunishmentStatus} from "@/entity/enums/punishmentStatus.ts";
@@ -289,6 +288,7 @@ export interface StudentListDataType {
     classe: string
     grade: SectionType | string
     image: string
+    isArchived?: boolean
 }
 
 export interface DataProps<TData extends object> {
@@ -345,6 +345,8 @@ export interface ListProps<TData extends object> {
     shareSearchQuery?: (value: string | undefined) => void
     showFilterAction?: (value: boolean) => void
     onSelectData?: (data: TData) => void
+    onRowRedirect?: (data: TData) => void
+    getSelectedRecord?: (date: TData | null) => void
     dataDescription?: ReactNode
     hasDesc?: boolean,
     pageTitle?: ReactNode
@@ -514,6 +516,7 @@ export type CustomUpdateProps<T extends object, Q extends EnumType[keyof EnumTyp
 }
 
 export interface ApiEvent<T extends object> {
+    id?: ID
     dayOfWeek: Day
     event: string | ReactNode
     allDay: boolean
@@ -522,28 +525,13 @@ export interface ApiEvent<T extends object> {
     resource?: T
 }
 
-export type CalendarEvent = CalendarProps['events']
-export type EventProps = Event
-
-export interface BigCalendarProps<TEvents extends object = Event> {
-    data: TEvents[]
-    views: ViewsProps<TEvents>
-    defaultView: View
-    startDayTime?: number[]
-    endDayTime?: [number, number]
-    startDate?: Date | string | number[]
-    endDate?: Date | string | number[]
-    className?: string
-    styles?: CSSProperties
-    onSelectEvent?: (event: TEvents) => void
-    start?: keyof TEvents
-    end?: keyof TEvents
-    showNavButton?: boolean
-    height?: number
-    onSelectSlot?: (slotInfo: SlotInfo) => void
-    isLoading ?: boolean
-    wrapperColor?: (event: Event) => [Color, Color]
-    selectable?: boolean
+export type EventType<T> = {
+    id?: string
+    title: string
+    start: Date
+    end: Date
+    allDay: boolean
+    resource?: T
 }
 
 export type TabFunction<T> = (teacherId: string, ids: IDS, pageable?: Pageable) => Promise<AxiosResponse<T>>
@@ -561,7 +549,7 @@ export type DateExplose = {
 
 export interface SchemaProps<TData extends FieldValues> {
     data: z.ZodSchema<TData>;
-    messageSuccess?: ReactNode;
+    messageSuccess?: ReactNode | ((data: TData) => string);
     description?: string;
     explain?: string;
     marquee?: boolean;

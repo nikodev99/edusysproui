@@ -45,7 +45,6 @@ export const TeacherReprimand = ({infoData, hasPermission, isSelf}: InfoPageProp
     const {fetching, resource, options, handleSearch, handleChange} = useSearch<Enrollment>({
         setValue: setStudentValue as (value: unknown) => void,
         fetchFunc: getSearchedEnrolledStudents as never,
-        funcParams: [studentValue] as unknown[],
         setCustomOptions: studentOptions
     })
 

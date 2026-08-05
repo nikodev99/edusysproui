@@ -12,11 +12,12 @@ import {useEnrollmentForm} from "@/hooks/useEnrollmentForm.ts";
 import {Form} from "antd";
 import {useGlobalStore} from "@/core/global/store.ts";
 
-export const StudentPromotion = ({student, open, close, setRefresh}: {
+export const StudentPromotion = ({student, open, close, setRefresh, shouldReEnroll = false}: {
     student: Enrollment,
     open: boolean,
     close: () => void,
     setRefresh?: (value: boolean) => void
+    shouldReEnroll?: boolean
 }) => {
     const {promoteStudentActivity} = useActivity()
     const breakpoints = useGlobalStore(state => state.modalBreakpoints)
@@ -52,8 +53,6 @@ export const StudentPromotion = ({student, open, close, setRefresh}: {
     }
 
     const handleActivity = () => promoteStudentActivity(ind as Individual, classe?.name as string, promotedClasse?.label as string)
-
-    console.log({promotedClasse})
     
     return(
         <ConfirmationModal 
@@ -64,12 +63,13 @@ export const StudentPromotion = ({student, open, close, setRefresh}: {
             modalTitle={`Promotion de ${setFirstName(`${ind?.lastName} ${ind?.firstName}`)}`}
             alertDesc={{
                 type: isCurrent ? 'warning' : 'info',
-                msg: `Vous êtes sur le point de promouvoir un ${(text.student.label).toLocaleLowerCase()}: 
-                ${ind?.lastName} ${ind?.firstName}, ${isCurrent ? 'au cours de l\'année,' : ''} à une classe supérieure.`
+                msg: `Vous êtes sur le point de ${shouldReEnroll ? 'réinscrire' : 'promouvoir'} un ${(text.student.label).toLocaleLowerCase()}: 
+                ${ind?.lastName} ${ind?.firstName}, ${isCurrent ? 'au cours de l\'année,' : ''} à une ${shouldReEnroll ? 'nouvelle ou même classe' : 'classe supérieure'}.`
             }}
             messages={{success: successMessage, error: errorMessage}}
-            content={`Veuillez cliquer sur OUI pour promouvoir ${ind?.lastName} ${ind?.firstName} à la classe de votre choix et ainsi mettre fin à son inscription à sa présente classe: ${classe?.name}`}
-            btnTxt={'Promouvoir'}
+            content={`Veuillez cliquer sur OUI pour ${shouldReEnroll ? 'réinscrire' : 'promouvoir'} ${ind?.lastName} ${ind?.firstName} à la classe de votre choix
+                ${shouldReEnroll ? '.' : ` et ainsi mettre fin à son inscription à sa présente classe: ${classe?.name}`}`}
+            btnTxt={shouldReEnroll ? 'Réinscrire' : 'Promouvoir'}
             btnProps={{
                 icon: <LuCircleArrowOutUpRight />,
                 type: 'primary',
@@ -80,6 +80,7 @@ export const StudentPromotion = ({student, open, close, setRefresh}: {
                     errors={errors}
                     validationTriggered={true}
                     getSchool={setPromotedClasse}
+                    existingClassId={shouldReEnroll ? undefined : classe?.id}
                 />
             </Form>}
             setActivity={handleActivity}

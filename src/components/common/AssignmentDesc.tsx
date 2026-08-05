@@ -86,6 +86,7 @@ export const AssignmentDesc = (
 
     const barData = getAssignmentBarData(assignments)
 
+
     return(
         <>
         <Responsive gutter={[16, 16]} style={{padding: '0 20px 20px 20px'}}>

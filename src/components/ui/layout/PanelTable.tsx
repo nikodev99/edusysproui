@@ -1,6 +1,6 @@
 import {useNavigate} from "react-router-dom";
 import {ReactNode} from "react";
-import VoidData from "../../view/VoidData.tsx";
+import VoidData from "@/components/view/VoidData.tsx";
 
 interface PanelTableProps {
     title: ReactNode
@@ -9,6 +9,7 @@ interface PanelTableProps {
         statement?: string | ReactNode
         response: string | number | ReactNode
         link?: string,
+        onRedirect?: () => void
         tableRow?: boolean
     }[],
     ps?: boolean
@@ -27,8 +28,8 @@ const PanelTable = ({title, data, panelColor, ps}: PanelTableProps) => {
                 {!data || data?.length === 0 ? <VoidData /> : data?.map((d, i) => (
                     <div className={d.tableRow ? '' : "table-row"} key={`${d.statement}-${i}`}>
                         {!d.tableRow && (<div>{d.statement}</div>)}
-                        {d.link ? (
-                            <div className="linked" onClick={() => goThrough(d.link!)}>
+                        {(d.link || d.onRedirect) ? (
+                            <div className="linked" onClick={() => d.link ? goThrough(d.link!) : d.onRedirect ? d.onRedirect : undefined}>
                                 {d.response}
                             </div>
                         ) : (

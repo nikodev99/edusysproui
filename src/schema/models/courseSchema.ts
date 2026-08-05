@@ -7,7 +7,7 @@ export const courseSchema = z.object({
     }),
     abbr: z.string({required_error: "L'abréviation est réquise"}).min(1, {message: "L'abréviation est réquise"}),
     discipline: z.string().optional().nullable(),
-    department: departmentSchemaMerge.optional().nullable(),
+    department: z.lazy(() =>departmentSchemaMerge.optional().nullable()),
 })
 
 export const courseSchemaMerge = z.object({

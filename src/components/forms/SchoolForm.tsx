@@ -1,10 +1,10 @@
 import {FieldValues, Path, PathValue} from "react-hook-form";
-import {FormContentProps} from "../../core/utils/interfaces.ts";
-import {School} from "../../entity";
+import {FormContentProps} from "@/core/utils/interfaces.ts";
+import {School} from "@/entity";
 import FormContent from "../ui/form/FormContent.tsx";
-import {FormConfig} from "../../config/FormConfig.ts";
-import {FormUtils} from "../../core/utils/formUtils.ts";
-import {InputTypeEnum} from "../../core/shared/sharedEnums.ts";
+import {FormConfig} from "@/config/FormConfig.ts";
+import {FormUtils} from "@/core/utils/formUtils.ts";
+import {InputTypeEnum} from "@/core/shared/sharedEnums.ts";
 
 type SchoolFormProps<T extends FieldValues> = FormContentProps<T, School> & {
     handleUpdate?: (field: keyof School, value: unknown) => void;

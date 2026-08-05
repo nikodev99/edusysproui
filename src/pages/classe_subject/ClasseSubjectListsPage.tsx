@@ -1,9 +1,9 @@
-import {ViewRoot} from "../../components/custom/ViewRoot.tsx";
-import {ClasseList, CourseList, AddClasse, AddCourse} from "../../components/ui-kit-cc";
-import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
-import {text} from "../../core/utils/text_display.ts";
-import {useBreadcrumbItem} from "../../hooks/useBreadCrumb.tsx";
-import {ListPageHierarchy} from "../../components/custom/ListPageHierarchy.tsx";
+import {ViewRoot} from "@/components/custom/ViewRoot.tsx";
+import {ClasseList, CourseList, AddClasse, AddCourse} from "@/components/ui-kit-cc";
+import {useDocumentTitle} from "@/hooks/useDocumentTitle.ts";
+import {text} from "@/core/utils/text_display.ts";
+import {useBreadcrumbItem} from "@/hooks/useBreadCrumb.tsx";
+import {ListPageHierarchy} from "@/components/custom/ListPageHierarchy.tsx";
 import {LuBookPlus, LuChevronDown, LuClipboard} from "react-icons/lu";
 import {Button} from "antd";
 import {useEffect, useState} from "react";
@@ -65,8 +65,8 @@ const ClasseSubjectListsPage = () => {
                 memorizedTabKey='classe-course'
                 addMargin={{position: "top", size: 10}}
             />
-            <AddClasse open={addClasseOpen} onCancel={handleClasseModalClose} />
-            <AddCourse open={addCourseOpen} onCancel={handleCourseModalClose} />
+            {addClasseOpen && <AddClasse open={addClasseOpen} onCancel={handleClasseModalClose} />}
+            {addCourseOpen && <AddCourse open={addCourseOpen} onCancel={handleCourseModalClose} />}
         </>
     )
 }

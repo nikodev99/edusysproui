@@ -1,5 +1,5 @@
 import PageWrapper from "../../view/PageWrapper.tsx";
-import {ScheduleCalendar} from "../../common/ScheduleCalendar.tsx";
+import {ScheduleCalendar} from "../../ui-kit-schedule/components/ScheduleCalendar.tsx";
 import {InfoPageProps} from "../../../core/utils/interfaces.ts";
 import {Course, Schedule} from "../../../entity";
 import {useScheduleRepo} from "../../../hooks/actions/useScheduleRepo.ts";

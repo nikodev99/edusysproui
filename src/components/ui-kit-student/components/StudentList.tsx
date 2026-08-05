@@ -42,12 +42,12 @@ export const StudentList = <TError extends AxiosError>(listProps: ListViewerProp
 
     const getItems = useCallback((_url?: string, record?: StudentListDataType): ItemType[] => {
         return [
-            {
+            ...(record?.isArchived ? [] : [{
                 key: `details-${record?.id}`,
                 icon: <LuEye />,
                 label: `Voir ${setFirstName(text.student.label)}`,
                 onClick: () => throughDetails(record?.id, record)
-            },
+            }]),
             ...linkButtons
         ]
     }, [linkButtons, throughDetails])
@@ -63,7 +63,8 @@ export const StudentList = <TError extends AxiosError>(listProps: ListViewerProp
             className: 'col__name',
             align: 'start',
             onCell: (record) => ({
-                onClick: () => throughDetails(record?.id, record)
+                style: {cursor: 'pointer'},
+                ...(!record?.isArchived ? {onClick: () => throughDetails(record?.id, record)}: {})
             }),
             ...getColumnSearchProps('lastName'),
             render: (text, {firstName, image, reference}) => (
@@ -106,7 +107,7 @@ export const StudentList = <TError extends AxiosError>(listProps: ListViewerProp
             render: (academicYear: AcademicYear) => (<Tagger
                 status={checkAcademicYearEnded(academicYear)}
                 successMessage={'inscrit'}
-                warnMessage={'fin-année-scolaire'}
+                warnMessage={academicYear?.current ? 'fin-année-scolaire' : 'Archivé'}
             />)
         },
         {
@@ -176,11 +177,11 @@ export const StudentList = <TError extends AxiosError>(listProps: ListViewerProp
                 refetchCondition={refresh}
                 cardNotAvatar={true}
             />
-           <StudentActionLinks
+            {selectedStudent && <StudentActionLinks
                data={selectedStudent}
                getItems={setLinkButtons}
                setRefresh={setRefresh}
-           />
+           />}
         </>
     )
 }

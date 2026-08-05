@@ -1,7 +1,8 @@
 import {z} from "zod";
-import {guardianSchema, healthSchema, individualSchema} from "@/schema";
+import {academicYearSchemaMerge, classeSchemaMerge, guardianSchema, healthSchema, individualSchema} from "@/schema";
 import {dateProcess} from "../commonSchema.ts";
 import {IndividualType} from "@/core/shared/sharedEnums.ts";
+import Datetime, {DateFormat} from "@/core/datetime.ts";
 
 export const studentSchema = z.object({
     personalInfo: individualSchema.extend({
@@ -19,4 +20,12 @@ export const studentSchema = z.object({
 
 export const studentSchemaMerge = z.object({
     id: z.string({required_error: 'Étudiant est requis'}).min(3, {message: "Etudiant est requis"}),
+})
+
+export const studentBossSchema = z.object({
+    academicYear: academicYearSchemaMerge,
+    classe: classeSchemaMerge,
+    principalStudent: studentSchemaMerge,
+    current: z.boolean().default(true),
+    startPeriod: dateProcess("").optional().default(Datetime.now().format(DateFormat.ISO_DATE))
 })

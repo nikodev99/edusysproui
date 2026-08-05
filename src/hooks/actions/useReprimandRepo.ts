@@ -33,7 +33,7 @@ export const useReprimandRepo = () => {
         }
     }
 
-    const useGetClasseReprimand = (classeId: number) => {
+    const useGetClasseReprimands = (classeId: number) => {
         return {
             fetchReprimands: (filter: ReprimandFilterProps, page: number, size: number, sortField?: string, sortOrder?: string) => {
                 return getClasseReprimands(classeId, filter, page, size, sortField, sortOrder)
@@ -62,7 +62,7 @@ export const useReprimandRepo = () => {
     return {
         useInsertReprimand,
         useGetAllStudentReprimand,
-        useGetClasseReprimand,
+        useGetClasseReprimands,
         useGetStudentReprimands,
         useGetSomeStudentReprimandByTeacher,
         useGetAllStudentReprimandByTeacher,

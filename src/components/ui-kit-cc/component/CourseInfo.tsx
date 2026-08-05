@@ -5,7 +5,7 @@ import {ReactNode, useEffect, useMemo, useRef, useState} from "react";
 import {DepartmentDesc} from "../../common/DepartmentDesc.tsx";
 import Section from "../../ui/layout/Section.tsx";
 import {SuperWord} from "../../../core/utils/tsxUtils.tsx";
-import {findPercent, getUniqueness, setFirstName, sumInArray} from "../../../core/utils/utils.ts";
+import {findPercent, getUniqueness, setFirstName, setName, sumInArray} from "../../../core/utils/utils.ts";
 import PanelStat from "../../ui/layout/PanelStat.tsx";
 import {Progress, TableColumnsType} from "antd";
 import {useClasse} from "../../../hooks/useClasse.tsx";
@@ -13,7 +13,7 @@ import {text} from "../../../core/utils/text_display.ts";
 import {TeacherList} from "../../common/TeacherList.tsx";
 import {useScheduleRepo} from "../../../hooks/actions/useScheduleRepo.ts";
 import Datetime from "../../../core/datetime.ts";
-import {ScheduleCalendar} from "../../common/ScheduleCalendar.tsx";
+import {ScheduleCalendar} from "../../ui-kit-schedule/components/ScheduleCalendar.tsx";
 import {ShapePieChart} from "../../graph/ShapePieChart.tsx";
 import {Table} from "../../ui/layout/Table.tsx";
 import {useScoreRepo} from "../../../hooks/actions/useScoreRepo.ts";
@@ -170,7 +170,7 @@ const CourseSchedule = ({infoData, color, seeMore}: CourseInfoType) => {
                 height={380}
                 color={color}
                 isLoading={isLoading}
-                eventTitle={e => `${e?.classe?.name} - ${e?.course?.course}`}
+                eventTitle={e => `${e?.classe?.name} * ${e?.course?.course} * ${setName(e.teacher?.personalInfo)}`}
             />
         </Section>
     )

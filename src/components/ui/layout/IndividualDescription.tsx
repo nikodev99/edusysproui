@@ -3,10 +3,10 @@ import {Flex} from "antd";
 import {AvatarTitle} from "./AvatarTitle.tsx";
 import {SwitchTag} from "./SwitchTag.tsx";
 import PanelSection from "./PanelSection.tsx";
-import {Color} from "../../../core/utils/interfaces.ts";
+import {Color} from "@/core/utils/interfaces.ts";
 import {ReactNode} from "react";
-import {Individual} from "../../../entity";
-import Datetime from "../../../core/datetime.ts";
+import {Individual} from "@/entity";
+import Datetime from "@/core/datetime.ts";
 
 interface IndividualProps {
     personalInfo?: Individual
@@ -17,12 +17,13 @@ interface IndividualProps {
         panel?: ReactNode | string | undefined,
     }>
     redirectLink?: string,
+    onRedirect?: () => void
     period?: number[]
     isCurrent?: boolean
 }
 
 export const IndividualDescription = (
-    {personalInfo, show, titles, color, redirectLink, period, isCurrent}: IndividualProps
+    {personalInfo, show, titles, color, redirectLink, period, isCurrent, onRedirect}: IndividualProps
 ) => {
 
     const TablePanel = <PanelTable title={titles?.panel} data={[
@@ -37,7 +38,8 @@ export const IndividualDescription = (
                         gap={5} size={35}
                     />
                 </Flex>,
-                link: redirectLink
+                link: redirectLink,
+                onRedirect: onRedirect
             },
             {statement: 'Debut de mandat', response: <span>{Datetime?.of(period as number[]).fDate('DD/MM/YYYY')}</span>},
             {

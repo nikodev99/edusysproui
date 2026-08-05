@@ -88,6 +88,7 @@ const TeacherListPage = () => {
             gender: t?.personalInfo?.gender,
             reference: t?.personalInfo?.emailId,
             tag: <AffiliateStatusTag status={t?.status} />,
+            record: t,
             description: <>
                 <Divider style={{fontSize: '12px'}}>Cours ou classes</Divider>
                 <Flex gap={2} wrap justify={"center"}>

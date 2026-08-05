@@ -1,4 +1,4 @@
-import {globalSchool, text} from "@/core/utils/text_display.ts";
+import {text} from "@/core/utils/text_display.ts";
 import {useEffect, useState, useTransition} from "react";
 import {TeacherAcademicForm} from "@/components/ui-kit-teacher";
 import {useForm} from "react-hook-form";
@@ -15,8 +15,8 @@ import {OutputFileEntry} from "@uploadcare/blocks";
 import {addTeacher} from "@/data";
 import {IndividualForm} from "../../components/forms/IndividualForm.tsx";
 import {useRedirect} from "@/hooks/useRedirect.ts";
-import {loggedUser} from "@/auth/jwt/LoggedUser.ts";
 import {EmployeeContractForm} from "@/components/forms/EmployeeContractForm.tsx";
+import {useAuth} from "@/hooks/useAuth.ts";
 
 const AddTeacherPage = () => {
 
@@ -45,7 +45,7 @@ const AddTeacherPage = () => {
     const [courses, setCourses] = useState<CourseSchemaMerge[]>([])
     const [defaultCourses, setDefaultCourses] = useState<number[]>()
     const [isPending, startTransition] = useTransition()
-    const user = loggedUser.getUser()
+    const {user, userSchool} = useAuth()
     const {toAddTeacher} = useRedirect()
 
     const form = useForm<TeacherSchema>({
@@ -74,14 +74,14 @@ const AddTeacherPage = () => {
     useEffect(() => {
         reset({
             school: {
-                    id: globalSchool.school?.id,
+                    id: userSchool?.id,
             },
             contract: {
                 status: 'ACTIVE',
                 createdBy: {id: user?.personalInfo}
             },
         })
-    }, [reset, user?.personalInfo]);
+    }, [reset, user?.personalInfo, userSchool?.id]);
 
     const validate = (validateFields: boolean, current: number) => {
         if (validateFields) {

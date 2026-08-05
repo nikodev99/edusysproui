@@ -2,7 +2,7 @@ import {
     ApiEvent,
     Color,
     DateExplose,
-    EnumType,
+    EnumType, EventType,
     ID,
     Options,
     RepoOptions,
@@ -758,7 +758,7 @@ export const groupeBySemester = (terms: Planning[]) => {
     }, {} as Record<string, Planning[]>)
 }
 
-export const transformEvents = <T extends object>(apiEvents: ApiEvent<T>[]) => {
+export const transformEvents = <T extends object>(apiEvents: ApiEvent<T>[]): EventType<T>[] => {
     const getWeekRange = (date: Date) => {
         const day = date.getDay()
         const diffToMonday = date.getDate() - day + (day === 0 ? -6 : 1)
@@ -814,12 +814,13 @@ export const transformEvents = <T extends object>(apiEvents: ApiEvent<T>[]) => {
         }
 
         return startDates.map((start, index) => ({
-            title: event.event,
+            id: event.id,
+            title: event.event as string,
             start,
             end: endDates[index] || start, // Ensure `end` aligns with `start`
             allDay: false,
-            resource: { ...(event.resource || {}), start }
-        }));
+            resource: { ...(event?.resource || undefined ) }
+        })) as EventType<T>[];
     });
 };
 

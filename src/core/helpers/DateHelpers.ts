@@ -1,5 +1,7 @@
 import Datetime from "@/core/datetime.ts";
 import {Moment} from "@/core/utils/interfaces.ts";
+import {Day, WeekDay} from "@/entity/enums/day.ts";
+import dayjs, {ManipulateType} from "dayjs";
 
 const DEFAULT_LABELS = {
     seconds : 'sec.',
@@ -47,10 +49,24 @@ export class DateHelpers {
         })
     }
 
-    toTimeArray(arg: unknown): number[] | string {
-        if (Array.isArray(arg) && arg.length >= 2 && arg.length < 4) return arg;
-        if (typeof arg === "string") return arg.split(":").map(Number);
-        return "";
+    toTimeArray(timeInput: unknown): [number, number] {
+        if (timeInput == null) return [0, 0]
+        if (timeInput instanceof Date || dayjs.isDayjs(timeInput))
+            return Datetime.of(timeInput).TIME as [number, number]
+
+        if (typeof timeInput === 'string') {
+            const [h, m] = timeInput.split(':').map(Number)
+            return [h ?? 0, m ?? 0]
+        }
+        return [timeInput[0] ?? 0, timeInput[1] ?? 0]
+    }
+
+    duration(then: Moment, now: Moment, unit?: ManipulateType): number {
+        return Datetime.of(then).diff(now, unit)
+    }
+
+    minDuration(then: Moment, now: Moment): number {
+        return this.duration(then, now, 'minutes')
     }
 
     timeAgo (then: Moment, options?: {showLabels?: boolean, label?: LabelOverrides}): string {
@@ -75,7 +91,42 @@ export class DateHelpers {
         if (months < 12) return format(months, labels.months)
         return format(years, years > 1 ? `${labels.years}s` : labels.years)
     }
-    
+
+    getWeekRange (now: Moment): {monday: Datetime, friday: Datetime} {
+        const monday = Datetime.of(now).startOf('isoWeek')
+        const friday = monday.plusDay(4).endOf('day')
+        return {monday, friday}
+    }
+
+    getDates (dayOfWeek: WeekDay, timeInput: [number, number] | string, now: Moment) {
+        const [hour, minute] = this.toTimeArray(timeInput)
+        const {monday, friday} = this.getWeekRange(now)
+
+        const day = Day[dayOfWeek]
+
+        if (day === Day.ALL_DAYS) {
+            const dates: Date[] = []
+            let current = monday
+            while (!current.isAfter(friday.toDate())) {
+                dates.push(monday.timeToDatetime({time: [hour, minute]}).toDate())
+                current = monday.plusDay(1)
+            }
+            return dates
+        }
+
+        return Array.from({ length: 6 }).map((_, index) => {
+            const candidate = monday.plusDay(index);
+            if (candidate.DAY === day + 1) {
+                return candidate.timeToDatetime([hour, minute]).toDate()
+            }
+            return null;
+        });
+    }
+
+    dateToDay (date: Moment): Day {
+        const jsDay = Datetime.of(date).DAY
+        return (jsDay === 0 ? Day.SUNDAY : jsDay - 1) as Day
+    }
 }
 
 export const datehelper = new DateHelpers()

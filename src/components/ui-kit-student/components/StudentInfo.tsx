@@ -26,7 +26,7 @@ import {AttendanceStatus, attendanceTag, calculateTotal} from "@/entity/enums/at
 import Tag from "@/components/ui/layout/Tag.tsx";
 import {LuBan} from "react-icons/lu";
 import {StudentCarousel} from "@/components/common/StudentCarousel.tsx";
-import {ScheduleCalendar} from "@/components/common/ScheduleCalendar.tsx";
+import {ScheduleCalendar} from "@/components/ui-kit-schedule/components/ScheduleCalendar.tsx";
 import Datetime from "@/core/datetime.ts";
 import {LinkToStudent} from "@/core/shared/sharedEnums.ts";
 import {useStudentRepo} from "@/hooks/actions/useStudentRepo.ts";
@@ -290,7 +290,7 @@ export const SchoolHistory = ({infoData, color, readonly = false}: StudentInfoPr
         enrollments: infoData?.student?.enrollments
     }), [infoData?.student?.enrollments])
 
-    const presentHistory = readonly ? [{
+    const presentHistory = readonly && !infoData?.isArchived ? [{
         dataId: infoData?.classe?.id.toString(),
         academicYear: infoData?.academicYear?.academicYear ?? '',
         classeName: infoData?.classe?.name ?? '',
@@ -338,7 +338,7 @@ export const SchoolHistory = ({infoData, color, readonly = false}: StudentInfoPr
                 columns={columns as []}
                 dataSource={historyData}
                 pagination={false}
-                rowKey={(record) => record.dataId}
+                rowKey={(record) => `${record?.dataId}-${record?.classeName}`}
                 components={{
                     header: {
                         cell: (props: HTMLProps<HTMLTableCellElement>) => (
@@ -361,8 +361,6 @@ export const AttendanceWidget = ({infoData, color, seeMore}: StudentInfoProps) =
     const total = calculateTotal(counts?.statusCount)
     const percent = (present: number): string =>
         total > 0 ? ((present / total) * 100).toFixed(2) : '0.00';
-
-    console.log(counts)
 
     const composeData = [
         {

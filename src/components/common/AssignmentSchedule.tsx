@@ -1,11 +1,10 @@
 import {Assignment, Schedule} from "@/entity";
-import {ReactNode, useEffect, useState} from "react";
-import {SlotInfo, View} from "react-big-calendar";
-import {CalendarEvent, EventProps} from "@/core/utils/interfaces.ts";
+import {ReactNode, useMemo, useState} from "react";
 import {AssignmentTypeLiteral, typeColors} from "@/entity/enums/assignmentType.ts";
-import {BigCalendar} from "@/components/graph/BigCalendar.tsx";
+import {BigCalendar, SlotInfo, View} from "@/components/graph/BigCalendar.tsx";
 import {AssignmentViewDesc} from "./AssignmentViewDesc.tsx";
 import Datetime from "@/core/datetime.ts";
+import {AssignmentCalendarEvents} from "@/entity/domain/assignment.ts";
 
 type AssignmentScheduleType = {
     eventTitle?: string | ReactNode | ((event: Schedule) => string)
@@ -20,41 +19,31 @@ type AssignmentScheduleType = {
     setRefetch?: (refetch: boolean) => void
     onlyMark?: string
     selectable?: boolean
-    selectSlotAction?: (slots: SlotInfo) => void
+    selectSlotAction?: (slotInfo: SlotInfo) => void
     startDate?: Date | string | number[]
     endDate?: Date | string | number[]
 }
 
 export const AssignmentSchedule = (
     {
-        eventSchedule, showBest = true, show = true, plus = true, shareScoreSize, setRefetch, onlyMark, views = ['month', 'week', 'agenda'],
-        height, isLoading, selectable, selectSlotAction, startDate, endDate
+        eventSchedule, showBest = true, show = true, plus = true, shareScoreSize, setRefetch, onlyMark,
+        height, selectable, selectSlotAction, startDate, endDate
     }: AssignmentScheduleType
 ) => {
-    const [wasDeleted, setWasDeleted] = useState<Record<string, boolean>>({})
-    const [wasUpdated, setWasUpdated] = useState<Record<string, boolean>>({})
     const [scoreSize, setScoreSize] = useState<number>(5)
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
     const [selectedAssignment, setSelectedAssignment] = useState<Assignment | null>(null)
 
-    useEffect(() => {
-        if (wasDeleted?.status || wasUpdated?.updated) {
-            setIsModalOpen(false)
-            if (setRefetch) {
-                setRefetch(true)
-            }
-        }
-    }, [setRefetch, wasDeleted?.status, wasUpdated?.updated])
-
-    const eventData: CalendarEvent = eventSchedule ? eventSchedule?.map(assignment => ({
-        title: assignment.examName,
+    const eventData = useMemo(() => eventSchedule ? eventSchedule?.map(assignment => ({
+        id: assignment?.id as number,
+        title: assignment.examName as string,
         start: Datetime.of(assignment?.examDate as number[]).timeToDatetime(assignment?.startTime as number[]).toDate(),
         end: Datetime.of(assignment?.examDate as number[]).timeToDatetime(assignment?.endTime as number[]).toDate(),
         allDay: false,
         resource: assignment
-    })): []
+    })) : [], [eventSchedule])
 
-    function onEventSelected(event: EventProps) {
+    function onEventSelected(event: AssignmentCalendarEvents) {
         setIsModalOpen(true)
         setSelectedAssignment?.(event.resource as Assignment)
     }
@@ -68,12 +57,12 @@ export const AssignmentSchedule = (
     return(
         <>
             <BigCalendar
-                styles={{ height: height ?? 600 }}
+                key={selectedAssignment?.id}
+                height={height ?? 600}
                 data={eventData as []}
-                views={views}
-                defaultView={views ?  views[0] : 'month'}
+                views={["month", 'week', 'agenda']}
+                defaultView={'month'}
                 onSelectEvent={onEventSelected}
-                isLoading={isLoading}
                 showNavButton
                 wrapperColor={(event) => typeColors(
                     AssignmentTypeLiteral[event?.resource?.type as unknown as keyof typeof AssignmentTypeLiteral], true
@@ -93,8 +82,6 @@ export const AssignmentSchedule = (
                 plus={plus}
                 showBest={showBest}
                 onlyMark={onlyMark}
-                setWasDeleted={setWasDeleted}
-                setWasUpdated={setWasUpdated}
                 scoreSize={scoreSize}
                 showLink={true}
                 setRefetch={setRefetch}

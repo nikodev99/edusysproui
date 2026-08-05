@@ -62,8 +62,8 @@ const ViewHeader = (
     }
 
     const baseItems: ItemType[] = [
-        ...(hasEdit && canEdit ? [{key: 1, label: editText ?? 'Editer', icon: <LuPencil />, onClick: handleClick}] : [])
-    ]
+        ...(hasEdit && canEdit ? [{key: 1, label: editText ?? 'Editer', icon: <LuPencil />, onClick: handleClick},{type: 'divider'}] : [])
+    ] as ItemType[]
     const additionalItems = items ? items : []
 
     return(

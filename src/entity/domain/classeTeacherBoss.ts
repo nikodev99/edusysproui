@@ -1,9 +1,9 @@
-import {AcademicYear} from "./academicYear.ts";
-import {Teacher} from "./teacher.ts";
+import {AcademicYear, Classe, Teacher} from "@/entity";
 
 export interface ClasseTeacherBoss {
     id?: number
     academicYear?: AcademicYear
+    classe?: Classe
     principalTeacher?: Teacher
     current?: boolean
     startPeriod?: Date | number[]

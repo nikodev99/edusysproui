@@ -3,10 +3,10 @@ import {courseSchema, courseSchemaMerge} from "./models/courseSchema.ts";
 import {classeSchema, classeSchemaMerge} from "./models/classeSchema.ts";
 import {guardianSchema} from "./models/guardianSchema.ts";
 import {enrollmentSchema} from "./models/enrollmentSchema.ts";
-import {studentSchema} from "./models/studentSchema.ts";
+import {studentBossSchema, studentSchema} from "./models/studentSchema.ts";
 import {addressSchema} from "./models/addressSchema.ts";
 import {healthSchema} from "./models/healthSchema.ts";
-import {teacherSchema, teacherSchoolAffiliationSchema} from "./models/teacherSchema.ts";
+import {teacherBossSchema, teacherSchema, teacherSchoolAffiliationSchema} from "./models/teacherSchema.ts";
 import {individualSchema, individualSchemaMerge} from "./models/individualSchema.ts";
 import {assignmentDateUpdateSchema, assignmentSchema} from "./models/assignmentSchema.ts";
 import {attendanceSchema} from "./models/attendanceSchema.ts";
@@ -41,8 +41,8 @@ export {gradeSchemaMerge, gradeSchema} from './models/gradeSchema.ts'
 export {departmentSchemaMerge,departmentSchema} from './models/departmentSchema.ts'
 export {schoolMergeSchema, schoolSchema} from './models/schoolSchema'
 export {guardianSchema} from './models/guardianSchema'
-export {studentSchema, studentSchemaMerge} from './models/studentSchema'
-export {teacherSchema, teacherSchemaMerge, teacherSchoolAffiliationSchema} from './models/teacherSchema'
+export {studentSchema, studentSchemaMerge, studentBossSchema} from './models/studentSchema'
+export {teacherSchema, teacherSchemaMerge, teacherSchoolAffiliationSchema, teacherBossSchema} from './models/teacherSchema'
 export {addressSchema} from './models/addressSchema'
 export {healthSchema} from './models/healthSchema'
 export {individualSchema, individualSchemaMerge} from './models/individualSchema.ts'
@@ -102,3 +102,5 @@ export type TeacherProgramTopic = z.infer<typeof topicSchema>
 export type ProgramTiming = z.infer<typeof programTiming>
 export type ScheduleSchema = z.infer<typeof scheduleSchema>
 export type ReportSchema = z.infer<typeof reportSchema>
+export type StudentBossSchema = z.infer<typeof studentBossSchema>
+export type TeacherBossSchema = z.infer<typeof teacherBossSchema>

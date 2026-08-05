@@ -30,8 +30,6 @@ export const AddClasse = ({open, onCancel}: ModalProps) => {
 
     const showField = useMemo(() => isUniversity(grade?.section as string), [grade?.section])
 
-    console.log({grade, showField})
-
     return(
         <InsertModal
             data={classeSchema as never}

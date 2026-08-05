@@ -53,7 +53,7 @@ export const UpdateSchema = <TData extends FieldValues, TReturn extends object>(
     }
 
     return(
-        <Modal title={title ?? 'Modification'} open={open} onCancel={handleModalClose} width={breakpoints} footer={null}>
+        <Modal title={title ?? 'Modification'} open={open} onCancel={handleModalClose} loading={!id} width={breakpoints} footer={null}>
             {successMessage && (<Alert message={successMessage} type="success" showIcon style={{marginBottom: '10px'}}/>)}
             {errorMessage && (<Alert message={errorMessage} type="error" showIcon style={{marginBottom: '10px'}}/>)}
             <Form layout='vertical' style={{marginTop: '15px'}}>

@@ -1,8 +1,8 @@
-import {Counted, CountType, GenderCounted, Moment, Pageable} from "@/core/utils/interfaces.ts";
+import {Counted, CountType, GenderCounted, Moment, Options, Pageable} from "@/core/utils/interfaces.ts";
 import {useFetch, useRawFetch} from "../useFetch.ts";
 import {fetchTeachers} from "@/data";
 import {
-    affiliateTeacher,
+    affiliateTeacher, checkTeacherIsPrincipal,
     countAllTeachers, deleteTeacherAffiliation, getAllSelfTeachers, getAllTeachers,
     getNumberOfStudentTaughtByClasse,
     getNumberOfStudentTaughtByTeacher, getSearchedTeacher,
@@ -13,13 +13,13 @@ import {
     getTeacherSchedule,
     getTeacherScheduleByDay, getTeacherWidgets, updateTeacherClasses, updateTeacherCourses
 } from "@/data/repository/teacherRepository.ts";
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import {SectionType} from "@/entity/enums/section.ts";
 import {Teacher} from "@/entity";
 import {useGlobalStore} from "@/core/global/store.ts";
 import {UserPermission} from "@/core/shared/sharedEnums.ts";
 import {useAuth} from "@/hooks/useAuth.ts";
-import {getShortSortOrder, setSortFieldName} from "@/core/utils/utils.ts";
+import {getShortSortOrder, setName, setSortFieldName} from "@/core/utils/utils.ts";
 import {reportRepository} from "@/data/repository/reportRepository.ts";
 import {ReportSchema, TeacherSchoolAffiliationSchema} from "@/schema";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
@@ -246,16 +246,31 @@ export const useTeacherRepo = (context: UserPermission = UserPermission.ALL) => 
         }
     }
 
-    const useGetAllWeekReport = (teacherId: string, startDate: Moment, endDate: Moment) => useFetch(
-        ["reports", teacherId, startDate, endDate],
-        reportRepository.getAllWeekReport,
-        [teacherId, startDate, endDate],
-        !!teacherId
+    const useGetAllWeekReport = (id: string | number, startDate: Moment, endDate: Moment, isClasse: boolean = false) => useFetch(
+        ["reports", id, startDate, endDate],
+        isClasse ? reportRepository.getAllClasseWeekReport : reportRepository.getAllWeekReport,
+        [id, startDate, endDate],
+        !!id
     )
 
     const useViewReport = (reportId: number) => useFetch(
         ["reports", reportId], reportRepository.viewReport, [reportId], (!!reportId)
     )
+
+    const useCheckPrincipal = (classeId: number) => {
+        const {user} = useAuth()
+        const {data} = useFetch(["teacher-principal", classeId, user?.userId], checkTeacherIsPrincipal, [user?.userId, classeId], !!user?.userId && !!classeId)
+        return {
+            isPrincipal: data
+        }
+    }
+
+    const teacherOptions = useCallback((data?: Teacher[], isPersonalInfo: boolean = false): Options => {
+        return data ? data?.map(i => ({
+            label: setName(i.personalInfo),
+            value: isPersonalInfo ? i?.personalInfo?.id as number : i?.id as string
+        })) : [] as Options
+    }, [])
 
     return {
         useGetPaginated,
@@ -279,7 +294,9 @@ export const useTeacherRepo = (context: UserPermission = UserPermission.ALL) => 
         useUpdateCourses,
         useAffiliateTeacher,
         useRemoveTeacherAffiliation,
-        useViewReport
+        useViewReport,
+        useCheckPrincipal,
+        teacherOptions
     }
 }
 

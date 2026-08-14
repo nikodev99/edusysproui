@@ -1,14 +1,15 @@
 import '../ui.scss'
-import {ReactNode} from "react";
+import {CSSProperties, ReactNode} from "react";
 
 interface BlockItemProps {
     children: ReactNode;
     dataKey?: string;
+    style?: CSSProperties
 }
 
-const BlockItem = ({children, dataKey}: BlockItemProps) => {
+const BlockItem = ({children, dataKey, style}: BlockItemProps) => {
     return(
-        <div className='block-item' key={dataKey}>
+        <div className='block-item' key={dataKey} style={style}>
             {children}
         </div>
     )

@@ -15,7 +15,7 @@ export type CourseType = keyof CourseTypeEnum
 
 export enum CourseTypeEnum {
     // 0. Math, Physics, Biology, etc.
-    SCIENCES = 'Sciences & Technologies',
+    SCIENCES = 'Sciences Exact',
 
     // 1. French, English, Spanish, local languages, etc.
     LANGUAGES = 'Langues & Lettres',
@@ -45,5 +45,5 @@ export enum CourseTypeEnum {
     HEALTH = 'Santé & Secourisme',
 
     // 10. General support, Exam prep, Transversal skills
-    GENERAL = 'Soutien & Methodology'
+    GENERAL = 'Methodology'
 }

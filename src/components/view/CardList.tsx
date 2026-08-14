@@ -40,7 +40,7 @@ const CardList = <TData extends object>(
         <>
             {
                 isActive && (<Skeleton loading={isLoading} active={isLoading} avatar={isLoading}>
-                    <Block responsive={{xs: 1, md: md, lg: lg, xxl: xl}}>
+                    <Block responsive={{xs: 1, md: md, lg: lg, xxl: xl}} style={{marginTop: 20}}>
                         {content && content?.map(c => (
                             <Card key={c.id} loading={!content || isLoading} className='card__list' onClick={() => onSelectData?.(c?.record as never)} styles={{
                                 body: {

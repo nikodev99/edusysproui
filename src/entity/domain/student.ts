@@ -1,4 +1,14 @@
-import {Enrollment, Guardian, HealthCondition, Score, Attendance, Individual, Classe, School} from "@/entity";
+import {
+    Enrollment,
+    Guardian,
+    HealthCondition,
+    Attendance,
+    Individual,
+    Classe,
+    School,
+    RadarAxis,
+    Score
+} from "@/entity";
 
 export interface Student {
     id: string
@@ -9,6 +19,7 @@ export interface Student {
     guardian: Guardian
     healthCondition: HealthCondition
     marks: Score[]
+    courseTypeStats: RadarAxis[];
     attendances: Attendance[]
     classe: Classe
     school: School

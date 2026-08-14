@@ -58,8 +58,8 @@ export interface EventInteractionArgs<TEvent extends object> {
 }
 
 
-// Loose on purpose — RBC's Formats holds per-part formatter functions/strings, and only
-// timeGutterFormat/dayHeaderFormat are even referenced below. Add keys here as you need them.
+// Loose on purpose — RBC's Formats holds per-part formatter functions/strings, and the only timeGutterFormat /
+// dayHeaderFormat are even referenced below. Add keys here as you need them.
 export type Formats = Partial<Record<string, string | ((date: Date, culture?: string) => string)>>
 
 export interface ContextMenuItem {
@@ -132,7 +132,7 @@ const toFullCalendarEvent = <TEvent extends object>(
         title: isReactNodeTitle ? '' : (rawTitle ?? ''),
         start: raw[startKey as string],
         end: raw[endKey as string],
-        // Original object travels with the FC event so every callback can hand it straight back.
+        // Original object travels with the FC event, so every callback can hand it straight back.
         extendedProps: { source: item },
     }
 }
@@ -172,11 +172,10 @@ export const BigCalendar = <TEvent extends object = Record<string, unknown>>(
     )
 
     const initialDate = useMemo(() => {
-        return events
-            .map(e => (e.start instanceof Date ? e.start : e.start ? new Date(e.start as string) : null))
-            .filter((d): d is Date => d instanceof Date && !isNaN(d.getTime()))
-            .sort((a, b) => a.getTime() - b.getTime())[0]
-    }, [events])
+        return datehelper.getDateReference(startDate, endDate).toDate()
+    }, [endDate, startDate])
+
+    const isMonthView = initialView === 'dayGridMonth'
 
     const toTimeString = (hour: number, minute: number) => {
         const totalMinutes = Math.max(0, hour * 60 + minute)
@@ -220,6 +219,7 @@ export const BigCalendar = <TEvent extends object = Record<string, unknown>>(
 
     const handleEventClick = useCallback(
         (arg: EventClickInfo) => {
+            console.log({arg})
             const source = arg.event.extendedProps.source as TEvent
             onSelectEvent?.(source, arg.jsEvent as unknown as SyntheticEvent)
         },
@@ -310,13 +310,6 @@ export const BigCalendar = <TEvent extends object = Record<string, unknown>>(
         (arg: MountInfo<EventDisplayInfo>) => {
             const source = arg.event.extendedProps.source as TEvent
 
-            if (wrapperColor) {
-                const [background, color] = wrapperColor(source)
-                arg.el.style.backgroundColor = background
-                arg.el.style.borderColor = background
-                arg.el.style.color = color
-            }
-
             if (eventPropGetter) {
                 // FullCalendar doesn't track a "selected" event state the way RBC does — passed as false.
                 const { className, style } = eventPropGetter(
@@ -337,24 +330,36 @@ export const BigCalendar = <TEvent extends object = Record<string, unknown>>(
                 })
             }
         },
-        [wrapperColor, eventPropGetter, contextMenuItems]
+        [eventPropGetter, contextMenuItems]
     )
 
     const eventContent = useCallback((arg: EventDisplayInfo) => {
         const extendedProps = (arg.event).extendedProps
         const duration = datehelper.minDuration(arg.event.start as Date, arg.event.end as Date)
         const isShortEvent = duration <= 30;
-        console.log({title: arg.event.title, duration: duration})
+        let styles: {bg?: string, color?: string} = {bg: undefined, color: undefined}
+
+        if (wrapperColor) {
+            const [background, color] = wrapperColor(extendedProps.source)
+            styles = {bg: background, color: color}
+        }
+        
         const wrapStyle: CSSProperties = {
             whiteSpace: 'normal',
             overflow: !isShortEvent ? 'visible' : 'hidden',
             wordBreak: !isShortEvent ? 'break-word' : undefined,
             lineHeight: 1.25,
             display: 'flex',
+            background: styles.bg,
+            borderColor: styles.bg,
+            color: styles.color,
             // 'row' puts title and time side-by-side; 'column' stacks them
             flexDirection: isShortEvent ? 'row' : 'column',
             alignItems: isShortEvent ? 'center' : 'flex-start',
             gap: isShortEvent ? '8px' : '2px', // Horizontal gap when inline, vertical gap when stacked
+            cursor: 'pointer',
+            borderRadius: '4px',
+            padding: isMonthView ? '5px' : undefined,
         }
 
         const timeStyle: CSSProperties = {
@@ -382,16 +387,30 @@ export const BigCalendar = <TEvent extends object = Record<string, unknown>>(
             </div>
             <span>{title}</span>
         </div>
-    }, [])
+    }, [isMonthView, wrapperColor])
 
     const mergedStyle: CSSProperties = { height: height ? `${height}px` : 'auto', ...styles }
 
     return (
         <div className={!showToolbar ? `big-calendar ${className ?? ''}` : className} style={mergedStyle}>
-            {isLoading ? (
-                <Skeleton active loading />
-            ) : (
+            <div style={{ position: 'relative', height: '100%' }}>
+                {isLoading && (
+                    // Overlay only — the calendar underneath stays mounted, so toggling
+                    // isLoading (e.g., while fetching an event's details on click) never
+                    // remounts FullCalendar and never resets it back to initialDate.
+                    <div
+                        style={{
+                            position: 'absolute',
+                            inset: 0,
+                            zIndex: 10,
+                            background: 'var(--color-bg-container, #fff)',
+                        }}
+                    >
+                        <Skeleton active loading />
+                    </div>
+                )}
                 <FullCalendar
+                    key="main-calendar"
                     ref={calendarRef}
                     plugins={plugins}
                     borderless={borderless}
@@ -413,7 +432,7 @@ export const BigCalendar = <TEvent extends object = Record<string, unknown>>(
                     select={handleSelect}
                     selectAllow={handleSelectAllow}
                     unselect={clearSelectionTooltip}
-                    eventContent={eventContent}
+                    eventContent={isMonthView ? undefined : eventContent}
                     eventClick={handleEventClick}
                     eventDidMount={handleEventDidMount}
                     editable={isDraggable || isResizable}
@@ -427,7 +446,7 @@ export const BigCalendar = <TEvent extends object = Record<string, unknown>>(
                     nowIndicator
                     dayMaxEvents
                 />
-            )}
+            </div>
             {showSelectionTime && isSelecting && liveRange && mousePos && (
                 <div
                     style={{

@@ -1,4 +1,4 @@
-import { Children, isValidElement, ReactNode } from 'react'
+import {Children, CSSProperties, isValidElement, ReactNode} from 'react'
 import { Masonry } from 'react-plock'
 import BlockItem from "@/components/ui/layout/BlockItem.tsx";
 
@@ -77,15 +77,12 @@ interface BlockProps {
     responsive?: PxColumnsCountBreakPoints | NamedColumnsCountBreakPoints
     gap?: number
     useBalancedLayout?: boolean
+    style?: CSSProperties
 }
 
-const Block = ({
-                   items,
-                   children,
-                   responsive,
-                   gap = 12,
-                   useBalancedLayout = true,
-               }: BlockProps) => {
+const Block = (
+    {items, children, responsive, gap = 12, useBalancedLayout = true, style}: BlockProps
+) => {
     const content = items ?? Children.toArray(children)
 
     return (
@@ -98,7 +95,7 @@ const Block = ({
                 const dataKey = (item.props as { dataKey?: string })?.dataKey
 
                 return (
-                    <BlockItem key={dataKey ? `${dataKey}-${index}` : index} dataKey={dataKey} children={item} />
+                    <BlockItem key={dataKey ? `${dataKey}-${index}` : index} dataKey={dataKey} children={item} style={style} />
                 )
             }}
         />

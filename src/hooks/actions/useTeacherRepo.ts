@@ -1,6 +1,5 @@
 import {Counted, CountType, GenderCounted, Moment, Options, Pageable} from "@/core/utils/interfaces.ts";
 import {useFetch, useRawFetch} from "../useFetch.ts";
-import {fetchTeachers} from "@/data";
 import {
     affiliateTeacher, checkTeacherIsPrincipal,
     countAllTeachers, deleteTeacherAffiliation, getAllSelfTeachers, getAllTeachers,
@@ -27,10 +26,9 @@ import {TeacherClassUpdateRequest, TeacherCourseUpdateRequest} from "@/entity/do
 
 export const useTeacherRepo = (context: UserPermission = UserPermission.ALL) => {
     const schoolId = useGlobalStore(state => state.schoolId)
+    const {user} = useAuth()
 
     const useGetPaginated = () => {
-        const {user} = useAuth()
-
         return {
             getPaginatedTeachers: async (page: number, size: number, sortField?: string, sortOrder?: string) => {
                 if (sortField && sortOrder) {
@@ -71,8 +69,8 @@ export const useTeacherRepo = (context: UserPermission = UserPermission.ALL) => 
 
     const useGetAllTeachers = (pageable: Pageable, sortField: string, sortOrder: string) => useFetch(
         ['teacher-list'],
-        fetchTeachers,
-        [schoolId, pageable.page, pageable.size, sortField, sortOrder],
+        getAllTeachers,
+        [schoolId, pageable.page, pageable.size, `${sortField}:${sortOrder}`],
         !!schoolId && !!pageable.size,
     )
     
@@ -258,11 +256,14 @@ export const useTeacherRepo = (context: UserPermission = UserPermission.ALL) => 
     )
 
     const useCheckPrincipal = (classeId: number) => {
-        const {user} = useAuth()
         const {data} = useFetch(["teacher-principal", classeId, user?.userId], checkTeacherIsPrincipal, [user?.userId, classeId], !!user?.userId && !!classeId)
         return {
             isPrincipal: data
         }
+    }
+
+    const useAmongClasseTeachers = (classeTeacherIds?: Teacher[]): boolean => {
+        return (classeTeacherIds ?? []).some(t => t.id === user?.userId)
     }
 
     const teacherOptions = useCallback((data?: Teacher[], isPersonalInfo: boolean = false): Options => {
@@ -296,6 +297,7 @@ export const useTeacherRepo = (context: UserPermission = UserPermission.ALL) => 
         useRemoveTeacherAffiliation,
         useViewReport,
         useCheckPrincipal,
+        useAmongClasseTeachers,
         teacherOptions
     }
 }

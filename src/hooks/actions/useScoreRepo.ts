@@ -8,15 +8,13 @@ import {
     getBestTeacherStudentBySubject,
     getClasseBestStudents,
     getClasseBestStudentsByCourse,
-    getClassePoorStudents,
     getCourseBestStudentsByCourse,
-    getCoursePoorStudents, getStudentScoreOfAssignment
+    getStudentScoreOfAssignment
 } from "@/data/repository/scoreRepository.ts";
 import {useFetch, useRawFetch} from "../useFetch.ts";
 import {Pageable} from "@/core/utils/interfaces.ts";
 import {Score} from "@/entity";
 import {useCallback, useEffect, useState} from "react";
-import {AxiosResponse} from "axios";
 
 export const useScoreRepo = () => {
     const useGetAllAssignmentMarks = (assignmentId: number, size: number, enable: boolean = true) => useFetch(
@@ -54,76 +52,20 @@ export const useScoreRepo = () => {
         )
     }
     
-    const useGetClasseBestStudents = (classId: number, academicYear: string, courseId?: number): Score[] => {
-        const [scores, setScores] = useState<Score[]>([])
-        const fetch = useRawFetch()
-        const func = courseId ? getClasseBestStudentsByCourse : getClasseBestStudents
-        useEffect(() => {
-            if (classId && academicYear) {
-                fetch(func as (...args: unknown[]) => Promise<AxiosResponse<Score[], unknown>>, [{classId: classId, courseId: courseId}, academicYear])
-                    .then(resp => {
-                        if (resp.isSuccess) {
-                            setScores(resp.data as Score[])
-                        }
-                    })
-            }
-        }, [academicYear, classId, courseId, fetch, func]);
-        
-        return scores
-    }
-    
-    const useGetClassePoorStudents = (classeId: number, academicYear: string): Score[] => {
-        const [scores, setScores] = useState<Score[]>([])
-        const fetch = useRawFetch()
+    const useGetClasseBestStudents = (classId: number, academicYear: string, courseId?: number) => {
+        const {data} = useFetch(
+            ["List-of-best-student-in-classe", classId, courseId, academicYear],
+            courseId ? getClasseBestStudentsByCourse : getClasseBestStudents,
+            [{classId: classId, courseId: courseId}, academicYear],
+            courseId ? !!classId && !!courseId && !!academicYear : !!classId && !!academicYear
+        )
 
-        useEffect(() => {
-            if (classeId && academicYear) {
-                fetch(getClassePoorStudents, [classeId, academicYear])
-                    .then(resp => {
-                        if (resp.isSuccess) {
-                            setScores(resp.data as Score[])
-                        }
-                    })
-            }
-        }, [academicYear, classeId, fetch]);
-        
-        return scores
+        return data
     }
 
-    const useGetCourseBestStudents = (courseId: number, academicYear: string): Score[] => {
-        const [scores, setScores] = useState<Score[]>([])
-        const fetch = useRawFetch()
-
-        useEffect(() => {
-            if (courseId && academicYear) {
-                fetch(getCourseBestStudentsByCourse, [courseId, academicYear])
-                    .then(resp => {
-                        if (resp.isSuccess) {
-                            setScores(resp.data as Score[])
-                        }
-                    })
-            }
-        }, [academicYear, courseId, fetch]);
-
-        return scores
-    }
-
-    const useGetCoursePoorStudents = (courseId: number, academicYear: string): Score[] => {
-        const [scores, setScores] = useState<Score[]>([])
-        const fetch = useRawFetch()
-
-        useEffect(() => {
-            if (courseId && academicYear) {
-                fetch(getCoursePoorStudents, [courseId, academicYear])
-                    .then(resp => {
-                        if (resp.isSuccess) {
-                            setScores(resp.data as Score[])
-                        }
-                    })
-            }
-        }, [academicYear, courseId, fetch]);
-
-        return scores
+    const useGetCourseBestStudents = (courseId: number, academicYear: string) => {
+        const {data} = useFetch("Lis-of-best-students", getCourseBestStudentsByCourse, [courseId, academicYear], !!courseId && !!academicYear)
+        return data
     }
 
     const useGetAllTeacherMarks = (teacherId: number | number[]) => useFetch(
@@ -133,11 +75,11 @@ export const useScoreRepo = () => {
         !!teacherId
     )
 
-    const useGetBestTeacherStudents = (teacherPersonalInfoId: number, subjectId?: number) => useFetch(
-        subjectId ? ['teacher-student-marks', teacherPersonalInfoId] : ['teacher-students', teacherPersonalInfoId],
+    const useGetBestTeacherStudents = (teacherPersonalInfoId: number, academicYear: string, subjectId?: number) => useFetch(
+        ['teacher-student-marks', teacherPersonalInfoId, subjectId],
         subjectId ? getBestTeacherStudentBySubject : getBestTeacherStudentByScore,
-        [teacherPersonalInfoId, subjectId],
-        subjectId ? !!teacherPersonalInfoId && !!subjectId : !!teacherPersonalInfoId
+        subjectId ? [teacherPersonalInfoId, subjectId, academicYear] : [teacherPersonalInfoId, academicYear],
+        subjectId ? !!teacherPersonalInfoId && !!subjectId && !!academicYear : !!teacherPersonalInfoId && !!academicYear
     )
 
     const useGetStudentScore = (assignmentId: number, studentId: string, enabled: boolean = true) => useFetch(
@@ -165,9 +107,7 @@ export const useScoreRepo = () => {
         useGetAssignmentScores,
         useGetAllStudentScores,
         useGetClasseBestStudents,
-        useGetClassePoorStudents,
         useGetCourseBestStudents,
-        useGetCoursePoorStudents,
         useGetAllTeacherMarks,
         useGetBestTeacherStudents,
         useGetStudentScore,

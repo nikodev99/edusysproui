@@ -12,8 +12,7 @@ export const SelectClasse = (
     {getClasse, defaultClasses, isLoading, defaultValue, placeholder, multiple, onlyCurrent, variant, getResource}: SelectClassesProps
 ) => {
 
-    const {useGetClasseBasicValues} = useClasseRepo()
-    const classes = useGetClasseBasicValues()
+    const {classes} = useClasseRepo()
 
     const handleClasseChange = (value: number | number[]) => {
         getClasse?.(value)

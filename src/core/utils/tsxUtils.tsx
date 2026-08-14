@@ -15,7 +15,7 @@ import {
     LuClock4, LuClock5, LuClock6, LuClock7, LuClock8,
     LuClock9, LuCreditCard, LuFileText, LuHandCoins,
     LuMedal, LuPhoneOutgoing,
-    LuRefreshCcw, LuSend, LuThumbsDown, LuThumbsUp, LuTrendingDown,
+    LuRefreshCw, LuSend, LuThumbsDown, LuThumbsUp, LuTrash2, LuTrendingDown,
     LuX
 } from "react-icons/lu";
 import Datetime from "../datetime.ts";
@@ -222,9 +222,9 @@ export const CardSkeleton = ({title}: {title?: ReactNode}) => {
 }
 
 export const AssignmentDescription = (
-    {a, show, plus, remove, showBest, openUpdater, link}: {
+    {a, show, plus, handleRemove, showBest, openUpdater, link}: {
         a: Assignment, title?: ReactNode, show?: boolean,
-        plus?: boolean, remove?: (id?: bigint) => void, showBest?: boolean,
+        plus?: boolean, handleRemove?: (id?: bigint) => void, showBest?: boolean,
         openUpdater?: () => void
         link?: boolean
     }
@@ -256,10 +256,15 @@ export const AssignmentDescription = (
         ] : []),
 
         ...(
-            a?.passed ? [] : dateCompare(a?.examDate as Date) ? [] : showBest ? [{key: 11, children: <Space.Compact block>
-                <ModalConfirmButton handleFunc={remove ? remove : () => 'forbidden'} funcParam={a?.id as bigint} btnTxt={<LuX />} />
+            a?.passed ? [] : dateCompare(a?.examDate as Date) ? [] : showBest ? [{key: 11, children: <Space.Compact>
+                <ModalConfirmButton
+                    handleFunc={handleRemove ? handleRemove : () => 'forbidden'}
+                    btnProps={{variant: 'solid', color: "red"}}
+                    funcParam={a?.id as bigint}
+                    btnTxt={<LuTrash2 />}
+                />
                 <Tooltip title="Changer de date"> {/* TODO Gérer les boutons supprimer et changer de date */}
-                    <Button onClick={openUpdater} icon={<LuRefreshCcw />} />
+                    <Button onClick={openUpdater} icon={<LuRefreshCw />} />
                 </Tooltip>
             </Space.Compact>}]: []
         )

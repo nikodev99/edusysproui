@@ -41,7 +41,7 @@ export const useExamRepo = () => {
 
         useGetStudentExamProgress: (studentId: string, classeId: number, academicYear: string) => {
             const {data} = useFetch(
-                ['exam-progress', studentId, classeId],
+                ['exam-progress', studentId, classeId, academicYear],
                 getStudentExamProgress,
                 [studentId, classeId, academicYear],
                 !!studentId && !!classeId && !!academicYear

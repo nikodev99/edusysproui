@@ -1,5 +1,5 @@
 import {GenderCounted, InfoPageProps} from "@/core/utils/interfaces.ts";
-import {Classe, Teacher, Individual} from "@/entity";
+import {Classe, Teacher, Individual, ClasseRanking} from "@/entity";
 import Block from "@/components/view/Block.tsx";
 import {ReactNode} from "react";
 import Section from "@/components/ui/layout/Section.tsx";
@@ -17,7 +17,6 @@ import {AttendanceStatus, getColors} from "@/entity/enums/attendanceStatus.ts";
 import {ShapePieChart} from "@/components/graph/ShapePieChart.tsx";
 import VoidData from "@/components/view/VoidData.tsx";
 import {TeacherList} from "@/components/common/TeacherList.tsx";
-import {BestScoredTable} from "@/components/common/BestScoredTable.tsx";
 import {ScheduleCalendar} from "@/components/ui-kit-schedule/components/ScheduleCalendar.tsx";
 import {useScoreRepo} from "@/components/../hooks/actions/useScoreRepo.ts";
 import {useAttendanceRepo} from "@/components/../hooks/actions/useAttendanceRepo.ts";
@@ -26,13 +25,15 @@ import {datehelper} from "@/core/helpers/DateHelpers.ts";
 import {stringhelper} from "@/core/helpers/StringHelper.ts";
 import {useRedirect} from "@/hooks/useRedirect.ts";
 import {CourseTypeEnum} from "@/entity/domain/course.ts";
+import {BestStudentList} from "@/components/common/BestStudentList.tsx";
+import {PermissionType} from "@/pages/classe_subject/ClasseViewPage.tsx";
 
-type ClasseInfoProps = InfoPageProps<Classe> & {
+type ClasseInfoProps = InfoPageProps<Classe, PermissionType> & {
     studentCount?: GenderCounted | null
     totalStudents?: number
 };
 
-const ClasseInfoData = ({infoData, color, studentCount, totalStudents, seeMore}: ClasseInfoProps) => {
+const ClasseInfoData = ({infoData, color, studentCount, totalStudents, seeMore, hasPermission}: ClasseInfoProps) => {
     const {toViewStudent, toViewTeacher} = useRedirect()
 
     if (!infoData)
@@ -51,6 +52,9 @@ const ClasseInfoData = ({infoData, color, studentCount, totalStudents, seeMore}:
     const redirectLink = (id?: string): string => {
         return `${text.teacher.group.view.href}${id}`
     }
+
+    const canViewTeacher = (hasPermission as PermissionType).canViewTeacher
+    const canViewStudent = (hasPermission as PermissionType).canViewStudent
 
     const handleClick = () => {
         seeMore && seeMore('1')
@@ -83,7 +87,7 @@ const ClasseInfoData = ({infoData, color, studentCount, totalStudents, seeMore}:
                     show={principalTeacher === null || principalTeacher?.principalTeacher === undefined}
                     color={color}
                     titles={{panel: 'Responsable de classe'}}
-                    onRedirect={principalTeacher?.current ? () => toViewTeacher(principalTeacher?.principalTeacher?.id as string) : undefined}
+                    onRedirect={(principalTeacher?.current && canViewTeacher) ? () => toViewTeacher(principalTeacher?.principalTeacher?.id as string) : undefined}
                     period={principalTeacher?.startPeriod as number[]}
                     isCurrent={principalTeacher?.current}
                 />
@@ -92,7 +96,7 @@ const ClasseInfoData = ({infoData, color, studentCount, totalStudents, seeMore}:
                     show={principalStudent === null || principalStudent === undefined}
                     color={color}
                     titles={{panel: 'Chef de Classe'}}
-                    onRedirect={principalStudent?.current ? () => toViewStudent(principalStudent?.principalStudent?.id as string) : undefined}
+                    onRedirect={(principalStudent?.current && canViewStudent) ? () => toViewStudent(principalStudent?.principalStudent?.id as string) : undefined}
                     period={principalStudent?.startPeriod as number[]}
                     isCurrent={principalStudent?.current}
                 />
@@ -140,7 +144,11 @@ const ClasseSchedule = ({infoData, seeMore}: ClasseInfoProps) => {
     const {schedule} = infoData
 
     if (!infoData)
-        return <PanelSection title={'Emploi du temps'}><Skeleton active paragraph={{ rows: 4 }} /></PanelSection>
+        return (
+            <PanelSection title={'Emploi du temps'}>
+                <Skeleton active paragraph={{ rows: 4 }} />
+            </PanelSection>
+        )
 
     const handleSeeMore = ()=> {
         seeMore && seeMore('2')
@@ -155,35 +163,12 @@ const ClasseSchedule = ({infoData, seeMore}: ClasseInfoProps) => {
                 toolbar={false}
             />
         </Section>
-
     )
 }
 
 //TODO Je ne trouve pas l'intérêt de mettre quelque élèves ici
-/*const ClasseStudent = ({infoData, seeMore, color}: ClasseInfoProps) => {
 
-    const {students} = infoData
-
-    const handleClick = () => {
-        seeMore && seeMore('1')
-    }
-
-    const handleSeeDetails = (id: string) => {
-        redirectTo(`${text.student.group.view.href}${id}`)
-    }
-
-    return(
-        <StudentCarousel
-            title='Quelque élèves de la classe'
-            students={students}
-            seeMore={handleClick}
-            redirectTo={handleSeeDetails}
-            color={color}
-        />
-    )
-}*/
-
-const ClasseBestStudent = ({infoData, academicYear, color}: ClasseInfoProps) => {
+const ClasseBestStudent = ({infoData, academicYear, color, hasPermission}: ClasseInfoProps) => {
     const {useGetClasseBestStudents} = useScoreRepo()
     const bestStudents = useGetClasseBestStudents(infoData?.id, academicYear as string)
 
@@ -191,30 +176,16 @@ const ClasseBestStudent = ({infoData, academicYear, color}: ClasseInfoProps) => 
         return <Section title={'Meilleurs élève de la classe'}><Skeleton active paragraph={{ rows: 4 }} /></Section>
 
     return(
-        <Section title='Meilleurs élèves de la classe'>
-            <BestScoredTable
-                providedData={bestStudents}
-                color={color}
-            />
-        </Section>
-    )
-}
-
-const ClassePoorStudent = ({infoData, academicYear, color}: ClasseInfoProps) => {
-    const {useGetClassePoorStudents} = useScoreRepo()
-    const poorStudents = useGetClassePoorStudents(infoData?.id, academicYear as string)
-
-    if (!infoData)
-        return <Section title={'Étudiant nécessitant une suivie'}><Skeleton active paragraph={{ rows: 4 }} /></Section>
-
-    return(
-        <Section title='Étudiant necessitant une suivie'>
-            <BestScoredTable
-                providedData={poorStudents}
-                color={color}
-                goodToPoor={true}
-            />
-        </Section>
+        <BestStudentList
+            bestStudents={bestStudents ?? []}
+            sectionTitles={{
+                sectionTitle: (c: ClasseRanking) => <SuperWord input={`Performance des élèves de ${c.classeName}`} isSpan />,
+                bestTableTitle: 'Meilleurs élève de la classe',
+                poorTableTitle: 'Étudiant nécessitant un suivi'
+            }}
+            hasPermission={(hasPermission as PermissionType).canViewStudent}
+            color={color}
+        />
     )
 }
 
@@ -232,7 +203,7 @@ const ClasseTeachers = ({infoData, seeMore, hasPermission}: ClasseInfoProps) => 
         <Section title={'Enseignants de la classe'} more={true} seeMore={handleClick}>
             <TeacherList
                 teachers={classeTeachers}
-                hasPermission={hasPermission}
+                hasPermission={(hasPermission as PermissionType).canViewTeacher}
             />
         </Section>
     )
@@ -277,7 +248,6 @@ export const ClasseInfo = (infoData: ClasseInfoProps) => {
         <ClasseSchedule {...infoData} />,
         //<ClasseStudent {...infoData} />,
         <ClasseBestStudent {...infoData} />,
-        <ClassePoorStudent {...infoData} />,
         <ClasseAttendanceGraph {...infoData} />
     ]
 

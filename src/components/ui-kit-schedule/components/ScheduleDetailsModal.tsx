@@ -45,7 +45,7 @@ export const ScheduleDetailsModal = (
             <Card>
                 <Descriptions items={assignmentDesc(
                     schedule as Schedule,
-                    !!schedule?.teacher,
+                    !!schedule?.teacher && schedule?.teacher?.personalInfo?.id !== 0,
                     true)}
                 />
             </Card>

@@ -1,5 +1,5 @@
 import {InfoPageProps} from "@/core/utils/interfaces.ts";
-import {Score, Teacher} from "@/entity";
+import {GradeRankingStudent, Teacher} from "@/entity";
 import {useEffect, useState} from "react";
 import {useAssignmentRepo} from "@/hooks/actions/useAssignmentRepo.ts";
 import {useScoreRepo} from "@/hooks/actions/useScoreRepo.ts";
@@ -15,7 +15,7 @@ export const TeacherAssignments = ({infoData, hasPermission, resourceYear, isSel
     
     const [subjectValue, setSubjectValue] = useState<number | undefined>(courses && courses?.length > 0 ? courses[0].id as number : 0)
     const [classeValue, setClasseValue] = useState<number>(classes && classes?.length > 0 ? classes[0].id as number : 0)
-    const [scores, setScores] = useState<Score[]>([])
+    const [bestStudents, setBestStudents] = useState<GradeRankingStudent[]>([])
     const {useGetAllTeacherAssignments} = useAssignmentRepo()
     const {useGetBestTeacherStudents} = useScoreRepo()
     const {toExam} = useRedirect()
@@ -25,11 +25,11 @@ export const TeacherAssignments = ({infoData, hasPermission, resourceYear, isSel
         resourceYear?.id as string,
         {classId: classeValue, courseId: subjectValue}
     )
-    const {data, isSuccess} =  useGetBestTeacherStudents(personalInfo?.id as number, subjectValue)
+    const {data, isSuccess} =  useGetBestTeacherStudents(personalInfo?.id as number, resourceYear?.id as string, subjectValue)
 
     useEffect(() => {
         if (isSuccess)
-            setScores(data as Score[])
+            setBestStudents(data)
     }, [data, isSuccess]);
 
     const handleClasseValue = (value: number) => {
@@ -44,7 +44,7 @@ export const TeacherAssignments = ({infoData, hasPermission, resourceYear, isSel
     return (
         <AssignmentView 
             assignExams={assignments}
-            bestScores={scores}
+            scoreStats={bestStudents}
             getSubject={setSubjectValue}
             getClasse={handleClasseValue}
             classes={classes}
@@ -63,6 +63,7 @@ export const TeacherAssignments = ({infoData, hasPermission, resourceYear, isSel
                 }
                 : {})
             }
+            showOnlyBestTable
         />
     )
 }

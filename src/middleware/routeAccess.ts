@@ -299,7 +299,7 @@ class RouteAccess {
          */
         'classes-and-subjects': {
             module: [
-                () => isTopAdmin() || isAdmin() || isSecretary() || isTeacher()
+                () => isTopAdmin() || isAdmin() || isSecretary() || isTeacher() || isEnroll()
             ],
             permissions: {
                 create: [
@@ -329,6 +329,12 @@ class RouteAccess {
 
                     'reprimand': [
                         () => isTopAdmin() || isTeacher()
+                    ],
+                    'canViewTeachers': [
+                        () => isTopAdmin()
+                    ],
+                    'canViewStudents': [
+                        () => isTopAdmin() || isSecretary() || isTeacher() || isEnroll()
                     ],
                     'teacherAction': [
                         () => isTeacher()

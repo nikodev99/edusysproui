@@ -1,5 +1,5 @@
 import {useParams} from "react-router-dom";
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {AcademicYear, Classe} from "@/entity";
 import {Color, GenderCounted} from "@/core/utils/interfaces.ts";
 import {useDocumentTitle} from "@/hooks/useDocumentTitle.ts";
@@ -27,6 +27,10 @@ import {usePermission} from "@/hooks/usePermission.ts";
 import {ItemType} from "antd/es/menu/interface";
 import {stringhelper} from "@/core/helpers/StringHelper.ts";
 import {useTeacherRepo} from "@/hooks/actions/useTeacherRepo.ts";
+import {getUniqueness} from "@/core/utils/utils.ts";
+import {isTeacher} from "@/auth/dto/role.ts";
+
+export type PermissionType = {canViewStudent: boolean, canViewTeacher: boolean}
 
 const ClasseViewPage = () => {
 
@@ -42,15 +46,24 @@ const ClasseViewPage = () => {
     const [open, setOpen] = useToggle(false)
     const {currentAcademicYear} = useAcademicYearRepo()
     const {useCountClasseStudents} = useStudentRepo()
-    const {useCheckPrincipal} = useTeacherRepo()
+    const {useCheckPrincipal, useAmongClasseTeachers} = useTeacherRepo()
     const {useGetClasse} = useClasseRepo()
     const {can, canCreate, canDelete} = usePermission()
 
     const {isPrincipal} = useCheckPrincipal(Number(id))
     const isTeacherAuthorized = can('teacherAction', true)
+    const canViewTeachers = can('canViewTeachers', true)
+    const canViewStudents = can('canViewStudents', true)
+    const distinctTeachers = getUniqueness((classe?.classeTeachers ?? []), c => c.teacher, t => t?.id as string)
+    const isClasseTeacher = useAmongClasseTeachers(distinctTeachers)
+    
+    const isTeacherStudentView = canViewStudents && isClasseTeacher
+    const hasPermission: PermissionType = useMemo(() => ({
+        canViewTeacher: canViewTeachers,
+        canViewStudent: isTeacher() ? isTeacherStudentView :  canViewStudents
+    }), [canViewStudents, canViewTeachers, isTeacherStudentView])
 
     const {data, isSuccess, error, isLoading, refetch} = useGetClasse(Number(id), (usedAcademicYearId || currentAcademicYear?.id) as string)
-
     const {data: countData, isSuccess: isCountSuccess} = useCountClasseStudents(Number.parseInt(id ?? '0'), usedAcademicYearId as string)
 
     useDocumentTitle({
@@ -116,6 +129,7 @@ const ClasseViewPage = () => {
                         mention: <SelectAcademicYear
                             getResource={setAcademicYear as never}
                             getAcademicYear={setUsedAcademicYearId as never}
+                            when={{after: classe?.createdAt}}
                         />
                     }
                 ]}
@@ -137,7 +151,7 @@ const ClasseViewPage = () => {
                             totalStudents={studentCount?.total}
                             academicYear={usedAcademicYearId as string}
                             resourceYear={academicYear}
-                            hasPermission={canCreate}
+                            hasPermission={hasPermission}
                         />
                     },
                     {
@@ -172,6 +186,7 @@ const ClasseViewPage = () => {
                             infoData={classe!}
                             academicYear={usedAcademicYearId as string}
                             resourceYear={academicYear}
+                            hasPermission={hasPermission}
                             dataKey='exams'
                         />
                     },
@@ -189,7 +204,7 @@ const ClasseViewPage = () => {
                             infoData={classe}
                             academicYear={usedAcademicYearId}
                             resourceYear={academicYear}
-                            hasPermission={isTeacherAuthorized}
+                            hasPermission={isTeacherAuthorized && isClasseTeacher}
                             isSelf={false}
                             dataKey='reports'
                         />

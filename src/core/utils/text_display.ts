@@ -293,8 +293,4 @@ export const jwt = {
     roles: '@edusyspro-roles',
 }
 
-export const globalSchool = {
-    school: loggedUser.getSchool()
-}
-
-export const text = withSlug(toLower(globalSchool.school?.abbr as string) as string)
+export const text = withSlug(toLower(loggedUser.getSchool()?.abbr as string) as string)

@@ -5,8 +5,9 @@ import {useAssignmentRepo} from "@/hooks/actions/useAssignmentRepo.ts";
 import {useScoreRepo} from "@/hooks/actions/useScoreRepo.ts";
 import {AssignmentView} from "@/components/common/AssignmentView.tsx";
 import {useState} from "react";
+import {PermissionType} from "@/pages/classe_subject/ClasseViewPage.tsx";
 
-export const ClasseExams = ({infoData, academicYear, resourceYear}: InfoPageProps<Classe>) => {
+export const ClasseExams = ({infoData, academicYear, resourceYear, hasPermission}: InfoPageProps<Classe, PermissionType>) => {
     const {id} = infoData
     const [subject, setSubject] = useState<number | undefined>(undefined)
     const {useGetAllClasseAssignments} = useAssignmentRepo()
@@ -19,7 +20,7 @@ export const ClasseExams = ({infoData, academicYear, resourceYear}: InfoPageProp
         <>
            <AssignmentView
                assignExams={assignments}
-               bestScores={scoredData}
+               scoreStats={scoredData}
                tabViews={[{
                    key: 'exam-list',
                    label: 'Examens',
@@ -30,12 +31,14 @@ export const ClasseExams = ({infoData, academicYear, resourceYear}: InfoPageProp
                }]}
                name={infoData?.name}
                hasLegend={false}
+               hasPermission={(hasPermission as PermissionType).canViewStudent}
                calendarLimit={{
                    startDate: resourceYear?.startDate,
                    endDate: resourceYear?.endDate
                }}
                showBarChart
                getSubject={setSubject}
+               showOnlyBestTable
            />
         </>
     )

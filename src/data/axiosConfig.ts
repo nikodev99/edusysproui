@@ -46,7 +46,7 @@ apiClient.interceptors.request.use(config => {
     }
 );*/
 
-const request = ({method, url, data, headers, params}: AxiosConfig) => {
+const request = <T extends object>({method, url, data, headers, params}: AxiosConfig): Promise<AxiosResponse<T, unknown>> => {
     return apiClient({
         method: method,
         url: `${baseURL}${url}`,

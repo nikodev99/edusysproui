@@ -1,4 +1,15 @@
-import {Schedule, Grade, Course, ClasseTeacherBoss, ClasseStudentBoss, TeacherClasses, Enrollment, Department} from "@/entity";
+import {
+    Schedule,
+    Grade,
+    Course,
+    ClasseTeacherBoss,
+    ClasseStudentBoss,
+    TeacherClasses,
+    Enrollment,
+    Department,
+    Score
+} from "@/entity";
+import {SectionType} from "@/entity/enums/section.ts";
 
 export interface Classe {
     id: number
@@ -24,4 +35,12 @@ export interface ClasseBossesProps {
     classe?: Classe
     open?: boolean,
     onClose?: () => void
+}
+
+export type ClasseRanking = {
+    classeId: number,
+    classeName: string
+    section?: SectionType | string
+    bestStudentScores: Score[]
+    poorStudentScores: Score[]
 }

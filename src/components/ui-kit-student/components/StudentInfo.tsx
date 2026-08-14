@@ -38,6 +38,7 @@ import {BarChart} from "@/components/graph/BarChart.tsx";
 import {useExamRepo} from "@/hooks/actions/useExamRepo.ts";
 import {LineChart} from "@/components/graph/LineChart.tsx";
 import VoidData from "@/components/view/VoidData.tsx";
+import {CourseTypeEnum} from "@/entity/domain/course.ts";
 
 type StudentInfoProps = InfoPageProps<Enrollment> & {
     readonly?: boolean
@@ -260,14 +261,14 @@ export const ExamInsight = ({infoData, seeMore}: StudentInfoProps) => {
 
 const GraphSection = ({infoData}: StudentInfoProps) => {
 
-    const {personalInfo, marks} = useMemo(() => ({
+    const {personalInfo, stats} = useMemo(() => ({
         personalInfo: infoData?.student?.personalInfo,
-        marks: infoData?.student?.marks,
-    }), [infoData?.student?.marks, infoData?.student?.personalInfo])
+        stats: infoData?.student?.courseTypeStats,
+    }), [infoData?.student?.courseTypeStats, infoData?.student?.personalInfo])
 
-    const graphData = marks?.map((s) => ({
-        subject: s.assignment?.subject?.course,
-        score: s.obtainedMark
+    const graphData = stats?.map((s) => ({
+        subject: CourseTypeEnum[s.courseType],
+        score: s.average
     }))
 
     if (graphData && graphData?.length === 0) {
@@ -280,7 +281,12 @@ const GraphSection = ({infoData}: StudentInfoProps) => {
 
     return (
         <Section title='Cartographie des aptitudes'>
-            <RadarChart data={graphData}  xField='subject' yField='score' color={chooseColor(personalInfo?.firstName as string)} />
+            <RadarChart
+                data={graphData}
+                xField='subject'
+                yField='score'
+                color={chooseColor(personalInfo?.firstName as string)}
+            />
         </Section>
     )
 }
@@ -502,8 +508,9 @@ const CourseSchedule = ({infoData}: StudentInfoProps) => {
             <ScheduleCalendar
                 views={['day']}
                 eventSchedule={schedules}
-                height={300}
+                height={500}
                 hasTeacher
+                toolbar={false}
             />
         </Section>
     )

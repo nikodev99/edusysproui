@@ -28,7 +28,7 @@ export const useScheduleRepo = () => {
     }
 
     const useGetAllCourseSchedule = (courseId: number, byDay: boolean): UseQueryResult<Schedule[], unknown> => {
-        return useFetch(['course-schedule', courseId], getAllCourseSchedule, [courseId, byDay], !!courseId)
+        return useFetch(['course-schedule', courseId, byDay], getAllCourseSchedule, [courseId, byDay], !!courseId)
     }
 
     const useGetCourseHourByClasse = (courseId: number): UseQueryResult<ScheduleHoursBy[], unknown> => {

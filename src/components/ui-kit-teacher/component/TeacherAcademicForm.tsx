@@ -13,11 +13,8 @@ const TeacherAcademicForm = ({onClose, defaultClasses, defaultCourses}: {
 
     const [selectedClasse, setSelectedClasse] = useState<number[]>()
     const [selectedCourse, setSelectedCourse] = useState<number[]>([])
-    const {useGetBasicCourses} = useCourseRepo()
-    const {useGetClasseBasicValues} = useClasseRepo()
-
-    const courses = useGetBasicCourses()
-    const classes = useGetClasseBasicValues()
+    const {courses} = useCourseRepo()
+    const {classes} = useClasseRepo()
 
     const handleClassChange = (value: number[]) => {
         setSelectedClasse(value)

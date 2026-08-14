@@ -16,11 +16,8 @@ export const ReprimandFilters = (
     const [filterItem, setFilterItem] = useState<ReprimandFilterProps>({
         academicYear: academicYear as string
     })
-    const {useGetClasseBasicValues} = useClasseRepo()
+    const {classes} = useClasseRepo()
 
-    const fetchedClasses = useGetClasseBasicValues()
-
-    const classes = useMemo(() => fetchedClasses ?? [], [fetchedClasses])
     const pTypes = enumToObjectArray(PunishmentType)
     const rTypes = enumToObjectArray(ReprimandType)
     const pStatus = enumToObjectArray(PunishmentStatus)

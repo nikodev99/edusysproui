@@ -1,14 +1,14 @@
 import {Filter} from "../common/Filter.tsx";
-import {AssignmentFilterProps} from "../../data/repository/assignmentRepository.ts";
-import {text} from "../../core/utils/text_display.ts";
+import {AssignmentFilterProps} from "@/entity/domain/assignment.ts";
+import {text} from "@/core/utils/text_display.ts";
 import {ItemType} from "antd/es/menu/interface";
 import {useMemo, useState} from "react";
-import {useGradeRepo} from "../../hooks/actions/useGradeRepo.ts";
-import {useCourseRepo} from "../../hooks/actions/useCourseRepo.ts";
+import {useGradeRepo} from "@/hooks/actions/useGradeRepo.ts";
+import {useCourseRepo} from "@/hooks/actions/useCourseRepo.ts";
 //import {useSemesterRepo} from "../../../hooks/useSemesterRepo.ts";
-import {useClasseRepo} from "../../hooks/actions/useClasseRepo.ts";
-import {FilterType, useFilter} from "../../hooks/useFilter.ts";
-import {Options} from "../../core/utils/interfaces.ts";
+import {useClasseRepo} from "@/hooks/actions/useClasseRepo.ts";
+import {FilterType, useFilter} from "@/hooks/useFilter.ts";
+import {Options} from "@/core/utils/interfaces.ts";
 
 export const AssignmentFilter = (
     {academicYear, academicYearOptions, setFilters: emitFilters}: FilterType<AssignmentFilterProps>
@@ -17,18 +17,14 @@ export const AssignmentFilter = (
     //const [semesters, setSemesters] = useState<Semester[]>([])
     const [filterItem, setFilterItem] = useState<AssignmentFilterProps>({academicYearId: academicYear} as AssignmentFilterProps)
     const {useGetAllGrades} = useGradeRepo()
-    const {useGetClasseBasicValues} = useClasseRepo()
-    const {useGetBasicCourses} = useCourseRepo()
+    const {classes} = useClasseRepo()
+    const {courses} = useCourseRepo()
     //const {useGetAllSemesters} = useSemesterRepo()
     
     const fetchedGrades = useGetAllGrades()
-    const fetchedCourses = useGetBasicCourses()
     //const fetchedSemesters = useGetAllSemesters()
-    const fetchedClasses = useGetClasseBasicValues()
 
     const grades = useMemo(() => fetchedGrades ?? [], [fetchedGrades])
-    const classes = useMemo(() => fetchedClasses ?? [], [fetchedClasses])
-    const courses = useMemo(() => fetchedCourses ?? [], [fetchedCourses])
 
     const {makeOnChange, handleUpdateFilters, handleClear, getOptions} = useFilter(setFilterItem, emitFilters)
     

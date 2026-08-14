@@ -1,10 +1,10 @@
-import {useEffect, useLayoutEffect, useMemo, useState} from "react";
+import {useLayoutEffect, useMemo, useState} from "react";
 import {Assignment, Course, Enrollment, Exam, Student} from "@/entity";
 import {Badge, Card, Segmented, TableColumnsType, Tag as AntTag, Typography} from "antd";
 import VoidData from "@/components/view/VoidData.tsx";
 import Responsive from "@/components/ui/layout/Responsive.tsx";
 import Grid from "@/components/ui/layout/Grid.tsx";
-import Datetime from "@/core/datetime.ts";
+import Datetime, {DateFormat} from "@/core/datetime.ts";
 import {Widgets} from "@/components/ui/layout/Widgets.tsx";
 import {getAssignmentBarData} from "@/core/utils/utils.ts";
 import {BarChart} from "@/components/graph/BarChart.tsx";
@@ -12,12 +12,11 @@ import {AssignmentTypeLiteral, typeColors} from "@/entity/enums/assignmentType.t
 import {Table} from "@/components/ui/layout/Table.tsx";
 import {AvatarTitle} from "@/components/ui/layout/AvatarTitle.tsx";
 import {InitMarkType} from "@/core/utils/tsxUtils.tsx";
-import {text} from "@/core/utils/text_display.ts";
-import {redirectTo} from "@/context/RedirectContext.ts";
 import {useRedirect} from "@/hooks/useRedirect.ts";
 import {useExamRepo} from "@/hooks/actions/useExamRepo.ts";
 import {ExamView, NestedExamView, TypedAssignment} from "@/entity/domain/exam.ts";
 import {LineChart} from "@/components/graph/LineChart.tsx";
+import {stringhelper} from "@/core/helpers/StringHelper.ts";
 
 const markAverage = (totalMarks?: number, totalAssignments?: number): number => {
     if (!totalMarks || !totalAssignments) return 0
@@ -30,10 +29,10 @@ const ExamDescription = (
 
     const {Link, Title} = Typography
 
-    const {toViewStudent} = useRedirect()
+    const {toViewStudent, toViewExam} = useRedirect()
     const {useGetExamAssignments, useGetStudentExamProgress} = useExamRepo()
 
-    const {data, isSuccess, isPending, isFetching, isRefetching, isLoading, refetch} = useGetExamAssignments(
+    const {data, isPending, isFetching, isRefetching, isLoading} = useGetExamAssignments(
         examId, classeId, academicYear, uniqueStudent?.student?.id as string,
     )
 
@@ -52,16 +51,11 @@ const ExamDescription = (
     }, [data?.assignments, data?.examView, data?.statistics, uniqueStudent])
 
     const loading = useMemo(() => isPending || isFetching || isRefetching || isLoading, [isFetching, isPending, isRefetching, isLoading])
-    
-    useEffect(() => {
-        if (examId || academicYear || classeId)
-            refetch().then()
-    }, [academicYear, classeId, data, examId, isSuccess, refetch])
 
     const lineData = progress?.map(p => ({
         moyenne: p.average,
         examen: p.examName,
-        date: Datetime.of(p.examDate).format("DD/MM/YYYY")
+        date: Datetime.of(p.examDate).format(DateFormat.DATE_SLASH)
     })) ?? []
     const barData = getAssignmentBarData(assignments)
 
@@ -74,7 +68,7 @@ const ExamDescription = (
             title: 'Designation',
             dataIndex: 'examName',
             width: '30%',
-            render: (value, record) => <Link onClick={() => redirectTo(text.exam.group.view.href + record?.id)}>
+            render: (value, record) => <Link onClick={() => toViewExam(record.id as number)}>
                 {value}
             </Link>
         },
@@ -122,7 +116,7 @@ const ExamDescription = (
             render: (text: TypedAssignment[]) => {
                 const match = text?.find(a => a.type === type)
                 return match ? <Title level={4}>
-                    {match.average?.toFixed(2)} <Badge color={match?.average >= 14 ? 'green' : match?.average >= 10 ? 'gold' : 'red' } />
+                    {stringhelper.formatAvg(match.average)} <Badge color={match?.average >= 14 ? 'green' : match?.average >= 10 ? 'gold' : 'red' } />
                 </Title> : '-'
             }
         })): []),
@@ -137,7 +131,7 @@ const ExamDescription = (
             render: (text: number) => {
                 return <div>
                     {text ? <Title level={4}>
-                        {text?.toFixed(2)} <Badge color={text >= 14 ? 'green' : text >= 10 ? 'gold' : 'red' } />
+                        {stringhelper.formatAvg(text)} <Badge color={text >= 14 ? 'green' : text >= 10 ? 'gold' : 'red' } />
                     </Title> : '-'}
                 </div>
             }
@@ -194,7 +188,12 @@ const ExamDescription = (
                     const ass = text?.filter(a => a.type === type);
                     const mark = ass[index]?.marks?.[0]?.obtainedMark
                     const coefficient = ass[index]?.coefficient || 1
-                    return (mark || mark === 0) ? (mark * coefficient) : "-";
+                    const obtainedNote = stringhelper.formatAvg((mark ?? 0) * coefficient)
+                    return (mark || mark === 0)
+                        ? coefficient > 1
+                            ? <Badge size='small' count={coefficient}>{obtainedNote}</Badge>
+                            : obtainedNote
+                        : "-";
                 },
             }))
         })): []),
@@ -203,7 +202,7 @@ const ExamDescription = (
             dataIndex: 'subjectAverage',
             key: 'subject-averages',
             align: 'center',
-            render: (subjectAverage: number) => subjectAverage ? subjectAverage.toFixed(2) : '-'
+            render: (subjectAverage: number) => subjectAverage ? stringhelper.formatAvg(subjectAverage) : '-'
         }
     ]
 

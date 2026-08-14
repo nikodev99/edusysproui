@@ -976,7 +976,7 @@ export const getUniqueness = <T, K>(
             }
             return map;
         }, new Map<ID, K>()).values()
-    ) : undefined;
+    ) : [];
 }
 
 export const collectErrorMessages = (errors?: FieldError | Record<string, unknown>): string[] => {

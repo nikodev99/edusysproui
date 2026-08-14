@@ -1,43 +1,45 @@
-import {GenderCounted, InfoPageProps, ScheduleHoursBy} from "../../../core/utils/interfaces.ts";
-import {Classe, Course, Department, Schedule, Score, Teacher} from "../../../entity";
-import Block from "../../view/Block.tsx";
-import {ReactNode, useEffect, useMemo, useRef, useState} from "react";
-import {DepartmentDesc} from "../../common/DepartmentDesc.tsx";
-import Section from "../../ui/layout/Section.tsx";
-import {SuperWord} from "../../../core/utils/tsxUtils.tsx";
-import {findPercent, getUniqueness, setFirstName, setName, sumInArray} from "../../../core/utils/utils.ts";
-import PanelStat from "../../ui/layout/PanelStat.tsx";
+import {GenderCounted, InfoPageProps, ScheduleHoursBy} from "@/core/utils/interfaces.ts";
+import {Classe, Course, Department, GradeRankingStudent, Schedule, Score, Teacher} from "@/entity";
+import Block from "@/components/view/Block.tsx";
+import {ReactNode, useEffect, useMemo, useState} from "react";
+import {DepartmentDesc} from "@/components/common/DepartmentDesc.tsx";
+import Section from "@/components/ui/layout/Section.tsx";
+import {SuperWord} from "@/core/utils/tsxUtils.tsx";
+import {cutStatement, findPercent, getUniqueness, setName, sumInArray} from "@/core/utils/utils.ts";
+import PanelStat from "@/components/ui/layout/PanelStat.tsx";
 import {Progress, TableColumnsType} from "antd";
-import {useClasse} from "../../../hooks/useClasse.tsx";
-import {text} from "../../../core/utils/text_display.ts";
-import {TeacherList} from "../../common/TeacherList.tsx";
-import {useScheduleRepo} from "../../../hooks/actions/useScheduleRepo.ts";
-import Datetime from "../../../core/datetime.ts";
-import {ScheduleCalendar} from "../../ui-kit-schedule/components/ScheduleCalendar.tsx";
-import {ShapePieChart} from "../../graph/ShapePieChart.tsx";
-import {Table} from "../../ui/layout/Table.tsx";
-import {useScoreRepo} from "../../../hooks/actions/useScoreRepo.ts";
-import {BestScoredTable} from "../../common/BestScoredTable.tsx";
-import {AiOutlineArrowDown} from "react-icons/ai";
-import {useStudentRepo} from "../../../hooks/actions/useStudentRepo.ts";
-import {Gender} from "../../../entity/enums/gender.tsx";
-import PanelTable from "../../ui/layout/PanelTable.tsx";
-import {useTeacherRepo} from "../../../hooks/actions/useTeacherRepo.ts";
-import {MarksHistogram} from "../../common/MarksHistogram.tsx";
+import {text} from "@/core/utils/text_display.ts";
+import {TeacherList} from "@/components/common/TeacherList.tsx";
+import {useScheduleRepo} from "@/hooks/actions/useScheduleRepo.ts";
+import Datetime from "@/core/datetime.ts";
+import {ScheduleCalendar} from "@/components/ui-kit-schedule/components/ScheduleCalendar.tsx";
+import {ShapePieChart} from "@/components/graph/ShapePieChart.tsx";
+import {Table} from "@/components/ui/layout/Table.tsx";
+import {useScoreRepo} from "@/hooks/actions/useScoreRepo.ts";
+import {useStudentRepo} from "@/hooks/actions/useStudentRepo.ts";
+import {Gender} from "@/entity/enums/gender.tsx";
+import PanelTable from "@/components/ui/layout/PanelTable.tsx";
+import {useTeacherRepo} from "@/hooks/actions/useTeacherRepo.ts";
+import {MarksHistogram} from "@/components/common/MarksHistogram.tsx";
+import {useClasseRepo} from "@/hooks/actions/useClasseRepo.ts";
+import {stringhelper} from "@/core/helpers/StringHelper.ts";
+import {SectionType} from "@/entity/enums/section.ts";
+import {SingleBestStudentList} from "@/components/common/BestStudentList.tsx";
+import {PermissionType} from "@/pages/classe_subject/ClasseViewPage.tsx";
 
-type CourseInfoType = InfoPageProps<Course> & {
+type CourseInfoType = InfoPageProps<Course, PermissionType> & {
     classes?: Classe[]
     teachers?: Teacher[]
     academicYear?: string
     hours?: ScheduleHoursBy[]
     marks?: {scores: Score[], isLoading: boolean}
     meanMark?: number
+    setPlural?: (value: string, count?: number) => string
 }
 
 const CourseInfoData = ({infoData, color, classes, academicYear}: CourseInfoType) => {
     const [studentCount, setStudentCount] = useState<GenderCounted>()
-    const totalClasses = useRef<number>(0)
-    const {classeCount} = useClasse()
+    const {countClasses} = useClasseRepo()
 
     const {useCountStudent, useCountSomeClasseStudents} = useStudentRepo()
 
@@ -50,12 +52,12 @@ const CourseInfoData = ({infoData, color, classes, academicYear}: CourseInfoType
     const {data, isSuccess} = useCountSomeClasseStudents(classeIds as [], academicYear ?? '')
 
     const studentConcerned = findPercent(studentCount?.total as number, allStudents?.total as number)
+    const genderTitle = (s: Gender) => s === Gender.FEMME ? 'Filles' : 'Garçons'
+    const totalClasses = classes && classes.length ? classes.length : 0
 
     useEffect(() => {
         if (isSuccess)
             setStudentCount(data as GenderCounted)
-        
-        totalClasses.current = classes && classes.length ? classes.length : 0
         
     }, [classes, data, isSuccess]);
 
@@ -66,28 +68,28 @@ const CourseInfoData = ({infoData, color, classes, academicYear}: CourseInfoType
                     <PanelStat
                         key={i}
                         title={g.count}
-                        subTitle={`${text.student.label}${g.gender === Gender.FEMME ? 'e' : ''}s `}
+                        subTitle={genderTitle(g.gender)}
                         round={<Progress percent={findPercent(g.count, studentCount.total) as number} type='circle' size={35} strokeColor={color} />}
                         desc={`Concerné${g.gender === Gender.FEMME ? 'e' : ''}s`}
                     />
                 ))}
-                <PanelStat
-                    title={totalClasses.current}
-                    subTitle={`Classe${totalClasses.current > 1 ? 's' : ''}`}
-                    round={<Progress percent={findPercent(totalClasses.current, classeCount) as number} type='circle' size={35} strokeColor={color} />}
+                {totalClasses && <PanelStat
+                    title={totalClasses}
+                    subTitle={`Classe${totalClasses > 1 ? 's' : ''}`}
+                    round={<Progress percent={findPercent(totalClasses, countClasses) as number} type='circle' size={35} strokeColor={color} />}
                     desc='Concernés'
-                />
+                />}
             </div>
             <div className='panel'>
-                <PanelStat
+                {studentConcerned && <PanelStat
                     title={`${studentConcerned ?? 0}%`}
                     subTitle={text.student.label + 's'}
                     round={<Progress percent={studentConcerned as number} type='dashboard' size={35} strokeColor={color} />}
                     desc='Concernés'
-                />
+                />}
                 {studentCount?.genders && studentCount?.genders.length > 0 && studentCount?.genders?.map(s => (<PanelStat
                     title={s?.ageAverage?.toFixed(1)}
-                    subTitle={s.gender === Gender.FEMME ? 'Filles' : 'Garçons'}
+                    subTitle={genderTitle(s?.gender as Gender)}
                     round={<Progress percent={findPercent(s?.ageAverage as number, maxAge) as number} type='dashboard' size={35} strokeColor={color} />}
                     desc='Age Moyen'
                 />))}
@@ -99,21 +101,26 @@ const CourseInfoData = ({infoData, color, classes, academicYear}: CourseInfoType
 const CourseDepartment = ({infoData, color}: CourseInfoType) => {
     const {department} = infoData
     return (
-        <DepartmentDesc department={department as Department} color={color} />
+        <DepartmentDesc
+            department={department as Department}
+            color={color}
+        />
     )
 }
 
-const CourseTeachers = ({teachers, infoData, color, meanMark, hours}: CourseInfoType) => {
+const CourseTeachers = ({teachers, infoData, color, meanMark, hours, setPlural, hasPermission}: CourseInfoType) => {
     const {useCountAllTeachers} = useTeacherRepo()
     const countTeachers = useCountAllTeachers()
     const totalWeekHour = sumInArray(hours?? [], 'totalHours')
 
+    const teacherTitle = setPlural?.(text.teacher.label, teachers?.length)
+
     return (
-        <Section title={text.teacher.label + 's assignés'}>
+        <Section title={teacherTitle + ' assignés'}>
             <div className='panel'>
                 <PanelStat
                     title={teachers?.length}
-                    subTitle={text.teacher.label + 's'}
+                    subTitle={teacherTitle}
                     round={<Progress percent={findPercent(teachers?.length as number, countTeachers?.total as number) as number} type='circle' size={35} strokeColor={color} />}
                     desc={`Assignés`}
                 />
@@ -121,7 +128,7 @@ const CourseTeachers = ({teachers, infoData, color, meanMark, hours}: CourseInfo
                     title={meanMark?.toFixed(1)}
                     subTitle={'Note'}
                     round={<Progress percent={findPercent(meanMark as number, 20) as number} type='circle' size={35} strokeColor={color} />}
-                    desc='Moyen'
+                    desc='Moyenne'
                 />
                 <PanelStat
                     title={totalWeekHour}
@@ -137,6 +144,7 @@ const CourseTeachers = ({teachers, infoData, color, meanMark, hours}: CourseInfo
                     response: <TeacherList
                         teachers={teachers}
                         showCourse={true}
+                        hasPermission={(hasPermission as PermissionType).canViewTeacher}
                     />
                 }]}/>
             </div>
@@ -167,9 +175,10 @@ const CourseSchedule = ({infoData, color, seeMore}: CourseInfoType) => {
                 eventSchedule={courseSchedules}
                 hasTeacher={true}
                 views={['day']}
-                height={380}
+                height={500}
                 color={color}
                 isLoading={isLoading}
+                toolbar={false}
                 eventTitle={e => `${e?.classe?.name} * ${e?.course?.course} * ${setName(e.teacher?.personalInfo)}`}
             />
         </Section>
@@ -244,36 +253,7 @@ const CourseHoursByTeacher = ({hours, color}: CourseInfoType) => {
     )
 }
 
-const CourseBestStudents = ({infoData, color, academicYear}: CourseInfoType) => {
-    const {useGetCourseBestStudents} = useScoreRepo()
-    const bestStudents = useGetCourseBestStudents(infoData?.id as number, academicYear as string)
-    return (
-        <Section title={setFirstName(`Meilleurs ${text.student.label}s en ${infoData?.course}`)}>
-            <BestScoredTable
-                providedData={bestStudents}
-                color={color}
-            />
-        </Section>
-    )
-}
-
-const CoursePoorStudents = ({infoData, color, academicYear}: CourseInfoType) => {
-    const {useGetCoursePoorStudents} = useScoreRepo()
-    const poorStudents = useGetCoursePoorStudents(infoData?.id as number, academicYear as string)
-    return (
-        <Section title={setFirstName(`Mauvais ${text.student.label}s en ${infoData?.course}`)}>
-            <BestScoredTable
-                providedData={poorStudents}
-                color={color}
-                icon={<AiOutlineArrowDown />}
-                goodToPoor={true}
-            />
-        </Section>
-    )
-}
-
 const CourseMarkHistogram = ({marks, color}: CourseInfoType) => {
-    console.log("Marks: ", marks)
     return(
         <Section title='Distribution des Notes'>
             <MarksHistogram
@@ -286,16 +266,23 @@ const CourseMarkHistogram = ({marks, color}: CourseInfoType) => {
 }
 
 export const CourseInfo = (courseType: CourseInfoType) => {
-    const {infoData, teachers} = courseType
+    const {infoData, teachers, academicYear, color, hasPermission} = courseType
     const [courseHour, setCourseHour] = useState<ScheduleHoursBy[]>([])
     const [scores, setScores] = useState<Score[]>([])
     const {useGetCourseHourByTeacher} = useScheduleRepo()
-    const {useGetAllTeacherMarks} = useScoreRepo()
+    const {useGetAllTeacherMarks, useGetCourseBestStudents} = useScoreRepo()
+    const bestStudents = useGetCourseBestStudents(infoData?.id as number, academicYear as string)
     
     const teacherIds = teachers?.length ? teachers.map(t => t.personalInfo.id) : []
 
     const {data, isSuccess} = useGetCourseHourByTeacher(infoData?.id as number)
     const {data: fetchedScores, isLoading, isSuccess: isFetched} = useGetAllTeacherMarks(teacherIds as [])
+
+    const sectionTitles = {
+        sectionTitle: (s: GradeRankingStudent) => `Performance des apprenants de ${SectionType[s.section as keyof SectionType]} en ${cutStatement(infoData?.course as string, 15, infoData?.abbr)}`,
+        bestTableTitle: `Meilleurs apprenants`,
+        poorTableTitle: `apprenants en difficulté`
+    }
 
     useEffect(() => {
         if (isFetched)
@@ -306,16 +293,26 @@ export const CourseInfo = (courseType: CourseInfoType) => {
     }, [data, fetchedScores, isFetched, isSuccess])
 
     const meanMark = scores?.length ? (sumInArray(scores, 'obtainedMark')/scores?.length) : 0
+    const handlePlural = (word: string, count?: number) => {
+        return stringhelper.setPlural({word: word, count: count ?? undefined})
+    }
 
     const coursesComponents: ReactNode[] = [
-        <CourseInfoData {...courseType} />,
+        <CourseInfoData {...courseType} setPlural={handlePlural} />,
         <CourseDepartment {...courseType} />,
-        <CourseTeachers {...courseType} meanMark={meanMark} hours={courseHour} />,
+        <CourseTeachers {...courseType} meanMark={meanMark} hours={courseHour} setPlural={handlePlural} />,
         <CourseSchedule {...courseType} />,
         <CourseHoursByClasse {...courseType} hours={courseHour} />,
         <CourseHoursByTeacher {...courseType} hours={courseHour} />,
-        <CourseBestStudents {...courseType} />,
-        <CoursePoorStudents {...courseType} />,
+        ...((bestStudents && bestStudents.length > 0) ? bestStudents.map((s, i) => (
+            <SingleBestStudentList
+                key={`${s.section}-${i}`}
+                bestStudents={s}
+                sectionTitles={sectionTitles}
+                color={color}
+                hasPermission={(hasPermission as PermissionType).canViewStudent}
+            />
+        )): []),
         <CourseMarkHistogram {...courseType} marks={{scores: scores, isLoading: isLoading}} />
     ]
 

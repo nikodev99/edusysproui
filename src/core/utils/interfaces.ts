@@ -406,7 +406,9 @@ export interface SortCriteria<T extends object> {
     sortOrder?: 'asc' | 'desc'
 }
 
-export interface InfoPageProps<T extends object> {
+export type PermissionProps<T extends object> = T
+
+export interface InfoPageProps<T extends object, P extends object = never> {
     infoData: T
     dataKey: string
     seeMore?: (key: string) => void
@@ -415,7 +417,7 @@ export interface InfoPageProps<T extends object> {
     viewLink?: string
     academicYear?: string
     resourceYear?: AcademicYear
-    hasPermission?: boolean
+    hasPermission?: boolean | PermissionProps<P>
     isSelf?: boolean
 }
 
@@ -431,14 +433,15 @@ export type RedirectFunction = (link: string, option?:NavigateOptions) => void;
 export type Moment = Date | number[] | string | number
 export type Color = string
 export type Counted = Record<string, number>
+export type GenderCount = {
+    gender: Gender,
+    count: number,
+    ageAverage: number
+}
 export type GenderCounted = {
     total: number,
     totalAverageAge: number
-    genders: {
-        gender: Gender,
-        count: number,
-        ageAverage: number
-    }[]
+    genders: GenderCount[]
 }
 export type CountType = {classe?: string, count?: number};
 export type AttendanceCount = {status: AttendanceStatus, count: number, classeId?: number}
@@ -613,6 +616,7 @@ export interface SelectEntityProps<
     defaultValue?: EntityID | EntityID[]
     getResource?: (resource: Entity | Entity[]) => void
     style?: CSSProperties
+    when?: {before?: Moment, after?: Moment}
     onChange?: (value?: EntityID | EntityID[] | null) => void
 }
 

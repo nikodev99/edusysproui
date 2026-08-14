@@ -53,7 +53,7 @@ export const useAcademicYearRepo = () => {
             ['academic-year-list', schoolId],
             getAllAcademicYears,
             [schoolId],
-            options?.enable ? options?.enable && !!schoolId : !!schoolId,
+            options?.enable !== undefined ? options?.enable && !!schoolId : !!schoolId,
         )
 
         if(options?.shouldRefetch)

@@ -1,11 +1,11 @@
 import {cloneElement, isValidElement, ReactNode, useEffect, useMemo, useState} from "react";
-import {Assignment, Classe, Course, Score} from "@/entity";
+import {Assignment, Classe, ClasseRanking, Course, GradeRankingStudent} from "@/entity";
 import TabItem from "../view/TabItem.tsx";
 import {SuperWord} from "../../core/utils/tsxUtils.tsx";
 import {Select} from "antd";
 import {AssignmentDesc} from "./AssignmentDesc.tsx";
 import {UseQueryResult} from "@tanstack/react-query";
-import {isString} from "@/core/utils/utils.ts";
+import {cutStatement, isString} from "@/core/utils/utils.ts";
 import {Moment} from "@/core/utils/interfaces.ts";
 
 interface AssignmentViewProps {
@@ -13,7 +13,7 @@ interface AssignmentViewProps {
     getSubject?: (id: number) => void
     classeId?: number
     getClasse?: (id: number) => void
-    bestScores?: Score[]
+    scoreStats?: GradeRankingStudent[] | ClasseRanking[]
     academicYear?: string | number
     tabViews?: { key: string; label: ReactNode, children?: ReactNode }[]
     selects?: ReactNode[]
@@ -26,21 +26,22 @@ interface AssignmentViewProps {
     classes?: Classe[]
     studentId?: string
     disableSelect?: boolean
+    hasPermission?: boolean
     label?: string
     calendarLimit?: {
         startDate?: Moment
         endDate?: Moment
     }
+    showOnlyBestTable?: boolean
 }
 
 const AssignmentView = (
     {
-        assignExams, bestScores, tabViews, title, name, showBarChart, hasLegend, showBest = true, getSubject,
-        getClasse, courses, classes, selects, studentId, disableSelect, label = 'Evaluation', calendarLimit
+        assignExams, scoreStats, tabViews, title, name, showBarChart, hasLegend, showBest = true, getSubject, hasPermission,
+        getClasse, courses, classes, selects, studentId, disableSelect, label = 'Evaluation', calendarLimit, showOnlyBestTable
     }: AssignmentViewProps
 ) => {
     const [assignments, setAssignments] = useState<Assignment[] | null>(null)
-    const [allSubjects, setAllSubjects] = useState<{value: number | undefined, label: string | undefined}[] | null>(null)
     const [subjectValue, setSubjectValue] = useState<number>(courses && courses?.length > 0 ? courses[0].id as number : 0)
     const [selectedSubject, setSelectedSubject] = useState<string | null>(null)
     const [selectedClasse, setSelectedClasse] = useState<string | null>(null)
@@ -77,32 +78,33 @@ const AssignmentView = (
         return isFetching || isRefetching || isFetchLoading || isPending
     }, [isFetchLoading, isFetching, isPending, isRefetching]);
     
-    const bestStudent = useMemo(() => bestScores && bestScores?.length > 0 ? bestScores : null, [bestScores])
+    const bestStudent = useMemo(() => scoreStats && scoreStats?.length > 0 ? scoreStats : null, [scoreStats])
 
     const disabledSelect = useMemo(() => 
             selectedTabKey === 'exam-list' || 
             (disableSelect && selectedTabKey === 'assignment-list'), 
         [disableSelect, selectedTabKey]
     )
+    
+    const allSubjects = useMemo(() => {
+            if (!courseExists) {
+                const seen = new Map<number | undefined, string | undefined>()
+                seen.set(0, "Tous");
+
+                (assignments as Assignment[])?.forEach(a => {
+                    if (!seen.has(a?.subject?.id)) {
+                        seen.set(a?.subject?.id, cutStatement(a?.subject?.course as string, 15, a.subject?.abbr))
+                    }
+                });
+
+                return Array.from(seen.entries()).map(([value, label]) => ({value, label}))
+            }
+            return []
+    }, [assignments, courseExists])
 
     useEffect(() => {
         if (isSuccess) {
             setAssignments(data as Assignment[])
-            setAllSubjects((prevSubjects) => {
-                if (!courseExists) {
-                    const seen = new Map<number | undefined, string | undefined>(prevSubjects?.map(s => [s.value, s.label]))
-                    seen.set(0, "Tous");
-
-                    (data as Assignment[])?.forEach(a => {
-                        if (!seen.has(a?.subject?.id)) {
-                            seen.set(a?.subject?.id, a?.subject?.course)
-                        }
-                    });
-
-                    return Array.from(seen.entries()).map(([value, label]) => ({value, label}))
-                }
-                return prevSubjects
-            })
         }
 
     }, [courseExists, data, isSuccess]);
@@ -135,6 +137,7 @@ const AssignmentView = (
                 title={isString(title) ? <SuperWord input={title} /> : title}
                 selects={[
                     ...((allSubjects && allSubjects?.length > 0) || (subjects && subjects?.length > 0) ? [(<Select
+                        style={{width: 150}}
                         key='select-subject'
                         className='select-control'
                         defaultValue={subjectValue}
@@ -144,6 +147,7 @@ const AssignmentView = (
                         disabled={!disabledSelect ? !!(disableSelect && disabledSelect) : disabledSelect}
                     />)]: []),
                     ...(classes && classes?.length > 0 ? [(<Select
+                        style={{width: 150}}
                         key='select-classe'
                         className='select-control'
                         defaultValue={classeValue}
@@ -161,19 +165,19 @@ const AssignmentView = (
                         label: label,
                         children: <AssignmentDesc
                             assignments={assignments}
-                            listTitle={<SuperWord
-                                input={`Les meilleurs apprenants ${
-                                    subjectValue !== 0 ? `en ${selectedSubject}` : ` de ${selectedClasse ?? name}`
-                                }`}
-                            />}
+                            listTitle={`Les meilleurs apprenants ${
+                                    subjectValue !== 0 ? `en ${selectedSubject ?? name}` : ` de ${selectedClasse ?? name}`
+                            }`}
                             setRefetch={handleConfirmation}
                             showBarChart={showBarChart}
                             barLayout={subjectValue ? 'horizontal' : 'vertical'}
                             hasLegend={hasLegend}
-                            studentAllScore={bestStudent}
+                            hasPermission={hasPermission}
+                            studentAllScores={bestStudent}
                             isLoading={isLoading}
                             scoreLoading={loading}
                             showBest={showBest}
+                            showOnlyBestTable={showOnlyBestTable}
                             onlyMark={studentId}
                             calendarLimit={calendarLimit}
                         />

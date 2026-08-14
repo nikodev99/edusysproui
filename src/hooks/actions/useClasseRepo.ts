@@ -87,11 +87,16 @@ export const useClasseRepo = (context: UserPermission = UserPermission.ALL) => {
         mutationFn: async ({courseId}: {courseId: number}) => await updatePrincipalCourse(classeId, courseId),
     })
 
+    const classes = useGetClasseBasicValues()
+    const countClasses = classes?.length ?? 0
+
     return {
         useGetPaginated,
         useGetClasse,
         useGetClasseBasicValues,
-        useUpdateClasseCourse
+        useUpdateClasseCourse,
+        classes,
+        countClasses
     }
 }
 

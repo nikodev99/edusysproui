@@ -1,13 +1,14 @@
-import {Score} from "@/entity";
+import {Score, Student} from "@/entity";
 import {Badge, List, Skeleton, TableColumnsType, TablePaginationConfig, Tag, Typography} from "antd";
 import {Avatar} from "./Avatar.tsx";
-import {setFirstName} from "@/core/utils/utils.ts";
+import {MAIN_COLOR, setFirstName} from "@/core/utils/utils.ts";
 import {AutoScrollList} from "./AutoScrollList.tsx";
 import {AvatarTitle} from "./AvatarTitle.tsx";
-import {text} from "@/core/utils/text_display.ts";
 import {AutoScrollTable} from "./AutoScrollTable.tsx";
 import {Table} from "./Table.tsx";
 import {useCallback, useMemo} from "react";
+import {stringhelper} from "@/core/helpers/StringHelper.ts";
+import {useRedirect} from "@/hooks/useRedirect.ts";
 
 interface ScoreItemProps {
     scores: Score[];
@@ -18,13 +19,20 @@ interface ScoreItemProps {
     infinite?: boolean
     height?: number
     isTable?: boolean
+    showBestTable?: boolean
     customHeaders?: TableColumnsType<Score>
     hasPagination?: TablePaginationConfig | false
+    hasPermission?: boolean
 }
 
 const ScoreItem = (
-    {scores, isLoading, scoreSize, allScores, onLoadMore, infinite = true, height, isTable, customHeaders = undefined, hasPagination = false}: ScoreItemProps
+    {
+        scores, isLoading, scoreSize, allScores, onLoadMore, infinite = true, height, isTable, customHeaders = undefined,
+        hasPagination = false, showBestTable = false, hasPermission = false
+    }: ScoreItemProps
 ) => {
+
+    const {toViewStudent} = useRedirect()
 
     const sortedScores = useMemo(() => scores && scores?.length > 0 ?
             [...scores]?.sort((a, b) => b.obtainedMark - a.obtainedMark) : []
@@ -32,19 +40,17 @@ const ScoreItem = (
 
     const load = useCallback(() => onLoadMore?.(), [onLoadMore])
 
-    console.log("SCORES: ", sortedScores)
-
     const columns: TableColumnsType<Score> = customHeaders ?? [
         {
             title: 'Noms & Prénoms',
             dataIndex: 'student',
-            render: student => <AvatarTitle
+            render: (student: Student) => <AvatarTitle
                 firstName={student?.personalInfo?.firstName}
                 lastName={student?.personalInfo?.lastName}
-                reference={student?.reference}
+                reference={student?.personalInfo?.reference}
                 image={student?.personalInfo?.image}
-                link={text.student.group.view.href + student.id}
-                size={30}
+                toView={hasPermission ? () => toViewStudent(student?.id, student.personalInfo) : undefined}
+                size={35}
             />
         },
         {
@@ -52,19 +58,47 @@ const ScoreItem = (
             dataIndex: ['assignment', 'classe'],
             key: 'classe',
             align: 'center',
-            render: classe => <Tag color={'#1d2e28'}>{classe?.name}</Tag>
+            render: classe => <Tag color={MAIN_COLOR}>{classe?.name}</Tag>
+        },
+        ...(showBestTable ? [{
+            title: 'n',
+            dataIndex: 'assignmentCount',
+            key: 'assignmentCount',
+            align: "right",
+            render: (text: number) => text
         },
         {
-            title: 'Notes cumulés',
+            title: 'Moyenne Total',
             dataIndex: 'obtainedMark',
             key: 'obtainedMark',
             align: "right",
             render: (text: number) => <Typography.Title level={4}>
-                {text}
+                {stringhelper.formatAvg(text)}
+            </Typography.Title>
+        },
+        {
+            title: 'Moyenne Bayésienne',
+            dataIndex: 'shrinkMark',
+            key: 'shrinkMark',
+            align: "right",
+            render: (text: number) => <Typography.Title level={4}>
+                {stringhelper.formatAvg(text)}
                 <Badge color={text >= 15 ? 'green' : text >= 10 ? 'gold' : 'red' } />
             </Typography.Title>
-        }
-    ]
+        }]: [
+            {
+                title: 'Moyenne Total',
+                dataIndex: 'obtainedMark',
+                key: 'obtainedMark',
+                align: "right",
+                render: (text: number) => <Typography.Title level={4}>
+                    {stringhelper.formatAvg(text)}
+                    <Badge color={text >= 15 ? 'green' : text >= 10 ? 'gold' : 'red' } />
+                </Typography.Title>
+            }
+        ]),
+
+    ] as TableColumnsType<Score>
 
     return(
         <>
@@ -72,7 +106,7 @@ const ScoreItem = (
             <AutoScrollTable
                 tableProps={{
                     columns: columns,
-                    dataSource: sortedScores,
+                    dataSource: scores,
                     pagination: hasPagination,
                     className: 'score-table',
                     size: 'small',
@@ -90,7 +124,7 @@ const ScoreItem = (
             <Table
                 tableProps={{
                     columns: columns,
-                    dataSource: sortedScores,
+                    dataSource: scores,
                     pagination: hasPagination,
                     className: 'score-table',
                     loading: isLoading,

@@ -1,14 +1,14 @@
 import {create, StoreApi, UseBoundStore} from "zustand";
 import {combine} from "zustand/middleware";
-import {fetchFunc} from "../../hooks/useFetch.ts";
-import {getDepartmentBasics} from "../../data/repository/departmentRepository.ts";
-import {AcademicYear, Classe, Department, School} from "../../entity";
-import {getAcademicYearFromYear, getCurrentAcademicYear} from "../../data/repository/academicYearRepository.ts";
-import {getClassesBasicValues} from "../../data/repository/classeRepository.ts";
-import {countStudent} from "../../data/repository/studentRepository.ts";
+import {fetchFunc} from "@/hooks/useFetch.ts";
+import {getDepartmentBasics} from "@/data/repository/departmentRepository.ts";
+import {AcademicYear, Classe, Department, School} from "@/entity";
+import {getAcademicYearFromYear, getCurrentAcademicYear} from "@/data/repository/academicYearRepository.ts";
+import {getClassesBasicValues} from "@/data/repository/classeRepository.ts";
+import {countStudent} from "@/data/repository/studentRepository.ts";
 import {GenderCounted} from "../utils/interfaces.ts";
-import {countAllTeachers} from "../../data/repository/teacherRepository.ts";
-import {loggedUser} from "../../auth/jwt/LoggedUser.ts";
+import {countAllTeachers} from "@/data/repository/teacherRepository.ts";
+import {loggedUser} from "@/auth/jwt/LoggedUser.ts";
 
 type WithSelectors<S> = S extends { getState: () => infer T }
     ? S & { use: { [K in keyof T]: () => T[K] } }

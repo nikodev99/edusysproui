@@ -1,21 +1,33 @@
-import {redirectTo} from "../../../context/RedirectContext.ts";
-import {text} from "../../../core/utils/text_display.ts";
+import {text} from "@/core/utils/text_display.ts";
 import {LuEye} from "react-icons/lu";
 import {TableColumnsType, Tag} from "antd";
-import {Course} from "../../../entity";
-import {ActionButton} from "../../ui/layout/ActionButton.tsx";
-import ListViewer from "../../custom/ListViewer.tsx";
-import {getAllCoursesSearch} from "../../../data/repository/courseRepository.ts";
-import {getAllSchoolCourses} from "../../../data/action/courseAction.ts";
+import {Course} from "@/entity";
+import ListViewer from "@/components/custom/ListViewer.tsx";
 import {AxiosResponse} from "axios";
-import {DataProps} from "../../../core/utils/interfaces.ts";
-import {AiOutlineEllipsis} from "react-icons/ai";
-import {fDatetime} from "../../../core/utils/utils.ts";
+import {DataProps} from "@/core/utils/interfaces.ts";
+import {fDatetime} from "@/core/utils/utils.ts";
+import {useCourseRepo} from "@/hooks/actions/useCourseRepo.ts";
+import {usePermission} from "@/hooks/usePermission.ts";
+import {useMemo} from "react";
+import {UserPermission} from "@/core/shared/sharedEnums.ts";
+import {useRedirect} from "@/hooks/useRedirect.ts";
+import {CourseType, CourseTypeEnum} from "@/entity/domain/course.ts";
 
 export const CourseList = ({condition}: {condition?: boolean}) => {
+    const {toViewCourse} = useRedirect()
+    const {canViewAll, canViewSome} = usePermission()
+
+    const context = useMemo(() => {
+        if (canViewAll) return UserPermission.ALL
+        if (canViewSome) return UserPermission.TEACHER
+        return UserPermission.NONE
+    }, [canViewAll, canViewSome])
+
+    const {useGetPaginated} = useCourseRepo(context)
+    const { getPaginatedCourses, getSearchedCourses } = useGetPaginated()
 
     const throughDetails = (link: string | number) => {
-        redirectTo(`${text.cc.group.course.view.href}${link}`)
+        toViewCourse(link as number)
     }
 
     const getItems = (url: string) => {
@@ -23,11 +35,10 @@ export const CourseList = ({condition}: {condition?: boolean}) => {
             return [
                 {
                     key: `details-${url}`,
-                    icon: <LuEye size={20}/>,
+                    icon: <LuEye />,
                     label: text.cc.group.course.view.label,
                     onClick: () => throughDetails(url)
                 },
-                {key: `delete-${url}`, label: 'Delete', danger: true}
             ]
         return []
     }
@@ -61,13 +72,13 @@ export const CourseList = ({condition}: {condition?: boolean}) => {
             showSorterTooltip: false,
         },
         {
-            title: "Discipline",
-            dataIndex: ['department', 'code'],
+            title: "Type",
+            dataIndex: 'courseType',
             key: 'code',
             align: 'center',
             sorter: true,
             showSorterTooltip: false,
-            render: text => <Tag color='cyan'>{text}</Tag>
+            render: (type: CourseType) => <Tag color='cyan'>{CourseTypeEnum[type]}</Tag>
         },
         {
             title: "Date d'ajout",
@@ -77,14 +88,6 @@ export const CourseList = ({condition}: {condition?: boolean}) => {
             sorter: true,
             showSorterTooltip: false,
             render: text => fDatetime(text, true)
-        },
-        {
-            title: <AiOutlineEllipsis />,
-            dataIndex: 'id',
-            key: 'action',
-            align: 'right',
-            width: '10%',
-            render: (text) => (<ActionButton items={getItems(text)}/>)
         }
     ];
 
@@ -100,8 +103,8 @@ export const CourseList = ({condition}: {condition?: boolean}) => {
 
     return(
         <ListViewer
-            callback={getAllSchoolCourses as () => Promise<AxiosResponse<Course[]>>}
-            searchCallback={getAllCoursesSearch as (input: unknown) => Promise<AxiosResponse<Course[]>>}
+            callback={getPaginatedCourses as () => Promise<AxiosResponse<Course[]>>}
+            searchCallback={getSearchedCourses as (input: unknown) => Promise<AxiosResponse<Course[]>>}
             tableColumns={columns}
             cardData={toCardData}
             dropdownItems={(url?: string) =>getItems(url as string)}
@@ -113,6 +116,7 @@ export const CourseList = ({condition}: {condition?: boolean}) => {
             localStorage={{
                 activeIcon: 'courseActiveIcon'
             }}
+            onRowRedirect={record => throughDetails(record?.id as number)}
             refetchCondition={condition}
             descMargin={{size: '10px 0'}}
         />

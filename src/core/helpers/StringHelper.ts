@@ -1,3 +1,5 @@
+import {FormatAvgOptions} from "@/components/header/types.ts";
+
 type PluralOptions = {
     word?: string;
     allWords?: boolean;
@@ -42,6 +44,46 @@ export class StringHelper {
                 /^[A-Za-zÀ-ÖØ-öø-ÿ0-9]+$/.test(part) ? resolve(part) : part
             )
             .join('');
+    }
+
+    formatAvg(
+        avg: number | null | undefined,
+        options: FormatAvgOptions = {}
+    ): string {
+        const {
+            decimals = 2,
+            fallback = 'N/A',
+            locale,
+            prefix = '',
+            suffix = '',
+            trimTrailingZeros = false,
+        } = options;
+
+        // 1. Guard against null, undefined, NaN, and Infinity (e.g., 0 / 0)
+        if (avg === null || avg === undefined || !Number.isFinite(avg)) {
+            return fallback;
+        }
+
+        // 2. Format with locale support or standard fixed decimals
+        let formattedNumber: string;
+
+        if (locale) {
+            formattedNumber = new Intl.NumberFormat(locale, {
+                minimumFractionDigits: trimTrailingZeros ? 0 : decimals,
+                maximumFractionDigits: decimals,
+            }).format(avg);
+        } else {
+            // Avoid floating point rounding bugs (e.g., 1.005.toFixed(2) -> '1.00')
+            const rounded = Math.round((avg + Number.EPSILON) * Math.pow(10, decimals)) / Math.pow(10, decimals);
+            formattedNumber = rounded.toFixed(decimals);
+
+            if (trimTrailingZeros) {
+                formattedNumber = parseFloat(formattedNumber).toString();
+            }
+        }
+
+        // 3. Assemble the final string
+        return `${prefix}${formattedNumber}${suffix}`;
     }
 }
 

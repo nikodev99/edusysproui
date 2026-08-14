@@ -1,12 +1,10 @@
 import Responsive from "../ui/layout/Responsive.tsx";
 import Grid from "../ui/layout/Grid.tsx";
 import {Card} from "antd";
-import VoidData from "../view/VoidData.tsx";
 import {ShapePieChart} from "../graph/ShapePieChart.tsx";
-import {Assignment, Score} from "@/entity";
+import {Assignment, ClasseRanking, GradeRankingStudent, Score} from "@/entity";
 import {dateCompare, getAssignmentBarData, getDiffFromNow} from "@/core/utils/utils.ts";
 import {ReactNode, useLayoutEffect, useRef, useState} from "react";
-import {CardSkeleton} from "../../core/utils/tsxUtils.tsx";
 import dayjs from "dayjs";
 import {ScoreItem} from "../ui/layout/ScoreItem.tsx";
 import {BarChart} from "../graph/BarChart.tsx";
@@ -14,11 +12,13 @@ import Datetime from "../../core/datetime.ts";
 import {AssignmentViewDesc} from "./AssignmentViewDesc.tsx";
 import {AssignmentSchedule} from "./AssignmentSchedule.tsx";
 import {Moment} from "@/core/utils/interfaces.ts";
+import {checkIfGradeRanking} from "@/entity/domain/grade.ts";
+import {SuperWord} from "@/core/utils/tsxUtils.tsx";
 
 interface AssignmentDescProps {
     assignments: Assignment[] | null
     listTitle: string | ReactNode
-    studentAllScore?: Score[] | null
+    studentAllScores?: GradeRankingStudent[] | ClasseRanking[] | null
     isLoading?: boolean
     scoreLoading?: boolean
     hasLegend?: boolean
@@ -28,10 +28,12 @@ interface AssignmentDescProps {
     refetch?: boolean
     showBest?: boolean
     onlyMark?: string
+    hasPermission?: boolean
     calendarLimit?: {
         startDate?: Moment
         endDate?: Moment
     }
+    showOnlyBestTable?: boolean
 }
 
 const getNextAssignment = (assignments: Assignment[] | null): Assignment | null => {
@@ -54,8 +56,8 @@ const getLastPassedAssignment = (assignments: Assignment[] | null): Assignment |
 }
 
 export const AssignmentDesc = (
-    {assignments, listTitle, isLoading, studentAllScore, setRefetch, refetch, scoreLoading, hasLegend = true, showBarChart = false,
-    showBest = true, barLayout = 'vertical', onlyMark, calendarLimit}: AssignmentDescProps
+    {assignments, listTitle, isLoading, studentAllScores, setRefetch, refetch, scoreLoading, hasLegend = true, showBarChart = false,
+    showBest = true, barLayout = 'vertical', onlyMark, calendarLimit, showOnlyBestTable, hasPermission}: AssignmentDescProps
 ) => {
     const [scoreSize, setScoreSize] = useState<number>(5)
     const assignment = useRef<Assignment | null>()
@@ -86,47 +88,40 @@ export const AssignmentDesc = (
 
     const barData = getAssignmentBarData(assignments)
 
+    const startDate = calendarLimit?.startDate ? Datetime.of(calendarLimit?.startDate as Moment).toDate() : undefined
+    const lastDate = calendarLimit?.endDate ? Datetime.of(calendarLimit?.endDate as Moment).toDate() : undefined
 
     return(
         <>
         <Responsive gutter={[16, 16]} style={{padding: '0 20px 20px 20px'}}>
             <Grid xs={24} md={24} lg={24}>
-                {assignments && assignments?.length > 0
-                    ? <Card>
-                        <AssignmentSchedule
-                            eventSchedule={assignments}
-                            shareScoreSize={setScoreSize}
-                            setRefetch={setRefetch}
-                            onlyMark={onlyMark}
-                            isLoading={isLoading}
-                            showBest={showBest}
-                            startDate={calendarLimit?.startDate ? Datetime.of(calendarLimit?.startDate as Moment).toDate() : undefined}
-                            endDate={calendarLimit?.endDate ? Datetime.of(calendarLimit?.endDate as Moment).toDate() : undefined}
-                        />
-                    </Card>
-                    : <VoidData />
-                }
+                <AssignmentSchedule
+                    eventSchedule={assignments ?? []}
+                    shareScoreSize={setScoreSize}
+                    setRefetch={setRefetch}
+                    onlyMark={onlyMark}
+                    isLoading={isLoading}
+                    showBest={showBest}
+                    startDate={startDate}
+                    endDate={lastDate}
+                />
             </Grid>
 
             {showBest  && <Grid xs={24} md={12} lg={12}>
                 <Responsive gutter={[16, 16]}>
                     <Grid xs={24} md={24} lg={showBarChart ? 12 : 24}>
-                        {!isLoading
-                            ? assignments && assignments?.length > 0 && <Card title='Status des devoirs' size='small'>
-                                <ShapePieChart
-                                    data={pieData as []}
-                                    minHeight={290}
-                                    height={290}
-                                    innerRadius={50}
-                                    outerRadius={80}
-                                    hasLegend={hasLegend}
-                                />
-                            </Card>
-                            : <CardSkeleton title='Status des devoirs' />
-                        }
+                        {pieData && pieData?.length > 0 && <Card size='small' title='Status des devoirs'>
+                            <ShapePieChart
+                                data={pieData}
+                                height={290}
+                                innerRadius={50}
+                                outerRadius={80}
+                                hasLegend={hasLegend}
+                            />
+                        </Card>}
                     </Grid>
-                    {!isLoading
-                        ? assignments && assignments?.length > 0 && showBarChart && (<Grid xs={24} md={24} lg={12}>
+                    {assignments && assignments?.length > 0 && showBarChart && (
+                        <Grid xs={24} md={24} lg={12}>
                             {showBarChart && <Card title='Status des matières' size='small'>
                                 <BarChart
                                     data={barData as []}
@@ -137,24 +132,31 @@ export const AssignmentDesc = (
                                     layout={barLayout}
                                 />
                             </Card>}
+                        </Grid>
+                    )}
+                    {studentAllScores && studentAllScores?.length > 0 && studentAllScores?.map((s: GradeRankingStudent | ClasseRanking, i: number) =>
+                        (<Grid key={`${s.section}-${s.classeName}-${i}`} xs={24} md={24} lg={24}>
+                            <Card size='small' title={<SuperWord input={
+                                studentAllScores?.length > 1
+                                    ? `${checkIfGradeRanking(s) 
+                                        ? `[${s.section}]` 
+                                        : `[${s.classeName}]`} ${listTitle}`
+                                    : listTitle
+                            } />}>
+                                {<ScoreItem
+                                    scores={s.bestStudentScores as Score[]}
+                                    isLoading={scoreLoading ?? false}
+                                    scoreSize={5}
+                                    allScores={5}
+                                    infinite={false}
+                                    height={300}
+                                    isTable={true}
+                                    showBestTable={showOnlyBestTable}
+                                    hasPermission={hasPermission}
+                                />}
+                            </Card>
                         </Grid>)
-                        : (<Grid xs={24} md={24} lg={12}>
-                            <CardSkeleton title='Status des matières' />
-                        </Grid>)
-                    }
-                    {studentAllScore && studentAllScore?.length > 0 && <Grid xs={24} md={24} lg={24}>
-                        <Card size='small' title={listTitle}>
-                            {<ScoreItem
-                                scores={studentAllScore as Score[]}
-                                isLoading={scoreLoading ?? false}
-                                scoreSize={5}
-                                allScores={5}
-                                infinite={false}
-                                height={300}
-                                isTable={true}
-                            />}
-                        </Card>
-                    </Grid>}
+                    )}
                 </Responsive>
             </Grid>}
 

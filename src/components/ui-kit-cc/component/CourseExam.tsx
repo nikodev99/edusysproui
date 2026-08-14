@@ -1,10 +1,11 @@
-import {AssignmentView} from "../../common/AssignmentView.tsx";
-import {useAssignmentRepo} from "../../../hooks/actions/useAssignmentRepo.ts";
-import {InfoPageProps} from "../../../core/utils/interfaces.ts";
-import {Course} from "../../../entity";
-import {useScoreRepo} from "../../../hooks/actions/useScoreRepo.ts";
+import {AssignmentView} from "@/components/common/AssignmentView.tsx";
+import {useAssignmentRepo} from "@/hooks/actions/useAssignmentRepo.ts";
+import {InfoPageProps} from "@/core/utils/interfaces.ts";
+import {Course} from "@/entity";
+import {useScoreRepo} from "@/hooks/actions/useScoreRepo.ts";
+import {PermissionType} from "@/pages/classe_subject/ClasseViewPage.tsx";
 
-export const CourseExam = ({infoData, academicYear}: InfoPageProps<Course>) => {
+export const CourseExam = ({infoData, academicYear, resourceYear, hasPermission}: InfoPageProps<Course, PermissionType>) => {
     const {useGetAllCourseAssignments} = useAssignmentRepo()
     const {useGetCourseBestStudents} = useScoreRepo()
 
@@ -14,7 +15,14 @@ export const CourseExam = ({infoData, academicYear}: InfoPageProps<Course>) => {
     return(
         <AssignmentView
             assignExams={assignments}
-            bestScores={scoredData}
+            scoreStats={scoredData}
+            calendarLimit={{
+                startDate: resourceYear?.startDate,
+                endDate: resourceYear?.endDate
+            }}
+            name={infoData?.course}
+            showOnlyBestTable
+            hasPermission={(hasPermission as PermissionType).canViewStudent}
         />
     )
 }

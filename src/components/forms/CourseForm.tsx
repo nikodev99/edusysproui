@@ -6,6 +6,8 @@ import {InputTypeEnum} from "@/core/shared/sharedEnums.ts";
 import {FormConfig} from "@/config/FormConfig.ts";
 import {useMemo} from "react";
 import {useDepartmentRepo} from "@/hooks/actions/useDepartmentRepo.ts";
+import {enumToObjectArray} from "@/core/utils/utils.ts";
+import {CourseTypeEnum} from "@/entity/domain/course.ts";
 
 export const CourseForm = <T extends FieldValues>(
     {control, errors, data, showField}: FormContentProps<T, Course>
@@ -20,6 +22,8 @@ export const CourseForm = <T extends FieldValues>(
         value: d.id,
         label: d.name
     })) as [], [departments])
+
+    const courseTypeOptions = enumToObjectArray(CourseTypeEnum, true)
 
     return(
         <FormContent formItems={[
@@ -49,6 +53,21 @@ export const CourseForm = <T extends FieldValues>(
                     validateStatus: form.validate('abbr'),
                     help: form.error('abbr'),
                     defaultValue: (data ? data.abbr : undefined) as PathValue<T, Path<T>>
+                }
+            },
+            {
+                type: InputTypeEnum.SELECT,
+                inputProps: {
+                    lg: 12,
+                    options: courseTypeOptions,
+                    label: 'Type de matière',
+                    control: control,
+                    name: 'courseType' as Path<T>,
+                    required: true,
+                    placeholder: 'Départment de Science',
+                    validateStatus: form.validate('courseType'),
+                    help: form.error('courseType'),
+                    selectedValue: (data ? data.courseType : undefined) as PathValue<T, Path<T>>
                 }
             },
             ...(showField ? [{

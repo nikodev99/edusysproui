@@ -3,35 +3,43 @@ import {useEffect, useMemo, useState} from "react";
 import {Classe, Course, Schedule, Teacher, TeacherClasses} from "@/entity";
 import {useDocumentTitle} from "@/hooks/useDocumentTitle.ts";
 import {cutStatement, getUniqueness} from "@/core/utils/utils.ts";
-import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
+import {useBreadCrumb} from "@/hooks/useBreadCrumb.tsx";
 import {text} from "@/core/utils/text_display.ts";
-import {SuperWord} from "../../core/utils/tsxUtils.tsx";
-import ViewHeader from "../../components/ui/layout/ViewHeader.tsx";
+import {SuperWord} from "@/core/utils/tsxUtils.tsx";
+import ViewHeader from "@/components/ui/layout/ViewHeader.tsx";
 import {Tag} from "antd";
 import {ItemType} from "antd/es/menu/interface";
 import {LuFileArchive} from "react-icons/lu";
-import {ViewRoot} from "../../components/custom/ViewRoot.tsx";
+import {ViewRoot} from "@/components/custom/ViewRoot.tsx";
 import {CourseExam, CourseInfo, CourseSchedule} from "@/components/ui-kit-cc";
 import {Color} from "@/core/utils/interfaces.ts";
-import {useAcademicYear} from "@/hooks/useAcademicYear.ts";
 import {useScheduleRepo} from "@/hooks/actions/useScheduleRepo.ts";
 import {useCourseRepo} from "@/hooks/actions/useCourseRepo.ts";
-import {CourseEditDrawer} from "../../components/ui-kit-cc/component/CourseEditDrawer.tsx";
+import {CourseEditDrawer} from "@/components/ui-kit-cc/component/CourseEditDrawer.tsx";
 import {useToggle} from "@/hooks/useToggle.ts";
+import {CourseType, CourseTypeEnum} from "@/entity/domain/course.ts";
+import {useAcademicYearRepo} from "@/hooks/actions/useAcademicYearRepo.ts";
+import {usePermission} from "@/hooks/usePermission.ts";
+import {PermissionType} from "@/pages/classe_subject/ClasseViewPage.tsx";
+import {isTeacher} from "@/auth/dto/role.ts";
 
 const SubjectViewPage = () => {
 
     const {id} = useParams()
-
-    const {usedAcademicYearId} = useAcademicYear()
-
     const [course, setCourse] = useState<Course | null>(null)
     const [schedules, setSchedules] = useState<Schedule[]>([])
     const [color, setColor] = useState<Color>('')
     const [open, setOpen] = useToggle(false)
 
+    const {can} = usePermission()
+    const {currentAcademicYear} = useAcademicYearRepo()
     const {useGetAllCourseSchedule}= useScheduleRepo()
     const {useGetCourse} = useCourseRepo()
+
+    const canViewTeachers = can('canViewTeachers', true)
+    
+    //TODO Mieux réfléchir lorsqu'un prof est connecter.
+    const canViewStudents = can('canViewStudents', true)
 
     const {data, isSuccess} = useGetAllCourseSchedule(course?.id as number, false)
     const {data: courseData, isSuccess: isCourseFetched, refetch} = useGetCourse(Number.parseInt(id as string))
@@ -78,6 +86,13 @@ const SubjectViewPage = () => {
         return teachers;
     }, [schedules, uniqueClasses])
 
+    const hasPermission: PermissionType = useMemo(() => {
+        return {
+            canViewTeacher: canViewTeachers,
+            canViewStudent: isTeacher() ? false : canViewStudents,
+        }
+    }, [canViewStudents, canViewTeachers])
+
     useEffect(() => {
         if (isCourseFetched)
             setCourse(courseData as Course)
@@ -109,7 +124,7 @@ const SubjectViewPage = () => {
                 }}
                 blockProps={[
                     {title: 'Département', mention: <em><mark>{course?.department?.name}</mark></em>},
-                    {title: 'Code', mention: <Tag>{course?.department?.code}</Tag>},
+                    {title: 'Type', mention: <Tag color={color}>{CourseTypeEnum[course?.courseType as CourseType]}</Tag>},
                 ]}
                 items={manageItems}
                 pColor={setColor}
@@ -124,14 +139,16 @@ const SubjectViewPage = () => {
                             dataKey='course-info'
                             classes={uniqueClasses?.length ? uniqueClasses as Classe[] : undefined}
                             teachers={uniqueTeachers as Teacher[] || undefined}
-                            academicYear={usedAcademicYearId as string}
+                            resourceYear={currentAcademicYear}
+                            academicYear={currentAcademicYear?.id as string}
+                            hasPermission={hasPermission}
                         />
                     },
                     {
                         label: 'Programme',
                         children: <CourseSchedule
                             infoData={course as Course}
-                            academicYear={usedAcademicYearId as string}
+                            academicYear={currentAcademicYear?.id as string}
                             dataKey='course-schedule'
                         />
                     },
@@ -140,14 +157,16 @@ const SubjectViewPage = () => {
                         children: <CourseExam
                             infoData={course as Course}
                             dataKey='course-exams'
-                            academicYear={usedAcademicYearId as string}
+                            academicYear={currentAcademicYear?.id as string}
+                            resourceYear={currentAcademicYear}
+                            hasPermission={hasPermission}
                         />
                     }
                 ]}
                 exists={course !== null}
                 memorizedTabKey='courseTabKey'
             />
-            <CourseEditDrawer open={open} close={handleCloseDrawer} data={course as Course} />
+            {open && <CourseEditDrawer open={open} close={handleCloseDrawer} data={course as Course} />}
         </>
     )
 }

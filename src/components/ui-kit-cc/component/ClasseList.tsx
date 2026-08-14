@@ -51,8 +51,10 @@ export const ClasseList = ({condition}: {condition?: boolean}) => {
                     label: text.cc.group.classe.view.label,
                     onClick: () => throughDetails(url)
                 },
-                {type: 'divider'},
-                ...linkButtons
+                ...(linkButtons && linkButtons?.length > 0 ? [
+                    {type: 'divider'} as ItemType,
+                    ...linkButtons
+                ] : []),
             ]
         return []
     }, [linkButtons, throughDetails])

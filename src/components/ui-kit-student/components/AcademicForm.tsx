@@ -13,18 +13,17 @@ export const AcademicForm = ({control, errors, getSchool, xs, existingClassId}: 
 }) => {
 
     const {useGetCurrentAcademicYear} = useAcademicYearRepo()
-    const {useGetClasseBasicValues} = useClasseRepo()
+    const {classes} = useClasseRepo()
 
     const academicYear = useGetCurrentAcademicYear()
-    const allClasses = useGetClasseBasicValues()
-    const classes = useMemo(() =>
-        existingClassId ? allClasses?.filter(c => c.id !== existingClassId) : allClasses, [allClasses, existingClassId])
+    const allClasses = useMemo(() =>
+        existingClassId ? classes?.filter(c => c.id !== existingClassId) : classes, [classes, existingClassId])
 
     //TODO ensure the client is connected
-    const classeOptions = useMemo(() => classes.map(c => ({
+    const classeOptions = useMemo(() => allClasses.map(c => ({
         value: c.id,
         label: c.name,
-    })), [classes])
+    })), [allClasses])
 
     const handleClasseChange = (value: string) => {
         getSchool?.(classeOptions[value])

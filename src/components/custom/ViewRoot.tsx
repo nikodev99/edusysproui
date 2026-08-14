@@ -1,5 +1,5 @@
 import {Skeleton, TabsProps} from "antd";
-import {TabItemType} from "@/core/utils/interfaces.ts";
+import type {TabItemType} from "@/core/utils/interfaces.ts";
 import {cloneElement, ReactElement, ReactNode, useEffect, useState} from "react";
 import LocalStorageManager from "@/core/LocalStorageManager.ts";
 import {firstLetter} from "@/core/utils/utils.ts";
@@ -63,6 +63,7 @@ const ViewRoot = ({items, tab, exists, isLoading, skeleton, addMargin, memorized
                 activeKey={tabKey}
                 defaultActiveKey={tabKey}
                 centered={true}
+                destroyOnHidden
                 {...tab}
                 type={type}
             />

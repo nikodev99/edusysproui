@@ -57,7 +57,6 @@ export const AssignmentSchedule = (
     return(
         <>
             <BigCalendar
-                key={selectedAssignment?.id}
                 height={height ?? 600}
                 data={eventData as []}
                 views={["month", 'week', 'agenda']}

@@ -1,5 +1,5 @@
 import {AxiosResponse} from "axios";
-import {Score} from "@/entity";
+import {Score, GradeRankingStudent, ClasseRanking} from "@/entity";
 import {apiClient, request} from "../axiosConfig.ts";
 import {IDS} from "@/core/utils/interfaces.ts";
 import {getShortSortOrder} from "@/core/utils/utils.ts";
@@ -67,7 +67,7 @@ export const getAllStudentScoresBySubject = (studentId: string, academicYearId: 
 }
 
 export const getClasseBestStudents = ({classId}: IDS, academicYear: string) => {
-    return apiClient.get(`/score/classe_best/${classId}`, {
+    return apiClient.get<ClasseRanking[]>(`/score/classe_best/${classId}`, {
         params: {
             academicYear: academicYear,
         }
@@ -75,15 +75,7 @@ export const getClasseBestStudents = ({classId}: IDS, academicYear: string) => {
 }
 
 export const getClasseBestStudentsByCourse = ({classId, courseId}: IDS, academicYear: string) => {
-    return apiClient.get(`/score/classe_best/${classId}/${courseId}`, {
-        params: {
-            academicYear: academicYear,
-        }
-    })
-}
-
-export const getClassePoorStudents = (classeId: number, academicYear: string) => {
-    return apiClient.get(`/score/classe_poor/${classeId}`, {
+    return apiClient.get<ClasseRanking[]>(`/score/classe_best/${classId}/${courseId}`, {
         params: {
             academicYear: academicYear,
         }
@@ -91,15 +83,7 @@ export const getClassePoorStudents = (classeId: number, academicYear: string) =>
 }
 
 export const getCourseBestStudentsByCourse = (courseId: number, academicYear: string) => {
-    return apiClient.get(`/score/course_best/${courseId}`, {
-        params: {
-            academicYear: academicYear,
-        }
-    })
-}
-
-export const getCoursePoorStudents = (courseId: number, academicYear: string) => {
-    return apiClient.get(`/score/course_poor/${courseId}`, {
+    return apiClient.get<GradeRankingStudent[]>(`/score/course_best/${courseId}`, {
         params: {
             academicYear: academicYear,
         }
@@ -111,12 +95,20 @@ export const getAllTeacherMarks = (teacherId: number | number[]) => {
     return apiClient.get(`/score/all_teacher_marks/${requestParam}`)
 }
 
-export const getBestTeacherStudentBySubject = (teacherId: number, subjectId: number) => {
-    return apiClient.get<Score[]>(`/score/students/${teacherId}/${subjectId}`)
+export const getBestTeacherStudentBySubject = (teacherId: number, subjectId: number, academicYear: string) => {
+    return apiClient.get<GradeRankingStudent[]>(`/score/students/${teacherId}/${subjectId}`, {
+        params: {
+            academicYear: academicYear
+        }
+    })
 }
 
-export const getBestTeacherStudentByScore = (personalInfoId: number) => {
-    return apiClient.get<Score[]>(`/score/students/${personalInfoId}`)
+export const getBestTeacherStudentByScore = (personalInfoId: number, academicYear: string) => {
+    return apiClient.get<GradeRankingStudent[]>(`/score/students/${personalInfoId}`, {
+        params: {
+            academicYear: academicYear
+        }
+    })
 }
 
 export const getStudentScoreOfAssignment = (assignmentId: number, studentId: number) => {

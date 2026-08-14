@@ -100,7 +100,7 @@ export const searchEnrolledStudentsByGuardian = (
 }
 
 export const searchUnenrolledStudents = (schoolId: string, searchInput: string) => {
-    return request({
+    return request<Enrollment>({
         method: 'GET',
         url: '/enroll/not_enrolled/' + schoolId,
         params: {
@@ -109,8 +109,8 @@ export const searchUnenrolledStudents = (schoolId: string, searchInput: string) 
     })
 }
 
-export const searchStudents = (schoolId: string, searchInput: string): Promise<AxiosResponse<Enrollment, unknown>> => {
-    return request({
+export const searchStudents = (schoolId: string, searchInput: string) => {
+    return request<Enrollment>({
         method: 'GET',
         url: '/enroll/searched-student/' + schoolId,
         params: {

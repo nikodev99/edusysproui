@@ -25,6 +25,8 @@ export const StudentActionLinks = ({data, getItems, setRefresh}: ActionButtonsPr
     
     const items: ItemType[] = useMemo(() => [
         ...(canCreate && !enrollment?.isArchived ? [{type: 'divider'}]: []),
+
+        //TODO Do not show reinscription if the student have just been reinscrit.
         ...(canCreate ? [{
             key: `reinscription-${studentId}`,
             label: 'Réinscrire',
@@ -35,6 +37,7 @@ export const StudentActionLinks = ({data, getItems, setRefresh}: ActionButtonsPr
             },
             disabled: !enrollment?.isArchived
         }] : []),
+
         ...(canCreate ? [{
             key: `promu-${studentId}`,
             label: <Tooltip title="Changer de classe">Promouvoir</Tooltip>,
@@ -42,13 +45,16 @@ export const StudentActionLinks = ({data, getItems, setRefresh}: ActionButtonsPr
             onClick: setOpenPromoteStudent,
             disabled: enrollment?.isArchived
         }] : []),
+
         ...(can('reprimand') && !enrollment?.isArchived ? [{
             key: 'discipline-' + studentId,
             label: "Sanctions disciplinaires",
             icon: <LuBan />,
             onClick: () => toDiscipline(studentId as string, enrollment as Enrollment)
         }] : []),
+
         ...(canDelete ? [{type: 'divider'}]: []),
+
         ...(canDelete ? [{
             key: `delete-${studentId}`,
             label: 'Rétiré',

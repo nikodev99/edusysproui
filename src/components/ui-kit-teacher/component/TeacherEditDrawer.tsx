@@ -114,12 +114,9 @@ const TeacherClassCourseModal = ({open, onClose, teacherId, currentClasses, curr
     const [selectedCourseIds, setSelectedCourseIds] = useState<number[]>([]);
     const [message, setMessage] = useState<{success?: ReactNode, error?: ReactNode}>()
 
-    const {useGetClasseBasicValues} = useClasseRepo()
-    const {useGetBasicCourses} = useCourseRepo()
+    const {classes} = useClasseRepo()
+    const {courses} = useCourseRepo()
     const {useUpdateCourses, useUpdateClasses} = useTeacherRepo()
-
-    const allSchoolClasses= useGetClasseBasicValues()
-    const allSchoolCourses = useGetBasicCourses()
 
     const updateClasses = useUpdateClasses(teacherId);
     const updateCourses = useUpdateCourses(teacherId);
@@ -134,18 +131,18 @@ const TeacherClassCourseModal = ({open, onClose, teacherId, currentClasses, curr
     const classOptions = useMemo(() => {
         if (mode === "ADD") {
             const assignedIds = new Set(currentClasses.map((c) => c.id));
-            return allSchoolClasses.filter((c) => !assignedIds.has(c.id));
+            return classes.filter((c) => !assignedIds.has(c.id));
         }
         return currentClasses;
-    }, [mode, allSchoolClasses, currentClasses]);
+    }, [mode, classes, currentClasses]);
 
     const courseOptions = useMemo(() => {
         if (mode === "ADD") {
             const assignedIds = new Set(currentCourses.map((c) => c.id));
-            return allSchoolCourses.filter((c) => !assignedIds.has(c.id as number));
+            return courses.filter((c) => !assignedIds.has(c.id as number));
         }
         return currentCourses;
-    }, [mode, allSchoolCourses, currentCourses]);
+    }, [mode, courses, currentCourses]);
 
     const isSubmitting = updateClasses.isPending || updateCourses.isPending;
 

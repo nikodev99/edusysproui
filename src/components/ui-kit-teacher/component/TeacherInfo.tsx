@@ -92,7 +92,7 @@ export const ProsInfo = ({infoData, color, isSelf, readonly = false}: TeacherInf
 
 const CalendarSection = ({infoData, seeMore, academicYear}: TeacherInfo) => {
     const {useGetTeacherSchedules} = useTeacherRepo()
-    const {data: schedules, isLoading, isFetching} = useGetTeacherSchedules(infoData?.id as string, academicYear as string, !(infoData?.courses && infoData?.courses?.length > 0))
+    const {data: schedules, isLoading, isFetching} = useGetTeacherSchedules(infoData?.id as string, academicYear as string, (infoData?.courses && infoData?.courses?.length > 0))
 
     if (!infoData || !academicYear || !schedules || isLoading || isFetching)
         return <Section title='Informations sur l’emploi du temps'><Skeleton active paragraph={{ rows: 4 }} /></Section>
@@ -106,7 +106,8 @@ const CalendarSection = ({infoData, seeMore, academicYear}: TeacherInfo) => {
             <ScheduleCalendar
                 views={['day']}
                 eventSchedule={schedules}
-                height={300}
+                height={400}
+                toolbar={false}
             />
         </Section>
     )

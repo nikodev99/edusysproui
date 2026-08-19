@@ -32,7 +32,7 @@ export const raw = {
         }
     },
     teacher: {
-        label: 'Enseignants',
+        label: 'Enseignant',
         href: '/teachers',
         group: {
             view: {
@@ -51,7 +51,7 @@ export const raw = {
         }
     },
     guardian: {
-        label: 'Tuteurs',
+        label: 'Tuteur',
         href: '/guardians',
         group: {
             view: {

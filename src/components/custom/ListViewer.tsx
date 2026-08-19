@@ -30,15 +30,15 @@ import {ActionButton} from "@/components/ui/layout/ActionButton.tsx";
 
 const ListViewer = <TData extends object, TError>(
     {
-        callback, searchCallback, tableColumns, dropdownItems, throughDetails, hasCount, countTitle, localStorage, onRowRedirect,
-        fetchId, cardData, cardNotAvatar, level, refetchCondition, callbackParams, searchCallbackParams, infinite, getSelectedRecord,
+        callback, searchCallback, tableColumns, dropdownItems, hasCount, countTitle, localStorage, onRowRedirect,
+        fetchId, cardRender, refetchCondition, callbackParams, searchCallbackParams, infinite, getSelectedRecord,
         uuidKey, tableProps, descMargin, itemSize, displayItem, filters, shareSearchQuery, onSelectData, dataDescription,
         tableHeight, hasDesc = true, pageTitle, noSearch = false, setLoading, emptyPage, btnFilter, searchInputPlaceholder, onInputSearch
     }: ListViewerProps<TData, TError>
 ) => {
 
     const iconActive = localStorage?.activeIcon ? LocalStorageManager.get<number>(localStorage?.activeIcon) ?? 1 : 1
-    const pageSizeCount = !infinite && itemSize ? itemSize : localStorage?.pageSize ? LocalStorageManager.get<number>(localStorage?.pageSize) ?? itemSize ?? 10 : 10
+    const pageSizeCount = !infinite && itemSize ? itemSize : localStorage?.pageSize ? LocalStorageManager.get<number>(localStorage?.pageSize) ?? itemSize ?? 12 : 12
     const paginationPage = !infinite && localStorage?.page ? LocalStorageManager.get<number>(localStorage?.page) ?? 1 : 1
     const count = !infinite && localStorage?.pageCount ? LocalStorageManager.get<number>(localStorage?.pageCount) ?? 0 : 0
 
@@ -226,7 +226,11 @@ const ListViewer = <TData extends object, TError>(
     return(
         <>
             {hasDesc && <PageTitle title={pageTitle} description={dataDescription} />}
-            <div className='header__area' onClick={clearSelectionContextMenu}>
+            <div className='header__area' onClick={() => {
+                    clearSelectionContextMenu()
+                    onSelectData?.(null)
+                }
+            }>
                 <Flex justify='space-between' align='middle' className='flex__between' wrap='wrap'>
                     <PageDescription
                         count={dataCount}
@@ -261,7 +265,7 @@ const ListViewer = <TData extends object, TError>(
                                     onClick={() => selectedIcon(1)}
                                 />
                             </Tooltip>
-                            {cardData && <Tooltip title='Affichage carte'>
+                            {cardRender && <Tooltip title='Affichage carte'>
                                 <Button
                                     icon={<LuLayoutDashboard />}
                                     color={activeIcon === 2 ? 'blue' : undefined}
@@ -288,17 +292,12 @@ const ListViewer = <TData extends object, TError>(
             </div>
             <Responsive gutter={[16, 16]} className={`${activeIcon !== 2 ? 'student__list__datatable' : ''}`}>
                 {
-                    activeIcon === 2 && cardData ? (<Grid xs={24} md={24} lg={24}>
+                    activeIcon === 2 && cardRender ? (<Grid xs={24} md={24} lg={24}>
                         <CardList
-                            content={cardData ? cardData(dataSource as TData[]) : []}
+                            content={cardRender?.(dataSource as TData[]) ?? []}
                             isActive={activeIcon === 2 }
                             isLoading={isLoading || dataSource === undefined}
-                            dropdownItems={dropdownItems!}
-                            throughDetails={throughDetails!}
-                            avatarLess={cardNotAvatar}
-                            titleLevel={level as 1}
                             displayItem={displayItem}
-                            onSelectData={onSelectData}
                         />
 
                     </Grid>)

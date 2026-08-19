@@ -2,18 +2,18 @@ import {useDocumentTitle} from "@/hooks/useDocumentTitle.ts";
 import {text} from "@/core/utils/text_display.ts";
 import {BreadcrumbType, useBreadcrumbItem} from "@/hooks/useBreadCrumb.tsx";
 import {ListPageHierarchy} from "@/components/custom/ListPageHierarchy.tsx";
-import {LuCalendarPlus, LuEllipsis, LuEllipsisVertical, LuEye} from "react-icons/lu";
+import {LuCalendarPlus, LuClipboardList, LuEllipsis, LuEllipsisVertical, LuEye} from "react-icons/lu";
 import {AxiosResponse} from "axios";
 import {Assignment, Classe, Course, Individual} from "@/entity";
 import ListViewer from "@/components/custom/ListViewer.tsx";
 import {useEffect, useMemo, useState} from "react";
 import {Space, TableColumnsType, Tag as AntTag, Typography} from "antd";
-import {AssignmentDescription, SuperWord} from "@/core/utils/tsxUtils.tsx";
+import {SuperWord} from "@/core/utils/tsxUtils.tsx";
 import {AvatarTitle} from "@/components/ui/layout/AvatarTitle.tsx";
 import Datetime from "@/core/datetime.ts";
 import Tag from "@/components/ui/layout/Tag.tsx";
 import {ActionButton} from "@/components/ui/layout/ActionButton.tsx";
-import {setFirstName} from "@/core/utils/utils.ts";
+import {setFirstName, setName} from "@/core/utils/utils.ts";
 import {AssignmentFilter, ExamActionLinks} from "@/components/ui-kit-exam";
 import {useAcademicYearRepo} from "@/hooks/actions/useAcademicYearRepo.ts";
 import {AssignmentTypeLiteral, typeColors} from "@/entity/enums/assignmentType.ts";
@@ -23,13 +23,15 @@ import {UserPermission} from "@/core/shared/sharedEnums.ts";
 import {AssignmentFilterProps} from "@/entity/domain/assignment.ts";
 import {useRedirect} from "@/hooks/useRedirect.ts";
 import {usePermission} from "@/hooks/usePermission.ts";
+import {getExamPalette} from "@/core/helpers/colorPalette.ts";
+import {EntityCardProps} from "@/components/custom/EntityCard.tsx";
 
 const ExamListPage = () => {
     const [filters, setFilters] = useState<AssignmentFilterProps | null>(null)
     const [isRefetch, setIsRefetch] = useState(false)
     const [searchQuery, setSearchQuery] = useState<string | undefined>(undefined)
     const [links, setLinks] = useState<ItemType[]>([])
-    const [selectedAssignment, setSelectedAssignment] = useState<Assignment | null>(null)
+    const [selectedAssignment, setSelectedAssignment] = useState<Assignment | null | undefined>(null)
     const {currentAcademicYear, academicYearOptions} = useAcademicYearRepo()
     const {canViewAll, canViewSome} = usePermission()
     
@@ -96,14 +98,6 @@ const ExamListPage = () => {
             },
             ...links,
         ]
-    }
-
-    const cardData = (data: Assignment[]) => {
-        return data?.map(c => ({
-            id: c.id,
-            description: <AssignmentDescription a={c} link show plus />,
-            record: c
-        })) as []
     }
 
     const tableColumns: TableColumnsType<Assignment> = [
@@ -219,6 +213,45 @@ const ExamListPage = () => {
         }
     ]
 
+    const handleCardRender = (record: Assignment[]) => {
+        return record?.map(r => {
+            const literal = AssignmentTypeLiteral[r?.type as unknown as keyof typeof AssignmentTypeLiteral]
+            const date = Datetime.of(r?.examDate as Date)
+            const start = date.timeToDatetime(r?.startTime as [])?.time()
+            const end = date.timeToDatetime(r?.endTime as [])?.time()
+            const preparedBy = setName(r?.preparedBy)
+            const colors = getExamPalette(literal)
+            return {
+                id: r.id as number,
+                record: r,
+                ariaLabel: `Fiche étudiant – ${r.examName}`,
+                palette: colors,
+                header: {type: 'icon', icon: <LuClipboardList size={36} color={colors.accentColor}/>},
+                pillText: `${literal}-#${r?.id}`,
+                rightText: r?.semester?.academicYear?.academicYear,
+                titlePrimary :r.examName,
+                stats: [
+                    {label: "Classe", value: r?.classe?.name},
+                    ...(r?.subject ? [{label: 'Matière', value: r?.subject?.abbr}]: []),
+                    ...(Number(r?.coefficient ?? 0) > 1 ? [{label: 'Coefficient', value: r?.coefficient, small: true}]: []),
+                    ...(!r?.subject || !(r?.coefficient ?? 0 > 1) ? [{label: 'Date', value: date.format({format: "DD MMM YYYY"}), small: true}]: []),
+                    ...(!(r?.coefficient ?? 0 > 1) ? [{label: 'Préparé par', value: preparedBy, small: true}]: []),
+                ],
+                tags: [
+                    <Space>
+                        <Tag color={!r?.passed ? 'warning': 'success'}>{!r?.passed ? 'Programmé' : 'Traité'}</Tag>
+                        {r?.passed ? undefined : Datetime.now().isAfter(r?.examDate as Date) ? <Tag color='danger'>Date Dépassée</Tag> : undefined}
+                    </Space>,
+                    ...((r?.coefficient ?? 0 > 1) ? [<Tag>{preparedBy}</Tag>] : [])
+                ],
+                footerLabel: "Heures: ",
+                footerValue: <strong>{start}-{end}</strong>,
+                redirectTo: (_id, record) => toViewExam(record?.id as number),
+                dropdown: <ActionButton items={getItems(selectedAssignment?.id as never, selectedAssignment as Assignment)} />,
+            } as EntityCardProps<Assignment>
+        })
+    }
+
     const handleUpdateFilters = (value: AssignmentFilterProps) => {
         setFilters(value)
         setIsRefetch(false)
@@ -242,9 +275,8 @@ const ExamListPage = () => {
                 tableColumns={tableColumns}
                 dropdownItems={getItems}
                 countTitle={text.exam.label}
-                cardData={cardData}
+                cardRender={handleCardRender}
                 fetchId='exam-list'
-                cardNotAvatar={true}
                 itemSize={12}
                 displayItem={3}
                 localStorage={{
@@ -263,9 +295,9 @@ const ExamListPage = () => {
                 onSelectData={setSelectedAssignment}
             />
             {selectedAssignment && <ExamActionLinks
-                assignment={selectedAssignment as Assignment}
-                getLinks={setLinks}
-                setRefetch={setIsRefetch}
+                data={selectedAssignment as Assignment}
+                getItems={setLinks}
+                setRefresh={setIsRefetch}
             />}
         </>
     )

@@ -11,17 +11,16 @@ import React, {useEffect, useState, useCallback, useMemo} from "react";
 import {redirectTo} from "@/context/RedirectContext.ts";
 import {text} from "@/core/utils/text_display.ts";
 import {useScoreRepo} from "@/hooks/actions/useScoreRepo.ts";
+import {useMenuItemsEffect} from "@/hooks/useMenuItemsEffect.ts";
+import {ActionButtonsProps} from "@/core/utils/interfaces.ts";
 
 interface ExamActionLinksProps {
-    assignment?: Assignment
-    getLinks?: (items: ItemType[]) => void
-    setRefetch?: (value: boolean) => void
     loadMessage?: {success?: string, error?: string}
     deleteTab?: (tab: string) => void
 }
 
 export const ExamActionLinks = React.memo((
-    {assignment, setRefetch, getLinks, loadMessage, deleteTab}: ExamActionLinksProps
+    {data, setRefresh, getItems, loadMessage, deleteTab}: ActionButtonsProps<Assignment> & ExamActionLinksProps
 ) => {
     const [finish, setFinish] = useToggle(false)
     const [remove, setRemove] = useToggle(false)
@@ -31,7 +30,7 @@ export const ExamActionLinks = React.memo((
     const [messages, setMessages] = useState<{success?: string, error?: string}>()
 
     const {useCountAssignmentMarks} = useScoreRepo()
-    const scoreCount = useCountAssignmentMarks(assignment?.id as number) || 0
+    const scoreCount = useCountAssignmentMarks(data?.id as number) || 0
 
     const handleCompleteAssignment = useCallback(() => {
         if (scoreCount > 0) {
@@ -59,7 +58,7 @@ export const ExamActionLinks = React.memo((
     }, [scoreCount, setRemove])
 
     const itemType: ItemType[] = useMemo(() => [
-        ...(assignment && assignment?.passed ? [] : [
+        ...(data && data?.passed ? [] : [
             {
                 key: 3,
                 label: 'Traité',
@@ -83,11 +82,9 @@ export const ExamActionLinks = React.memo((
                 disabled: notify === 'remove'
             }
         ]),
-    ], [assignment, handleCompleteAssignment, handleChangeDate, handleOpenRemoveModal, notify])
+    ], [data, handleCompleteAssignment, handleChangeDate, handleOpenRemoveModal, notify])
 
-    useEffect(() => {
-        getLinks && getLinks(itemType)
-    }, [getLinks, assignment?.passed]);
+    useMenuItemsEffect(itemType, getItems)
     
     useEffect(() => {
         if (loadMessage) {
@@ -98,12 +95,12 @@ export const ExamActionLinks = React.memo((
 
     const handleFinish = () => {
         setFinish()
-        setRefetch && setRefetch(true)
+        setRefresh?.(true)
     }
 
     const handleChangeDateClose = () => {
         setOpenChangeDate()
-        setRefetch && setRefetch(true)
+        setRefresh?.(true)
     }
 
     const handleRemoveAssignment = () => {
@@ -137,9 +134,28 @@ export const ExamActionLinks = React.memo((
             {messages?.success && <FormSuccess message={messages?.success} />}
             {messages?.error && <FormError message={messages?.error} />}
 
-            <ExamFinished assignmentId={assignment?.id as number} open={finish} close={handleFinish} />
-            <UpdateAssignmentDates assignment={assignment as Assignment} open={openChangeDate} onCancel={handleChangeDateClose} />
-            <ExamRemove assignmentId={assignment?.id as number} open={remove} close={handleRemoveAssignment} setWasDeleted={setWasDeleted} />
+            {data && finish && (
+                <ExamFinished
+                    assignmentId={data?.id as number}
+                    open={finish}
+                    close={handleFinish}
+                />
+            )}
+            {data && openChangeDate && (
+                <UpdateAssignmentDates
+                    assignment={data as Assignment}
+                    open={openChangeDate}
+                    onCancel={handleChangeDateClose}
+                />
+            )}
+            {data && remove && (
+                <ExamRemove
+                    assignmentId={data?.id as number}
+                    open={remove}
+                    close={handleRemoveAssignment}
+                    setWasDeleted={setWasDeleted}
+                />
+            )}
         </section>
     )
 })

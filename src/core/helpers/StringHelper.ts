@@ -1,4 +1,4 @@
-import {FormatAvgOptions} from "@/components/header/types.ts";
+import {FormatAvgOptions} from "@/core/helpers/types.ts";
 
 type PluralOptions = {
     word?: string;
@@ -8,10 +8,12 @@ type PluralOptions = {
 
 export class StringHelper {
     setPlural(word?: string): string;
+    setPlural(word?: string, count?: number): string;
     setPlural(options: PluralOptions): string;
-    setPlural(arg?: string | PluralOptions): string {
-        const { word, allWords = false, count } =
-            typeof arg === 'object' ? arg : { word: arg };
+    setPlural(arg?: string | PluralOptions, size?: number): string {
+        const { word, allWords = false, count } = typeof arg === 'object'
+            ? arg
+            : { word: arg, count: size };
 
         const toSingular = (w: string): string => {
             if (/[^aeiou]ies$/i.test(w)) return `${w.slice(0, -3)}y`;        // categories -> category

@@ -15,8 +15,9 @@ import {StatusTags} from "@/core/utils/tsxUtils.tsx";
 import {ActionButton} from "@/components/ui/layout/ActionButton.tsx";
 import {BiSolidUserAccount} from "react-icons/bi";
 import {AiOutlineUserDelete} from "react-icons/ai";
-import {DataProps} from "@/core/utils/interfaces.ts";
-import {Status} from "@/entity/enums/status.ts";
+import {EntityCardProps} from "@/components/custom/EntityCard.tsx";
+import {getEmployeePalette} from "@/core/helpers/colorPalette.ts";
+import Datetime from "@/core/datetime.ts";
 
 const EmployeeListPage = () => {
     const {toAddEmployee, toViewEmployee} = useRedirect()
@@ -60,16 +61,39 @@ const EmployeeListPage = () => {
         ]
     }
 
-    const cardData = (data: Employee[]) => data?.map(e => ({
-        id: e.id,
-        lastName: e?.personalInfo?.lastName,
-        firstName: e?.personalInfo?.firstName,
-        gender: e?.personalInfo?.gender,
-        reference: e.personalInfo.emailId ?? e.personalInfo?.reference,
-        tag: <StatusTags status={e.personalInfo?.status as Status} female={e.personalInfo?.gender === Gender.FEMME} />,
-        record: e,
-        description: <div></div>,
-    })) as DataProps<Employee>[]
+    /*const handleActionButton = (record?: Teacher) => {
+        const hasParam = !!record
+        return (
+            <ActionButton
+                idKey={hasParam ? record?.id: ''}
+                onSelect={hasParam ? (key) => setSelectedTeacher(record?.id === key ? record : undefined): undefined}
+                items={selectedTeacher && selectedTeacher?.id === record?.id ? getItems(record?.id as string) : []}
+                dropdownProps={hasParam ? {open: Boolean(selectedTeacher?.id === record?.id)}: undefined}
+            />
+        )
+    }*/
+
+    const handleCardRender = (record: Employee[]) => {
+        return record?.map(r => {
+            const colors = getEmployeePalette(r?.personalInfo?.gender as keyof typeof Gender)
+            return {
+                id: r.id as string,
+                record: r,
+                ariaLabel: `Fiche Employé – ${r.personalInfo?.firstName} ${r.personalInfo?.lastName}`,
+                palette: colors,
+                header: {type: "avatar", image: r.personalInfo?.image, firstText: r.personalInfo?.firstName, lastText: r.personalInfo?.lastName},
+                pillText: r.personalInfo?.reference,
+                rightText: text.teacher.label,
+                titlePrimary :r.personalInfo?.firstName.charAt(0) + r.personalInfo?.firstName.slice(1).toLowerCase(),
+                titleSecondary: r.personalInfo?.lastName.charAt(0) + r.personalInfo?.lastName.slice(1).toLowerCase(),
+                footerLabel: "Embauché le",
+                footerValue: Datetime.of(r.contract?.startDate).format({format: "DD MMM YYYY"}),
+                isDimmed: r.contract?.status !== 'ACTIVE',
+                redirectTo: redirectToView,
+                dropdown: <div>dropdown</div>
+            } as EntityCardProps<Employee>
+        })
+    }
 
     const columns: TableColumnsType<Employee> = [
         {
@@ -147,7 +171,7 @@ const EmployeeListPage = () => {
                 callback={fetchAllEmployees as () => Promise<never>}
                 searchCallback={fetchSearchedEmployees as () => Promise<never>}
                 tableColumns={columns}
-                cardData={cardData}
+                cardRender={handleCardRender}
                 dropdownItems={(_url?: string, record?: Employee) => getItems(record)}
                 throughDetails={redirectToView}
                 fetchId={"employees-list"}

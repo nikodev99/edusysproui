@@ -11,7 +11,7 @@ export interface Course {
     modifyAt?: Date
 }
 
-export type CourseType = keyof CourseTypeEnum
+export type CourseType = keyof typeof CourseTypeEnum
 
 export enum CourseTypeEnum {
     // 0. Math, Physics, Biology, etc.

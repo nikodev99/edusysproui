@@ -29,6 +29,8 @@ import {DefaultOptionType} from "antd/es/select";
 import {UseMutationOptions} from "@tanstack/react-query";
 import {Variant} from "antd/es/config-provider";
 import {NavigateOptions} from "react-router-dom";
+import {IndividualType, NonIndividualType} from "@/core/shared/sharedEnums.ts";
+import {EntityCardProps} from "@/components/custom/EntityCard.tsx";
 
 export interface Metadata {
     title: string
@@ -291,17 +293,20 @@ export interface StudentListDataType {
     isArchived?: boolean
 }
 
+export type CardType<T> = {
+    data: T,
+    redirectTo?: (link?: string, record?: T) => void,
+    dropdown?: ReactNode
+    onSelect?: (student: T) => void,
+    avatarSize?: number
+}
+
+export type CardListType = keyof typeof IndividualType | keyof typeof NonIndividualType
+
 export interface DataProps<TData extends object> {
     id: string | number
-    lastName?: string
-    firstName?: string
-    gender?: Gender
-    image?: string
-    reference?: string
-    tag?: string | ReactNode
-    description?: string | ReactNode | string[] | ReactNode[]
     record: TData
-    bodyLess?: boolean
+    cardType: CardListType
 }
 
 export type ListViewerProps<TData extends object, TError> = ListProps<TData> & {
@@ -327,8 +332,7 @@ export interface ListProps<TData extends object> {
     dropdownItems?: (url?: string, record?: TData) => ItemType[]
     throughDetails?: (id: string | number, record?:TData) => void
     localStorage?: {activeIcon?: string, pageSize?: string, page?: string, pageCount?: string}
-    cardNotAvatar?: boolean
-    cardData?: (data: TData[]) => DataProps<TData>[]
+    cardRender?: (data: TData[]) => EntityCardProps<TData>[]
     level?: 1 | 2 | 3 | 4 | 5
     hasSearch?: boolean
     searchInput?: boolean
@@ -344,7 +348,7 @@ export interface ListProps<TData extends object> {
     filters?: ReactNode
     shareSearchQuery?: (value: string | undefined) => void
     showFilterAction?: (value: boolean) => void
-    onSelectData?: (data: TData) => void
+    onSelectData?: (data: TData | null | undefined) => void
     onRowRedirect?: (data: TData) => void
     getSelectedRecord?: (date: TData | null) => void
     dataDescription?: ReactNode

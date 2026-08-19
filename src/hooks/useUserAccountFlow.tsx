@@ -5,7 +5,6 @@ import {useUserRepo} from "./actions/useUserRepo.ts";
 import {useAuth} from "./useAuth.ts";
 import {useMemo} from "react";
 import {assignUserToSchoolSchema, AssignUserToSchoolSchema, signupSchema, SignupSchema} from "@/schema";
-import {loggedUser} from "../auth/jwt/LoggedUser.ts";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {MessageResponse} from "../core/utils/interfaces.ts";
@@ -23,7 +22,7 @@ interface UserAccountFlow {
 export const useUserAccountFlow = (personalInfo?: Individual, userType?: UserType): UserAccountFlow => {
     const {useAccountExists} = useAccount()
     const {useGetUserByPersonalInfo} = useUserRepo()
-    const {registerUser, assignUser} = useAuth()
+    const {registerUser, assignUser, userSchool} = useAuth()
     
     const accountExists = useAccountExists(personalInfo?.id as number)
     const userToAssign = useGetUserByPersonalInfo(personalInfo?.id as number)
@@ -51,8 +50,6 @@ export const useUserAccountFlow = (personalInfo?: Individual, userType?: UserTyp
                 userId: userToAssign?.id as number,
             } as AssignUserToSchoolSchema
 
-            console.log({assignData})
-
             return assignUser(assignData);
         }
         
@@ -62,7 +59,7 @@ export const useUserAccountFlow = (personalInfo?: Individual, userType?: UserTyp
                 email: personalInfo.emailId,
                 phoneNumber: personalInfo.telephone,
                 personalInfoId: personalInfo.id as number,
-                roles: {...data.roles, schoolId: loggedUser.getSchool()?.id},
+                roles: {...data.roles, schoolId: userSchool?.id as string},
                 userType: userType
             } as SignupSchema
 

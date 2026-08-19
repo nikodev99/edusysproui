@@ -1,15 +1,16 @@
-import {TableColumnsType, Tag} from "antd";
+import {TableColumnsType} from "antd";
+import Tag from "@/components/ui/layout/Tag.tsx";
 import {Classe, Department} from "@/entity";
-import {LuEye} from "react-icons/lu";
+import {LuEye, LuGraduationCap} from "react-icons/lu";
 import ListViewer from "@/components/custom/ListViewer.tsx";
 import {text} from "@/core/utils/text_display.ts";
 import {AxiosResponse} from "axios";
 import {currency, fDatetime} from "@/core/utils/utils.ts";
-import {DataProps} from "@/core/utils/interfaces.ts";
+import {ID} from "@/core/utils/interfaces.ts";
 import {SuperWord} from "@/core/utils/tsxUtils.tsx";
 import {useClasseRepo} from "@/hooks/actions/useClasseRepo.ts";
 import {AvatarTitle} from "@/components/ui/layout/AvatarTitle.tsx";
-import {anyIsUniversity, SectionType} from "@/entity/enums/section.ts";
+import {anyIsUniversity, formatGrade, SectionType} from "@/entity/enums/section.ts";
 import {useCallback, useMemo, useState} from "react";
 import {ItemType} from "antd/es/menu/interface";
 import {useGradeRepo} from "@/hooks/actions/useGradeRepo.ts";
@@ -17,6 +18,11 @@ import {usePermission} from "@/hooks/usePermission.ts";
 import {UserPermission} from "@/core/shared/sharedEnums.ts";
 import {ClasseActionLinks} from "@/components/ui-kit-cc";
 import {useRedirect} from "@/hooks/useRedirect.ts";
+import {ActionButton} from "@/components/ui/layout/ActionButton.tsx";
+import {getClassePalette} from "@/core/helpers/colorPalette.ts";
+import Datetime from "@/core/datetime.ts";
+import {EntityCardProps} from "@/components/custom/EntityCard.tsx";
+import {objectHelper} from "@/core/helpers/ObjectHelper.ts";
 
 export const ClasseList = ({condition}: {condition?: boolean}) => {
     const [selectedClasse, setSelectedClasse] = useState<Classe | null>(null)
@@ -42,14 +48,14 @@ export const ClasseList = ({condition}: {condition?: boolean}) => {
         toViewClasse(link as number)
     }, [toViewClasse])
 
-    const getItems = useCallback((url?: string): ItemType[] => {
+    const getItems = useCallback((url?: ID): ItemType[] => {
         if (url)
             return [
                 {
                     key: `details-${url}`,
                     icon: <LuEye />,
                     label: text.cc.group.classe.view.label,
-                    onClick: () => throughDetails(url)
+                    onClick: () => throughDetails(url as number)
                 },
                 ...(linkButtons && linkButtons?.length > 0 ? [
                     {type: 'divider'} as ItemType,
@@ -58,20 +64,6 @@ export const ClasseList = ({condition}: {condition?: boolean}) => {
             ]
         return []
     }, [linkButtons, throughDetails])
-
-    const cardData = (data: Classe[]) => {
-        return data?.map(c => ({
-            id: c.id,
-            lastName: c.name,
-            reference: c.category,
-            description: <div style={{
-                textAlign: 'center',
-            }}>
-                <div style={{marginBottom: '5px'}}>Niveau Académique</div>
-                <div><Tag color='geekblue'>{c.grade.section}</Tag></div>
-            </div>
-        })) as DataProps<Classe>[]
-    }
 
     const columns: TableColumnsType<Classe> = [
         {
@@ -136,21 +128,60 @@ export const ClasseList = ({condition}: {condition?: boolean}) => {
         }
     ];
 
+    const handleActionButton = (record?: Classe) => {
+        const hasParam = !!record
+        return (
+            <ActionButton
+                idKey={hasParam ? `${record?.id}`: ''}
+                onSelect={hasParam ? (key) => setSelectedClasse(record?.id === Number(key) ? record : null): undefined}
+                items={selectedClasse && selectedClasse?.id === record?.id ? getItems(record?.id as number) : []}
+                dropdownProps={hasParam ? {open: Boolean(selectedClasse?.id === record?.id)}: undefined}
+            />
+        )
+    }
+
+    const handleCardRender = (record: Classe[]) => {
+        return record?.map(r => {
+            const colors = getClassePalette()
+            return {
+                id: r.id as number,
+                record: r,
+                ariaLabel: `Fiche étudiant – ${r.name}`,
+                palette: colors,
+                header: {type: 'icon', icon: <LuGraduationCap size={36} color={colors.accentColor} />},
+                pillText: r?.category,
+                rightText: formatGrade(SectionType[r?.grade?.section as keyof typeof SectionType])?.toUpperCase(),
+                titlePrimary :r.name,
+                stats: [
+                    {label: "Salle", value: r?.roomNumber ?? "—"},
+                    {label: "Coût/mois", value: r?.monthCost ? `${r.monthCost}` : "—", small: true},
+                ],
+                tags: [
+                    ...(r.department && !objectHelper.isEmpty(r.department) ? [
+                        <Tag color={colors.accentSoft} textColor={colors.accentColor}>{r?.department?.name?.toUpperCase()}</Tag>
+                    ]: [])
+                ],
+                footerLabel: "Créée le",
+                footerValue: Datetime.of(r?.createdAt as Date).format({format: "DD MMM YYYY"}),
+                redirectTo: throughDetails,
+                dropdown: handleActionButton?.(r),
+            } as EntityCardProps<Classe>
+        })
+    }
+
     return (<>
         <ListViewer
             callback={getPaginatedClasses as () => Promise<AxiosResponse<Classe[]>>}
             searchCallback={getSearchedClasses as (input: unknown) => Promise<AxiosResponse<Classe[]>>}
             tableColumns={columns}
             dropdownItems={getItems}
-            throughDetails={throughDetails}
             countTitle='Classe'
             fetchId='classe-list'
-            cardData={cardData}
-            cardNotAvatar={true}
+            cardRender={handleCardRender}
             localStorage={{
                 activeIcon: 'classeActiveIcon'
             }}
-            onRowRedirect={record => throughDetails(record?.id)}
+            onRowRedirect={record => throughDetails(record?.id as number)}
             getSelectedRecord={setSelectedClasse}
             refetchCondition={refresh}
             descMargin={{size: '10px 0'}}

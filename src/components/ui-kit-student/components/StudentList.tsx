@@ -1,4 +1,4 @@
-import {DataProps, ListViewerProps, StudentListDataType} from "@/core/utils/interfaces.ts";
+import {ListViewerProps, StudentListDataType} from "@/core/utils/interfaces.ts";
 import {AxiosError} from "axios";
 import ListViewer from "@/components/custom/ListViewer.tsx";
 import {TableColumnsType} from "antd";
@@ -21,13 +21,14 @@ import {AcademicYear, Enrollment, Individual} from "@/entity";
 import {StudentActionLinks} from "./StudentActionLinks.tsx";
 import {useCallback, useState} from "react";
 import {ItemType} from "antd/es/menu/interface";
-import {toEnrollment} from "@/entity/domain/enrollment.ts";
-import {StudentCard} from "@/components/ui-kit-student";
+import {fromEnrollment, toEnrollment} from "@/entity/domain/enrollment.ts";
 import {formatGrade} from "@/entity/enums/section.ts";
 import Tag from "@/components/ui/layout/Tag.tsx";
+import {EntityCardProps} from "@/components/custom/EntityCard.tsx";
+import {getStudentPalette} from "@/core/helpers/colorPalette.ts";
 
 export const StudentList = <TError extends AxiosError>(listProps: ListViewerProps<StudentListDataType, TError>) => {
-    const [selectedStudent, setSelectedStudent] = useState<Enrollment | undefined>(undefined)
+    const [selectedStudent, setSelectedStudent] = useState<Enrollment | null | undefined>(undefined)
     const [linkButtons, setLinkButtons] = useState<ItemType[]>([])
     const [refresh, setRefresh] = useState<boolean>(false)
     
@@ -51,6 +52,56 @@ export const StudentList = <TError extends AxiosError>(listProps: ListViewerProp
             ...linkButtons
         ]
     }, [linkButtons, throughDetails])
+
+    const handleActionButton = (record?: StudentListDataType) => {
+        const hasParam = !!record
+        return (
+            <ActionButton
+                idKey={hasParam ? record?.id: ''}
+                onSelect={hasParam ? (key) => setSelectedStudent(record?.id === key ? toEnrollment(record) : undefined): undefined}
+                items={selectedStudent && selectedStudent?.student?.id === record?.id ? getItems(record?.id, record) : []}
+                dropdownProps={hasParam ? {open: Boolean(selectedStudent?.student?.id as string === record?.id as string)}: undefined}
+            />
+        )
+    }
+
+    console.log('SELECTED STUDENT: ', selectedStudent)
+
+    const handleCardRender = (record: StudentListDataType[]) => {
+        return record?.map((r) => {
+            const colors = getStudentPalette(r.gender, r.isArchived)
+            return {
+                id: r.id as string,
+                record: r,
+                ariaLabel: `Fiche étudiant – ${r.firstName} ${r.lastName}`,
+                palette: colors,
+                header: {type: "avatar", image: r.image, firstText: r.firstName, lastText: r.lastName},
+                pillText: r.reference,
+                rightText: r.academicYear?.academicYear,
+                titlePrimary :r.firstName.charAt(0) + r.firstName.slice(1).toLowerCase(),
+                titleSecondary: r.lastName.charAt(0) + r.lastName.slice(1).toLowerCase(),
+                stats: [
+                    {label: "Âge", value: r.age},
+                    {label: "Classe", value: r.classe, small: true},
+                    {label: "Enrol. ID", value: r.enrollmentId, small: true},
+                ],
+                tags: [
+                    <Tag key={'grade'} color={colors?.accentSoft} textColor={colors?.accentColor}>{formatGrade(r.grade)?.toUpperCase()}</Tag>,
+                    <Tag key={'gender'} color={colors?.genderTagBg} textColor={colors?.genderTagColor} icon={<SelectedGenderIcon gender={r.gender}/>}>
+                        {colors?.genderLabel}
+                    </Tag>,
+                    <Tagger  key={'status'} status={checkAcademicYearEnded(r.academicYear)} successMessage="inscrit" warnMessage="fin-année-scolaire"/>,
+                ],
+                footerLabel: "Inscrit le",
+                footerValue: Datetime.of(r.lastEnrolledDate).format({format: "DD MMM YYYY"}),
+                isDimmed: r.isArchived,
+                redirectTo: throughDetails,
+                dropdown: handleActionButton?.(r)
+            } as EntityCardProps<StudentListDataType>
+        })
+    }
+
+    console.log('STUDENT ITEMS: ', getItems?.(selectedStudent?.student?.id as string, fromEnrollment(selectedStudent as Enrollment)))
 
     const columns: TableColumnsType<StudentListDataType> = [
         {
@@ -146,17 +197,14 @@ export const StudentList = <TError extends AxiosError>(listProps: ListViewerProp
             key: 'action',
             align: 'right',
             width: '5%',
-            render: (id, record) => (<ActionButton items={getItems(id, record)} />)
+            render: () => (
+                <ActionButton
+                    items={getItems?.(selectedStudent?.student?.id,
+                        fromEnrollment(selectedStudent as Enrollment))}
+                />
+            )
         }
     ];
-
-    const cardData = (data: StudentListDataType[]) => {
-        return data?.map(c => ({
-            description: <StudentCard student={c} redirectTo={throughDetails} dropdownItems={getItems} />,
-            bodyLess: true,
-            record: c
-        })) as DataProps<StudentListDataType>[]
-    }
 
     return(
         <>
@@ -168,19 +216,21 @@ export const StudentList = <TError extends AxiosError>(listProps: ListViewerProp
                 dropdownItems={(url, record) => getItems(url, record)}
                 throughDetails={throughDetails as () => void}
                 countTitle={text.student.label}
-                cardData={cardData}
+                cardRender={handleCardRender}
                 hasDesc={false}
                 level={5}
                 displayItem={4}
                 itemSize={12}
-                onSelectData={(data) => setSelectedStudent(toEnrollment(data))}
+                onSelectData={(data) => {
+                    console.log('selected student data: ', data)
+                    setSelectedStudent(toEnrollment(data as StudentListDataType))
+                }}
                 refetchCondition={refresh}
-                cardNotAvatar={true}
             />
             {selectedStudent && <StudentActionLinks
-               data={selectedStudent}
-               getItems={setLinkButtons}
-               setRefresh={setRefresh}
+                data={selectedStudent}
+                getItems={setLinkButtons}
+                setRefresh={setRefresh}
            />}
         </>
     )

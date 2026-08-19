@@ -5,14 +5,14 @@ import {useCallback, useEffect, useMemo, useState} from "react";
 import {Assignment} from "@/entity";
 import {useBreadCrumb} from "@/hooks/useBreadCrumb.tsx";
 import {text} from "@/core/utils/text_display.ts";
-import {SuperWord} from "@/core/utils/tsxUtils.tsx";
+import {ClockIcon, SuperWord} from "@/core/utils/tsxUtils.tsx";
 import {cutStatement, setFirstName, zeroFormat} from "@/core/utils/utils.ts";
 import ViewHeader from "@/components/ui/layout/ViewHeader.tsx";
 import {ExamEditDrawer, ExamInfo, ExamScores, ExamInsertScores, ExamActionLinks} from "@/components/ui-kit-exam";
 import {useToggle} from "@/hooks/useToggle.ts";
 import {ViewRoot} from "@/components/custom/ViewRoot.tsx";
 import Datetime from "@/core/datetime.ts";
-import {LuCalendarCheck, LuClock12, LuClock8, LuListPlus, LuX} from "react-icons/lu";
+import {LuCalendarCheck, LuListPlus, LuX} from "react-icons/lu";
 import {Flex, Space} from "antd";
 import Tag from "@/components/ui/layout/Tag.tsx";
 import {ItemType} from "antd/es/menu/interface";
@@ -37,7 +37,7 @@ const ExamViewPage = () => {
 
     const assignment = useMemo(() => isSuccess ? data : {}, [data, isSuccess])
 
-    const {scores, refetch: loadScores} = useGetAssignmentScores(assignment?.id as bigint) ?? []
+    const {scores, refetch: loadScores} = useGetAssignmentScores(assignment?.id as number)
 
     const {context} = useBreadCrumb({
         bCItems: [
@@ -138,15 +138,15 @@ const ExamViewPage = () => {
                     {
                         title: "Heure de début",
                         mention: <Flex align={"center"} gap={5}>
-                            <LuClock8 style={{color: 'dimgray'}} />
-                            <span>{setFirstName(Datetime.timeToCurrentDate(assignment?.startTime as number[]).format('HH:mm'))}</span>
+                            <ClockIcon time={assignment?.startTime as string} />
+                            <span>{setFirstName(Datetime.timeToCurrentDate(assignment?.startTime as number[]).time())}</span>
                         </Flex>
                     },
                     {
                         title: "Heure de fin",
                         mention: <Flex align={"center"} gap={5}>
-                            <LuClock12 style={{color: 'dimgray'}} />
-                            <span>{setFirstName(Datetime.timeToCurrentDate(assignment?.endTime as number[]).format('HH:mm'))}</span>
+                            <ClockIcon time={assignment?.endTime as string} />
+                            <span>{setFirstName(Datetime.timeToCurrentDate(assignment?.endTime as number[]).time())}</span>
                         </Flex>
                     },
                     {
@@ -176,11 +176,11 @@ const ExamViewPage = () => {
                 <ExamEditDrawer open={openDrawer} close={handleCloseDrawer} data={assignment as Assignment} isLoading={isLoading} hasMarks={(scores && scores?.length > 0)} />
             </section>
             <ExamActionLinks
-                assignment={assignment as Assignment}
+                data={assignment as Assignment}
                 deleteTab={deleteTab}
-                getLinks={setLinks}
+                getItems={setLinks}
                 loadMessage={messages}
-                setRefetch={setIsRefetch}
+                setRefresh={setIsRefetch}
             />
         </>
     )

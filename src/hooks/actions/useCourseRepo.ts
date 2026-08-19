@@ -5,6 +5,7 @@ import {Course} from "@/entity";
 import {
     getAllBasicCourses,
     getAllCourses,
+    getTeacherCourses,
     getAllCoursesSearch,
     getCourseById
 } from "@/data/repository/courseRepository.ts";
@@ -13,7 +14,6 @@ import {useGlobalStore} from "@/core/global/store.ts";
 import {useAuth} from "@/hooks/useAuth.ts";
 import {getShortSortOrder, setSortFieldName} from "@/core/utils/utils.ts";
 import {UserPermission} from "@/core/shared/sharedEnums.ts";
-import {getTeacherCourses} from "@/data/repository/teacherRepository.ts";
 
 export const useCourseRepo = (context: UserPermission = UserPermission.ALL) => {
     const schoolId = useGlobalStore(state => state.schoolId)
@@ -31,14 +31,14 @@ export const useCourseRepo = (context: UserPermission = UserPermission.ALL) => {
                         case UserPermission.ALL:
                             return await getAllCourses(schoolId, {page: page, size: size}, `${sortField}:${sortOrder}`);
                         case UserPermission.TEACHER:
-                            return await getTeacherCourses(user?.userId as string, schoolId)
+                            return await getTeacherCourses(schoolId, user?.userId as string)
                     }
                 }
                 switch (context) {
                     case UserPermission.ALL:
                         return await getAllCourses(schoolId, {page: page, size: size})
                     case UserPermission.TEACHER:
-                        return await getTeacherCourses(user?.userId as string, schoolId)
+                        return await getTeacherCourses(schoolId, user?.userId as string)
                 }
 
             },

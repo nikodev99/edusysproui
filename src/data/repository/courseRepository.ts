@@ -39,3 +39,7 @@ export const getCourseById = (courseId: string): Promise<AxiosResponse<Course>> 
 export const updateCourse = (data: CourseSchema, courseId: ID) => {
     return apiClient.put(`/courses/${courseId}`, data)
 }
+
+export const getTeacherCourses = (schoolId: string, teacherId: string) => {
+    return apiClient.get<Course[]>(`/courses/teacher/${schoolId}/${teacherId}`)
+}

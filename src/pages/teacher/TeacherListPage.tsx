@@ -2,17 +2,21 @@ import {useDocumentTitle} from "@/hooks/useDocumentTitle.ts";
 import {text} from "@/core/utils/text_display.ts";
 import {BreadcrumbType, useBreadcrumbItem} from "@/hooks/useBreadCrumb.tsx";
 import {LuEllipsisVertical, LuEye, LuHandshake, LuUserPlus, LuUserRoundPlus} from "react-icons/lu";
-import {Button, Divider, Flex, TableColumnsType, Tag} from "antd";
+import {Button, Flex, TableColumnsType} from "antd";
+import Tag from "@/components/ui/layout/Tag.tsx";
 import {Teacher, TeacherCourses} from "@/entity";
 import {Avatar} from "@/components/ui/layout/Avatar.tsx";
-import {enumToObjectArrayForFiltering, getAge, setFirstName, setPlural} from "@/core/utils/utils.ts";
-import {Gender} from "@/entity/enums/gender.tsx";
+import {
+    enumToObjectArrayForFiltering,
+    setFirstName,
+    setPlural
+} from "@/core/utils/utils.ts";
+import {Gender, SelectedGenderIcon} from "@/entity/enums/gender.tsx";
 import {AffiliateStatusTag} from "@/core/utils/tsxUtils.tsx";
 import {ActionButton} from "@/components/ui/layout/ActionButton.tsx";
 import {ListPageHierarchy} from "@/components/custom/ListPageHierarchy.tsx";
 import ListViewer from "@/components/custom/ListViewer.tsx";
 import {AxiosResponse} from "axios";
-import {DataProps} from "@/core/utils/interfaces.ts";
 import {useRedirect} from "@/hooks/useRedirect.ts";
 import {useTeacherRepo} from "@/hooks/actions/useTeacherRepo.ts";
 import {useMemo, useState} from "react";
@@ -20,9 +24,14 @@ import {ItemType} from "antd/es/menu/interface";
 import {TeacherActionLinks} from "@/components/ui-kit-teacher";
 import {UserPermission} from "@/core/shared/sharedEnums.ts";
 import {usePermission} from "@/hooks/usePermission.ts";
+import {EntityCardProps} from "@/components/custom/EntityCard.tsx";
+import Datetime from "@/core/datetime.ts";
+import {ContractTypeEnum} from "@/entity/enums/contractType.ts";
+import {getTeacherPalette} from "@/core/helpers/colorPalette.ts";
+import {datehelper} from "@/core/helpers/DateHelpers.ts";
 
 const TeacherListPage = () => {
-    const [selectedTeacher, setSelectedTeacher] = useState<Teacher | undefined>(undefined)
+    const [selectedTeacher, setSelectedTeacher] = useState<Teacher | undefined | null>(undefined)
     const [linkButtons, setLinkButtons] = useState<ItemType[]>([])
     const [refresh, setRefresh] = useState<boolean>(false)
     const {toViewTeacher, toAddTeacher, toAffiliateTeacher} = useRedirect()
@@ -80,27 +89,22 @@ const TeacherListPage = () => {
         ]
     }
 
-    const cardData = (data: Teacher[]) => {
-        return data?.map(t => ({
-            id: t.id,
-            lastName: t?.personalInfo?.lastName,
-            firstName: t?.personalInfo?.firstName,
-            gender: t?.personalInfo?.gender,
-            reference: t?.personalInfo?.emailId,
-            tag: <AffiliateStatusTag status={t?.status} />,
-            record: t,
-            description: <>
-                <Divider style={{fontSize: '12px'}}>Cours ou classes</Divider>
-                <Flex gap={2} wrap justify={"center"}>
-                    {(t.courses && t.courses.length > 0
-                        ? t.courses.map((tcc) => tcc?.course?.course).filter(Boolean)
-                        : t.classes?.map((c) => c?.classe?.name).filter(Boolean) ?? []).map((item, index) => (
-                        <Tag key={index}>{item}</Tag>
-                    ))}
-                </Flex>
-            </>
-        })) as DataProps<Teacher>[]
+    const handleActionButton = (record?: Teacher) => {
+        const hasParam = !!record
+        return (
+            <ActionButton
+                idKey={hasParam ? record?.id: ''}
+                onSelect={hasParam ? (key) => setSelectedTeacher(record?.id === key ? record : undefined): undefined}
+                items={selectedTeacher && selectedTeacher?.id === record?.id ? getItems(record?.id as string) : []}
+                dropdownProps={hasParam ? {open: Boolean(selectedTeacher?.id === record?.id)}: undefined}
+            />
+        )
     }
+
+    const actionButton = <ActionButton
+        icon={<LuEllipsisVertical size={30} style={{borderStyle: 'border'}} />}
+        items={getItems(selectedTeacher?.id as string)}
+    />
 
     const columns: TableColumnsType<Teacher> = [
         {
@@ -145,7 +149,7 @@ const TeacherListPage = () => {
             align: 'center',
             responsive: ['md'],
             sorter: true,
-            render: (text) => getAge(text) + 'ans'
+            render: (text) => datehelper.timeAgo(text)
         },
         {
             title: "Status",
@@ -193,14 +197,45 @@ const TeacherListPage = () => {
             key: 'action',
             align: 'right',
             width: '6%',
-            render: (text) => (
-                <ActionButton
-                    icon={<LuEllipsisVertical size={30} style={{borderStyle: 'border'}} />}
-                    items={getItems(text)}
-                />
-            )
+            render: () => actionButton
         }
     ]
+
+    const handleCardRender = (record: Teacher[]) => {
+        return record?.map(r => {
+            const colors = getTeacherPalette(r?.personalInfo?.gender as keyof typeof Gender)
+            return {
+                id: r.id as string,
+                record: r,
+                ariaLabel: `Fiche Enseignant – ${r.personalInfo?.firstName} ${r.personalInfo?.lastName}`,
+                palette: colors,
+                header: {type: "avatar", image: r.personalInfo?.image, firstText: r.personalInfo?.firstName, lastText: r.personalInfo?.lastName},
+                pillText: r.personalInfo?.reference,
+                rightText: text.teacher.label,
+                titlePrimary :r.personalInfo?.firstName.charAt(0) + r.personalInfo?.firstName.slice(1).toLowerCase(),
+                titleSecondary: r.personalInfo?.lastName.charAt(0) + r.personalInfo?.lastName.slice(1).toLowerCase(),
+                stats: [
+                    {label: "Age", value: datehelper.timeAgo(r?.personalInfo?.birthDate)},
+                    {label: "Classes", value: r?.classes?.map(c => `${c.classe.name}`)?.join(', '), small: true},
+                    ...(r?.courses && r?.courses?.length > 0 ? [{label: "Matières", value: r?.courses?.map(c => `${c.course.abbr}`)?.join(', '), small: true}] : []),
+                ],
+                tags: [
+                    <Tag color={colors.genderTagBg} textColor={colors.genderTagColor} icon={<SelectedGenderIcon gender={colors.genderLabel as Gender}/>}>
+                        {colors.genderLabel}
+                    </Tag>,
+                    ...(r?.contract?.contractType ? [<Tag color={colors.accentColor} textColor={colors.accentSoft}>
+                        {(ContractTypeEnum[r?.contract?.contractType] ?? "")?.toUpperCase()}
+                    </Tag>] : []),
+                    ...(r?.status ? [<AffiliateStatusTag status={r?.status} />] : [])
+                ],
+                footerLabel: "Embauché le",
+                footerValue: Datetime.of(r.contract?.startDate).format({format: "DD MMM YYYY"}),
+                isDimmed: r.status !== 'ACTIVE',
+                redirectTo: throughDetails,
+                dropdown: handleActionButton?.(r as Teacher)
+            } as EntityCardProps<Teacher>
+        })
+    }
 
     return (
         <>
@@ -220,7 +255,7 @@ const TeacherListPage = () => {
                 dropdownItems={getItems as never}
                 throughDetails={throughDetails as never}
                 countTitle={text.teacher.label}
-                cardData={cardData}
+                cardRender={handleCardRender}
                 localStorage={{
                     activeIcon: 'teacherActiveIcon',
                     pageSize: 'teacherPageSize',

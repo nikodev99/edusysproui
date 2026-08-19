@@ -17,57 +17,49 @@ export const StudentActionLinks = ({data, getItems, setRefresh}: ActionButtonsPr
     const [shouldReEnroll, setShouldReEnroll] = useToggle(false)
     const {toDiscipline} = useRedirect()
     const {canDelete, canCreate, can} = usePermission()
-    
-    const {enrollment, studentId} = useMemo(() => ({
-        enrollment: data,
-        studentId: data?.student?.id
-    }), [data])
+
+    console.log("ID: ", data?.id, ' REF: ', data?.student?.personalInfo?.reference)
     
     const items: ItemType[] = useMemo(() => [
-        ...(canCreate && !enrollment?.isArchived ? [{type: 'divider'}]: []),
+        ...(canCreate && !data?.isArchived ? [{type: 'divider'}]: []),
 
         //TODO Do not show reinscription if the student have just been reinscrit.
         ...(canCreate ? [{
-            key: `reinscription-${studentId}`,
+            key: `reinscription-${data?.id}`,
             label: 'Réinscrire',
             icon: <LuUserPlus/>,
             onClick: () => {
                 setShouldReEnroll()
                 setOpenPromoteStudent()
             },
-            disabled: !enrollment?.isArchived
+            disabled: !data?.isArchived
         }] : []),
 
         ...(canCreate ? [{
-            key: `promu-${studentId}`,
+            key: `promu-${data?.id}`,
             label: <Tooltip title="Changer de classe">Promouvoir</Tooltip>,
             icon: <LuCircleArrowOutUpRight/>,
             onClick: setOpenPromoteStudent,
-            disabled: enrollment?.isArchived
+            disabled: data?.isArchived
         }] : []),
 
-        ...(can('reprimand') && !enrollment?.isArchived ? [{
-            key: 'discipline-' + studentId,
+        ...(can('reprimand') && !data?.isArchived ? [{
+            key: 'discipline-' + data?.id,
             label: "Sanctions disciplinaires",
             icon: <LuBan />,
-            onClick: () => toDiscipline(studentId as string, enrollment as Enrollment)
+            onClick: () => toDiscipline(data?.student?.id as string, data as Enrollment)
         }] : []),
 
-        ...(canDelete ? [{type: 'divider'}]: []),
-
-        ...(canDelete ? [{
-            key: `delete-${studentId}`,
+        ...(canDelete ? [{type: 'divider'}, {
+            key: `delete-${data?.id}`,
             label: 'Rétiré',
             icon: <LuUserMinus />,
             danger: true,
-            disabled: enrollment?.isArchived,
+            disabled: data?.isArchived,
             onClick: setOpenRemoveStudent
         }] : [])
-    ] as [], [
-        can, canCreate, canDelete, enrollment, setShouldReEnroll,
-        setOpenPromoteStudent, setOpenRemoveStudent, studentId, toDiscipline
-    ])
-    
+    ] as [], [can, canCreate, canDelete, data, setShouldReEnroll, setOpenPromoteStudent, setOpenRemoveStudent, toDiscipline])
+
     useMenuItemsEffect(items, getItems)
     
     return(

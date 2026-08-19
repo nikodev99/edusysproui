@@ -2,17 +2,15 @@ import Datetime from "@/core/datetime.ts";
 import {Moment} from "@/core/utils/interfaces.ts";
 import {Day, WeekDay} from "@/entity/enums/day.ts";
 import dayjs, {ManipulateType} from "dayjs";
-
-const DEFAULT_LABELS = {
-    seconds : 'sec.',
-    minutes : 'min.',
-    hours   : 'h',
-    weeks   : 'sem.',
-    months  : 'mois',
-    years   : 'An',
-} as const;
-
-type LabelOverrides = Partial<typeof DEFAULT_LABELS>
+import {
+    CompoundOptions,
+    DEFAULT_COMPOUND_LABELS, DEFAULT_DIRECTION_LABELS, DEFAULT_SIMPLE_LABELS, DirectionLabels, SimpleOptions,
+    TimeAgoInput,
+    TimeAgoOptions,
+    UNIT_TO_DAYJS,
+    UnitKey
+} from "@/core/helpers/types.ts";
+import {stringhelper} from "@/core/helpers/StringHelper.ts";
 
 export class DateHelpers {
     formatWeekRange(weekDates: Datetime[]): string {
@@ -69,27 +67,78 @@ export class DateHelpers {
         return this.duration(then, now, 'minutes')
     }
 
-    timeAgo (then: Moment, options?: {showLabels?: boolean, label?: LabelOverrides}): string {
+    applyDirection(value: string, isPast: boolean, direction: boolean | Partial<DirectionLabels>) {
+        const resolved: DirectionLabels = {
+            past: {
+                ...DEFAULT_DIRECTION_LABELS.past,
+                ...(typeof direction === 'object' ? direction.past : {})
+            },
+            future: {
+                ...DEFAULT_DIRECTION_LABELS.future,
+                ...(typeof direction === 'object' ? direction.future : {})
+            }
+        }
+
+        const { prefix, suffix } = isPast ? resolved.past : resolved.future
+
+        return [prefix, value, suffix].filter(Boolean).join(' ')
+    }
+
+    timeAgo (input: TimeAgoInput, options?: TimeAgoOptions): string {
         const showLabels = options?.showLabels ?? true
-        const labels = {...DEFAULT_LABELS, ...options?.label}
+        const then = Datetime.of(input)
+        const now = options?.now ? Datetime.of(options?.now) : Datetime.now()
 
-        const now = Datetime.now()
+        const isPast = then.isBefore(now)
+        const withDir = (s: string) => options?.direction
+            ? this.applyDirection(s, isPast, options.direction)
+            : s
 
+        const format = (x: number, label: string) => showLabels ? `${x} ${label}` : `${x}`
+
+        let result: string
+        if (options?.compound) {
+            const opts = options as CompoundOptions
+            const units = opts.compound.split('-') as UnitKey[]
+            const labels = {...DEFAULT_COMPOUND_LABELS, ...opts.labels}
+            const separator = opts.separator ?? ' et '
+            const skipZero = opts.skipZero ?? true
+
+            const [start, end] = isPast ? [now, then] : [then, now]
+            let current = start.clone()
+            const parts: string[] = []
+
+            for (const unit of units) {
+                const value = end.diff(current, UNIT_TO_DAYJS[unit])
+                if (!skipZero || value > 0) {
+                    parts.push(format(value, labels[unit]))
+                }
+                if (value > 0) {
+                    current = current.plus(value, UNIT_TO_DAYJS[unit])
+                }
+            }
+            result = parts.join(separator) || format(0, labels[units[units.length - 1]]);
+            return withDir(result)
+        }
+
+        const labels = {...DEFAULT_SIMPLE_LABELS, ...(options as SimpleOptions | undefined)?.labels}
         const seconds = Math.abs(now.diffSecond(then))
         const minutes = Math.abs(now.diffMinutes(then))
         const hours = Math.abs(now.diffHour(then))
+        const days = Math.abs(now.diffDay(then))
         const weeks = Math.abs(now.diffWeek(then))
         const months = Math.abs(now.diffMonth(then))
         const years = Math.abs(now.diffYear(then))
 
-        const format = (x: number, label: string) => showLabels ? `${x} ${label}` : `${x}`
+        if (seconds < 60) result = format(seconds, labels.seconds)
+        else if (minutes < 60) result = format(minutes, labels.minutes)
+        else if (hours < 24) result = format(hours, labels.hours)
+        else if (days < 7) result = format(days, stringhelper.setPlural({word: labels.days, count: days}))
+        else if (weeks < 4) result = format(weeks, labels.weeks)
+        else if (months < 12) result = format(months, labels.months)
+        else result = format(years, stringhelper.setPlural({word: labels.years, count: years}))
 
-        if (seconds < 60) return format(seconds, labels.seconds)
-        if (minutes < 60) return format(minutes, labels.minutes)
-        if (hours < 24) return format(hours, labels.hours)
-        if (weeks < 4) return format(weeks, labels.weeks)
-        if (months < 12) return format(months, labels.months)
-        return format(years, years > 1 ? `${labels.years}s` : labels.years)
+        return withDir(result)
     }
 
     getWeekRange (now: Moment): {monday: Datetime, friday: Datetime} {

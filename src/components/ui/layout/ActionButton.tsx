@@ -2,8 +2,10 @@ import {AiOutlineEllipsis} from "react-icons/ai";
 import {Dropdown, DropdownProps} from "antd";
 import {ItemType} from "antd/es/menu/interface";
 import {CSSProperties, ReactNode} from "react";
+import {MAIN_COLOR} from "@/core/utils/utils.ts";
 
-export const ActionButton = ({items, placement, arrow, icon, style, className, btnLabel, hasButton = true, trigger = ['click'], dropdownProps}: {
+export const ActionButton = ({idKey, items, placement, arrow, icon, style, className, btnLabel, hasButton = true, specialStyle = true, trigger = ['click'], dropdownProps, onSelect}: {
+    idKey?: string,
     items?: ItemType[],
     placement?: "bottomLeft" | "topLeft" | "topCenter" | "topRight" | "bottomCenter" | "bottomRight" | "top" | "bottom" | undefined
     arrow?: boolean,
@@ -14,12 +16,24 @@ export const ActionButton = ({items, placement, arrow, icon, style, className, b
     dropdownProps?: DropdownProps
     trigger?: DropdownProps['trigger']
     hasButton?: boolean
+    onSelect?: (key: string) => void
+    specialStyle?: boolean
 }) => {
     return(
-        <Dropdown arrow={arrow} trigger={trigger} menu={{items: items}} placement={placement ? placement : 'bottomLeft'} {...dropdownProps}>
-            {hasButton && <div style={{cursor: 'pointer' , ...style}} className={className}>
+        <Dropdown
+            arrow={arrow} trigger={trigger} menu={{ items: items }} placement={placement ? placement : 'bottomLeft'}
+            destroyOnHidden {...dropdownProps}
+        >
+            {hasButton && <span
+                style={specialStyle ? {
+                    width: 34, height: 34, borderRadius: "50%", display: "flex",
+                    alignItems: "center", justifyContent: "center", gap: 3,
+                    color: '#fff', background: MAIN_COLOR
+                }: style}
+                className={className} onClick={idKey && onSelect ? () => onSelect?.(idKey as string): undefined}
+            >
                 {icon ? icon : <AiOutlineEllipsis style={{fontWeight: 'bolder'}} size={30} />} {btnLabel && btnLabel}
-            </div>}
+            </span>}
         </Dropdown>
     )
 }

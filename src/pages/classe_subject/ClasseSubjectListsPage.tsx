@@ -59,7 +59,8 @@ const ClasseSubjectListsPage = () => {
                 ]}
                 tab={{
                     centered: false,
-                    type: 'card'
+                    type: 'card',
+                    destroyOnHidden: true
                 }}
                 exists={true}
                 memorizedTabKey='classe-course'

@@ -73,15 +73,14 @@ export const TeacherActionLinks = ({data, getItems, setRefresh, schoolId}: Teach
             icon: <LuListTodo/>,
             onClick: () => toViewTeacher(data?.id as string, '5'),
         }] : []),
-        {type: 'divider'},
-        ...(canDelete ? [{
+        ...(canDelete ? [{type: 'divider'}, {
             key: `delete-${data?.id}`,
             label: 'Retirer l\'enseignant', 
             danger: true, 
             icon: <LuTrash2/>,
             onClick: () => setRemoveTeacher()
         }] : [])
-    ], [
+    ] as [], [
         accountExists, canCreate, canDelete, data?.id, isPresentInSchool, isSelf, setOpenCreateUser, setRemoveTeacher,
         toViewTeacher
     ])

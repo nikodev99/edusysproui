@@ -22,7 +22,7 @@ dayjs.extend(isSameOrAfter); // FIX: was isSameOfAfter (typo in original)
 dayjs.extend(isoWeek);
 dayjs.tz.setDefault('Africa/Brazzaville')
 
-type DateInput = Moment | Dayjs;
+type DateInput = Moment | Dayjs | Datetime;
 
 /**
  * Common date format patterns — French (fr-FR) conventions:
@@ -153,6 +153,9 @@ class Datetime {
         if (typeof date === "string") {
             return dayjs.tz(date, this.timezone).locale(this.locale);
         }
+        if (date instanceof Datetime) {
+            return date.toDayjs()
+        }
         if (date instanceof Date) {
             return dayjs(date).tz(this.timezone).locale(this.locale);
         }
@@ -264,6 +267,9 @@ class Datetime {
 
     toDate(): Date  { return this.date.toDate(); }
     toDayjs(): Dayjs { return this.date; } // FIX: removed unused format arg (dayjs(Dayjs, format) is not valid
+    clone(): Datetime {
+        return new Datetime(this.date)
+    }
 
     // ── Immutable boundary snapping ───────────────────────────────────────────
     //

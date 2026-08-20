@@ -32,7 +32,7 @@ import {withAuthProtection} from "@/middleware/withAuthProtection.tsx";
 import LogSchoolPage from "@/pages/user/LogSchoolPage.tsx";
 import AddEmployeePage from "@/pages/employee/AddEmployeePage.tsx";
 import EmployeeViewPage from "@/pages/employee/EmployeeViewPage.tsx";
-import CustomizePage from "@/pages/setting/CustomizePage.tsx";
+import SettingPage from "@/pages/setting/SettingPage.tsx";
 import AcademicYearPage from "@/pages/org/AcademicYearPage.tsx";
 import GradePage from "@/pages/org/GradePage.tsx";
 import DepartmentPage from "@/pages/org/DepartmentPage.tsx";
@@ -106,7 +106,7 @@ const SaveUserPage = withAuthProtection(withRoleProtection(UserSavePage))
 const UserActivity = withAuthProtection(withRoleProtection(UserActivityPage))
 const UserChangePassword = withAuthProtection(withRoleProtection(ChangePasswordPage))
 
-const SettingCustomizePage = withAuthProtection(withRoleProtection(CustomizePage));
+const SettingCustomizePage = withAuthProtection(withRoleProtection(SettingPage));
 
 export const Route = createBrowserRouter([
     {

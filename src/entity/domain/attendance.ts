@@ -1,7 +1,6 @@
-import {Classe} from "./classe.ts";
 import {AttendanceStatus} from "../enums/attendanceStatus.ts";
-import {AcademicYear} from "./academicYear.ts";
-import {Individual} from "./individual.ts";
+import {AcademicYear, Individual, Classe} from "@/entity";
+import {Moment} from "@/core/utils/interfaces.ts";
 
 export interface Attendance {
     id: number
@@ -10,4 +9,6 @@ export interface Attendance {
     classe: Classe
     attendanceDate: Date | number[] | string
     status: AttendanceStatus
+    createdDate: Moment
+    updatedDate: Moment
 }

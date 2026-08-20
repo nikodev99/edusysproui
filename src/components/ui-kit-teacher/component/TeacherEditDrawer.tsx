@@ -5,7 +5,7 @@ import {ReactNode, useEffect, useMemo, useState} from "react";
 import {useToggle} from "@/hooks/useToggle.ts";
 import FormSuccess from "@/components/ui/form/FormSuccess.tsx";
 import FormError from "@/components/ui/form/FormError.tsx";
-import {Button, Empty, Modal, Radio, Select, Space, Tabs, Tag, Typography} from "antd";
+import {Alert, Button, Empty, Modal, Radio, Select, Space, Tabs, Tag, Typography} from "antd";
 import {AddressOwner, ContractOwner, IndividualType} from "@/core/shared/sharedEnums.ts";
 import {UpdateAddress} from "@/components/custom/UpdateAddress.tsx";
 import {UpdatePersonalData} from "@/components/custom/UpdatePersonalData.tsx";
@@ -17,6 +17,7 @@ import {catchError} from "@/data/action/error_catch.ts";
 import {Notification} from "@/components/custom/Notification.tsx";
 import {ModalConfirmButton} from "@/components/ui/layout/ModalConfirmButton.tsx";
 import {UpdateEmployeeContract} from "@/components/custom/UpdateEmployeeContract.tsx";
+import {anyIsCollege, anyIsUniversity} from "@/entity/enums/section.ts";
 
 interface TeacherClassCourseModalProps {
     open: boolean
@@ -118,6 +119,11 @@ const TeacherClassCourseModal = ({open, onClose, teacherId, currentClasses, curr
     const {courses} = useCourseRepo()
     const {useUpdateCourses, useUpdateClasses} = useTeacherRepo()
 
+    const isUniv = anyIsUniversity(currentClasses?.map(c => c?.grade?.section) as [])
+    const isCol = anyIsCollege(currentClasses?.map(c => c?.grade?.section) as [])
+
+    const canHaveCourses = (currentClasses && currentClasses?.length > 0) || isUniv || isCol
+
     const updateClasses = useUpdateClasses(teacherId);
     const updateCourses = useUpdateCourses(teacherId);
 
@@ -143,6 +149,8 @@ const TeacherClassCourseModal = ({open, onClose, teacherId, currentClasses, curr
         }
         return currentCourses;
     }, [mode, courses, currentCourses]);
+
+    console.log("currentCourses: ", currentCourses, ' currentClasse: ', currentClasses)
 
     const isSubmitting = updateClasses.isPending || updateCourses.isPending;
 
@@ -271,7 +279,7 @@ const TeacherClassCourseModal = ({open, onClose, teacherId, currentClasses, curr
                             }))}
                         />
                     </>
-                ) : (currentCourses && currentCourses.length > 0) ? (
+                ) : canHaveCourses ? (
                     <>
                         <Text type="secondary">
                             {mode === "ADD"
@@ -303,7 +311,7 @@ const TeacherClassCourseModal = ({open, onClose, teacherId, currentClasses, curr
                             }))}
                         />
                     </>
-                ): null}
+                ): <Alert message={"Cet enseignant ne peut pas avoir des matières"} type='error' />}
             </Space>
         </Modal>
     </>)

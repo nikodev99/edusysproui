@@ -1,6 +1,7 @@
 import {Gender} from "@/entity/enums/gender";
 import {CardPalette} from "@/components/custom/EntityCard.tsx";
 import {AssignmentTypeLiteral} from "@/entity/enums/assignmentType.ts";
+import { AttendanceStatus } from "@/entity/enums/attendanceStatus";
 
 export const getStudentPalette = (gender?: string, isArchived?: boolean): CardPalette => {
     if (isArchived) return {
@@ -190,6 +191,62 @@ export const getExamPalette = (status: AssignmentTypeLiteral): CardPalette => {
                 accentBorder: "#E2E8F0",
                 statValueColor: "#334155",
                 actionBtnBg: "#4B5563",
+            };
+    }
+};
+
+export const getAttendancePalette = (attendanceStatus: AttendanceStatus): CardPalette => {
+    switch (attendanceStatus) {
+        case AttendanceStatus.PRESENT:
+            return {
+                headerGradient: "linear-gradient(135deg,#123a1f 0%,#1c6b32 55%,#28a745 100%)",
+                accentColor: "#1e7e34",
+                accentSoft: "#e9f7ec",
+                accentBorder: "#bfe6c8",
+                statValueColor: "#1e7e34",
+                actionBtnBg: "#28a745",
+            };
+
+        case AttendanceStatus.ABSENT:
+            return {
+                headerGradient: "linear-gradient(135deg,#5c1521 0%,#8a1f2f 55%,#dc3545 100%)",
+                accentColor: "#b02a37",
+                accentSoft: "#fbe9eb",
+                accentBorder: "#f2c6cb",
+                statValueColor: "#b02a37",
+                actionBtnBg: "#dc3545",
+            };
+
+        case AttendanceStatus.LATE:
+            return {
+                headerGradient: "linear-gradient(135deg,#6b4a00 0%,#a37a00 55%,#ffc107 100%)",
+                accentColor: "#a37a00",
+                accentSoft: "#fff8e1",
+                accentBorder: "#ffe69c",
+                statValueColor: "#a37a00",
+                // Darkened from the raw #ffc107 — a white icon/label on
+                // pure #ffc107 has poor contrast for the action button.
+                actionBtnBg: "#e0a800",
+            };
+
+        case AttendanceStatus.EXCUSED:
+            return {
+                headerGradient: "linear-gradient(135deg,#0b3d45 0%,#106e7c 55%,#17a2b8 100%)",
+                accentColor: "#117a8b",
+                accentSoft: "#e6f6f8",
+                accentBorder: "#b8e6ec",
+                statValueColor: "#117a8b",
+                actionBtnBg: "#17a2b8",
+            };
+
+        default:
+            return {
+                headerGradient: "linear-gradient(135deg,#4a4a4a 0%,#6e6e6e 55%,#a0a0a0 100%)",
+                accentColor: "#6c757d",
+                accentSoft: "#f1f1f1",
+                accentBorder: "#dcdcdc",
+                statValueColor: "#6c757d",
+                actionBtnBg: "#adb5bd",
             };
     }
 };

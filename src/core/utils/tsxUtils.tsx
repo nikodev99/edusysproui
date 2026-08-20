@@ -1,5 +1,5 @@
 import {getStatusKey, Status} from "@/entity/enums/status.ts";
-import {CSSProperties, ReactNode} from "react";
+import {CSSProperties, ReactNode, useCallback} from "react";
 import Tag from "@/components/ui/layout/Tag.tsx";
 import {Badge, Button, Card, Descriptions, Flex, Popover, Skeleton, Space, StepsProps, Tooltip, Typography} from "antd";
 import {Color} from "./interfaces.ts";
@@ -124,7 +124,14 @@ export const ClockIcon = ({time}: { time: string }) => {
     }
 }
 
-export const SuperWord = ({ input, isUpper, textSize = .6, isSpan = false, style }: { input: string | ReactNode; isUpper?: boolean, textSize?: number /** @range {0-1} */, isSpan?: boolean, style?: CSSProperties }) => {
+export const SuperWord = ({ input, isUpper, textSize = .6, isSpan = false, style, tooltip }: {
+    input: string | ReactNode; 
+    isUpper?: boolean, 
+    textSize?: number /** @range {0-1} */, 
+    isSpan?: boolean, 
+    style?: CSSProperties,
+    tooltip?: string
+}) => {
     const regex = /\b(\d)([a-zA-Z]{1,3})\b/g;
 
     const parts: (string | ReactNode)[] = [];
@@ -160,18 +167,29 @@ export const SuperWord = ({ input, isUpper, textSize = .6, isSpan = false, style
             parts.push(input.substring(lastIndex));
         }
     }
-
-    return (
-        <>
-            {isSpan ? (
+    
+    const getElement = useCallback((input: unknown)=> {
+        const elementPart = isSpan ? (
                 <span style={isUpper ? { textTransform: 'uppercase', padding: 0, margin: 0, ...style } : { pointerEvents: 'auto', padding: 0, margin: 0, ...style }}>
-                    {parts}
+                    {input as ReactNode }
                 </span>
             ) : (
                 <p style={isUpper ? { textTransform: 'uppercase', padding: 0, margin: 0, ...style } : { pointerEvents: 'auto', padding: 0, margin: 0, ...style }}>
-                    {parts}
+                    {input as ReactNode }
                 </p>
-            )}
+            )
+        
+        if (tooltip) {
+            return <Tooltip title={tooltip}>
+                {elementPart}
+            </Tooltip>
+        }
+        return elementPart
+    }, [isSpan, isUpper, style, tooltip])
+
+    return (
+        <>
+            {getElement(parts)}
         </>
     );
 }

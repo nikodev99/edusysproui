@@ -3,7 +3,7 @@ import Block from "@/components/view/Block.tsx";
 import PanelSection from "@/components/ui/layout/PanelSection.tsx";
 import PanelTable from "@/components/ui/layout/PanelTable.tsx";
 import {InfoPageProps, Moment, ReprimandData} from "@/core/utils/interfaces.ts";
-import {Department, StaffRole, Teacher} from "@/entity";
+import {ContractStatusEnum, Department, SalaryBasisEnum, StaffRole, Teacher} from "@/entity";
 import {
     getDistinctArray,
     cLowerName,
@@ -31,6 +31,7 @@ import {LuCircleCheck, LuClock} from "react-icons/lu";
 import {useReprimandRepo} from "@/hooks/actions/useReprimandRepo.ts";
 import {datehelper} from "@/core/helpers/DateHelpers.ts";
 import {useAssignmentRepo} from "@/hooks/actions/useAssignmentRepo.ts";
+import {ContractTypeEnum} from "@/entity/enums/contractType.ts";
 
 type TeacherInfo = InfoPageProps<Teacher> & {readonly?: boolean}
 
@@ -51,7 +52,7 @@ export const IndividualInfo = ({infoData, color}: TeacherInfo) => {
     )
 }
 
-export const ProsInfo = ({infoData, color, isSelf, readonly = false}: TeacherInfo) => {
+export const ProsInfo = ({infoData, color, isSelf, readonly = false, hasPermission}: TeacherInfo) => {
     if (!infoData)
         return <PanelSection title={"Informations Professionnelles"}><Skeleton active paragraph={{ rows: 4 }} /></PanelSection>
 
@@ -64,9 +65,19 @@ export const ProsInfo = ({infoData, color, isSelf, readonly = false}: TeacherInf
         {statement: 'Référence', response: infoData?.personalInfo?.reference},
         {statement: "Role dans établissement", response: StaffRole[infoData?.contract?.role]},
         ...(infoData?.contract?.jobTitle ? [{statement: 'Position', response: infoData?.contract?.jobTitle}] : []),
-        ...(!readonly ? [{statement: 'Date d\'Embauche', response: Datetime.of(contract?.startDate as number[]).fDate()}] : []),
+        ...(hasPermission || !readonly ? [{statement: 'Date d\'Embauche', response: Datetime.of(contract?.startDate as number[]).fDate()}] : []),
         {statement: 'Ancienneté', response: datehelper.timeAgo(contract?.startDate as Moment)},
-        ...(!readonly && isSelf ? [{statement: `Salaire par ${isHourly ? 'heure' : 'mois'}`, response: isHourly ? contract?.salaryByHour: contract?.monthlySalary}] : [])
+        ...(hasPermission || (!readonly && isSelf) ? [
+            {statement: `Methode de paiement`, response: <Tag>{SalaryBasisEnum[contract?.salaryBasis]}</Tag>},
+            {statement: `Salaire par ${isHourly ? 'heure' : 'mois'}`, response: isHourly ? contract?.salaryByHour: contract?.monthlySalary},
+            ...(contract?.contractType ? [{statement: 'Type de contract', response: <Tag color={color}>{ContractTypeEnum[contract?.contractType]}</Tag>}] : []),
+            ...(contract?.status ? [{statement: 'Statut', response: <Tag color={color}>{ContractStatusEnum[contract?.status]}</Tag>}] : []),
+            ...(contract?.isTrialPeriod ? [{response: <Tag color={color}>En periode d'essaie</Tag>}] : []),
+            ...(contract?.bankName ? [{statement: 'Bank', response: contract?.bankName}] : []),
+            ...(contract?.bankAccount ? [{statement: 'N° de compte', response: contract?.bankAccount}] : []),
+            ...(contract?.mobileMoneyNumber ? [{statement: 'Mobile Money', response: contract?.mobileMoneyNumber}] : []),
+            ...(contract?.cnssNumber ? [{statement: "N° d'affiliation CNSS", response: contract?.cnssNumber}] : []),
+        ] : [])
     ]
 
     const courseTaught = [

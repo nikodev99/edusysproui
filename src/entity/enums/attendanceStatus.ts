@@ -38,7 +38,7 @@ export const statusToLiteral = (status: AttendanceStatus): AttendanceStatusLiter
     }
 }
 
-export const litoralToStatus = (status: AttendanceStatusLiteral): AttendanceStatus => {
+export const literalToStatus = (status: AttendanceStatusLiteral): AttendanceStatus => {
     console.log('LITERAL: ', status)
     switch (status) {
         case 0 as AttendanceStatusLiteral:

@@ -86,6 +86,7 @@ export class DateHelpers {
 
     timeAgo (input: TimeAgoInput, options?: TimeAgoOptions): string {
         const showLabels = options?.showLabels ?? true
+        const isUpper = options?.isUpper
         const then = Datetime.of(input)
         const now = options?.now ? Datetime.of(options?.now) : Datetime.now()
 
@@ -94,7 +95,8 @@ export class DateHelpers {
             ? this.applyDirection(s, isPast, options.direction)
             : s
 
-        const format = (x: number, label: string) => showLabels ? `${x} ${label}` : `${x}`
+        const formatLabel = (label: string)=> isUpper === undefined ? label : isUpper ? label?.toUpperCase() : label?.toLowerCase()
+        const format = (x: number, label: string) => showLabels ? `${x} ${formatLabel(label)}` : `${x}`
 
         let result: string
         if (options?.compound) {

@@ -23,7 +23,7 @@ export const UpdateEmployeeContract = (
                 : {} as EmployeeContract
     }, [data, personal])
 
-    const loading = useMemo(() => !!data || isLoading || isSubmitting, [data, isLoading, isSubmitting])
+    const loading = useMemo(() => !data || isLoading || isSubmitting, [data, isLoading, isSubmitting])
 
     const handleContractUpdate = async (field: keyof EmployeeContract) => {
         if ((contractData as EmployeeContract)?.id) {

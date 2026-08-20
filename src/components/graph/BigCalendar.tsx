@@ -219,7 +219,6 @@ export const BigCalendar = <TEvent extends object = Record<string, unknown>>(
 
     const handleEventClick = useCallback(
         (arg: EventClickInfo) => {
-            console.log({arg})
             const source = arg.event.extendedProps.source as TEvent
             onSelectEvent?.(source, arg.jsEvent as unknown as SyntheticEvent)
         },

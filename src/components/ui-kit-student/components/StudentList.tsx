@@ -65,8 +65,6 @@ export const StudentList = <TError extends AxiosError>(listProps: ListViewerProp
         )
     }
 
-    console.log('SELECTED STUDENT: ', selectedStudent)
-
     const handleCardRender = (record: StudentListDataType[]) => {
         return record?.map((r) => {
             const colors = getStudentPalette(r.gender, r.isArchived)
@@ -222,7 +220,6 @@ export const StudentList = <TError extends AxiosError>(listProps: ListViewerProp
                 displayItem={4}
                 itemSize={12}
                 onSelectData={(data) => {
-                    console.log('selected student data: ', data)
                     setSelectedStudent(toEnrollment(data as StudentListDataType))
                 }}
                 refetchCondition={refresh}

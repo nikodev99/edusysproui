@@ -10,7 +10,7 @@ import {
     ResponsiveContainer,
 } from 'recharts';
 import {BarProps, ChartProps} from "../ui/ui_interfaces.ts";
-import {setGraphColor} from "../../core/utils/utils.ts";
+import {setGraphColor} from "@/core/utils/utils.ts";
 
 type BarChartProps<TData> = ChartProps<TData> & BarProps<TData>
 
@@ -62,10 +62,10 @@ export const BarChart = <T extends object>({
                         />
                     ))
                     : Array.from({ length: stackBars || 0 }).map((_, index) => {
-                        const skey = stackKeys ? stackKeys[index] as string : `bar${index}`;
+                        const s_key = stackKeys ? stackKeys[index] as string : `bar${index}`;
                         return (<Bar
                             barSize={barSize ?? 50}
-                            key={`bar-${index}-${skey}`}
+                            key={`bar-${index}-${s_key}`}
                             dataKey={stackKeys ? stackKeys[index] as string : `bar${index}`}
                             stackId={stackId}
                             fill={setColor(index)}

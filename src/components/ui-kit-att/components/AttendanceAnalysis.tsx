@@ -1,12 +1,12 @@
-import {AttendanceCommonAnalysis} from "../../common/AttendanceCommonAnalysis.tsx";
-import {useAttendanceRepo} from "../../../hooks/actions/useAttendanceRepo.ts";
-import {text} from "../../../core/utils/text_display.ts";
-import {AttendanceSummary} from "../../../core/utils/interfaces.ts";
-import Datetime from "../../../core/datetime.ts";
+import {AttendanceCommonAnalysis} from "@/components/common/AttendanceCommonAnalysis.tsx";
+import {useAttendanceRepo} from "@/hooks/actions/useAttendanceRepo.ts";
+import {text} from "@/core/utils/text_display.ts";
+import {AttendanceSummary} from "@/core/utils/interfaces.ts";
+import Datetime from "@/core/datetime.ts";
 import {AttendanceTable} from "./AttendanceTable.tsx";
-import {isObjectEmpty} from "../../../core/utils/utils.ts";
+import {isObjectEmpty} from "@/core/utils/utils.ts";
 import {Button, Flex} from "antd";
-import {redirectTo} from "../../../context/RedirectContext.ts";
+import {redirectTo} from "@/context/RedirectContext.ts";
 
 export const AttendanceAnalysis = (
     {academicYear, date}: {
@@ -16,8 +16,6 @@ export const AttendanceAnalysis = (
 ) => {
 
     const today = date || Datetime.now();
-
-    console.log('DATE DANS ATTENDANCE ANALYSIS', today.DAY)
 
     const {
         useGetSchoolAttendanceStatPerStatus,
@@ -46,7 +44,7 @@ export const AttendanceAnalysis = (
             }
             prefixTabElement={[
                 {
-                    label: Datetime.now().fullDay(),
+                    label: today.fullDay(),
                     children: data && !isObjectEmpty(data?.statusCount) ? (
                         <AttendanceTable
                             date={today}

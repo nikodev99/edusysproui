@@ -13,8 +13,10 @@ import {
     TeacherAgenda,
     TeacherAssignments,
     TeacherEditDrawer,
-    TeacherInfo, TeacherReports,
-    TeacherProgram, TeacherReprimand
+    TeacherInfo,
+    TeacherProgram,
+    TeacherReports,
+    TeacherReprimand
 } from "@/components/ui-kit-teacher";
 import {useToggle} from "@/hooks/useToggle.ts";
 import {ViewRoot} from "@/components/custom/ViewRoot.tsx";
@@ -27,6 +29,7 @@ import {useAcademicYearRepo} from "@/hooks/actions/useAcademicYearRepo.ts";
 import {useUserRepo} from "@/hooks/actions/useUserRepo.ts";
 import {AffiliateStatusTag} from "@/core/utils/tsxUtils.tsx";
 import {Skeleton} from "antd";
+import {PermissionLevel} from "@/middleware/routeAccess.ts";
 
 const TeacherViewPage = () => {
 
@@ -40,7 +43,7 @@ const TeacherViewPage = () => {
     const [shouldRefresh, setShouldRefresh] = useState<boolean>(false)
     const [openDrawer, setOpenDrawer] = useToggle(false)
     const {isSelfInd} = useUserRepo()
-    const {can, canEdit} = usePermission()
+    const {can, canEdit, level} = usePermission()
     const {useGetTeacher, useGetWidgets} = useTeacherRepo()
     const {useAccountExists} = useAccount()
     const {currentAcademicYear} = useAcademicYearRepo()
@@ -102,8 +105,6 @@ const TeacherViewPage = () => {
         refetch().then(r => r.data)
     }
 
-    console.log("TEACHER: ", teacher)
-
     if (!teacher) return <Skeleton active paragraph={{rows: 10}} />
 
     return(
@@ -138,6 +139,7 @@ const TeacherViewPage = () => {
                         academicYear={currentAcademicYear?.id}
                         dataKey='info'
                         isSelf={isSelfAuthorized}
+                        hasPermission={level === PermissionLevel.FULL}
                     />},
                     {label: "Agenda", children: <TeacherAgenda
                         infoData={teacher as Teacher}

@@ -87,7 +87,8 @@ const CourseInfoData = ({infoData, color, classes, academicYear}: CourseInfoType
                     round={<Progress percent={studentConcerned as number} type='dashboard' size={35} strokeColor={color} />}
                     desc='Concernés'
                 />}
-                {studentCount?.genders && studentCount?.genders.length > 0 && studentCount?.genders?.map(s => (<PanelStat
+                {studentCount?.genders && studentCount?.genders.length > 0 && studentCount?.genders?.map((s, i) => (<PanelStat
+                    key={`${s.gender}-${i}`}
                     title={s?.ageAverage?.toFixed(1)}
                     subTitle={genderTitle(s?.gender as Gender)}
                     round={<Progress percent={findPercent(s?.ageAverage as number, maxAge) as number} type='dashboard' size={35} strokeColor={color} />}

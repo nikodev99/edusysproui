@@ -43,7 +43,7 @@ export interface EntityCardProps<T extends object> {
     record: T
     palette: CardPalette;
     header: EntityCardHeader;
-    titlePrimary: string;
+    titlePrimary: string | { primary: string; tooltipTitle?: string};
     titleSecondary?: string;
     pillText?: ReactNode;
     rightText?: ReactNode;
@@ -67,6 +67,9 @@ export const EntityCard = <T extends object>(
     const goTo = () => redirectTo?.(id as string, record);
     const hasFooterContent = footerLabel || footerValue;
     const hasFooter = hasFooterContent || dropdown;
+
+    const primaryTitle = typeof titlePrimary === 'string' ? titlePrimary : titlePrimary.primary;
+    const tooltipTitle = typeof titlePrimary === 'string' ? undefined : titlePrimary.tooltipTitle;
 
     return (
         <article
@@ -133,18 +136,27 @@ export const EntityCard = <T extends object>(
 
             {/* ── Body ── */}
             <div style={{zIndex: -1, paddingTop: "50px", textAlign: "center"}}>
-                <h2 onClick={goTo} style={{fontSize: 19, letterSpacing: "-.01em", color: "#0e0e0e", lineHeight: 1.2, marginBottom: 4}}>
+                {header.type === "avatar" ? (<h2 onClick={goTo} style={{fontSize: 19, letterSpacing: "-.01em", color: "#0e0e0e", lineHeight: 1.2, marginBottom: 4}}>
                     {titleSecondary ? (
                         <>
                             <em style={{fontStyle: "italic", color: palette.accentColor}}>
-                                <SuperWord input={titlePrimary} isSpan={true}/>
+                                <SuperWord input={primaryTitle} tooltip={tooltipTitle} isSpan={true} />
                             </em>{" "}
-                            <SuperWord input={titleSecondary} isSpan={true}/>
+                            <SuperWord input={titleSecondary}  isSpan={true} />
                         </>
                     ) : (
-                        <SuperWord input={titlePrimary} isSpan={true}/>
+                        <SuperWord input={primaryTitle} tooltip={tooltipTitle} isSpan={true} />
                     )}
-                </h2>
+                </h2>): (<div>
+                    <h2 onClick={goTo} style={{fontSize: 19, letterSpacing: "-.01em", color: "#0e0e0e", lineHeight: 1.2, marginBottom: 4}}>
+                        <SuperWord input={primaryTitle} tooltip={tooltipTitle} isSpan={true} />
+                    </h2>
+                    {titleSecondary && (
+                        <h4 onClick={goTo} style={{fontSize: 14, fontWeight: 500, lineHeight: 1.4, marginBottom: 4}}>
+                            <SuperWord input={titleSecondary}/>
+                        </h4>
+                    )}
+                </div>)}
 
                 <Divider/>
 

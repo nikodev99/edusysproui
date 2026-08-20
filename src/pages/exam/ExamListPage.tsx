@@ -13,7 +13,7 @@ import {AvatarTitle} from "@/components/ui/layout/AvatarTitle.tsx";
 import Datetime from "@/core/datetime.ts";
 import Tag from "@/components/ui/layout/Tag.tsx";
 import {ActionButton} from "@/components/ui/layout/ActionButton.tsx";
-import {setFirstName, setName} from "@/core/utils/utils.ts";
+import {cutStatement, setFirstName, setName} from "@/core/utils/utils.ts";
 import {AssignmentFilter, ExamActionLinks} from "@/components/ui-kit-exam";
 import {useAcademicYearRepo} from "@/hooks/actions/useAcademicYearRepo.ts";
 import {AssignmentTypeLiteral, typeColors} from "@/entity/enums/assignmentType.ts";
@@ -109,7 +109,7 @@ const ExamListPage = () => {
             width: '20%',
             sorter: true,
             showSorterTooltip: false,
-            render: (value, record) => <Link
+            render: (value: string, record) => <Link
                 onClick={() => toViewExam(record?.id as number)}
             >
                 {value}
@@ -221,6 +221,7 @@ const ExamListPage = () => {
             const end = date.timeToDatetime(r?.endTime as [])?.time()
             const preparedBy = setName(r?.preparedBy)
             const colors = getExamPalette(literal)
+            console.log({record: r})
             return {
                 id: r.id as number,
                 record: r,
@@ -228,21 +229,20 @@ const ExamListPage = () => {
                 palette: colors,
                 header: {type: 'icon', icon: <LuClipboardList size={36} color={colors.accentColor}/>},
                 pillText: `${literal}-#${r?.id}`,
-                rightText: r?.semester?.academicYear?.academicYear,
-                titlePrimary :r.examName,
+                rightText: `${r?.semester?.academicYear?.academicYear} - ${r?.semester?.template?.semesterName}`,
+                titlePrimary : {primary: cutStatement(r?.examName as string, 40), tooltipTitle: r?.examName && r?.examName?.length > 40 ? r?.examName : undefined},
+                titleSecondary: `Préparé par ${preparedBy}`,
                 stats: [
                     {label: "Classe", value: r?.classe?.name},
-                    ...(r?.subject ? [{label: 'Matière', value: r?.subject?.abbr}]: []),
-                    ...(Number(r?.coefficient ?? 0) > 1 ? [{label: 'Coefficient', value: r?.coefficient, small: true}]: []),
-                    ...(!r?.subject || !(r?.coefficient ?? 0 > 1) ? [{label: 'Date', value: date.format({format: "DD MMM YYYY"}), small: true}]: []),
-                    ...(!(r?.coefficient ?? 0 > 1) ? [{label: 'Préparé par', value: preparedBy, small: true}]: []),
+                    ...(r?.subject ? [{label: 'Matière', value: cutStatement(r?.subject?.course as string, 10, r?.subject?.abbr)}]: []),
+                    ...((r?.coefficient && r?.coefficient > 1) ? [{label: 'Coefficient', value: r?.coefficient, small: true}]: []),
+                    {label: 'Date', value: date.format({format: "DD MMM YYYY"}), small: true}
                 ],
                 tags: [
                     <Space>
                         <Tag color={!r?.passed ? 'warning': 'success'}>{!r?.passed ? 'Programmé' : 'Traité'}</Tag>
                         {r?.passed ? undefined : Datetime.now().isAfter(r?.examDate as Date) ? <Tag color='danger'>Date Dépassée</Tag> : undefined}
                     </Space>,
-                    ...((r?.coefficient ?? 0 > 1) ? [<Tag>{preparedBy}</Tag>] : [])
                 ],
                 footerLabel: "Heures: ",
                 footerValue: <strong>{start}-{end}</strong>,

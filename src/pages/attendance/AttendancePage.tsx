@@ -1,6 +1,6 @@
 import {useDocumentTitle} from "@/hooks/useDocumentTitle.ts";
 import {text} from "@/core/utils/text_display.ts";
-import {useMemo, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import ViewHeader from "../../components/ui/layout/ViewHeader.tsx";
 import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
 import Datetime from "../../core/datetime.ts";
@@ -12,6 +12,8 @@ import {redirectTo} from "@/context/RedirectContext.ts";
 import {Dayjs} from "dayjs";
 import {DatePicker} from "antd";
 import {AcademicYear} from "@/entity";
+import {datehelper} from "@/core/helpers/DateHelpers.ts";
+import {Moment} from "@/core/utils/interfaces.ts";
 
 const AttendancePage = () => {
 
@@ -24,11 +26,16 @@ const AttendancePage = () => {
 
     const [academicYear, setAcademicYear] = useState<string>('')
     const [academicYearResource, setAcademicYearResource] = useState<AcademicYear>()
-    const [date, setDate] = useState<Datetime>(Datetime.now())
 
-    const handleCatchingAcademicYear = (academicYear: string | string[]) => {
-        setAcademicYear(academicYear as string)
-    }
+    const dateReference = useMemo(() => datehelper.getDateReference(academicYearResource?.startDate as Moment, academicYearResource?.endDate as Moment), [academicYearResource])
+
+    const [date, setDate] = useState<Datetime>(dateReference)
+    
+    useEffect(() => {
+        if (date.isToday() && !date.isBetween(academicYearResource?.startDate as Moment, academicYearResource?.endDate as Moment)) {
+            setDate(Datetime.of(dateReference))
+        }
+    }, [academicYearResource, date, dateReference])
 
     const getItems = [
         {icon: <LuCalendarPlus />, label: text.att.group.add.label, onClick: () => redirectTo(text.att.group.add.href)}
@@ -50,11 +57,11 @@ const AttendancePage = () => {
                 closeState={false}
                 btnLabel={"Gérer la fiche de présence"}
                 blockProps={[
-                    {title: 'Date du jour', mention: <mark>{Datetime.now().fullDay()}</mark>},
+                    {title: 'Date du jour', mention: <mark>{date.fullDay()}</mark>},
                     {
-                        title: 'Année Academique',
+                        title: 'Année Académique',
                         mention: <SelectAcademicYear
-                            getAcademicYear={handleCatchingAcademicYear}
+                            getAcademicYear={setAcademicYear as never}
                             defaultValue={true as never}
                             getResource={setAcademicYearResource as () => void}
                         />
@@ -62,7 +69,7 @@ const AttendancePage = () => {
                     {
                         title: 'Date Sélectionné',
                         mention: <DatePicker
-                            value={date?.toDayjs()}
+                            value={dateReference?.toDayjs()}
                             format='DD/MM/YYYY'
                             onChange={(date: Dayjs) => setDate(Datetime.of(date))}
                             variant='borderless'
@@ -82,7 +89,7 @@ const AttendancePage = () => {
             <ViewRoot
                 items={[
                     {
-                        label: 'Etat de présence',
+                        label: 'État de présence',
                         children: <AttendanceAnalysis date={date} academicYear={academicYear}/>
                     }
                 ]}

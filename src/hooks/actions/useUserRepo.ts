@@ -93,7 +93,11 @@ export const useUserRepo = () => {
     }
 
     const isSameUser = (currentUser?: User): boolean => currentUser ? currentUser?.username === logged?.username : false
-    const isSelf = (userId?: string): boolean => userId ? userId === logged?.userId : false
+    const isSelf = (userId: string | number): boolean => {
+        if (typeof userId === 'string') return  userId ? userId === logged?.userId : false
+        if (typeof userId === 'number') return  userId ? userId === logged?.personalInfo : false
+        return false
+    }
     const isSelfInd = (userPersonalInfo: number) => userPersonalInfo ? userPersonalInfo === logged?.personalInfo : false
     const isSelfUser = (): boolean => user ? user?.username === logged?.username : false
 

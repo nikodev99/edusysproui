@@ -73,6 +73,7 @@ export const SingleBestStudentList = ({sectionTitles, color, hasPermission, best
                             color={color}
                             markAsAbsent={false}
                             hasPermission={hasPermission}
+                            isShrink
                         />
                     }]} />
                     <PanelTable title={sectionTitles.poorTableTitle} panelColor={color} data={[{
@@ -83,6 +84,7 @@ export const SingleBestStudentList = ({sectionTitles, color, hasPermission, best
                             icon={<AiOutlineArrowDown />}
                             hasPermission={hasPermission}
                             goodToPoor
+                            isShrink
                         />
                     }]} />
                 </PanelSection>

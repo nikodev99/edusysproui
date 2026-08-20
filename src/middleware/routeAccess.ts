@@ -317,6 +317,7 @@ class RouteAccess {
                 viewSome: [
                     () => isTeacher()
                 ],
+                viewSelf: [],
                 special: {
                     // Teachers can assign homework even if they can't create classes
                     'assignHomework': [
@@ -944,7 +945,7 @@ class RouteAccess {
     }
 
     /**
-     * NEW METHOD: Check if user can view and edit
+     * NEW METHOD: Check if the user can view and edit
      *
      * This checks if the user has both view and edit permissions, which is useful
      * for enabling form fields or showing edit buttons without delete capabilities.
@@ -954,7 +955,7 @@ class RouteAccess {
     }
 
     /**
-     * NEW METHOD: Check if user has full access
+     * NEW METHOD: Check if the user has full access
      *
      * Full access means the user can view, create, edit, and delete everything.
      * This is typically only true for administrators.
@@ -975,7 +976,7 @@ class RouteAccess {
      * Get permission level for a module
      *
      * This returns the highest permission level the user has in a module.
-     * Useful for showing appropriate UI elements based on overall access level.
+     * Useful for showing appropriate UI elements based on the overall access level.
      *
      * @param module - The module name
      * @returns PermissionLevel - The highest permission level the user has

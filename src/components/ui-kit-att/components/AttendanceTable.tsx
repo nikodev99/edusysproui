@@ -1,17 +1,19 @@
-import {Attendance, Classe, Grade, Individual} from "../../../entity";
-import {Descriptions, TableColumnsType} from "antd";
-import {firstLetter, isObjectEmpty} from "../../../core/utils/utils.ts";
+import {Attendance, Classe, Grade, Individual} from "@/entity";
+import {TableColumnsType} from "antd";
+import {cutStatement, firstLetter, isObjectEmpty} from "@/core/utils/utils.ts";
 import Tag from "../../ui/layout/Tag.tsx";
-import {AttendanceStatus, attendanceTag} from "../../../entity/enums/attendanceStatus.ts";
-import Datetime from "../../../core/datetime.ts";
+import {AttendanceStatus, attendanceTag} from "@/entity/enums/attendanceStatus.ts";
+import Datetime, {DateFormat} from "../../../core/datetime.ts";
 import {AvatarTitle} from "../../ui/layout/AvatarTitle.tsx";
 import ListViewer from "../../custom/ListViewer.tsx";
-import {getAllSchoolStudentAttendanceOfTheDay} from "../../../data/repository/attendanceRepository.ts";
-import {AxiosResponse} from "axios";
 import {useMemo, useState} from "react";
-import {AttendanceStatusCountResponse, DataProps} from "../../../core/utils/interfaces.ts";
+import {AttendanceStatusCountResponse} from "@/core/utils/interfaces.ts";
 import {AttendanceDaySummary} from "./AttendanceDaySummary.tsx";
 import {UseQueryResult} from "@tanstack/react-query";
+import {EntityCardProps} from "@/components/custom/EntityCard.tsx";
+import {getAttendancePalette} from "@/core/helpers/colorPalette.ts";
+import {SectionType} from "@/entity/enums/section.ts";
+import {useAttendanceRepo} from "@/hooks/actions/useAttendanceRepo.ts";
 
 export const AttendanceTable = ({academicYear, todayAttendanceData, date}: {
     todayAttendanceData?: UseQueryResult<AttendanceStatusCountResponse, unknown>,
@@ -20,6 +22,8 @@ export const AttendanceTable = ({academicYear, todayAttendanceData, date}: {
 }) => {
 
     const [searchQuery, setSearchQuery] = useState<string | undefined>(undefined)
+    const {useGetPaginated} = useAttendanceRepo()
+    const {getPaginatedData} = useGetPaginated(academicYear as string, date as Datetime)
     const dataExists = useMemo(() =>
         todayAttendanceData?.isSuccess && todayAttendanceData?.data && !isObjectEmpty(todayAttendanceData?.data)
     , [todayAttendanceData])
@@ -73,36 +77,46 @@ export const AttendanceTable = ({academicYear, todayAttendanceData, date}: {
         }
     ]
 
-    const cardData = (data: Attendance[]) => {
-        return data?.map(c => (
-            {
-                id: `${c?.individual?.id}`,
-                firstName: c?.individual?.firstName,
-                lastName: c?.individual?.lastName,
-                image: c?.individual?.image,
-                tag: getTag(c.status),
-                description: <Descriptions size='small' items={[
-                    ...(date ? [{key: 1, label: 'Date', children: <em>{date.fullDay()}</em>, span: 3}] : []),
-                    {key: 2, label: 'Classe', children: c?.classe?.name},
-                    {key: 1, label: 'Section', children: c?.classe?.grade?.section}
-                ]} />
-            }
-        )) as DataProps<Attendance>[]
+    const handleCardRender = (data: Attendance[]): EntityCardProps<Attendance>[] => {
+        return data?.map(c => {
+            const colors = getAttendancePalette(AttendanceStatus[c?.status])
+            return {
+                id: c.id,
+                record: c,
+                ariaLabel: `Fiche de présence – ${c?.id}`,
+                palette: colors,
+                header: {type: 'avatar', image: c?.individual?.image, firstText: c?.individual?.firstName, lastText: c?.individual?.lastName},
+                pillText: `ATT-${c?.id}`,
+                rightText: c?.academicYear?.academicYear,
+                titlePrimary: c?.individual?.firstName,
+                titleSecondary: c?.individual?.lastName,
+                stats: [
+                    {label: 'Date', value: Datetime.of(c?.attendanceDate).fDate(), small: true},
+                    {label: 'Classe', value: cutStatement(c?.classe?.category as string, 10, c?.classe?.name), small: true},
+                    {label: 'Section', value: SectionType[c?.classe?.grade?.section as unknown as keyof typeof SectionType], small: true}
+                ],
+                tags: [
+                    getTag(c?.status)
+                ],
+                footerLabel: 'Ajouté le',
+                footerValue: Datetime.of(c?.createdDate).format(DateFormat.DATE_MEDIUM)
+            } as EntityCardProps<Attendance>
+        })
     }
 
     return(
         <main>
             {todayAttendanceData && dataExists && <AttendanceDaySummary data={todayAttendanceData} />}
             <ListViewer
-                callback={getAllSchoolStudentAttendanceOfTheDay as () => Promise<AxiosResponse<Attendance>>}
-                callbackParams={[academicYear, date?.toDate(), searchQuery]}
+                callback={getPaginatedData as never}
+                callbackParams={[searchQuery]}
                 shareSearchQuery={setSearchQuery}
                 tableColumns={columns as []}
                 hasCount={false}
                 fetchId='attendance-day'
                 uuidKey={['individual', 'id']}
-                cardData={cardData}
-                itemSize={30}
+                cardRender={handleCardRender}
+                itemSize={50}
             />
         </main>
     )

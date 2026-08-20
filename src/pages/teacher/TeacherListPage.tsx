@@ -7,6 +7,7 @@ import Tag from "@/components/ui/layout/Tag.tsx";
 import {Teacher, TeacherCourses} from "@/entity";
 import {Avatar} from "@/components/ui/layout/Avatar.tsx";
 import {
+    cutStatement,
     enumToObjectArrayForFiltering,
     setFirstName,
     setPlural
@@ -149,7 +150,7 @@ const TeacherListPage = () => {
             align: 'center',
             responsive: ['md'],
             sorter: true,
-            render: (text) => datehelper.timeAgo(text)
+            render: (text) => datehelper.timeAgo(text, {isUpper: false})
         },
         {
             title: "Status",
@@ -171,7 +172,7 @@ const TeacherListPage = () => {
                 if (text && text?.length > 0) {
                     return<Flex justify='center' gap={2} wrap>
                         {text?.map((c, index: number) => (
-                            <Tag key={index}>{c.course.course}</Tag>
+                            <Tag key={index}>{cutStatement(c.course.course as string, 10, c?.course?.abbr)}</Tag>
                         ))}
                     </Flex>
                 }else {
@@ -215,9 +216,9 @@ const TeacherListPage = () => {
                 titlePrimary :r.personalInfo?.firstName.charAt(0) + r.personalInfo?.firstName.slice(1).toLowerCase(),
                 titleSecondary: r.personalInfo?.lastName.charAt(0) + r.personalInfo?.lastName.slice(1).toLowerCase(),
                 stats: [
-                    {label: "Age", value: datehelper.timeAgo(r?.personalInfo?.birthDate)},
+                    {label: "Age", value: datehelper.timeAgo(r?.personalInfo?.birthDate, {showLabels: false})},
                     {label: "Classes", value: r?.classes?.map(c => `${c.classe.name}`)?.join(', '), small: true},
-                    ...(r?.courses && r?.courses?.length > 0 ? [{label: "Matières", value: r?.courses?.map(c => `${c.course.abbr}`)?.join(', '), small: true}] : []),
+                    ...(r?.courses && r?.courses?.length > 0 ? [{label: "Matières", value: r?.courses?.map(c => `${cutStatement(c.course.course as string, 10, c?.course?.abbr)}`)?.join(', '), small: true}] : []),
                 ],
                 tags: [
                     <Tag color={colors.genderTagBg} textColor={colors.genderTagColor} icon={<SelectedGenderIcon gender={colors.genderLabel as Gender}/>}>

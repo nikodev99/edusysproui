@@ -11,6 +11,7 @@ import {SectionType} from "../../../entity/enums/section.ts";
 import {Gender} from "../../../entity/enums/gender.tsx";
 import {UseQueryResult} from "@tanstack/react-query";
 import {AttendanceStatusCountResponse} from "../../../core/utils/interfaces.ts";
+import {StackedBarChart} from "@/components/graph/StackedBarChart.tsx";
 
 export const AttendanceDaySummary = ({data}: {
     data: UseQueryResult<AttendanceStatusCountResponse, unknown>
@@ -71,7 +72,7 @@ export const AttendanceDaySummary = ({data}: {
                 </Grid>
                 <Grid xs={24} md={12} lg={8}>
                     <Card style={{height: 350}}>
-                        <BarChart
+                        <StackedBarChart
                             data={sectionGraphData || []}
                             legend='name'
                             color={ATTENDANCE_STATUS_COLORS}

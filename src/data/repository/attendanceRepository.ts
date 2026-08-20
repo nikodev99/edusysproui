@@ -1,8 +1,13 @@
 import {AxiosResponse} from "axios";
-import {Attendance} from "../../entity";
+import {Attendance} from "@/entity";
 import {apiClient, request} from "../axiosConfig.ts";
-import {AttendanceStatusCountResponse, Pageable} from "../../core/utils/interfaces.ts";
-import {AttendanceSchema} from "../../schema";
+import {
+    AttendanceRecentCount,
+    AttendanceStatusCountResponse,
+    AttendanceSummary,
+    Pageable
+} from "@/core/utils/interfaces.ts";
+import {AttendanceSchema} from "@/schema";
 
 export const insertAttendances = (attendances: AttendanceSchema, classeId: number, date: Date) =>{
     return apiClient.post('attendance', Object.values(attendances?.attendance), {
@@ -17,9 +22,9 @@ export const updateAttendances = (attendances: AttendanceSchema) => {
     return apiClient.put('attendance', Object.values(attendances?.attendance))
 }
 
-export const getStudentAttendances = (studentId: number, pageable: Pageable, academicYearId: string): Promise<AxiosResponse<Attendance[]>> => {
+export const getStudentAttendances = (studentId: number, pageable: Pageable, academicYearId: string) => {
     const {page, size} = pageable
-    return request({
+    return request<Attendance[]>({
         method: 'GET',
         url: `/attendance/${studentId}`,
         params: {
@@ -30,8 +35,8 @@ export const getStudentAttendances = (studentId: number, pageable: Pageable, aca
     })
 }
 
-export const getAllStudentAttendances = (studentId: number, academicYearId: string): Promise<AxiosResponse<Attendance[]>> => {
-    return request({
+export const getAllStudentAttendances = (studentId: number, academicYearId: string) => {
+    return request<Attendance[]>({
         method: 'GET',
         url: `/attendance/all/${studentId}`,
         params: {
@@ -41,7 +46,7 @@ export const getAllStudentAttendances = (studentId: number, academicYearId: stri
 }
 
 export const getAllStudentClasseAttendanceOfTheDay = (classeId: number, academicYearId: string, date?: Date) => {
-    return request({
+    return request<Attendance[]>({
         method: 'GET',
         url: `/attendance/all_classe/${classeId}`,
         params: {
@@ -51,8 +56,8 @@ export const getAllStudentClasseAttendanceOfTheDay = (classeId: number, academic
     })
 }
 
-export const getStudentAttendanceStatusCount = (studentId: number, academicYearId: string): Promise<AxiosResponse<AttendanceStatusCountResponse, unknown>> => {
-    return apiClient.get(`/attendance/status_count/${studentId}`, {
+export const getStudentAttendanceStatusCount = (studentId: number, academicYearId: string) => {
+    return apiClient.get<AttendanceStatusCountResponse>(`/attendance/status_count/${studentId}`, {
         params: {
             academicYear: academicYearId
         }
@@ -69,8 +74,7 @@ export const getAllSchoolStudentAttendanceOfTheDay = (
     sortField?: string,
     sortOrder?: string,
 ) => {
-    console.log('searchable: ', searchable)
-    return request({
+    return request<Attendance[]>({
         method: 'GET',
         url: `/attendance/all_school/${schoolId}`,
         params: {
@@ -84,8 +88,8 @@ export const getAllSchoolStudentAttendanceOfTheDay = (
     })
 }
 
-export const getClasseAttendanceStatusCount = (classeId: number, academicYearId: string, date?: Date): Promise<AxiosResponse<AttendanceStatusCountResponse, unknown>> => {
-    return request({
+export const getClasseAttendanceStatusCount = (classeId: number, academicYearId: string, date?: Date) => {
+    return request<AttendanceStatusCountResponse>({
         method: 'GET',
         url: `/attendance/classe_${classeId}`,
         params: {
@@ -96,7 +100,7 @@ export const getClasseAttendanceStatusCount = (classeId: number, academicYearId:
 }
 
 export const getClasseAttendanceStatus = (classeId: number, academicYearId: string, pageCount?: number, size?: number) => {
-    return request({
+    return request<AttendanceSummary[]>({
         method: 'GET',
         url: `/attendance/classe_status/${classeId}`,
         params: {
@@ -108,7 +112,7 @@ export const getClasseAttendanceStatus = (classeId: number, academicYearId: stri
 }
 
 export const getClasseAttendanceStatusSearch = (classeId: number, academicYearId: string, name: string) => {
-    return request({
+    return request<AttendanceSummary[]>({
         method: 'GET',
         url: `/attendance/classe_status_search/${classeId}`,
         params: {
@@ -119,7 +123,7 @@ export const getClasseAttendanceStatusSearch = (classeId: number, academicYearId
 }
 
 export const getClasseRecentAttendanceStatus = (classeId: number, academicYearId: string, startDate?: Date, endDate?: Date) => {
-    return request({
+    return request<AttendanceRecentCount[]>({
         method: 'GET',
         url: `/attendance/classe_stat/${classeId}`,
         params: {
@@ -132,7 +136,7 @@ export const getClasseRecentAttendanceStatus = (classeId: number, academicYearId
 
 
 export const getSchoolAttendanceStatPerStatus = (schoolId: string, academicYearId: string, startDate?: Date, endDate?: Date) => {
-    return request({
+    return request<AttendanceRecentCount[]>({
         method: 'GET',
         url: `/attendance/school_stat/${schoolId}`,
         params: {
@@ -144,7 +148,7 @@ export const getSchoolAttendanceStatPerStatus = (schoolId: string, academicYearI
 }
 
 export const getClasseGoodStudentAttendanceRanking = (classeId: number, academicYearId: string) => {
-    return request({
+    return request<AttendanceSummary[]>({
         method: 'GET',
         url: `/attendance/classe_good/${classeId}`,
         params: {
@@ -154,7 +158,7 @@ export const getClasseGoodStudentAttendanceRanking = (classeId: number, academic
 }
 
 export const getClasseWorstStudentAttendanceRanking = (classeId: number, academicYearId: string) => {
-    return request({
+    return request<AttendanceSummary[]>({
         method: 'GET',
         url: `/attendance/classe_worst/${classeId}`,
         params: {
@@ -164,7 +168,7 @@ export const getClasseWorstStudentAttendanceRanking = (classeId: number, academi
 }
 
 export const getSchoolStudentRanking = (schoolId: string, academicYearId: string, isWorst: boolean = false) => {
-    return request({
+    return request<AttendanceSummary[]>({
         method: 'GET',
         url: `/attendance/school_ranking/${schoolId}`,
         params: {
@@ -175,7 +179,7 @@ export const getSchoolStudentRanking = (schoolId: string, academicYearId: string
 }
 
 export const getSchoolAttendanceStatusCount = (academicYearId: string, date?: Date): Promise<AxiosResponse<AttendanceStatusCountResponse, unknown>> => {
-    return request({
+    return request<AttendanceStatusCountResponse>({
         method: 'GET',
         url: `/attendance/school_status/${academicYearId}`,
         params: {

@@ -47,7 +47,7 @@ export const usePermission = () => {
 
         // Generic permission checker for special actions
         // Use this for module-specific actions like 'export', 'approve', etc.
-        //exclude 'true' means that the permission is not allowed to the toAdmin or school director
+        // exclude 'true' means that the permission is not allowed to the toAdmin or school director
         can: (action: string, exclude: boolean = false) => routeAccess.can(module, action, exclude),
 
         // Get a full summary-useful for debugging
@@ -68,7 +68,7 @@ export const usePermission = () => {
  *
  * @param module - The module name
  * @param action - The action to check ('view', 'create', 'edit', 'delete', or custom)
- * @returns boolean - true if user has this permission
+ * @returns boolean - true if the user has this permission
  *
  * @example
  * function DeleteButton({ studentId }) {
@@ -99,7 +99,7 @@ export const useModulePermission = (module: string, action: string): boolean => 
  * records - they need to see the information but shouldn't be able to change it.
  *
  * @param module - The module name
- * @returns boolean - true if user can only view (cannot modify)
+ * @returns boolean - true if the user can only view (cannot modify)
  *
  * @example
  * function StudentForm({ student }) {

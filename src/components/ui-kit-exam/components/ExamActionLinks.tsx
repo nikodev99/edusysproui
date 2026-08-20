@@ -13,6 +13,8 @@ import {text} from "@/core/utils/text_display.ts";
 import {useScoreRepo} from "@/hooks/actions/useScoreRepo.ts";
 import {useMenuItemsEffect} from "@/hooks/useMenuItemsEffect.ts";
 import {ActionButtonsProps} from "@/core/utils/interfaces.ts";
+import {usePermission} from "@/hooks/usePermission.ts";
+import {useUserRepo} from "@/hooks/actions/useUserRepo.ts";
 
 interface ExamActionLinksProps {
     loadMessage?: {success?: string, error?: string}
@@ -28,6 +30,10 @@ export const ExamActionLinks = React.memo((
     const [notify, setNotify] = useState<'completed' | 'date' | 'remove' | false>()
     const [wasDeleted, setWasDeleted] = useState<boolean>(false)
     const [messages, setMessages] = useState<{success?: string, error?: string}>()
+    const {isSelf} = useUserRepo()
+    const {canDelete, canViewAll, canCreate} = usePermission()
+    
+    const isAbleToDelete = (canDelete && canViewAll) || (canDelete && isSelf(data?.preparedBy?.id as number))
 
     const {useCountAssignmentMarks} = useScoreRepo()
     const scoreCount = useCountAssignmentMarks(data?.id as number) || 0
@@ -73,16 +79,16 @@ export const ExamActionLinks = React.memo((
                 onClick: handleChangeDate,
                 disabled: notify === 'date'
             },
-            {
+            ...(isAbleToDelete ? [{type: "divider"}, {
                 key: 5,
                 label: 'Supprimer',
                 danger: true,
                 icon: <LuArchiveX />,
                 onClick: handleOpenRemoveModal,
                 disabled: notify === 'remove'
-            }
-        ]),
-    ], [data, handleCompleteAssignment, handleChangeDate, handleOpenRemoveModal, notify])
+            }] : [])
+        ]) as ItemType[],
+    ], [data, handleCompleteAssignment, notify, handleChangeDate, isAbleToDelete, handleOpenRemoveModal])
 
     useMenuItemsEffect(itemType, getItems)
     

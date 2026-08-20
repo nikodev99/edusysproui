@@ -41,6 +41,7 @@ export type CommonOptions = {
     showLabels? : boolean;          // default true
     now?        : TimeAgoInput;     // custom reference point instead of "right now"
     direction?  : boolean | Partial<DirectionLabels>; // true = French defaults, object = override
+    isUpper?: boolean
 };
 export type SimpleOptions = CommonOptions & {
     compound?  : never;

@@ -1,5 +1,5 @@
 import OutletPage from "@/pages/OutletPage.tsx";
-import {text} from "@/core/utils/text_display.ts";
+import {useText} from "@/core/utils/text_display.ts";
 import {PageTitle} from "@/components/custom/PageTitle.tsx";
 import PageWrapper from "@/components/view/PageWrapper.tsx";
 import Grid from "@/components/ui/layout/Grid.tsx";
@@ -15,6 +15,7 @@ import {Individual} from "@/entity";
 
 const SearchablePage = () => {
     const {enrollStudentActivity} = useActivity()
+    const text = useText()
     const location = useLocation()
 
     const [error, setError] = useState<string | undefined>(undefined)

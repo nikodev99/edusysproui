@@ -4,10 +4,10 @@ import {
     AttendanceSummary,
     Color,
     WidgetItem
-} from "../../core/utils/interfaces.ts";
-import {text} from "../../core/utils/text_display.ts";
-import {AttendanceStatus, getColors} from "../../entity/enums/attendanceStatus.ts";
-import {ATTENDANCE_STATUS_COLORS, findPercent, setFirstName, sumObjectValues} from "../../core/utils/utils.ts";
+} from "@/core/utils/interfaces.ts";
+import {useText} from "@/core/utils/text_display.ts";
+import {AttendanceStatus, getColors} from "@/entity/enums/attendanceStatus.ts";
+import {ATTENDANCE_STATUS_COLORS, findPercent, setFirstName, sumObjectValues} from "@/core/utils/utils.ts";
 import Responsive from "../ui/layout/Responsive.tsx";
 import Grid from "../ui/layout/Grid.tsx";
 import {Widgets} from "../ui/layout/Widgets.tsx";
@@ -17,7 +17,7 @@ import {BarChart} from "../graph/BarChart.tsx";
 import {LineChart} from "../graph/LineChart.tsx";
 import VoidData from "../view/VoidData.tsx";
 import {Avatar} from "../ui/layout/Avatar.tsx";
-import {useAttendanceRepo} from "../../hooks/actions/useAttendanceRepo.ts";
+import {useAttendanceRepo} from "@/hooks/actions/useAttendanceRepo.ts";
 import {AttendanceDaySummary} from "../ui-kit-att";
 
 interface AttendanceAnalysisProps {
@@ -37,6 +37,7 @@ export const AttendanceCommonAnalysis = (
     {recentCount, goodStudent, worstStudents, classeId, academicYear, suffixTabElement, prefixTabElement, lineLoading, setIndividual = undefined, sections}: AttendanceAnalysisProps
 ) => {
     const {useGetClasseAttendanceCount, useGetSchoolAttendanceCount} = useAttendanceRepo()
+    const text = useText()
     const classeAttendances = useGetClasseAttendanceCount(classeId as number, academicYear as string)
     const schoolAttendances = useGetSchoolAttendanceCount(academicYear as string)
 

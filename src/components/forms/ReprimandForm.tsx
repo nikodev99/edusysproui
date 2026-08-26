@@ -8,7 +8,7 @@ import {Path, PathValue} from "react-hook-form";
 import {ReprimandSchema} from "@/schema";
 import {useAcademicYearRepo} from "@/hooks/actions/useAcademicYearRepo.ts";
 import {enumToObjectArray, setName} from "@/core/utils/utils.ts";
-import {text} from "@/core/utils/text_display.ts";
+import {useText} from "@/core/utils/text_display.ts";
 import Datetime from "@/core/datetime.ts";
 import {ReprimandType} from "@/entity/enums/reprimandType.ts";
 import {useAuth} from "@/hooks/useAuth.ts";
@@ -24,6 +24,7 @@ export const ReprimandForm = <T extends object>(
     const onlyField = FormUtils.onlyField(edit as boolean, 24, undefined)
     const form = new FormConfig(errors, edit, true)
     const {user} = useAuth()
+    const text = useText()
 
     const {academicYearOptions} = useAcademicYearRepo()
     const classe = reprimandee?.classe

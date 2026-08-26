@@ -2,7 +2,7 @@ import {GenderCounted, InfoPageProps, StudentListDataType} from "@/core/utils/in
 import {Classe} from "@/entity";
 import PageWrapper from "@/components/view/PageWrapper.tsx";
 import TabItem from "@/components/view/TabItem.tsx";
-import {text} from "@/core/utils/text_display.ts";
+import {useText} from "@/core/utils/text_display.ts";
 import {StudentList} from "@/components/ui-kit-student/components/StudentList.tsx";
 import {AxiosResponse} from "axios";
 import {getClasseEnrolledStudentsSearch} from "@/data/repository/studentRepository.ts";
@@ -18,6 +18,7 @@ type ClasseStudentProps = InfoPageProps<Classe> & {
 
 export const ClasseStudent = ({infoData, academicYear}: ClasseStudentProps) => {
     const {getPaginatedClasseStudents} = useStudentRepo()
+    const text = useText()
     return(
         <PageWrapper>
             <TabItem

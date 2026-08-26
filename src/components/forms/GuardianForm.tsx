@@ -7,7 +7,7 @@ import {FormConfig} from "@/config/FormConfig.ts";
 import {InputTypeEnum, LinkToStudent} from "@/core/shared/sharedEnums.ts";
 import {useMemo} from "react";
 import {enumToObjectArray} from "@/core/utils/utils.ts";
-import {text} from "@/core/utils/text_display.ts";
+import {useText} from "@/core/utils/text_display.ts";
 
 type GuardianFormProps<T extends FieldValues> = FormContentProps<T, Guardian> & {
     handleUpdate?: (field: keyof Guardian, value: unknown) => void,
@@ -17,7 +17,7 @@ type GuardianFormProps<T extends FieldValues> = FormContentProps<T, Guardian> & 
 const GuardianForm = <T extends FieldValues>(
     {control, edit, errors, enroll, data, handleUpdate, parent = 'student.guardian'}: GuardianFormProps<T>
 ) => {
-
+    const text = useText()
     const onlyField = FormUtils.onlyField(edit as boolean, 24, undefined)
 
     const form = new FormConfig(errors, edit, enroll)

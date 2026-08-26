@@ -1,16 +1,16 @@
-import {useDocumentTitle} from "../../hooks/useDocumentTitle.ts";
-import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
-import {text} from "../../core/utils/text_display.ts";
+import {useDocumentTitle} from "@/hooks/useDocumentTitle.ts";
+import {useBreadCrumb} from "@/hooks/useBreadCrumb.tsx";
+import {text} from "@/core/utils/text_display.ts";
 import {Alert, Button, Divider} from "antd";
-import {useGradeRepo} from "../../hooks/actions/useGradeRepo.ts";
-import {useAcademicYearRepo} from "../../hooks/actions/useAcademicYearRepo.ts";
-import {GradeCard} from "../../components/ui-kit-org";
-import {AcademicYear} from "../../entity";
-import {useRedirect} from "../../hooks/useRedirect.ts";
+import {useGradeRepo} from "@/hooks/actions/useGradeRepo.ts";
+import {useAcademicYearRepo} from "@/hooks/actions/useAcademicYearRepo.ts";
+import {GradeCard} from "@/components/ui-kit-org";
+import {AcademicYear} from "@/entity";
+import {useRedirect} from "@/hooks/useRedirect.ts";
 import {ReactNode, useMemo} from "react";
 import EmptyPage from "../EmptyPage.tsx";
 import Marquee from "react-fast-marquee";
-import Block from "../../components/view/Block.tsx";
+import Block from "@/components/view/Block.tsx";
 
 const GradePage = () => {
     useDocumentTitle({

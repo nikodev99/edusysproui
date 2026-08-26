@@ -4,7 +4,7 @@ import {useAssignmentRepo} from "@/hooks/actions/useAssignmentRepo.ts";
 import {useCallback, useEffect, useMemo, useState} from "react";
 import {Assignment} from "@/entity";
 import {useBreadCrumb} from "@/hooks/useBreadCrumb.tsx";
-import {text} from "@/core/utils/text_display.ts";
+import {useText} from "@/core/utils/text_display.ts";
 import {ClockIcon, SuperWord} from "@/core/utils/tsxUtils.tsx";
 import {cutStatement, setFirstName, zeroFormat} from "@/core/utils/utils.ts";
 import ViewHeader from "@/components/ui/layout/ViewHeader.tsx";
@@ -21,6 +21,7 @@ import {useScoreRepo} from "@/hooks/actions/useScoreRepo.ts";
 
 const ExamViewPage = () => {
     const {id} = useParams()
+    const text = useText()
 
     const [openDrawer, setOpenDrawer] = useToggle(false)
     const [links, setLinks] = useState<ItemType[]>([])

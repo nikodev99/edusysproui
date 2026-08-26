@@ -1,5 +1,5 @@
 import {useDocumentTitle} from "@/hooks/useDocumentTitle.ts";
-import {text} from "@/core/utils/text_display.ts";
+import {useText} from "@/core/utils/text_display.ts";
 import {BreadcrumbType, useBreadcrumbItem} from "@/hooks/useBreadCrumb.tsx";
 import {ListPageHierarchy} from "@/components/custom/ListPageHierarchy.tsx";
 import {LuCalendarPlus, LuClipboardList, LuEllipsis, LuEllipsisVertical, LuEye} from "react-icons/lu";
@@ -34,6 +34,7 @@ const ExamListPage = () => {
     const [selectedAssignment, setSelectedAssignment] = useState<Assignment | null | undefined>(null)
     const {currentAcademicYear, academicYearOptions} = useAcademicYearRepo()
     const {canViewAll, canViewSome} = usePermission()
+    const text = useText()
     
     const context = useMemo(() => 
         canViewAll ? UserPermission.ALL : canViewSome ? UserPermission.TEACHER : UserPermission.NONE, [

@@ -5,7 +5,7 @@ import {ReactNode} from "react";
 import Section from "@/components/ui/layout/Section.tsx";
 import PanelStat from "@/components/ui/layout/PanelStat.tsx";
 import {findPercent, setFirstName, setGender} from "@/core/utils/utils.ts";
-import {text} from "@/core/utils/text_display.ts";
+import {useText} from "@/core/utils/text_display.ts";
 import PanelTable from "@/components/ui/layout/PanelTable.tsx";
 import {SuperWord} from "@/core/utils/tsxUtils.tsx";
 import {Avatar as AntAvatar, Progress, Skeleton} from "antd";
@@ -35,6 +35,7 @@ type ClasseInfoProps = InfoPageProps<Classe, PermissionType> & {
 
 const ClasseInfoData = ({infoData, color, studentCount, totalStudents, seeMore, hasPermission}: ClasseInfoProps) => {
     const {toViewStudent, toViewTeacher} = useRedirect()
+    const text = useText()
 
     if (!infoData)
         return <PanelSection title={"Profile Classe"}><Skeleton active paragraph={{ rows: 4 }} /></PanelSection>

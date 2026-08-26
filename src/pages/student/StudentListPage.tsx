@@ -53,6 +53,7 @@ const StudentListPage = () => {
             <ListPageHierarchy
                 items={pageHierarchy as []}
                 hasDropdownButton={canViewAndEdit}
+                hasButton={false}
                 icon={<Button type='primary'><LuUserPlus /> {text.student.group.add.label}</Button>}
                 dropdownItems={[
                     {key: '1', icon: <LuClipboard />,label: text.student.group.add.label, onClick: () => toEnrollStudent()},

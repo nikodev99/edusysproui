@@ -36,6 +36,7 @@ export const ListPageHierarchy = (
                 icon={icon}
                 items={dropdownItems}
                 arrow={true}
+                specialStyle={false}
             />}
 
         </Flex>

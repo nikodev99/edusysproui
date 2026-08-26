@@ -5,7 +5,7 @@ import {AiOutlineArrowDown} from "react-icons/ai";
 import Section from "@/components/ui/layout/Section.tsx";
 import {ClasseRanking, GradeRankingStudent} from "@/entity";
 import {ReactNode, useCallback} from "react";
-import {text} from "@/core/utils/text_display.ts";
+import {useText} from "@/core/utils/text_display.ts";
 
 type GradeRankingFunction = (record: GradeRankingStudent) => ReactNode
 type ClasseRankingFunction = (record: ClasseRanking) => ReactNode
@@ -25,6 +25,8 @@ type Props = {
 }
 
 export const BestStudentList = ({sectionTitles, color, hasPermission, bestStudents}: Props & DataProp<GradeRankingStudent[] | ClasseRanking[]>) => {
+    const text = useText()
+    const label= text.student.label
 
     return (
         <>
@@ -37,7 +39,7 @@ export const BestStudentList = ({sectionTitles, color, hasPermission, bestStuden
                     bestStudents={s as GradeRankingStudent | ClasseRanking}
                 />
             )): (
-                <Section title={`Performance des ${text.student.label}`}>
+                <Section title={`Performance des ${label}`}>
                     <BestScoredTable
                         providedData={[]}
                         color={color}
@@ -50,7 +52,7 @@ export const BestStudentList = ({sectionTitles, color, hasPermission, bestStuden
     )
 }
 
-export const SingleBestStudentList = ({sectionTitles, color, hasPermission, bestStudents}: Props & DataProp<GradeRankingStudent | ClasseRanking>) => {
+export const SingleBestStudentList = ({sectionTitles, color, hasPermission, bestStudents, label}: Props & DataProp<GradeRankingStudent | ClasseRanking> & {label?: string}) => {
 
     const getTitle = useCallback((record: GradeRankingStudent | ClasseRanking): ReactNode => {
         if(typeof sectionTitles.sectionTitle === 'function') {
@@ -89,7 +91,7 @@ export const SingleBestStudentList = ({sectionTitles, color, hasPermission, best
                     }]} />
                 </PanelSection>
             ) : (
-                <Section title={`Performance des ${text.student.label}`}>
+                <Section title={`Performance des ${label}`}>
                     <BestScoredTable
                         providedData={[]}
                         color={color}

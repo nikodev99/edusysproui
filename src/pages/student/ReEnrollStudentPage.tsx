@@ -1,6 +1,6 @@
 import OutletPage from "@/pages/OutletPage.tsx";
-import {text} from "@/core/utils/text_display.ts";
-import {getStringAcademicYear, setFirstName, setPlural} from "@/core/utils/utils.ts";
+import {useText} from "@/core/utils/text_display.ts";
+import {getStringAcademicYear, setFirstName} from "@/core/utils/utils.ts";
 import PageWrapper from "@/components/view/PageWrapper.tsx";
 import Responsive from "@/components/ui/layout/Responsive.tsx";
 import Grid from "@/components/ui/layout/Grid.tsx";
@@ -12,6 +12,7 @@ import {Enrollment, Individual} from "@/entity";
 import {useStudentRepo} from "@/hooks/actions/useStudentRepo.ts";
 import {StudentResult} from "@/components/ui-kit-student";
 import {useActivity} from "@/hooks/useActivity.ts";
+import {stringhelper} from "@/core/helpers/StringHelper.ts";
 
 const ReEnrollStudentPage = () => {
     const {reenrollStudentActivity} = useActivity()
@@ -19,6 +20,7 @@ const ReEnrollStudentPage = () => {
     const [searchValue, setSearchValue] = useState<number | undefined>(undefined)
 
     const {findUnenrolledStudents, studentOptions} = useStudentRepo()
+    const text = useText()
 
     const {fetching, resource, options, handleSearch, handleChange} = useSearch<Enrollment>({
         setValue: setSearchValue as (value: unknown) => void,
@@ -43,7 +45,7 @@ const ReEnrollStudentPage = () => {
             }}
             breadCrumb={{
                 bCItems: [
-                    {title: setPlural(text.student.label), path: text.student.href},
+                    {title: stringhelper.setPlural(text.student.label), path: text.student.href},
                     {title: text.student.group.reAdd.label}
                 ]
             }}

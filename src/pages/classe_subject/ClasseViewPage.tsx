@@ -4,7 +4,7 @@ import {AcademicYear, Classe} from "@/entity";
 import {Color, GenderCounted} from "@/core/utils/interfaces.ts";
 import {useDocumentTitle} from "@/hooks/useDocumentTitle.ts";
 import {useBreadCrumb} from "@/hooks/useBreadCrumb.tsx";
-import {text} from "@/core/utils/text_display.ts";
+import {useText} from "@/core/utils/text_display.ts";
 import ViewHeader from "@/components/ui/layout/ViewHeader.tsx";
 import {Skeleton, Tag} from "antd";
 import {ViewRoot} from "@/components/custom/ViewRoot.tsx";
@@ -49,6 +49,7 @@ const ClasseViewPage = () => {
     const {useCheckPrincipal, useAmongClasseTeachers} = useTeacherRepo()
     const {useGetClasse} = useClasseRepo()
     const {can, canCreate, canDelete} = usePermission()
+    const text = useText()
 
     const {isPrincipal} = useCheckPrincipal(Number(id))
     const isTeacherAuthorized = can('teacherAction', true)

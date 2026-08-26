@@ -12,7 +12,7 @@ import {Gender, SelectedGenderIcon} from "@/entity/enums/gender.tsx";
 import Tagger from "@/components/ui/layout/Tagger.tsx";
 import {AiOutlineEllipsis} from "react-icons/ai";
 import {ActionButton} from "@/components/ui/layout/ActionButton.tsx";
-import {text} from "@/core/utils/text_display.ts";
+import {useText} from "@/core/utils/text_display.ts";
 import {LuEye} from "react-icons/lu";
 import {useColumnSearch} from "@/hooks/useColumnSearch.tsx";
 import Datetime from "@/core/datetime.ts";
@@ -31,6 +31,7 @@ export const StudentList = <TError extends AxiosError>(listProps: ListViewerProp
     const [selectedStudent, setSelectedStudent] = useState<Enrollment | null | undefined>(undefined)
     const [linkButtons, setLinkButtons] = useState<ItemType[]>([])
     const [refresh, setRefresh] = useState<boolean>(false)
+    const text = useText()
     
     const {callback, searchCallback} = listProps;
     const {toViewStudent} = useRedirect()
@@ -51,7 +52,7 @@ export const StudentList = <TError extends AxiosError>(listProps: ListViewerProp
             }]),
             ...linkButtons
         ]
-    }, [linkButtons, throughDetails])
+    }, [linkButtons, text.student.label, throughDetails])
 
     const handleActionButton = (record?: StudentListDataType) => {
         const hasParam = !!record

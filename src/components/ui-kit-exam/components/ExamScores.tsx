@@ -5,10 +5,13 @@ import {AvatarTitle} from "@/components/ui/layout/AvatarTitle.tsx";
 import {text} from "@/core/utils/text_display.ts";
 import PageWrapper from "@/components/view/PageWrapper.tsx";
 import {InitMarkType, MarkBadge} from "@/core/utils/tsxUtils.tsx";
+import {Section, SectionType} from "@/entity/enums/section.ts";
 
 export const ExamScores = (
-    {assignment, scores, loading, record}: {assignment?: Assignment, scores?: Score[], loading?: boolean, record?: Assignment}
+    {assignment, scores, loading}: {assignment?: Assignment, scores?: Score[], loading?: boolean}
 ) => {
+
+    const maxScale = assignment?.classe?.grade?.gradingScaleMax ?? 20
 
     const customTableColumns: TableColumnsType<Score> = [
         {
@@ -31,7 +34,12 @@ export const ExamScores = (
             align: 'center',
             responsive: ['md'],
             width: '15%',
-            render: () => <Tag>{(assignment?.subject?.course) || (record?.subject?.course)}</Tag>
+            render: () => assignment?.subject?.course
+                ? (
+                    <Tag>{assignment?.subject?.course}</Tag>
+                ): (
+                    <Tag>{SectionType[assignment?.classe?.grade?.section as Section]}</Tag>
+                )
         },
         {
             title: 'Devoir',
@@ -39,7 +47,7 @@ export const ExamScores = (
             align: 'center',
             responsive: ['md'],
             width: '25%',
-            render: () => <Tag>{(assignment?.examName) || (record?.examName)}</Tag>
+            render: () => <Tag>{assignment?.examName}</Tag>
         },
         {
             title: 'Notes Obtenues',
@@ -48,6 +56,7 @@ export const ExamScores = (
             align: "end",
             render: (score: number) => <MarkBadge
                 score={score}
+                maxScale={maxScale}
             />
         },
         {
@@ -55,16 +64,17 @@ export const ExamScores = (
             key: 'coefficient',
             align: 'end',
             responsive: ['md'],
-            render: () => <Tag>{(assignment?.coefficient) || (record?.coefficient)}</Tag>
+            render: () => <Tag>{assignment?.coefficient}</Tag>
         },
-        ...((assignment?.coefficient && assignment?.coefficient > 1) || (record?.coefficient && record?.coefficient > 1) ? [{
+        ...((assignment?.coefficient && assignment?.coefficient > 1) ? [{
             align: 'end' as 'start',
             title: 'Notes Pondérés',
             dataIndex: 'obtainedMark',
             key: 'mark-coefficient',
             render: (score: number) => <MarkBadge
                 score={score}
-                coefficient={(assignment?.coefficient || record?.coefficient) as number}
+                maxScale={maxScale}
+                coefficient={(assignment?.coefficient) as number}
             />
         }] : []),
         {
@@ -73,7 +83,11 @@ export const ExamScores = (
             key: 'appreciation',
             align: 'center',
             responsive: ['md'],
-            render: (note: number) => <InitMarkType av={note} coefficient={assignment?.coefficient} />
+            render: (note: number) => <InitMarkType
+                av={note}
+                maxScale={assignment?.classe?.grade?.gradingScaleMax ?? 20}
+                coefficient={assignment?.coefficient}
+            />
         },
     ]
 

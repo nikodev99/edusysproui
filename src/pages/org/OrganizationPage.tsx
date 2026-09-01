@@ -121,7 +121,7 @@ export const OrganizationPage = () => {
                             <Card.Meta title={
                                 <Flex align='center' justify={'space-between'}>
                                     <h3>Customisation</h3>
-                                    <Button type='link' onClick={toSettings}>Modifier</Button>
+                                    <Button type='link' onClick={() => toSettings()}>Modifier</Button>
                                 </Flex>
                             } style={{marginBottom: '5px'}} />
                             <Space>

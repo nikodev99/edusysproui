@@ -1,9 +1,10 @@
 import {useUserRepo} from "./actions/useUserRepo.ts";
 import {Individual} from "@/entity";
-import {text} from "@/core/utils/text_display.ts";
+import {useText} from "@/core/utils/text_display.ts";
 
 export const useActivity = () => {
     const {saveActivity} = useUserRepo()
+    const text = useText()
 
     const enrollStudentActivity = (ind: Individual, classe: string) => saveActivity({
         action: "Inscription d'un nouvel " + (text.student.label).toLowerCase(),
@@ -16,8 +17,8 @@ export const useActivity = () => {
     })
 
     const promoteStudentActivity = (ind: Individual, exClasse: string, classe: string) => saveActivity({
-        action: text.student.label + ' promu à une classe superieur',
-        description: `Promotion de ${ind?.lastName} ${ind?.lastName} à une classe superieur: ${exClasse} --> ${classe} `,
+        action: text.student.label + ' promu à une classe supérieur',
+        description: `Promotion de ${ind?.lastName} ${ind?.lastName} à une classe supérieur: ${exClasse} --> ${classe} `,
     })
 
     return {

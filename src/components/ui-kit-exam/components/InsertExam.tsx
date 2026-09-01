@@ -57,8 +57,7 @@ const InsertExam = () => {
     }, [data, isRefetch, refetch]);
 
     const handleSelectSlot = (slots: SlotInfo) => {
-        if(slots.action === 'click') {
-            setOpenModal()
+        if(slots.action === 'select') {
             reset({
                 examDate: Datetime.of(slots?.start as Date).toDate(),
                 ...(teacherId && teacherPersonal ? {
@@ -67,6 +66,7 @@ const InsertExam = () => {
                     }
                 } : {})
             })
+            setOpenModal()
         }
     }
 
@@ -74,6 +74,11 @@ const InsertExam = () => {
         reset()
         refetch().then(r => r)
         setOpenModal()
+    }
+
+    const handleSubmit = async (data: AssignmentSchema) => {
+        const registeredData = {...data, subject: data.subject?.id ? {id: data.subject}: null} as AssignmentSchema
+        await insertAssignment(registeredData)
     }
 
     return (
@@ -90,7 +95,7 @@ const InsertExam = () => {
                     />
                 </Grid>
             </Responsive>
-            <InsertModal
+            {openModal && <InsertModal
                 data={assignmentSchema as never}
                 customForm={<AssignmentForm
                     errors={errors}
@@ -99,7 +104,7 @@ const InsertExam = () => {
                     academicYear={currentAcademicYear?.id}
                 />}
                 handleForm={form}
-                postFunc={insertAssignment}
+                postFunc={handleSubmit as never}
                 open={openModal}
                 onCancel={handleModalClose}
                 messageSuccess={"Nouveau devoir ajouté avec succès"}
@@ -107,7 +112,7 @@ const InsertExam = () => {
                 okText='Créer devoir'
                 description="Poursuivre ?"
                 isNotif
-            />
+            />}
         </PageWrapper>
     )
 }

@@ -13,7 +13,7 @@ export const assignmentSchema = z.object({
     classe: classeSchemaMerge,
     subject: courseSchemaMerge.optional(),
     examName: z.string().min(3, {message: "Le nom de l'examen doit contenir au moins trois characters"}),
-    examDate: dateProcess('Date de l`\'examen est requise', {after: true}),
+    examDate: dateProcess('Date de l`\'examen est requise', /*{after: true}*/),
     startTime: timeProcess("L'heure de début est réquis"),
     endTime: timeProcess("L'heure de la fin est réquis"),
     coefficient: z.number().optional(),
@@ -21,7 +21,7 @@ export const assignmentSchema = z.object({
 })
 
 export const assignmentDateUpdateSchema = z.object({
-    examDate: dateProcess('Date de l`\'examen est requise', {after: true}),
+    examDate: dateProcess('Date de l`\'examen est requise', /*{after: true}*/),
     startTime: timeProcess("L'heure de début est réquis"),
     endTime: timeProcess("L'heure de la fin est réquis"),
     updatedDate: dateProcess('Date de mise à jour est requise')

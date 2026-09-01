@@ -3,7 +3,6 @@ import {request} from "../axiosConfig.ts";
 import {ID} from "@/core/utils/interfaces.ts";
 import {ResponseRepo as CustomResponse} from "../action/responseRepo.ts";
 import {studentSchema} from "@/schema";
-import {AxiosResponse} from "axios";
 import {ErrorCatch} from "../action/error_catch.ts";
 
 export class PatchContext {
@@ -46,6 +45,9 @@ export class PatchContext {
             case UpdateType.CONTRACT:
                 url = '/employee/contract'
                 break
+            case UpdateType.GRADE:
+                url = '/grades'
+                break
             default:
                 url = '/student'
                 break
@@ -80,14 +82,14 @@ export class PatchContext {
         let successMessage: string = 'Modification réussi'
 
         try {
-            const response: AxiosResponse<string> = await this.patchPath(field, value, studentId, type)
+            const response = await this.patchPath(field, value, studentId, type)
             if (response.status !== 200) {
                 return {
                     isSuccess: false,
-                    error: `Error ${response.status}: ${response.data as string}`
+                    error: `Error ${response.status}: ${typeof response.data === "string" ? response.data : ''}`
                 }
             }else {
-                successMessage = !Array.isArray(response.data) ? response.data : successMessage
+                successMessage = !Array.isArray(response.data) && typeof response.data === 'string' ? response.data as string : successMessage as string
                 return {
                     isSuccess: true,
                     success: successMessage

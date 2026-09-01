@@ -11,7 +11,7 @@ type dataEntryProps<T extends FieldValues> = InputType<T> & {inputType?: string}
 export const FormInput = <T extends FieldValues>(inputProps: dataEntryProps<T>) => {
 
     const [passwordVisible, setPasswordVisible] = useState(false);
-    const {placeholder, isCompact, buttonLabel, inputType, addonAfter, min, defaultValue, disabled, clearErrors} = inputProps
+    const {placeholder, isCompact, buttonLabel, inputType, addonAfter, min, defaultValue, disabled, clearErrors, max, step} = inputProps
 
     return(
         <FormItem {...inputProps} render={({field}) => (
@@ -24,8 +24,10 @@ export const FormInput = <T extends FieldValues>(inputProps: dataEntryProps<T>) 
                         placeholder={placeholder as string}
                         disabled={disabled}
                         min={min}
+                        max={max}
                         {...field}
                         defaultValue={defaultValue}
+                        step={step}
                         style={{width: '100%'}}
                     />}
                     {inputType === 'password' && <Input.Password
@@ -66,8 +68,10 @@ export const FormInput = <T extends FieldValues>(inputProps: dataEntryProps<T>) 
                                 disabled={disabled}
                                 onFocus={() => clearErrors ? clearErrors(field.name) : null}
                                 min={min}
+                                max={max}
                                 {...field}
                                 style={{width: '100%'}}
+                                step={step}
                                 defaultValue={defaultValue}
                             />
                         </Space.Compact>
@@ -77,6 +81,7 @@ export const FormInput = <T extends FieldValues>(inputProps: dataEntryProps<T>) 
                             disabled={disabled}
                             onFocus={() => clearErrors ? clearErrors(field.name) : null}
                             min={min}
+                            max={max}
                             {...field}
                             style={{width: '100%'}}
                             defaultValue={defaultValue}

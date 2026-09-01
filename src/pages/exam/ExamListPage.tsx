@@ -25,6 +25,8 @@ import {useRedirect} from "@/hooks/useRedirect.ts";
 import {usePermission} from "@/hooks/usePermission.ts";
 import {getExamPalette} from "@/core/helpers/colorPalette.ts";
 import {EntityCardProps} from "@/components/custom/EntityCard.tsx";
+import {Section, SectionType} from "@/entity/enums/section.ts";
+import {objectHelper} from "@/core/helpers/ObjectHelper.ts";
 
 const ExamListPage = () => {
     const [filters, setFilters] = useState<AssignmentFilterProps | null>(null)
@@ -46,7 +48,7 @@ const ExamListPage = () => {
     
     const {getAllSchoolAssignments} = useGetPaginatedExams()
 
-    const {Link, Text} = Typography
+    const { Text } = Typography
 
     useDocumentTitle({
         title: text.exam.label,
@@ -110,11 +112,12 @@ const ExamListPage = () => {
             width: '20%',
             sorter: true,
             showSorterTooltip: false,
-            render: (value: string, record) => <Link
+            render: (value: string, record) => <SuperWord
+                input={cutStatement(value, 40)}
                 onClick={() => toViewExam(record?.id as number)}
-            >
-                {value}
-            </Link>
+                tooltip={value}
+                isSpan
+            />
         },
         {
             title: 'Matière',
@@ -124,12 +127,13 @@ const ExamListPage = () => {
             width: '12%',
             sorter: true,
             showSorterTooltip: false,
-            render: (subject: Course) => <Text
-                onClick={() => toViewCourse(subject?.id as number)}
-                className='course-Link'
-            >
-                {subject?.course}
-            </Text>
+            render: (subject: Course, record) => !objectHelper.isEmpty(subject) ? (
+                <Text onClick={() => toViewCourse(subject?.id as number)} className='course-Link'>
+                    {subject?.course}
+                </Text>
+            ): (
+                <Tag>{SectionType[record?.classe?.grade?.section as Section]}</Tag>
+            )
         },
         {
             title: "Classe",
@@ -180,11 +184,8 @@ const ExamListPage = () => {
             width: '16%',
             responsive: ['md'],
             render: (teacher: Individual) => <AvatarTitle
-                lastName={teacher?.lastName}
-                firstName={teacher?.firstName}
-                image={teacher?.image}
-                reference={teacher?.emailId}
-                size={35}
+                personalInfo={teacher}
+                size={30}
             />
         },
         {
@@ -195,7 +196,7 @@ const ExamListPage = () => {
             width: '16%',
             render: (isPassed: true, record: Assignment) => <Space>
                 <Tag color={!isPassed ? 'warning': 'success'}>{!isPassed ? 'Programmé' : 'Traité'}</Tag>
-                {isPassed ? undefined : Datetime.now().isAfter(record?.examDate as Date) ? <Tag color='danger'>Date Dépassée</Tag> : undefined}
+                {isPassed ? undefined : Datetime.now().isAfter(record?.examDate as Date) ? <Tag color='danger'>Dépassée</Tag> : undefined}
             </Space>
         },
         {
@@ -204,10 +205,10 @@ const ExamListPage = () => {
             key: 'action',
             align: 'right',
             width: '6%',
-            render: (id) => (
+            render: (id, record) => (
                 <ActionButton
                     icon={<LuEllipsisVertical size={30} style={{borderStyle: 'border'}} />}
-                    items={getItems(id)}
+                    items={getItems(id, record)}
                     arrow
                 />
             )
@@ -222,7 +223,6 @@ const ExamListPage = () => {
             const end = date.timeToDatetime(r?.endTime as [])?.time()
             const preparedBy = setName(r?.preparedBy)
             const colors = getExamPalette(literal)
-            console.log({record: r})
             return {
                 id: r.id as number,
                 record: r,
@@ -231,18 +231,22 @@ const ExamListPage = () => {
                 header: {type: 'icon', icon: <LuClipboardList size={36} color={colors.accentColor}/>},
                 pillText: `${literal}-#${r?.id}`,
                 rightText: `${r?.semester?.academicYear?.academicYear} - ${r?.semester?.template?.semesterName}`,
-                titlePrimary : {primary: cutStatement(r?.examName as string, 40), tooltipTitle: r?.examName && r?.examName?.length > 40 ? r?.examName : undefined},
+                titlePrimary : {primary: cutStatement(r?.examName as string, 35), tooltipTitle: r?.examName && r?.examName?.length > 40 ? r?.examName : undefined},
                 titleSecondary: `Préparé par ${preparedBy}`,
                 stats: [
                     {label: "Classe", value: r?.classe?.name},
-                    ...(r?.subject ? [{label: 'Matière', value: cutStatement(r?.subject?.course as string, 10, r?.subject?.abbr)}]: []),
+                    ...(!objectHelper.isEmpty(r?.subject as Course) ? [
+                        {label: 'Matière', value: cutStatement(r?.subject?.course as string, 10, r?.subject?.abbr)}
+                    ]: [
+                        {label: 'Section', value: SectionType[r?.classe?.grade?.section as Section]}
+                    ]),
                     ...((r?.coefficient && r?.coefficient > 1) ? [{label: 'Coefficient', value: r?.coefficient, small: true}]: []),
                     {label: 'Date', value: date.format({format: "DD MMM YYYY"}), small: true}
                 ],
                 tags: [
                     <Space>
                         <Tag color={!r?.passed ? 'warning': 'success'}>{!r?.passed ? 'Programmé' : 'Traité'}</Tag>
-                        {r?.passed ? undefined : Datetime.now().isAfter(r?.examDate as Date) ? <Tag color='danger'>Date Dépassée</Tag> : undefined}
+                        {r?.passed ? undefined : Datetime.now().isAfter(r?.examDate as Date) ? <Tag color='danger'>Dépassée</Tag> : undefined}
                     </Space>,
                 ],
                 footerLabel: "Heures: ",

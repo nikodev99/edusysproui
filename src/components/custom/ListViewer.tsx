@@ -103,6 +103,8 @@ const ListViewer = <TData extends object, TError>(
         return data
     }, [btnFilter, content, fetchId, onInputSearch, searchQuery])
 
+    console.log({listViewerData: data})
+
     useEffect( () => {
         if (searchCallback && searchQuery) {
             fetchFunc(searchCallback, searchCallbackParams ? [...searchCallbackParams, searchQuery] : [searchQuery])

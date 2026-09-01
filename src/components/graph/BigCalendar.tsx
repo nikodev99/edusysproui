@@ -141,7 +141,7 @@ export const BigCalendar = <TEvent extends object = Record<string, unknown>>(
     {
         data, views, defaultView, startDayTime, endDayTime, startDate, endDate, className, styles,
         onSelectEvent, start = 'start' as keyof TEvent, end = 'end' as keyof TEvent, showNavButton = true,
-        height, onSelectSlot, isLoading = false, wrapperColor, selectable = false, borderless,
+        height = 500, onSelectSlot, isLoading = false, wrapperColor, selectable = false, borderless,
         hasAddons = false, step, timeSlot, resizable, draggableAccessor, allDaySlot = false,
         onEventDrop, onEventResize, eventPropGetter, toolbar, formats, contextMenuItems, showSelectionTime
     }: BigCalendarProps<TEvent>
@@ -418,7 +418,7 @@ export const BigCalendar = <TEvent extends object = Record<string, unknown>>(
                     initialDate={initialDate}
                     headerToolbar={headerToolbar}
                     events={events}
-                    height={height}
+                    height={height ?? 500}
                     slotMinTime={slotMinTime}
                     slotMaxTime={slotMaxTime}
                     slotDuration={slotDuration}

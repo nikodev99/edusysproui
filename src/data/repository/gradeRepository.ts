@@ -1,7 +1,7 @@
 import {AxiosResponse} from "axios";
-import {Grade} from "../../entity";
+import {Grade} from "@/entity";
 import {apiClient} from "../axiosConfig.ts";
-import {GradeSchema} from "../../schema";
+import {GradeSchema} from "@/schema";
 
 export const saveGrade = async (grade: GradeSchema) => {
     return await apiClient.post<GradeSchema>('/grades', grade)

@@ -1,25 +1,25 @@
 import {useLocation} from "react-router-dom";
-import {useGradeRepo} from "../../hooks/actions/useGradeRepo.ts";
-import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
-import {text} from "../../core/utils/text_display.ts";
-import Responsive from "../../components/ui/layout/Responsive.tsx";
-import Grid from "../../components/ui/layout/Grid.tsx";
-import {PlanningSaveModal, PlanningUpdateModal, PlanningRemoveModal} from "../../components/ui-kit-org";
+import {useGradeRepo} from "@/hooks/actions/useGradeRepo.ts";
+import {useBreadCrumb} from "@/hooks/useBreadCrumb.tsx";
+import {text} from "@/core/utils/text_display.ts";
+import Responsive from "@/components/ui/layout/Responsive.tsx";
+import Grid from "@/components/ui/layout/Grid.tsx";
+import {PlanningSaveModal, PlanningUpdateModal, PlanningRemoveModal} from "@/components/ui-kit-org";
 import {Button, Divider, Space, Table, TableColumnsType, Typography} from "antd";
 import {useCallback, useMemo, useState} from "react";
-import Datetime from "../../core/datetime.ts";
-import {GradeForm} from "../../components/forms/GradeForm.tsx";
+import Datetime from "@/core/datetime.ts";
+import {GradeForm} from "@/components/forms/GradeForm.tsx";
 import {useForm} from "react-hook-form";
-import {gradeSchema, GradeSchema} from "../../schema";
+import {gradeSchema, GradeSchema} from "@/schema";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {Grade, Planning, Semester} from "../../entity";
-import {PatchUpdate} from "../../core/PatchUpdate.ts";
-import FormSuccess from "../../components/ui/form/FormSuccess.tsx";
-import FormError from "../../components/ui/form/FormError.tsx";
-import {hasField} from "../../core/utils/utils.ts";
-import PageWrapper from "../../components/view/PageWrapper.tsx";
-import {useToggle} from "../../hooks/useToggle.ts";
+import {Grade, Planning, Semester} from "@/entity";
+import {PatchUpdate} from "@/core/PatchUpdate.ts";
+import FormSuccess from "@/components/ui/form/FormSuccess.tsx";
+import FormError from "@/components/ui/form/FormError.tsx";
+import PageWrapper from "@/components/view/PageWrapper.tsx";
+import {useToggle} from "@/hooks/useToggle.ts";
 import {LuPen, LuTrash} from "react-icons/lu";
+import {UpdateType} from "@/core/shared/sharedEnums.ts";
 
 const GradeEditPage = () => {
     const location = useLocation()
@@ -36,6 +36,8 @@ const GradeEditPage = () => {
 
     const {useGetGrade} = useGradeRepo()
     const grade = useGetGrade(gradeId, true, {shouldRefetch: shouldRefetch})
+
+    console.log({grade})
 
     const {context} = useBreadCrumb({
         bCItems: [
@@ -136,15 +138,14 @@ const GradeEditPage = () => {
 
     const handleGradeUpdate = async (field: keyof Grade) => {
         if (grade.id) {
-            if (hasField(grade, field)) {
-                await PatchUpdate.set(
-                    field,
-                    gradeFrom.watch(),
-                    grade.id,
-                    setSuccessMessage,
-                    setErrorMessage
-                )
-            }
+            await PatchUpdate.set(
+                field,
+                gradeFrom.watch(),
+                grade.id,
+                setSuccessMessage,
+                setErrorMessage,
+                UpdateType.GRADE
+            )
         }
     }
 
@@ -181,23 +182,23 @@ const GradeEditPage = () => {
                     </PageWrapper>
                 </Grid>
             </Responsive>
-            <PlanningSaveModal
+            {isOpen && <PlanningSaveModal
                 isOpen={isOpen}
                 onClose={handleCloseModal}
                 academicYearId={academicYear?.id as string}
                 gradeId={gradeId}
-            />
-            <PlanningUpdateModal 
+            />}
+            {(selectedPlanning && isOpenUpdate) && <PlanningUpdateModal
                 isOpen={isOpenUpdate} 
                 onClose={handleCloseUpdateModal} 
                 academicYearId={academicYear?.id as string} 
                 data={selectedPlanning}
-            />
-            <PlanningRemoveModal 
+            />}
+            {(selectedPlanning && isOpenRemove)  && <PlanningRemoveModal
                 planningId={selectedPlanning?.id || 0} 
                 open={isOpenRemove}
                 close={handleCloseRemoveModal}
-            />
+            />}
         </>
     )
 }

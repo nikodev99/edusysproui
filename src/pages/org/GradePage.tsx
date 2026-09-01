@@ -65,11 +65,11 @@ const GradePage = () => {
                             showIcon
                             message={(
                                 <Marquee pauseOnHover gradient={false}>
-                                        <span style={{ display: "inline-block", paddingRight: "3rem" }}>
-                                            Les niveaux scolaires sont essentiels car ils organisent l'enseignement en étapes
-                                            adaptées au développement des élèves, permettant une progression pédagogique cohérente,
-                                            une évaluation pertinente et une gestion efficace des ressources de l'école.
-                                        </span>
+                                    <span style={{ display: "inline-block", paddingRight: "3rem" }}>
+                                        Les niveaux scolaires sont essentiels car ils organisent l'enseignement en étapes
+                                        adaptées au développement des élèves, permettant une progression pédagogique cohérente,
+                                        une évaluation pertinente et une gestion efficace des ressources de l'école.
+                                    </span>
                                 </Marquee>
                             )}
                         />

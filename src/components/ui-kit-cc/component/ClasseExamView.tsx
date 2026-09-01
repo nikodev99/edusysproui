@@ -17,6 +17,9 @@ import {useExamRepo} from "@/hooks/actions/useExamRepo.ts";
 import {ExamView, NestedExamView, TypedAssignment} from "@/entity/domain/exam.ts";
 import {LineChart} from "@/components/graph/LineChart.tsx";
 import {stringhelper} from "@/core/helpers/StringHelper.ts";
+import {PermissionType} from "@/pages/classe_subject/ClasseViewPage.tsx";
+import {useUserRepo} from "@/hooks/actions/useUserRepo.ts";
+import {usePermission} from "@/hooks/usePermission.ts";
 
 const markAverage = (totalMarks?: number, totalAssignments?: number): number => {
     if (!totalMarks || !totalAssignments) return 0
@@ -24,19 +27,27 @@ const markAverage = (totalMarks?: number, totalAssignments?: number): number => 
 }
 
 const ExamDescription = (
-    {classeId, academicYear, examId, uniqueStudent}: {classeId: number, academicYear: string, examId: number, uniqueStudent?: Enrollment},
+    {classe, academicYear, examId, uniqueStudent, canViewAssignment}: {
+        classe: { classeId: number, maxScale: number },
+        academicYear: string,
+        examId: number,
+        uniqueStudent?: Enrollment
+        canViewAssignment?: boolean
+    }
 ) => {
 
     const {Link, Title} = Typography
 
     const {toViewStudent, toViewExam} = useRedirect()
     const {useGetExamAssignments, useGetStudentExamProgress} = useExamRepo()
+    const {hasFullAccess} = usePermission()
+    const {isSelfInd} = useUserRepo()
 
     const {data, isPending, isFetching, isRefetching, isLoading} = useGetExamAssignments(
-        examId, classeId, academicYear, uniqueStudent?.student?.id as string,
+        examId, classe.classeId, academicYear, uniqueStudent?.student?.id as string,
     )
 
-    const progress = useGetStudentExamProgress(uniqueStudent?.student?.id as string, classeId, academicYear)
+    const progress = useGetStudentExamProgress(uniqueStudent?.student?.id as string, classe.classeId, academicYear)
     
     const {assignments, statistics, examView} = useMemo(() => {
         const examViewData: ExamView[] = (uniqueStudent ? data?.examView?.map(e => ({
@@ -63,14 +74,20 @@ const ExamDescription = (
         return Array.from(new Set(assignments?.map(a => a?.type)))
     }, [assignments])
 
+    const hasPermission = (preparedBy: number) => (
+        hasFullAccess || canViewAssignment && isSelfInd(preparedBy)
+    )
+
     const assignmentsColumns: TableColumnsType<Assignment> = [
         {
             title: 'Designation',
             dataIndex: 'examName',
             width: '30%',
-            render: (value, record) => <Link onClick={() => toViewExam(record.id as number)}>
-                {value}
-            </Link>
+            render: (value, record) => (hasPermission(record?.preparedBy?.id as number)) ? (
+                <Link onClick={() => toViewExam(record.id as number)}>
+                    {value}
+                </Link>
+            ): value
         },
         {
             title: 'Matière',
@@ -104,7 +121,7 @@ const ExamDescription = (
             width: '30%',
             render: (student: Student) => <AvatarTitle
                 personalInfo={student?.personalInfo}
-                toView={() => toViewStudent(student?.id, student?.personalInfo)}
+                toView={(hasFullAccess || canViewAssignment) ? ()=>  toViewStudent(student?.id, student?.personalInfo): undefined}
                 size={40}
             />
         },
@@ -148,7 +165,7 @@ const ExamDescription = (
             dataIndex: 'totalAverage',
             key: 'app',
             align: "center",
-            render: (totalAverage: number) => totalAverage ? <InitMarkType av={totalAverage} /> : '-'
+            render: (totalAverage: number) => totalAverage ? <InitMarkType av={totalAverage} maxScale={classe.maxScale} /> : '-'
         }
     ]
 
@@ -312,12 +329,17 @@ const ExamDescription = (
 }
 
 export const ClasseExamView = (
-    {classeId, academicYear, uniqueStudent}: {classeId: number, academicYear: string, uniqueStudent?: Enrollment}
+    {classe, academicYear, uniqueStudent, hasPermission}: {
+        classe: { classeId: number, maxScale: number },
+        academicYear: string,
+        uniqueStudent?: Enrollment
+        hasPermission?: boolean | PermissionType
+    }
 ) => {
     const [activeExam, setActiveExam] = useState<number>(0)
     const {useGetClasseExams} = useExamRepo()
 
-    const classeExams = useGetClasseExams(classeId, academicYear)
+    const classeExams = useGetClasseExams(classe.classeId, academicYear)
     
     useLayoutEffect(() => {
         if (classeExams && classeExams?.length > 0) {
@@ -340,10 +362,11 @@ export const ClasseExamView = (
                 <Segmented options={segmentData as []} value={activeExam} onChange={segmentChange} block />
                 <main style={{margin: '15px 10px 5px 10px'}}>
                     <ExamDescription
-                        classeId={classeId}
+                        classe={classe}
                         academicYear={academicYear}
                         examId={activeExam}
                         uniqueStudent={uniqueStudent}
+                        canViewAssignment={(hasPermission as PermissionType).canViewAssignment}
                     />
                 </main></>
                 : <VoidData />

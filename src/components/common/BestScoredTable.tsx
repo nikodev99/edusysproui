@@ -33,7 +33,7 @@ export const BestScoredTable = (
     const fetch = useRawFetch<Score>();
 
     const isAbsent = (score: Score) => {
-        return markAsAbsent ? score.isPresent : false
+        return markAsAbsent && !score.isPresent
     }
 
     useEffect(() => {

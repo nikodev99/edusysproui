@@ -31,7 +31,7 @@ export const ExamActionLinks = React.memo((
     const [wasDeleted, setWasDeleted] = useState<boolean>(false)
     const [messages, setMessages] = useState<{success?: string, error?: string}>()
     const {isSelf} = useUserRepo()
-    const {canDelete, canViewAll, canCreate} = usePermission()
+    const {canDelete, canViewAll} = usePermission()
     
     const isAbleToDelete = (canDelete && canViewAll) || (canDelete && isSelf(data?.preparedBy?.id as number))
 

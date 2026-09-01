@@ -1,29 +1,29 @@
-import {Table} from "../../ui/layout/Table.tsx";
-import PageWrapper from "../../view/PageWrapper.tsx";
-import Datetime from "../../../core/datetime.ts";
-import {useAttendanceRepo} from "../../../hooks/actions/useAttendanceRepo.ts";
-import {useStudentRepo} from "../../../hooks/actions/useStudentRepo.ts";
+import {Table} from "@/components/ui/layout/Table.tsx";
+import PageWrapper from "@/components/view/PageWrapper.tsx";
+import Datetime from "@/core/datetime.ts";
+import {useAttendanceRepo} from "@/hooks/actions/useAttendanceRepo.ts";
+import {useStudentRepo} from "@/hooks/actions/useStudentRepo.ts";
 import {Alert, Button, Flex, Form, TableColumnsType} from "antd";
-import {Attendance, Classe, Individual, Student} from "../../../entity";
-import {AvatarTitle} from "../../ui/layout/AvatarTitle.tsx";
-import RadioInput from "../../ui/form/RadioInput.tsx";
+import {Attendance, Classe, Individual, Student} from "@/entity";
+import {AvatarTitle} from "@/components/ui/layout/AvatarTitle.tsx";
+import RadioInput from "@/components/ui/form/RadioInput.tsx";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {attendanceSchema, AttendanceSchema} from "../../../schema";
+import {attendanceSchema, AttendanceSchema} from "@/schema";
 import {
     AttendanceStatus,
     AttendanceStatusLiteral, compareAttendanceStatus,
     statusToLiteral
-} from "../../../entity/enums/attendanceStatus.ts";
-import {useColumnSearch} from "../../../hooks/useColumnSearch.tsx";
+} from "@/entity/enums/attendanceStatus.ts";
+import {useColumnSearch} from "@/hooks/useColumnSearch.tsx";
 import {useEffect, useState} from "react";
-import {enumToObjectArray, getUniqueness} from "../../../core/utils/utils.ts";
-import {redirectTo} from "../../../context/RedirectContext.ts";
-import {text} from "../../../core/utils/text_display.ts";
-import {LoadingButton} from "../../ui/layout/LoadingButton.tsx";
-import FormSuccess from "../../ui/form/FormSuccess.tsx";
-import FormError from "../../ui/form/FormError.tsx";
-import {AttendanceSelects} from "../../common/AttendanceSelects.tsx";
+import {enumToObjectArray, getUniqueness} from "@/core/utils/utils.ts";
+import {redirectTo} from "@/context/RedirectContext.ts";
+import {text} from "@/core/utils/text_display.ts";
+import {LoadingButton} from "@/components/ui/layout/LoadingButton.tsx";
+import FormSuccess from "@/components/ui/form/FormSuccess.tsx";
+import FormError from "@/components/ui/form/FormError.tsx";
+import {AttendanceSelects} from "@/components/common/AttendanceSelects.tsx";
 
 interface AttendanceInsertingProps {
     edit?: boolean
@@ -202,8 +202,6 @@ export const AttendanceInserting = (
                 if (studentId && attendance.status) {
                     const oldStatus = attendance.status
                     const newStatus = data.attendance[studentId]?.status
-
-                    console.log('STUDENT_ID ', {studentId, oldStatus, newStatus})
 
                     if (!compareAttendanceStatus(oldStatus, newStatus)) {
                         newData.attendance[studentId] = data?.attendance[studentId]

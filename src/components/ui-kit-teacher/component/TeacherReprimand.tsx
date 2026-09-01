@@ -8,7 +8,7 @@ import {useEffect, useState} from "react";
 import {useSearch} from "@/hooks/useSearch.ts";
 import {useStudentRepo} from "@/hooks/actions/useStudentRepo.ts";
 import {UserPermission} from "@/core/shared/sharedEnums.ts";
-import {text} from "@/core/utils/text_display.ts";
+import {useText} from "@/core/utils/text_display.ts";
 import {useRedirect} from "@/hooks/useRedirect.ts";
 import {Notification} from "@/components/custom/Notification.tsx";
 import {useReprimandRepo} from "@/hooks/actions/useReprimandRepo.ts";
@@ -34,6 +34,7 @@ export const TeacherReprimand = ({infoData, hasPermission, isSelf}: InfoPageProp
     const {getSearchedEnrolledStudents} = useGetPaginated()
     const {useGetAllStudentReprimandByTeacher} = useReprimandRepo()
     const {fetchReprimands} = useGetAllStudentReprimandByTeacher(infoData?.personalInfo?.id as number)
+    const text = useText()
 
     const {data, isSuccess, refetch} = useFetch(
         ['teacher-all-reprimands', filters, pageable?.size],

@@ -83,6 +83,7 @@ export const SingleBestStudentList = ({sectionTitles, color, hasPermission, best
                         response: <BestScoredTable
                             providedData={bestStudents.poorStudentScores}
                             color={color}
+                            markAsAbsent={false}
                             icon={<AiOutlineArrowDown />}
                             hasPermission={hasPermission}
                             goodToPoor

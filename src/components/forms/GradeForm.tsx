@@ -56,7 +56,41 @@ export const GradeForm = <T extends FieldValues>(
                     help: form.error( 'subSection'),
                     placeholder: 'Série A',
                     defaultValue: (data ? data.subSection : undefined) as PathValue<T, Path<T>>,
-                    onFinish: edit ? (value: unknown) => handleUpdate?.('section', value) : undefined
+                    onFinish: edit ? (value: unknown) => handleUpdate?.('subSection', value) : undefined
+                }
+            },
+            {
+                type: InputTypeEnum.NUMBER,
+                inputProps: {
+                    lg: onlyField ?? 12,
+                    md: onlyField ?? 12,
+                    hasForm: edit,
+                    label: 'Note maximale (Barème)',
+                    control: control,
+                    name: form.name('gradingScaleMax') as Path<T>,
+                    validateStatus: form.validate('gradingScaleMax'),
+                    help: form.error( 'gradingScaleMax'),
+                    placeholder: '20',
+                    step: 10, max: 100, min: 10,
+                    defaultValue: (data ? data.gradingScaleMax : undefined) as PathValue<T, Path<T>>,
+                    onFinish: edit ? (value: unknown) => handleUpdate?.('gradingScaleMax', value) : undefined
+                }
+            },
+            {
+                type: InputTypeEnum.NUMBER,
+                inputProps: {
+                    lg: onlyField ?? 12,
+                    md: onlyField ?? 12,
+                    hasForm: edit,
+                    label: 'Seuil minimal pour valider l\'année',
+                    control: control,
+                    name: form.name('gradingPassThreshold') as Path<T>,
+                    validateStatus: form.validate('gradingPassThreshold'),
+                    help: form.error( 'gradingPassThreshold'),
+                    placeholder: '10',
+                    step: 5, max: 100, min: 5,
+                    defaultValue: (data ? data.gradingPassThreshold : undefined) as PathValue<T, Path<T>>,
+                    onFinish: edit ? (value: unknown) => handleUpdate?.('gradingPassThreshold', value) : undefined
                 }
             },
         ]} />

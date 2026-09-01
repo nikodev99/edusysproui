@@ -8,3 +8,17 @@ export enum MarkType {
     FA = 'Faible',
     TF = 'Très Faible'
 }
+
+export type MarkLabel = keyof typeof MarkType
+
+// Types for your data structures
+export interface MarkLabels {
+    key: number;
+    avg: number | null; // InputNumber can be null if empty
+    label: MarkLabel | string;
+}
+
+export interface GradeConfig {
+    maxValue: number;
+    markLabels: MarkLabels[];
+}

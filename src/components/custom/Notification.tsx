@@ -1,10 +1,10 @@
 import FormSuccess from "@/components/ui/form/FormSuccess.tsx";
 import FormError from "@/components/ui/form/FormError.tsx";
 import {Alert} from "antd";
-import {ReactNode} from "react";
+import {Messages} from "@/components/ui/layout/ConfirmationModal.tsx";
 
 export type NotificationProps = {
-    responseMessages?: {success?: ReactNode, error?: ReactNode}
+    responseMessages?: Messages
     setRedirect?: (url?: string) => void
     isNotif?: boolean
     onClose?: () => void

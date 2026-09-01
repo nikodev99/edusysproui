@@ -17,8 +17,6 @@ export const StudentActionLinks = ({data, getItems, setRefresh}: ActionButtonsPr
     const [shouldReEnroll, setShouldReEnroll] = useToggle(false)
     const {toDiscipline} = useRedirect()
     const {canDelete, canCreate, can} = usePermission()
-
-    console.log("ID: ", data?.id, ' REF: ', data?.student?.personalInfo?.reference)
     
     const items: ItemType[] = useMemo(() => [
         ...(canCreate && !data?.isArchived ? [{type: 'divider'}]: []),

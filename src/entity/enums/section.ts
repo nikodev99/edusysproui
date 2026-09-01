@@ -16,6 +16,8 @@ export enum SectionType {
     OTHER = 'AUTRE'
 }
 
+export type Section = keyof typeof SectionType
+
 export const UNIVERSITY_SECTIONS = new Set<SectionType>([
     SectionType.BTS,
     SectionType.DUT,

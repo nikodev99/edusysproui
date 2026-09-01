@@ -1,17 +1,17 @@
 import {useForm} from "react-hook-form";
-import {gradeSchema, GradeSchema} from "../../schema";
+import {gradeSchema, GradeSchema} from "@/schema";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {InsertSchema} from "../../components/custom/InsertSchema.tsx";
-import {GradeForm} from "../../components/forms/GradeForm.tsx";
-import PageWrapper from "../../components/view/PageWrapper.tsx";
+import {InsertSchema} from "@/components/custom/InsertSchema.tsx";
+import {GradeForm} from "@/components/forms/GradeForm.tsx";
+import PageWrapper from "@/components/view/PageWrapper.tsx";
 import {Divider} from "antd";
-import {PlanningForm} from "../../components/forms/PlanningForm.tsx";
-import {useBreadCrumb} from "../../hooks/useBreadCrumb.tsx";
-import {text} from "../../core/utils/text_display.ts";
+import {PlanningForm} from "@/components/forms/PlanningForm.tsx";
+import {useBreadCrumb} from "@/hooks/useBreadCrumb.tsx";
+import {text} from "@/core/utils/text_display.ts";
 import {useMemo} from "react";
-import {saveGrade} from "../../data/repository/gradeRepository.ts";
-import {loggedUser} from "../../auth/jwt/LoggedUser.ts";
-import {useAcademicYearRepo} from "../../hooks/actions/useAcademicYearRepo.ts";
+import {saveGrade} from "@/data/repository/gradeRepository.ts";
+import {loggedUser} from "@/auth/jwt/LoggedUser.ts";
+import {useAcademicYearRepo} from "@/hooks/actions/useAcademicYearRepo.ts";
 
 export const GradeSavePage = () => {
     const {useGetCurrentAcademicYear} = useAcademicYearRepo()

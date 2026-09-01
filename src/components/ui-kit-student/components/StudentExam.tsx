@@ -36,7 +36,6 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
     const [size, setSize] = useState<number>(examCount)
     const {currentAcademicYear: academicYear} = useAcademicYearRepo()
     const [academicYearId, setAcademicYearId] = useState<string>(academicYear?.id ?? '')
-    console.log('Academic year: ', academicYear)
 
     const {useGetAllClasseAssignments} = useAssignmentRepo()
     const {useGetAllStudentScores} = useScoreRepo()
@@ -157,7 +156,11 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
             key: 'appreciation',
             align: 'center',
             width: '10%',
-            render: (note: number, record) => <InitMarkType av={note} coefficient={record?.coefficient} />
+            render: (note: number, record) => <InitMarkType
+                av={note}
+                maxScale={enrolledStudent?.classe?.grade?.gradingScaleMax}
+                coefficient={record?.coefficient}
+            />
         },
     ];
 
@@ -219,7 +222,10 @@ export const StudentExam = ({enrolledStudent}: StudentExamProps) => {
                     key: 'exam-table',
                     label: 'Performance aux examens',
                     children: <ClasseExamView
-                        classeId={enrolledStudent?.classe?.id}
+                        classe={{
+                            classeId: enrolledStudent?.classe?.id,
+                            maxScale: enrolledStudent?.classe?.grade?.gradingScaleMax
+                        }}
                         academicYear={academicYearId ?? '0'}
                         uniqueStudent={enrolledStudent}
                     />

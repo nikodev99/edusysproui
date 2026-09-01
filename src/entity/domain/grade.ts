@@ -6,6 +6,8 @@ export interface Grade {
     id?: number
     section?: SectionType | string
     subSection?: string
+    gradingScaleMax: number
+    gradingPassThreshold: number
     school?: School
     planning?: Planning[]
     createdAt?: Date | number[] | string

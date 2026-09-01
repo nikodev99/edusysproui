@@ -144,7 +144,18 @@ export const useRedirect = () => {
             return redirectTo(text.employee.group.view.href + employeeSlug, {state: employeeId})
         return redirectTo(text.employee.group.view.href + employeeId)
     }
-    const toSettings = () => redirectTo(text.settings.href)
+    const toSettings = (link?: 1 | 2 | 3 | 4) => {
+        const url = text.settings.href
+        let children: string = link ? '/' : ''
+        switch(link) {
+            case 1: children += 'students'; break
+            case 2: children += 'teachers'; break
+            case 3: children += 'academic'; break
+            case 4: children += 'examinations'; break
+        }
+
+        return redirectTo(url + children)
+    }
 
     const toOrg = () => redirectTo(text.org.group.school.href)
 

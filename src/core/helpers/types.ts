@@ -100,3 +100,85 @@ export type FormatAvgOptions = {
      */
     trimTrailingZeros?: boolean;
 }
+
+export enum TextCase {
+    UPPER = 'UPPER',
+    LOWER = 'LOWER',
+}
+
+export interface CaseOptions {
+    // --------------------------------------------------------
+    // 1. CORE CASING RULES (Original)
+    // --------------------------------------------------------
+    /** Capitalize only the first letter of the entire string (Sentence-like) */
+    firstLetterOnly?: boolean;
+
+    /** Capitalize the first letter of every word (Title Case) */
+    capitalizeWords?: boolean;
+
+    // --------------------------------------------------------
+    // 2. ADVANCED GRAMMATICAL & STYLISTIC RULES
+    // --------------------------------------------------------
+    /** Capitalize the first letter of every sentence (detects '.', '!', '?') */
+    sentenceCase?: boolean;
+
+    /**
+     * Words to explicitly IGNORE when `capitalizeWords` is true.
+     * Essential for true Title Case (e.g., ignoring "and", "the", "of", "in").
+     */
+    ignoreWords?: string[];
+
+    /** Inverts the case of every letter (e.g., "Hello World" -> "hELLO wORLD") */
+    toggleCase?: boolean;
+
+    /** Applies an alternating case (e.g., "hello" -> "hElLo" or "HeLlO") */
+    alternatingCase?: boolean;
+
+    // --------------------------------------------------------
+    // 3. TARGETING & POSITIONAL CONTROL
+    // --------------------------------------------------------
+    /** Array of 0-based character indices to specifically apply the case to */
+    positions?: number[];
+
+    /**
+     * If true, characters NOT in the `positions` array keep their original case.
+     * If false/undefined, unselected characters are forced to the opposite case.
+     */
+    preserveUnselectedPositions?: boolean;
+
+    /** Only apply the target case to these specific substrings if found in the text */
+    targetSubstrings?: string[];
+
+    /** Only apply the target case to parts of the string matching this RegExp */
+    targetRegex?: RegExp;
+
+    /**
+     * Prevent casing changes inside quotes or parentheses
+     * (e.g., keep acronyms or specific names intact)
+     */
+    preserveQuotedText?: boolean;
+
+    // --------------------------------------------------------
+    // 4. CLEANUP & NORMALIZATION
+    // --------------------------------------------------------
+    /** Remove accents/diacritics (e.g., "Café" -> "Café") before applying case */
+    removeDiacritics?: boolean;
+
+    /** Trim whitespace from start and end before applying casing */
+    trim?: boolean;
+
+    /** Remove extra spaces between words (e.g., "Hello World" -> "Hello World") */
+    normalizeSpaces?: boolean;
+
+    // --------------------------------------------------------
+    // 5. COMPARISON & LOCALIZATION (Original)
+    // --------------------------------------------------------
+    /** Compare the formatted result against a target string */
+    compareWith?: string;
+
+    /** When comparing, set to true for case-insensitive matching */
+    ignoreCaseInCompare?: boolean;
+
+    /** Locale for Unicode-aware casing (e.g., 'tr-TR', 'fr-FR') */
+    locale?: string;
+}

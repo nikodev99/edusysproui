@@ -213,7 +213,7 @@ export interface ZodSelect<T extends FieldValues> {
     defaultActiveFirstOption?: boolean
     suffixIcon?: ReactNode,
     onSearch?:  ((value: string) => void) | undefined
-    onChange?:  ((value: string, option?: ({label: string, value: string | number } | {label: string, value: string | number }[])) => void) | undefined
+    onChange?:  ((value: unknown, option?: ({label: string, value: unknown | number } | {label: string, value: unknown | number }[])) => void) | undefined
     notFoundContent?: ReactNode
     mode?:  "tags" | "multiple"
 }
@@ -239,7 +239,13 @@ export interface InputProps extends ZodFormItemProps {
     addonAfter?: ReactNode,
     min?: number
     max?: number
+    step?: number
+    inputMode?: 'input' | 'spinner'
     disabled?: boolean,
+    timeRange?: {
+        startTime: number[],
+        endTime: number[]
+    }
 }
 
 export interface ZodListControl<T extends FieldValues> extends ZodControl<T>{

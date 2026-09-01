@@ -30,7 +30,7 @@ import {useTeacherRepo} from "@/hooks/actions/useTeacherRepo.ts";
 import {getUniqueness} from "@/core/utils/utils.ts";
 import {isTeacher} from "@/auth/dto/role.ts";
 
-export type PermissionType = {canViewStudent: boolean, canViewTeacher: boolean}
+export type PermissionType = {canViewStudent: boolean, canViewTeacher: boolean, canViewAssignment: boolean}
 
 const ClasseViewPage = () => {
 
@@ -61,7 +61,8 @@ const ClasseViewPage = () => {
     const isTeacherStudentView = canViewStudents && isClasseTeacher
     const hasPermission: PermissionType = useMemo(() => ({
         canViewTeacher: canViewTeachers,
-        canViewStudent: isTeacher() ? isTeacherStudentView :  canViewStudents
+        canViewStudent: isTeacher() ? isTeacherStudentView :  canViewStudents,
+        canViewAssignment: isTeacher() ? isTeacherStudentView : canViewTeachers,
     }), [canViewStudents, canViewTeachers, isTeacherStudentView])
 
     const {data, isSuccess, error, isLoading, refetch} = useGetClasse(Number(id), (usedAcademicYearId || currentAcademicYear?.id) as string)

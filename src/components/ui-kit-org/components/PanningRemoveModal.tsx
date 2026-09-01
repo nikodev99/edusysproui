@@ -1,10 +1,10 @@
-import FormSuccess from "../../ui/form/FormSuccess.tsx";
-import FormError from "../../ui/form/FormError.tsx";
+import FormSuccess from "@/components/ui/form/FormSuccess.tsx";
+import FormError from "@/components/ui/form/FormError.tsx";
 import {Modal} from "antd";
-import {ModalConfirmButton} from "../../ui/layout/ModalConfirmButton.tsx";
+import {ModalConfirmButton} from "@/components/ui/layout/ModalConfirmButton.tsx";
 import {useState} from "react";
-import {useRawFetch} from "../../../hooks/useFetch.ts";
-import {deletePlanning} from "../../../data/repository/planningRepository.ts";
+import {useRawFetch} from "@/hooks/useFetch.ts";
+import {deletePlanning} from "@/data/repository/planningRepository.ts";
 
 export const PlanningRemoveModal = ({planningId, open, close}: {
     planningId: number,
@@ -30,7 +30,7 @@ export const PlanningRemoveModal = ({planningId, open, close}: {
         <>
             {successMessage && <FormSuccess message={successMessage} />}
             {errorMessage && <FormError message={errorMessage} />}
-            <Modal open={open} onCancel={close} destroyOnClose title={"Supprimer le planning"} footer={null}>
+            <Modal open={open} onCancel={close} destroyOnHidden title={"Supprimer le planning"} footer={null}>
                 <p style={{marginBottom: '15px'}}>
                     Cliquez le bouton ci-dessous pour supprimer ce planning
                 </p>

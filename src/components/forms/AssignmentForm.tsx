@@ -144,6 +144,7 @@ export const AssignmentForm = <T extends FieldValues, Q>(
                         help: form.error('startTime'),
                         defaultValue: (data ? data.startTime : undefined) as PathValue<T, Path<T>>,
                         onFinish: edit && handleUpdate ? (value: unknown) => handleUpdate('startTime', value) : undefined,
+                        timeRange: {startTime: [6,0], endTime: [17,59]},
                         disabled: disabled
                     }
                 },
@@ -161,6 +162,7 @@ export const AssignmentForm = <T extends FieldValues, Q>(
                         help: form.error('endTime'),
                         defaultValue: (data ? data.endTime : undefined) as PathValue<T, Path<T>>,
                         onFinish: edit && handleUpdate ? (value: unknown) => handleUpdate('endTime', value) : undefined,
+                        timeRange: {startTime: [6,0], endTime: [17,59]},
                         disabled: disabled
                     }
                 },

@@ -25,8 +25,9 @@ export const ClasseExams = ({infoData, academicYear, resourceYear, hasPermission
                    key: 'exam-list',
                    label: 'Examens',
                    children: <ClasseExamView
-                       classeId={infoData?.id}
+                       classe={{classeId: infoData?.id, maxScale: infoData?.grade?.gradingScaleMax}}
                        academicYear={academicYear || '0'}
+                       hasPermission={(hasPermission as PermissionType).canViewAssignment}
                    />
                }]}
                name={infoData?.name}

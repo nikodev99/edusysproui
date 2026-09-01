@@ -20,11 +20,12 @@ export const TeacherList = (
                 <Tag key={`${c.classe?.id}-${i}`}>{c?.classe.name}</Tag>
             ))}
         </div>
-        : <div>
+        : (teacher?.courses && teacher?.courses?.length) ? <div>
             {teacher?.courses?.map((c, i) => (
                 <Tag key={`${c?.course?.id}-${i}`}>{c?.course.course}</Tag>
             ))}
         </div>
+        : 'Maitre de ' //+ teacher?.classes?.map(c => (c?.classe?.name))
 
     return (
         <LoadMoreList

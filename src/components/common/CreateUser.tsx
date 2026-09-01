@@ -15,12 +15,12 @@ export type CreateUserProps = {
 const CreateUser = ({open, onCancel, personalInfo, userType}: CreateUserProps) => {
     const {flowType, handleSubmit: handleSubmitFlow, useForm} = useUserAccountFlow(personalInfo, userType)
 
-    const {control, formState: {errors, submitCount}, watch} = useForm
-
-    console.log({submitCount, errors, formData: watch(), flowType})
+    const {control, formState: {errors}} = useForm
 
     const createUser = async (data: SignupSchema | AssignUserToSchoolSchema) => {
-        return handleSubmitFlow(data)
+        const response = await handleSubmitFlow(data)
+        onCancel?.()
+        return response
     }
 
     return(

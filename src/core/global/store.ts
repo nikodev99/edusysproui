@@ -2,7 +2,7 @@ import {create, StoreApi, UseBoundStore} from "zustand";
 import {combine} from "zustand/middleware";
 import {fetchFunc} from "@/hooks/useFetch.ts";
 import {getDepartmentBasics} from "@/data/repository/departmentRepository.ts";
-import {AcademicYear, Classe, Department, School} from "@/entity";
+import {AcademicYear, Classe, Department, Grade, School} from "@/entity";
 import {getAcademicYearFromYear, getCurrentAcademicYear} from "@/data/repository/academicYearRepository.ts";
 import {getClassesBasicValues} from "@/data/repository/classeRepository.ts";
 import {countStudent} from "@/data/repository/studentRepository.ts";
@@ -49,7 +49,8 @@ export const useGlobalStore = createSelectors(create(combine({
     school: {} as School,
     schoolId: '' as string,
     schoolAbbr: '' as string,
-    securityRedirect: '' as string
+    securityRedirect: '' as string,
+    grades: [] as Grade[]
 }, (set) => ({
     initiateSchool() {
         const school = loggedUser.getSchool()

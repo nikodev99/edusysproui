@@ -166,7 +166,7 @@ const ExamViewPage = () => {
             <ViewRoot
                 items={[
                     {label: 'Info', children: <ExamInfo infoData={assignment != null ? assignment : {}} marks={scores} color={color} dataKey='exam-info' />},
-                    {label: 'Notes', children: <ExamScores scores={scores} loading={isLoading} record={assignment as Assignment} /> },
+                    {label: 'Notes', children: <ExamScores scores={scores} loading={isLoading} assignment={assignment as Assignment} /> },
                     ...items as TabItemType[]
                 ]}
                 exists={assignment != null}

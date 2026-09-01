@@ -59,6 +59,11 @@ import GuardianBillingSettingPage from "@/pages/guardian/GuardianBillingSettingP
 import AffiliateTeacherPage from "@/pages/teacher/AffiliateTeacherPage.tsx";
 import AffiliateNewTeacherPage from "@/pages/teacher/AffiliateNewTeacherPage.tsx";
 import ClasseSchedulePage from "@/pages/classe_subject/ClasseSchedulePage.tsx";
+import StudentSettingPage from "@/pages/setting/StudentSettingPage.tsx";
+import TeacherSettingPage from "@/pages/setting/TeacherSettingPage.tsx";
+import AcademicSettingPage from "@/pages/setting/AcademicSettingPage.tsx";
+import ExamSettingPage from "@/pages/setting/ExamSettingPage.tsx";
+import SettingsProvider from "@/providers/SettingsProvider";
 
 const DashboardPage = withAuthProtection(withRoleProtection(Dashboard));
 
@@ -107,6 +112,10 @@ const UserActivity = withAuthProtection(withRoleProtection(UserActivityPage))
 const UserChangePassword = withAuthProtection(withRoleProtection(ChangePasswordPage))
 
 const SettingCustomizePage = withAuthProtection(withRoleProtection(SettingPage));
+const SettingStudentPage = withAuthProtection(withRoleProtection(StudentSettingPage));
+const SettingTeacherPage = withAuthProtection(withRoleProtection(TeacherSettingPage));
+const SettingAcademicPage = withAuthProtection(withRoleProtection(AcademicSettingPage));
+const SettingExamPage = withAuthProtection(withRoleProtection(ExamSettingPage));
 
 export const Route = createBrowserRouter([
     {
@@ -135,9 +144,11 @@ export const Route = createBrowserRouter([
         element: (
             <RedirectProvider>
                 <AuthMiddleware>
-                    <NavigationHandler>
-                        <PageLayout />
-                    </NavigationHandler>
+                    <SettingsProvider>
+                        <NavigationHandler>
+                            <PageLayout />
+                        </NavigationHandler>
+                    </SettingsProvider>
                 </AuthMiddleware>
             </RedirectProvider>
         ),
@@ -269,7 +280,13 @@ export const Route = createBrowserRouter([
             },
             {
                 path: 'settings',
-                element: <SettingCustomizePage />
+                children: [
+                    {path: text.path.page, element: <SettingCustomizePage />},
+                    {path: 'students', element: <SettingStudentPage />},
+                    {path: 'teachers', element: <SettingTeacherPage />},
+                    {path: 'academic', element: <SettingAcademicPage />},
+                    {path: 'examinations', element: <SettingExamPage />}
+                ]
             }
         ]
     }

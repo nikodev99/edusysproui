@@ -1,10 +1,10 @@
 import {getStatusKey, Status} from "@/entity/enums/status.ts";
-import {CSSProperties, ReactNode, useCallback} from "react";
+import {CSSProperties, ReactNode, useCallback, useMemo} from "react";
 import Tag from "@/components/ui/layout/Tag.tsx";
 import {Badge, Button, Card, Descriptions, Flex, Popover, Skeleton, Space, StepsProps, Tooltip, Typography} from "antd";
 import {Color} from "./interfaces.ts";
-import {MarkType} from "@/entity/enums/MarkType.ts";
-import {AffiliationStatus, AffiliationStatusEnum, Assignment} from "@/entity";
+import {GradeConfig, MarkLabels, MarkType} from "@/entity/enums/MarkType.ts";
+import {AffiliationStatus, AffiliationStatusEnum, Assignment, getSetting} from "@/entity";
 import {
     LuArrowRight,
     LuAward, LuBadgeDollarSign,
@@ -28,6 +28,7 @@ import {InvoiceStatus, StatusInput} from "@/finance/models/invoice.ts";
 import {GATEWAY_META, PaymentGateway, PaymentMethod, PaymentStatus, STATUS_META} from "@/finance/models/payment.ts";
 import {ProgramStatus, statusConfig} from "@/entity/domain/courseProgram.ts";
 import {datehelper} from "@/core/helpers/DateHelpers.ts";
+import {useSetting} from "@/core/store/settingAccessor.ts";
 
 export const StatusTags = ({status, female}: {status: Status, female?: boolean}): ReactNode => {
     const label = getStatusKey(status, female)
@@ -124,19 +125,22 @@ export const ClockIcon = ({time}: { time: string }) => {
     }
 }
 
-export const SuperWord = ({ input, isUpper, textSize = .6, isSpan = false, style, tooltip }: {
+export const SuperWord = ({ input, isUpper, textSize = .6, isSpan = false, style, tooltip, onClick }: {
     input: string | ReactNode; 
     isUpper?: boolean, 
     textSize?: number /** @range {0-1} */, 
     isSpan?: boolean, 
     style?: CSSProperties,
     tooltip?: string
+    onClick?: () => void
 }) => {
     const regex = /\b(\d)([a-zA-Z]{1,3})\b/g;
 
     const parts: (string | ReactNode)[] = [];
     let lastIndex = 0;
     let match: RegExpExecArray | [never, never, never] | null;
+
+    const { Link } = Typography
 
     if (typeof input === 'string') {
         while ((match = regex?.exec(input)) !== null) {
@@ -171,11 +175,11 @@ export const SuperWord = ({ input, isUpper, textSize = .6, isSpan = false, style
     const getElement = useCallback((input: unknown)=> {
         const elementPart = isSpan ? (
                 <span style={isUpper ? { textTransform: 'uppercase', padding: 0, margin: 0, ...style } : { pointerEvents: 'auto', padding: 0, margin: 0, ...style }}>
-                    {input as ReactNode }
+                    { onClick ? <Link onClick={onClick}>{ input as ReactNode }</Link> : input as ReactNode }
                 </span>
             ) : (
                 <p style={isUpper ? { textTransform: 'uppercase', padding: 0, margin: 0, ...style } : { pointerEvents: 'auto', padding: 0, margin: 0, ...style }}>
-                    {input as ReactNode }
+                    { onClick ? <Link onClick={onClick}>{ input as ReactNode }</Link> : input as ReactNode }
                 </p>
             )
         
@@ -185,7 +189,7 @@ export const SuperWord = ({ input, isUpper, textSize = .6, isSpan = false, style
             </Tooltip>
         }
         return elementPart
-    }, [isSpan, isUpper, style, tooltip])
+    }, [Link, isSpan, isUpper, onClick, style, tooltip])
 
     return (
         <>
@@ -289,58 +293,71 @@ export const AssignmentDescription = (
     ]} />
 }
 
-export const InitMarkType = ({av, coefficient}: {av: number, coefficient?: number}) => {
-    let color: string;
-    let text: MarkType;
-    let icon: ReactNode
+export const InitMarkType = ({av, coefficient, maxScale = 20}: {av: number, maxScale: number, coefficient?: number}) => {
+    const settings = useSetting()
+    const gradeConfigs = getSetting<GradeConfig[]>(settings.gradingappreciationlabels, [])
+    const thresholds = gradeConfigs?.find(g => g.maxValue === maxScale)?.markLabels ?? [
+        {key: 0, avg: 18, label: 'EX'},
+        {key: 1, avg: 16, label: 'TB'},
+        {key: 2, avg: 14, label: 'GOOD'},
+        {key: 3, avg: 12, label: 'AB'},
+        {key: 4, avg: 10, label: 'PA'},
+        {key: 5, avg: 8, label: 'IN'},
+        {key: 6, avg: 18, label: 'FA'},
+        {key: 7, avg: 18, label: 'TF'},
+    ] as MarkLabels[];
 
-    if ((av * (coefficient ?? 1)) >= (18 * (coefficient ?? 1))) {
-        text = MarkType.EX;
-        color = 'success';
-        icon = <LuAward />
-    } else if ((av * (coefficient ?? 1)) >= 16 * (coefficient ?? 1)) {
-        text = MarkType.TB;
-        color = 'success';
-        icon = <LuMedal />
-    } else if ((av * (coefficient ?? 1)) >= (14 * (coefficient ?? 1))) {
-        text = MarkType.GOOD;
-        color = 'processing';
-        icon = <LuCircleCheck />
-    } else if ((av * (coefficient ?? 1)) >= 12 * (coefficient ?? 1)) {
-        text = MarkType.AB;
-        color = 'processing';
-        icon = <LuCheck />
-    }else if ((av * (coefficient ?? 1)) >= 10 * (coefficient ?? 1)) {
-        text = MarkType.PA;
-        color = 'warning';
-        icon = <LuThumbsUp />
-    }else if ((av * (coefficient ?? 1)) >= 8 * (coefficient ?? 1)) {
-        text = MarkType.IN;
-        color = 'warning';
-        icon = <LuThumbsDown />
-    }else if ((av * (coefficient ?? 1)) >= 6 * (coefficient ?? 1)) {
-        text = MarkType.FA;
-        color = 'danger';
-        icon = <LuTrendingDown />
-    } else {
-        text = MarkType.TF;
-        color = 'danger';
-        icon = <LuX />
-    }
+    const MARK_TYPE_STYLES: Record<MarkType, { color: string; icon: ReactNode }> = {
+        [MarkType.EX]: { color: 'success', icon: <LuAward /> },
+        [MarkType.TB]: { color: 'success', icon: <LuMedal /> },
+        [MarkType.GOOD]: { color: 'processing', icon: <LuCircleCheck /> },
+        [MarkType.AB]: { color: 'processing', icon: <LuCheck /> },
+        [MarkType.PA]: { color: 'warning', icon: <LuThumbsUp /> },
+        [MarkType.IN]: { color: 'warning', icon: <LuThumbsDown /> },
+        [MarkType.FA]: { color: 'danger', icon: <LuTrendingDown /> },
+        [MarkType.TF]: { color: 'danger', icon: <LuX /> },
+    };
+
+    const coef = coefficient ?? 1;
+    const weightedAv = av * coef;
+
+    const sorted = [...thresholds]?.sort((a, b) => (b?.avg ?? 1) - (a?.avg ?? 1));
+    const matched = sorted.find(t => weightedAv >= ((t?.avg ?? 1) * coef)) ?? sorted[sorted.length - 1];
+
+    const text = MarkType[matched?.label] ?? MarkType.TF;
+    const { color, icon } = MARK_TYPE_STYLES[text];
 
     return (
         <Tag color={color as 'warning'} icon={icon}>{text}</Tag>
     );
 };
 
-export const MarkBadge = ({score, coefficient, level = 4}: {score: number, coefficient?: number, level?: number}) => {
+export const MarkBadge = ({score, maxScale = 20, coefficient, level = 4}: {
+    score: number, maxScale?: number, coefficient?: number, level?: number
+}) => {
+    
+    const getNote = useMemo(() => {
+        if (maxScale === 10) {
+            return {
+                max: 7,
+                min: 4
+            }
+        }
+        return {
+            max: 15,
+            min: 10
+        }
+    }, [maxScale])
+
+    const {max, min} = getNote
+    
     return(
         <Typography.Title level={level as 4}>
             {score * (coefficient ? coefficient : 1)}
             <Badge color={
-                (score * (coefficient ? coefficient : 1)) >= (15 * (coefficient ? coefficient : 1))
+                (score * (coefficient ? coefficient : 1)) >= (max * (coefficient ? coefficient : 1))
                     ? 'green'
-                    : (score * (coefficient ? coefficient : 1)) >= (10 * (coefficient ? coefficient : 1))
+                    : (score * (coefficient ? coefficient : 1)) >= (min * (coefficient ? coefficient : 1))
                         ? 'gold'
                         : 'red'
             }
